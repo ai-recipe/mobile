@@ -10,6 +10,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { setIsOnboarded } from "@/store/slices/authSlice";
 
 const STEPS = [
   {
@@ -71,6 +73,7 @@ export default function OnboardingScreen() {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPrepTime] = useState("30");
   const [selectedDietary] = useState(["Vegan", "Glutensiz"]);
+  const dispatch = useDispatch();
 
   const scanPos = useSharedValue(0);
 
@@ -89,6 +92,7 @@ export default function OnboardingScreen() {
       setCurrentStep(currentStep + 1);
     } else {
       router.replace("/");
+      dispatch(setIsOnboarded(true));
     }
   };
 
