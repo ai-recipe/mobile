@@ -1,20 +1,11 @@
-import { Stack } from "expo-router";
-import { View, ActivityIndicator } from "react-native";
+import { useAppSelector } from "@/store/hooks";
+import { Redirect, Stack } from "expo-router";
 
 export default function PublicLayout() {
-  // Show loading state while checking auth
-  if (false) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  const { isOnboarded } = useAppSelector((state) => state.auth);
+
+  if (isOnboarded) {
+    return <Redirect href="/(protected)/(tabs)" />;
   }
 
   return (

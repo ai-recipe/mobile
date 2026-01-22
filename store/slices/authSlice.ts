@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
 interface User {
   id: string;
   email: string;
@@ -28,7 +27,7 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
     },
     setIsOnboarded: (state, action: PayloadAction<boolean>) => {
-      state.isAuthenticated = action.payload;
+      console.log("setIsOnboarded", action.payload);
       state.isOnboarded = action.payload;
     },
     logout: (state) => {

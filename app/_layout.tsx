@@ -1,17 +1,19 @@
 import { Stack } from "expo-router";
-import React, { useEffect } from "react";
-import "../global.css";
-import { Platform, View, ActivityIndicator } from "react-native";
+import React from "react";
+import { ActivityIndicator, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
+import "../global.css";
 
+import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
-
-  useEffect(() => {}, []);
+  const { isOnboarded } = useAppSelector((state) => state.auth);
+  console.log("isOnboarded layout", isOnboarded);
+  useInitApp();
 
   if (isLoading) {
     return (

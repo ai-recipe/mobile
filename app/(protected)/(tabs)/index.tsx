@@ -1,21 +1,19 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  SafeAreaView,
-  Platform,
-} from "react-native";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withRepeat,
-  withTiming,
   withSequence,
+  withTiming,
 } from "react-native-reanimated";
 
 export default function HomeScreen() {
@@ -38,21 +36,6 @@ export default function HomeScreen() {
       { rotate: `${floatAnim.value / 4}deg` },
     ],
   }));
-
-  const remoteImages = {
-    profile:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDlPbF5SyiqYHOw9MvzpLgA9djeRORumXGM3s8iLmDqz-wHE30_KNgDcUrPOorhKUg7STEUTsPguhPfbbZjSVe6fxpmOkAyaSMR3Mb33R9dqWGdNTxpDPGTCyU7GQnFPlZSvmSgau9WXFV-s50NWRAXJnuJtTsG3171m3emtHZ_7zdvXpalJStTWAM0txF3fgu3iGfsAGgR2_AbpUOZwsB3_QcIE2Z6BSv74lqti22-H7ghzx8N4PZ10ZDzhvPPKwSTpvhMW6tw0e06",
-    pasta:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCObA8mlqBV4stqfLnbyTsXs19qURFCTnM79heytpRqNy4R_4Pkgd-wFmCSvvtuYqWWXeNv8AfmEVT1DTTcK9T0egdhAgB4bQSyYf7eeZbmdRn-dwXeCxtpfIkCp7c32vSN_XhlVFwGI01BcRBRyzovvnmkNT8Z6sHA2r41dyD2YYeah8_Nvhpumf7WVtFcWB3EVTdgOIA5qiBLQCwxnDkj_cplLNTVpsGkHhnBM52i45fH30LFW-TZME_9O4MIYiNTRbMdDk8w-XzE",
-    salad:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCHEy-wv2JhBZO7kV08cNU3gBgsfjv329fG-gx97xJsHvTyXB6RlOu58chEioDeBfg6pqeObUI-Dt21i0oiBGCV2_k8GV76vMPnNcrPNI3hetMIfI9B6ySpwc9C2GCe_qTSwa1slHTFtB3Sw1lCd8PDNfnkCXRFW8yI7PmvzHy-7cUb2J5VuPZCWSu_LCr4ZvG1fVE3jNeVRHkrCekomyNcytgdgbeShThp0IWK1pVhh__1QfCIRj1qHnPjnWgvGa5tYAMbj6xn1LjV",
-    salmon:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCSwDEx6ubfln7p66waOTbZnmbYXOmtmG9QX4Q81o8INAEcBB3KEus8zO49pYAZ2JozwhAw3WEjehBCr3jhqISiTBh3-vokdIe9ameqGht6ZNJren19amVjIgt9LohWtSRCAH9HJ3rlgcuEJr_c0a7OzLoGs0ET-b5XLDDDBsVklDzFWOt0Vg71uR4pYgwQF37DjuLQzYaHHnEA_JyCjIm6jGVp6iDSvXLElSYtCY70LdY6-ztSky2FfdP5-rReCeZqhYUueL9Y4Sqz",
-    yogurt:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAkn3A23H_SFLjyIZrj6zmN20H2utEo-DTb6VFbSV3qp2cIzL6nGWi44OoTEzAsSbAQkLc-OEa26_BjFlIcEQD06DdpRzcOWzFKYVgDJln00Zb0ZcTtLYxgCuIvFNnTAcejgrL8q0OcC-XF00wRh5F2y5qvFNC9a3V8nrLfrCo0373zVtUmeZ3gxTdk6FkuhNKvMfE25RqeroC0cbn0DQXGI-DPSiIncQceaOghEAOlpuTUV8aCIomjMqNsw3osj0bIikoschk4MvjVt",
-    quinoa:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuA3OfSYb7-slCezdx-6WDGDbp_pJw6ZLCwatASyV-eP2YyDOEOCJaEe3cDQA1XZyDsJ659UL_JKhpiojiZA2SFSOl5hqOpHgEGyOGzQlHoY1DH4MAe9Nj6pyxRaZagpCBiCObUFOzy8CKYrRi032MZKj75mfFQSRRA-a-h1zXANNS0xbsWlpsnlrkYWZLySTYMLWJFV5BYuPfWq3NrFigY07V6lDawmjh-Rf_B_Ma2ukvZViidtPHNq3hZV7CajCMbUVXKB47RVQbTd",
-  };
 
   return (
     <View className="flex-1 bg-background">

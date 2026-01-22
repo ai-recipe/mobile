@@ -1,4 +1,6 @@
+import { setIsOnboarded } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -11,7 +13,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
-import { setIsOnboarded } from "@/store/slices/authSlice";
 
 const STEPS = [
   {
@@ -91,6 +92,8 @@ export default function OnboardingScreen() {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      AsyncStorage.setItem("isOnboarded", "true");
+
       router.replace("/");
       dispatch(setIsOnboarded(true));
     }
