@@ -1,10 +1,11 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 export default function ScanScreen() {
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <Text className="text-xl font-bold">Tarat</Text>
-    </View>
+    <ScreenWrapper withTabBar>
+      <Text className="text-xl font-bold p-5">Tarat</Text>
+    </ScreenWrapper>
   );
 }

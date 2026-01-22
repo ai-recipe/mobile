@@ -1,10 +1,11 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 export default function FavoritesScreen() {
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <Text className="text-xl font-bold">Favoriler</Text>
-    </View>
+    <ScreenWrapper withTabBar>
+      <Text className="text-xl font-bold p-5">Favoriler</Text>
+    </ScreenWrapper>
   );
 }
