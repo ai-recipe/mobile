@@ -39,7 +39,7 @@ export default function AIScanScreen() {
   };
 
   return (
-    <ScreenWrapper showBackButton>
+    <ScreenWrapper showBackButton withTabBar={false}>
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <View className="pt-8 pb-6">

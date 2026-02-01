@@ -39,12 +39,12 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   const containerStyle = [
     styles.container,
     {
-      backgroundColor,
+      backgroundColor: "#fff",
       // Generic Top Padding
       // On Android, we sometimes need to account for StatusBar if transparency is used
       ...(withTabNavigation
         ? {
-            marginBottom: 100,
+            marginBottom: 76,
             paddingTop:
               Platform.OS === "android"
                 ? Math.max(insets.top, StatusBar.currentHeight || 0)

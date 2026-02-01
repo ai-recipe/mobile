@@ -100,10 +100,16 @@ export default function AiScanFormScreen() {
       setStep(4);
     } catch (err) {
       dispatch(setRecipeLoading(false));
-      dispatch(setAnalyseError(err instanceof Error ? err.message : "Analiz başarısız"));
+      dispatch(
+        setAnalyseError(
+          err instanceof Error ? err.message : "Analiz başarısız",
+        ),
+      );
       Alert.alert(
         "Analiz Hatası",
-        err instanceof Error ? err.message : "Tarifler alınamadı. Lütfen tekrar deneyin.",
+        err instanceof Error
+          ? err.message
+          : "Tarifler alınamadı. Lütfen tekrar deneyin.",
         [{ text: "Tamam", onPress: () => setStep(2) }],
       );
     }
@@ -418,7 +424,9 @@ export default function AiScanFormScreen() {
               <TouchableOpacity
                 activeOpacity={0.9}
                 className="w-full h-12 bg-zinc-900 dark:bg-white rounded-xl items-center justify-center flex-row gap-2"
-                onPress={() => console.log("Navigate to Detail", item.recipe_name)}
+                onPress={() =>
+                  console.log("Navigate to Detail", item.recipe_name)
+                }
               >
                 <Text className="text-white dark:text-black font-bold text-sm">
                   Tarifi Gör
@@ -437,7 +445,7 @@ export default function AiScanFormScreen() {
   );
 
   return (
-    <ScreenWrapper withTabNavigation={step !== 3}>
+    <ScreenWrapper withTabNavigation={step !== 3 && step !== 4}>
       {/* Dynamic Header: Only show back/progress on steps 1 & 2 */}
       {(step === 1 || step === 2) && (
         <View className="px-5 py-2 flex-row items-center justify-between z-10">
