@@ -4,7 +4,8 @@ import { Redirect, Stack } from "expo-router";
 export default function PublicLayout() {
   const { isOnboarded } = useAppSelector((state) => state.auth);
 
-  if (isOnboarded) {
+  if (false) {
+    //todo
     return <Redirect href="/(protected)/(tabs)" />;
   }
 

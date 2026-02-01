@@ -94,7 +94,7 @@ export default function OnboardingScreen() {
     } else {
       AsyncStorage.setItem("isOnboarded", "true");
 
-      router.replace("/");
+      router.replace("/(public)/screens/login");
       dispatch(setIsOnboarded(true));
     }
   };

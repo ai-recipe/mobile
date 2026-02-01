@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,7 +9,7 @@ import { BlurView } from "expo-blur";
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
-
+  const router = useRouter();
   return (
     <View style={styles.tabBarContainer}>
       <BlurView
@@ -26,6 +26,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             const isFocused = state.index === index;
 
             const onPress = () => {
+              if (route.name === "scan") {
+                router.push("/screens/ai-scan");
+                return;
+              }
               const event = navigation.emit({
                 type: "tabPress",
                 target: route.key,
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "transparent", // Use transparent with BlurView
+    backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: "#F1F5F9",
     // Add shadow for premium feel
@@ -192,14 +196,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 10,
-    overflow: "hidden", // Important for blur clipping
   },
   blurWrapper: {
     width: "100%",
   },
   tabBarInner: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     maxWidth: 500,
     width: "100%",

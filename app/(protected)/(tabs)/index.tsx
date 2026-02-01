@@ -16,6 +16,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const floatAnim = useSharedValue(0);
@@ -81,7 +82,10 @@ export default function HomeScreen() {
                   className="flex-row items-center justify-center gap-3 bg-white w-full h-[60px] rounded-full "
                 >
                   <MaterialIcons name="photo-camera" size={24} color="black" />
-                  <Text className="text-black font-extrabold text-[17px]">
+                  <Text
+                    className="text-black font-extrabold text-[17px]"
+                    onPress={() => router.push("/(public)/screens/onboarding")}
+                  >
                     Taramaya Başla
                   </Text>
                 </TouchableOpacity>
