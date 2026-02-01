@@ -23,7 +23,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "package": "com.m.sahinkundakci.myapp"
+      "package": "com.m.sahinkundakci.myapp",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -47,6 +51,12 @@
         "projectId": "0af9548a-c546-434a-8e8f-74b6717f880a"
       }
     },
-    "owner": "phonenumber123"
+    "owner": "phonenumber123",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0af9548a-c546-434a-8e8f-74b6717f880a"
+    }
   }
 }
