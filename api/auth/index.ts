@@ -1,8 +1,12 @@
 import { api } from "@/api/axios";
 
 class AuthService {
-  public login() {
-    return api.post("/auth/login");
+  public loginWithEmailAPI(data: any) {
+    return api.post("/auth/login", data);
+  }
+
+  public registerWithEmailAPI(data: any) {
+    return api.post("/auth/register", data);
   }
 }
 

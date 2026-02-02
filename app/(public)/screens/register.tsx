@@ -1,8 +1,13 @@
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { registerWithEmailAsync } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,7 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Controller, useForm } from "react-hook-form";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -35,6 +39,10 @@ type RegisterFormData = yup.InferType<typeof registerSchema>;
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { isRegisterLoading, error: authError } = useAppSelector(
+    (state) => state.auth,
+  );
 
   const {
     control,
@@ -45,9 +53,18 @@ export default function RegisterScreen() {
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    // TODO: Implement registration
-    router.replace("/(protected)/(tabs)");
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      const resultAction = await dispatch(registerWithEmailAsync(data));
+      if (registerWithEmailAsync.fulfilled.match(resultAction)) {
+        router.replace("/(protected)/(tabs)");
+      } else {
+        const message = resultAction.payload as string;
+        Alert.alert("Hata", message || "Kayıt yapılamadı");
+      }
+    } catch (err) {
+      Alert.alert("Hata", "Bir sorun oluştu");
+    }
   };
 
   return (
@@ -190,11 +207,18 @@ export default function RegisterScreen() {
               <TouchableOpacity
                 onPress={handleSubmit(onSubmit)}
                 activeOpacity={0.8}
-                className="w-full h-14 bg-[#f39849] rounded-full flex-row items-center justify-center mb-4 shadow-lg shadow-orange-500/30"
+                disabled={isRegisterLoading}
+                className={`w-full h-14 bg-[#f39849] rounded-full flex-row items-center justify-center mb-4 shadow-lg shadow-orange-500/30 ${
+                  isRegisterLoading ? "opacity-70" : ""
+                }`}
               >
-                <Text className="text-white font-bold text-[17px]">
-                  Kayıt Ol
-                </Text>
+                {isRegisterLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white font-bold text-[17px]">
+                    Kayıt Ol
+                  </Text>
+                )}
               </TouchableOpacity>
 
               {/* Login link */}

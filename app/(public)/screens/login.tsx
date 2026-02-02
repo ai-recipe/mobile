@@ -1,8 +1,13 @@
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { loginWithEmailAsync } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,7 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Controller, useForm } from "react-hook-form";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -31,6 +35,10 @@ type LoginFormData = yup.InferType<typeof loginSchema>;
 
 export default function LoginScreen() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { isLoginLoading, error: authError } = useAppSelector(
+    (state) => state.auth,
+  );
 
   const {
     control,
@@ -41,9 +49,18 @@ export default function LoginScreen() {
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    // TODO: Implement email/password login
-    router.replace("/(protected)/(tabs)");
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const resultAction = await dispatch(loginWithEmailAsync(data));
+      if (loginWithEmailAsync.fulfilled.match(resultAction)) {
+        router.replace("/(protected)/(tabs)");
+      } else {
+        const message = resultAction.payload as string;
+        Alert.alert("Hata", message || "Giriş yapılamadı");
+      }
+    } catch (err) {
+      Alert.alert("Hata", "Bir sorun oluştu");
+    }
   };
 
   return (
@@ -166,11 +183,18 @@ export default function LoginScreen() {
               <TouchableOpacity
                 onPress={handleSubmit(onSubmit)}
                 activeOpacity={0.8}
-                className="w-full h-14 bg-[#f39849] rounded-full flex-row items-center justify-center mb-4 shadow-lg shadow-orange-500/30"
+                disabled={isLoginLoading}
+                className={`w-full h-14 bg-[#f39849] rounded-full flex-row items-center justify-center mb-4 shadow-lg shadow-orange-500/30 ${
+                  isLoginLoading ? "opacity-70" : ""
+                }`}
               >
-                <Text className="text-white font-bold text-[17px]">
-                  Giriş Yap
-                </Text>
+                {isLoginLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white font-bold text-[17px]">
+                    Giriş Yap
+                  </Text>
+                )}
               </TouchableOpacity>
 
               {/* Sign up link */}
