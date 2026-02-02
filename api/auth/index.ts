@@ -8,6 +8,10 @@ class AuthService {
   public registerWithEmailAPI(data: any) {
     return api.post("/auth/register", data);
   }
+
+  public logoutAPI() {
+    return api.post("/auth/logout");
+  }
 }
 
 export default new AuthService();

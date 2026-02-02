@@ -1,11 +1,11 @@
+import { setImage } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import React from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { ScreenWrapper } from "../../components/ScreenWrapper";
-import { setImage } from "@/store/slices/recipeSlice";
 import { useDispatch } from "react-redux";
-import { router } from "expo-router";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 export default function AIScanScreen() {
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ export default function AIScanScreen() {
   };
 
   return (
-    <ScreenWrapper showBackButton withTabBar={false}>
+    <ScreenWrapper showBackButton withTabNavigation={false}>
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <View className="pt-8 pb-6">
@@ -57,7 +57,7 @@ export default function AIScanScreen() {
           <TouchableOpacity
             onPress={() => handlePickImage(true)}
             activeOpacity={0.9}
-            className="flex-1 bg-zinc-900 dark:bg-orange-500 h-48 rounded-[32px] items-center justify-center shadow-xl shadow-black/20"
+            className="flex-1 bg-zinc-900 dark:bg-orange-500 h-48 rounded-[32px] items-center justify-center"
           >
             <View className="size-16 bg-white/10 rounded-full items-center justify-center mb-3">
               <MaterialIcons name="photo-camera" size={32} color="white" />
@@ -69,7 +69,7 @@ export default function AIScanScreen() {
           <TouchableOpacity
             onPress={() => handlePickImage(false)}
             activeOpacity={0.9}
-            className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-48 rounded-[32px] items-center justify-center shadow-sm"
+            className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-48 rounded-[32px] items-center justify-center"
           >
             <View className="size-16 bg-orange-100 dark:bg-zinc-700 rounded-full items-center justify-center mb-3">
               <MaterialIcons name="collections" size={32} color="#f39849" />

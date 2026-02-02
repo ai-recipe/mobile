@@ -1,9 +1,12 @@
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setCurrentLanguage } from "@/store/slices/appSlice";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -12,7 +15,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch } from "react-redux";
 
 const STEPS = [
   {
@@ -71,10 +73,12 @@ const DIETARY = [
 ];
 
 export default function OnboardingScreen() {
+  const { t, i18n } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPrepTime] = useState("30");
   const [selectedDietary] = useState(["Vegan", "Glutensiz"]);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const currentLanguage = useAppSelector((state) => state.app.currentLanguage);
 
   const scanPos = useSharedValue(0);
 
@@ -98,6 +102,47 @@ export default function OnboardingScreen() {
       dispatch(setIsOnboarded(true));
     }
   };
+
+  const changeLanguage = async (lng: string) => {
+    await i18n.changeLanguage(lng);
+    await AsyncStorage.setItem("CURRENT_LANGUAGE", lng);
+    dispatch(setCurrentLanguage(lng));
+  };
+
+  const renderLanguageSelector = () => (
+    <View className="flex-row justify-end px-6 pt-2">
+      <View className="flex-row bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
+        <Pressable
+          onPress={() => changeLanguage("tr")}
+          className={`px-3 py-1.5 rounded-full ${
+            currentLanguage === "tr" ? "bg-primary" : ""
+          }`}
+        >
+          <Text
+            className={`text-xs font-bold ${
+              currentLanguage === "tr" ? "text-white" : "text-gray-500"
+            }`}
+          >
+            TR
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => changeLanguage("en")}
+          className={`px-3 py-1.5 rounded-full ${
+            currentLanguage === "en" ? "bg-primary" : ""
+          }`}
+        >
+          <Text
+            className={`text-xs font-bold ${
+              currentLanguage === "en" ? "text-white" : "text-gray-500"
+            }`}
+          >
+            EN
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
 
   const renderProgress = () => (
     <View className="flex-row justify-center items-center gap-3 py-6">
@@ -151,7 +196,7 @@ export default function OnboardingScreen() {
 
       <View className="py-8 items-center">
         <Text className="text-3xl font-black text-center text-text dark:text-white mb-3">
-          {STEPS[0].title}
+          {t("welcome")}
         </Text>
         <Text className="text-base text-center text-secondary dark:text-gray-300 leading-relaxed font-medium">
           {STEPS[0].description}
@@ -364,6 +409,7 @@ export default function OnboardingScreen() {
         <View className="w-12" />
       </View>
 
+      {renderLanguageSelector()}
       {renderProgress()}
 
       {currentStep === 0 && renderStep0()}

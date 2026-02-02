@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loginWithEmailAsync } from "@/store/slices/authSlice";
+import { setAuthenticated } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
@@ -51,6 +51,10 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      dispatch(setAuthenticated(true));
+      router.replace("/(protected)/(tabs)");
+      return;
+      /*
       const resultAction = await dispatch(loginWithEmailAsync(data));
       if (loginWithEmailAsync.fulfilled.match(resultAction)) {
         router.replace("/(protected)/(tabs)");
@@ -58,6 +62,7 @@ export default function LoginScreen() {
         const message = resultAction.payload as string;
         Alert.alert("Hata", message || "Giriş yapılamadı");
       }
+      */
     } catch (err) {
       Alert.alert("Hata", "Bir sorun oluştu");
     }

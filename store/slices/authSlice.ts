@@ -60,6 +60,22 @@ export const registerWithEmailAsync = createAsyncThunk(
   },
 );
 
+export const logoutAsync = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await AuthService.logoutAPI();
+      await AsyncStorage.removeItem("token");
+    } catch (error: any) {
+      // Even if API fails, we should clear local token
+      await AsyncStorage.removeItem("token");
+      return rejectWithValue(
+        error.response?.data?.message || "Çıkış yapılırken bir hata oluştu",
+      );
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -70,6 +86,9 @@ export const authSlice = createSlice({
     setIsOnboarded: (state, action: PayloadAction<boolean>) => {
       console.log("setIsOnboarded", action.payload);
       state.isOnboarded = action.payload;
+    },
+    setAuthenticated: (state, action: PayloadAction<boolean>) => {
+      state.isAuthenticated = action.payload;
     },
     logout: (state) => {
       state.isAuthenticated = false;
@@ -107,10 +126,23 @@ export const authSlice = createSlice({
       .addCase(registerWithEmailAsync.rejected, (state, action) => {
         state.isRegisterLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+        state.error = null;
+      })
+      .addCase(logoutAsync.rejected, (state, action) => {
+        // We still clear state on logout error because local token is removed
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { logout, setIsOnboarded } = authSlice.actions;
+export const { logout, setIsOnboarded, setAuthenticated } = authSlice.actions;
 
 export default authSlice.reducer;

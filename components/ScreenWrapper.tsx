@@ -59,6 +59,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
           }
         : {
             marginBottom: 0,
+            paddingTop: Platform.OS === "android" ? insets.top : insets.top,
           }),
     },
   ];
@@ -66,7 +67,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   return (
     <View style={containerStyle}>
       {showBackButton && (
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} className="p-5">
           <MaterialIcons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
       )}
