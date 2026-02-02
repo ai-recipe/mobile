@@ -22,7 +22,6 @@ interface ScreenWrapperProps {
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   children,
-  withTabBar = false,
   backgroundColor = "transparent",
   showBackButton = false,
   withTabNavigation = true,
@@ -53,9 +52,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
             // Generic Bottom Padding
             // If we have a tab bar, we add its height + safe area
             // If no tab bar, just safe area (for home indicator)
-            paddingBottom: withTabBar
-              ? insets.bottom + TAB_BAR_HEIGHT
-              : insets.bottom + 16, // Extra 16 for breathing room
+            paddingBottom: insets.bottom + 16, // Extra 16 for breathing room
           }
         : {
             marginBottom: 0,
