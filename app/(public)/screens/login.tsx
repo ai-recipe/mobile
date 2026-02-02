@@ -93,8 +93,8 @@ export default function LoginScreen() {
                   Mutfakta <Text className="text-[#f39849]">Sihir</Text> Yaratın
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 text-center text-sm font-medium leading-relaxed">
-                  Yapay zeka şefiniz ile buzdolabındaki malzemeleri gurme tariflere
-                  dönüştürün.
+                  Yapay zeka şefiniz ile buzdolabındaki malzemeleri gurme
+                  tariflere dönüştürün.
                 </Text>
               </View>
             </Animated.View>
@@ -168,7 +168,9 @@ export default function LoginScreen() {
                 activeOpacity={0.8}
                 className="w-full h-14 bg-[#f39849] rounded-full flex-row items-center justify-center mb-4 shadow-lg shadow-orange-500/30"
               >
-                <Text className="text-white font-bold text-[17px]">Giriş Yap</Text>
+                <Text className="text-white font-bold text-[17px]">
+                  Giriş Yap
+                </Text>
               </TouchableOpacity>
 
               {/* Sign up link */}
@@ -176,7 +178,9 @@ export default function LoginScreen() {
                 <Text className="text-zinc-600 dark:text-zinc-400 text-sm">
                   Hesabınız yok mu?
                 </Text>
-                <TouchableOpacity onPress={() => router.push("/(public)/screens/register")}>
+                <TouchableOpacity
+                  onPress={() => router.push("/(public)/screens/register")}
+                >
                   <Text className="text-[#f39849] font-bold text-sm">
                     Kayıt Ol
                   </Text>
