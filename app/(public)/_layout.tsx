@@ -12,6 +12,8 @@ export default function PublicLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="screens/onboarding" />
+      <Stack.Screen name="screens/login" />
+      <Stack.Screen name="screens/register" />
     </Stack>
   );
 }
