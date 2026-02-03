@@ -4,10 +4,22 @@ import {
 } from "@/components/MultiStepForm";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  resetSurveyStatus,
+  submitSurveyAsync,
+} from "@/store/slices/surveySlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useMemo } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as yup from "yup";
 
 const COOKING_HABITS = [
@@ -57,6 +69,8 @@ function useSurveySteps(): MultiStepFormStep[] {
   const inputBg = isDark ? "rgba(255,255,255,0.05)" : theme.card;
   const inputBorder = isDark ? "rgba(255,255,255,0.1)" : theme.border;
   const placeholderColor = isDark ? "rgba(255,255,255,0.3)" : theme.muted;
+
+  const { isSubmitLoading } = useAppSelector((state) => state.survey);
 
   return useMemo(
     () => [
@@ -344,17 +358,31 @@ function useSurveySteps(): MultiStepFormStep[] {
               <View className="flex-grow min-h-[120]" />
               <TouchableOpacity
                 activeOpacity={0.9}
-                className="w-full rounded-xl py-5 flex-row items-center justify-center gap-2"
-                style={{ backgroundColor: theme.tint }}
+                disabled={isSubmitLoading}
+                className="w-full rounded-xl py-5 flex-row items-center justify-center gap-2 mb-2"
+                style={{
+                  backgroundColor: theme.tint,
+                  opacity: isSubmitLoading ? 0.7 : 1,
+                }}
                 onPress={nextStep}
               >
-                <MaterialIcons name="check-circle" size={22} color="white" />
-                <Text className="text-white text-lg font-bold">
-                  Anketi Bitir
-                </Text>
+                {isSubmitLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <>
+                    <MaterialIcons
+                      name="check-circle"
+                      size={22}
+                      color="white"
+                    />
+                    <Text className="text-white text-lg font-bold">
+                      Anketi Bitir
+                    </Text>
+                  </>
+                )}
               </TouchableOpacity>
               <Text
-                className="text-center text-xs mt-4"
+                className="text-center text-xs mt-2"
                 style={{ color: theme.muted }}
               >
                 Bu tercihleri daha sonra ayarlardan değiştirebilirsin
@@ -364,17 +392,46 @@ function useSurveySteps(): MultiStepFormStep[] {
         },
       },
     ],
-    [theme, isDark, inputBg, inputBorder, placeholderColor],
+    [theme, isDark, inputBg, inputBorder, placeholderColor, isSubmitLoading],
   );
 }
 
 export default function EarnCreditSurveyScreen() {
   const steps = useSurveySteps();
+  const dispatch = useAppDispatch();
+  const { isSuccess, error } = useAppSelector((state) => state.survey);
+
+  useEffect(() => {
+    if (isSuccess) {
+      Alert.alert(
+        "Tebrikler!",
+        "Anketi tamamladınız ve kredileriniz hesabınıza tanımlandı.",
+        [
+          {
+            text: "Tamam",
+            onPress: () => {
+              dispatch(resetSurveyStatus());
+              router.back();
+            },
+          },
+        ],
+      );
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Hata", error, [
+        {
+          text: "Tamam",
+          onPress: () => dispatch(resetSurveyStatus()),
+        },
+      ]);
+    }
+  }, [error]);
 
   const handleFinish = (data: Record<string, unknown>) => {
-    // TODO: submit to API / grant credits
-    console.log("Survey completed", data);
-    router.back();
+    dispatch(submitSurveyAsync(data));
   };
 
   return (

@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import uiReducer from "./slices/uiSlice";
+import appReducer from "./slices/appSlice";
 import authReducer from "./slices/authSlice";
 import recipeReducer from "./slices/recipeSlice";
-import appReducer from "./slices/appSlice";
+import surveyReducer from "./slices/surveySlice";
+import uiReducer from "./slices/uiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     recipe: recipeReducer,
     app: appReducer,
+    survey: surveyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
