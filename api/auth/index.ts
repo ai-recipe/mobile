@@ -12,6 +12,10 @@ class AuthService {
   public logoutAPI() {
     return api.post("/auth/logout");
   }
+
+  public initDeviceAPI({ deviceID }: any) {
+    return api.post("/auth/initDevice", { deviceID });
+  }
 }
 
 export default new AuthService();

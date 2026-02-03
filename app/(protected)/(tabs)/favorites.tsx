@@ -26,14 +26,8 @@ const MyAiRecipesScreen = () => {
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
         <View className="flex-row items-center mb-6">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            AI <Text className="text-[#f39849]">Arşivim</Text>
+            Favori <Text className="text-[#f39849]">Tariflerim</Text>
           </Text>
-          <MaterialCommunityIcons
-            name="heart"
-            size={24}
-            color="#f39849"
-            className="ml-2"
-          />
         </View>
 
         <FlatList

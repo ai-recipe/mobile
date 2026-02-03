@@ -1,13 +1,16 @@
 import { useAppSelector } from "@/store/hooks";
-import { Redirect, Stack } from "expo-router";
+import { initDeviceAsync } from "@/store/slices/authSlice";
+import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export default function PublicLayout() {
   const { isOnboarded } = useAppSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  if (false) {
-    //todo
-    return <Redirect href="/(protected)/(tabs)" />;
-  }
+  useEffect(() => {
+    dispatch(initDeviceAsync() as any);
+  }, [dispatch]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

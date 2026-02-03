@@ -1,6 +1,8 @@
 import AuthService from "@/api/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import * as Application from "expo-application";
+import { Platform } from "react-native";
 
 interface User {
   id: string;
@@ -15,6 +17,7 @@ interface AuthState {
   isOnboarded: boolean;
   isLoginLoading: boolean;
   isRegisterLoading: boolean;
+  isInitDeviceLoading: boolean;
   error: string | null;
 }
 
@@ -25,8 +28,32 @@ const initialState: AuthState = {
   isOnboarded: false,
   isLoginLoading: false,
   isRegisterLoading: false,
+  isInitDeviceLoading: false,
   error: null,
 };
+
+export const initDeviceAsync = createAsyncThunk(
+  "auth/initDevice",
+  async (_, { rejectWithValue }) => {
+    try {
+      let deviceID: string;
+      if (Platform.OS === "ios") {
+        deviceID = (await Application.getIosIdForVendorAsync()) || "unknown";
+      } else if (Platform.OS === "android") {
+        deviceID = Application.getAndroidId() || "unknown";
+      } else {
+        deviceID = "unknown";
+      }
+
+      const response = await AuthService.initDeviceAPI({ deviceID });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Cihaz başlatma başarısız",
+      );
+    }
+  },
+);
 
 export const loginWithEmailAsync = createAsyncThunk(
   "auth/loginWithEmail",
@@ -80,9 +107,6 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    initDevice: (state) => {
-      state.isAuthenticated = true;
-    },
     setIsOnboarded: (state, action: PayloadAction<boolean>) => {
       console.log("setIsOnboarded", action.payload);
       state.isOnboarded = action.payload;
@@ -99,46 +123,16 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginWithEmailAsync.pending, (state) => {
-        state.isLoginLoading = true;
-        state.error = null;
+      .addCase(initDeviceAsync.pending, (state) => {
+        state.isInitDeviceLoading = true;
       })
-      .addCase(loginWithEmailAsync.fulfilled, (state, action) => {
-        state.isLoginLoading = false;
+      .addCase(initDeviceAsync.fulfilled, (state) => {
         state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.isInitDeviceLoading = false;
       })
-      .addCase(loginWithEmailAsync.rejected, (state, action) => {
-        state.isLoginLoading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(registerWithEmailAsync.pending, (state) => {
-        state.isRegisterLoading = true;
-        state.error = null;
-      })
-      .addCase(registerWithEmailAsync.fulfilled, (state, action) => {
-        state.isRegisterLoading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-      })
-      .addCase(registerWithEmailAsync.rejected, (state, action) => {
-        state.isRegisterLoading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(logoutAsync.fulfilled, (state) => {
+      .addCase(initDeviceAsync.rejected, (state) => {
         state.isAuthenticated = false;
-        state.token = null;
-        state.user = null;
-        state.error = null;
-      })
-      .addCase(logoutAsync.rejected, (state, action) => {
-        // We still clear state on logout error because local token is removed
-        state.isAuthenticated = false;
-        state.token = null;
-        state.user = null;
-        state.error = action.payload as string;
+        state.isInitDeviceLoading = false;
       });
   },
 });

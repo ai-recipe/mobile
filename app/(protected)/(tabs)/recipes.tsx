@@ -1,3 +1,4 @@
+import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ScreenWrapper } from "@/components/ScreenWrapper";
 
 const STATIC_RECIPES = [
   {
@@ -36,7 +36,7 @@ const RecipesScreen = () => {
     <ScreenWrapper>
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-4">
-          Şefin <Text className="text-[#f39849]">Seçimleri</Text>
+          Üretilen <Text className="text-[#f39849]">Tarifler</Text>
         </Text>
 
         {/* Search Bar */}

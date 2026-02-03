@@ -6,10 +6,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
+import { useSharedValue } from "react-native-reanimated";
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const floatAnim = useSharedValue(0);
+
   return (
     <View style={styles.tabBarContainer}>
       <BlurView

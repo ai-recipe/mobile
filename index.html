@@ -1,0 +1,218 @@
+<!doctype html>
+<html class="light" lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+    <title>Kredi Yönetimi ile Ana Sayfa</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#F59353",
+              "background-light": "#FFFFFF",
+              "background-dark": "#0F172A",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              xl: "1.5rem",
+              "2xl": "2rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .ios-shadow {
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+      }
+      .glass-effect {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.8);
+      }
+      .dark .glass-effect {
+        background-color: rgba(15, 23, 42, 0.8);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
+  >
+    <div
+      class="h-12 w-full flex items-center justify-between px-8 sticky top-0 z-50 bg-background-light dark:bg-background-dark"
+    >
+      <span class="text-sm font-semibold">20:33</span>
+      <div class="flex items-center gap-1.5">
+        <span class="material-icons-round text-lg">signal_cellular_alt</span>
+        <span class="material-icons-round text-lg">wifi</span>
+        <span class="material-icons-round text-lg rotate-90">battery_full</span>
+      </div>
+    </div>
+    <main class="flex-1 px-5 pb-32 space-y-6">
+      <div
+        class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 ios-shadow"
+      >
+        <div class="flex justify-between items-end mb-3">
+          <div>
+            <h2 class="text-sm font-medium text-slate-500 dark:text-slate-400">
+              Günlük Limit
+            </h2>
+            <p class="text-2xl font-bold">
+              5
+              <span class="text-slate-400 font-normal text-lg">/ 10 Kredi</span>
+            </p>
+          </div>
+          <div
+            class="flex items-center text-primary font-semibold text-sm bg-orange-50 dark:bg-orange-950/30 px-3 py-1 rounded-full"
+          >
+            <span class="material-icons-round text-base mr-1">bolt</span>
+            Premium
+          </div>
+        </div>
+        <div
+          class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-5"
+        >
+          <div
+            class="h-full bg-primary rounded-full transition-all duration-500"
+            style="width: 50%"
+          ></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button
+            class="flex items-center justify-center gap-2 py-3 px-4 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-active active:scale-95"
+          >
+            <span class="material-icons-round text-lg">add_circle</span>
+            Kredi Yükle
+          </button>
+          <button
+            class="flex items-center justify-center gap-2 py-3 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl active:scale-95 transition-all"
+          >
+            <span class="material-icons-round text-lg">stars</span>
+            Kredi Kazan
+          </button>
+        </div>
+      </div>
+      <div
+        class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FBA471] via-[#F59353] to-[#E87E3E] p-8 min-h-[300px] flex flex-col justify-between text-white shadow-xl shadow-orange-200 dark:shadow-none"
+      >
+        <div
+          class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"
+        ></div>
+        <div
+          class="absolute -bottom-10 -left-10 w-32 h-32 bg-black/5 rounded-full blur-xl"
+        ></div>
+        <div class="relative z-10">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 rounded-full mb-6"
+          >
+            <span class="material-icons-round text-xs">auto_awesome</span>
+            <span class="text-[10px] font-bold tracking-widest uppercase"
+              >Yapay Zeka Sihiri</span
+            >
+          </div>
+          <h1 class="text-4xl font-extrabold leading-tight mb-4">
+            Malzemelerini<br />Tarat
+          </h1>
+          <p class="text-white/90 text-sm leading-relaxed max-w-[220px]">
+            Buzdolabındaki malzemeleri saniyeler içinde gurme tariflere
+            dönüştüren yapay zeka gücü.
+          </p>
+        </div>
+        <button
+          class="relative z-10 mt-8 w-full bg-white text-slate-900 py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-lg shadow-lg active:scale-95 transition-transform"
+        >
+          <span class="material-icons-round text-2xl">photo_camera</span>
+          Taramaya Başla
+        </button>
+      </div>
+      <div
+        class="bg-[#FFF8F1] dark:bg-slate-900/80 p-5 rounded-3xl flex items-start gap-4 border border-[#FFE7D1] dark:border-slate-800"
+      >
+        <div class="relative">
+          <div
+            class="w-14 h-14 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-sm border border-orange-100 dark:border-slate-700"
+          >
+            <span class="material-icons-round text-primary text-3xl"
+              >smart_toy</span
+            >
+          </div>
+          <div class="absolute -top-2 -right-1 text-primary rotate-12">
+            <span class="material-icons-round text-xl">restaurant</span>
+          </div>
+        </div>
+        <div
+          class="flex-1 bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-700 dark:text-slate-300 leading-snug relative"
+        >
+          <div
+            class="absolute -left-2 top-0 w-0 h-0 border-t-[10px] border-t-white dark:border-t-slate-800 border-l-[10px] border-l-transparent"
+          ></div>
+          "Buzdolabında saklanan bir şaheser mi var? Hadi bulalım!"
+        </div>
+      </div>
+    </main>
+    <nav
+      class="fixed bottom-0 left-0 right-0 glass-effect border-t border-slate-100 dark:border-slate-800 px-6 pb-8 pt-3 z-50"
+    >
+      <div class="max-w-md mx-auto flex items-center justify-between">
+        <button class="flex flex-col items-center gap-1 group">
+          <span class="material-icons-round text-primary">home</span>
+          <span class="text-[10px] font-bold text-primary">Ana Sayfa</span>
+        </button>
+        <button
+          class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          <span class="material-icons-round">menu_book</span>
+          <span class="text-[10px] font-medium">Tarifler</span>
+        </button>
+        <div class="relative -top-10">
+          <button
+            class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-orange-300 dark:shadow-none border-4 border-white dark:border-slate-900 active:scale-90 transition-transform"
+          >
+            <span class="material-icons-round text-3xl">document_scanner</span>
+          </button>
+          <span
+            class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary"
+            >Tarat</span
+          >
+        </div>
+        <button
+          class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          <span class="material-icons-round">favorite_border</span>
+          <span class="text-[10px] font-medium">Favoriler</span>
+        </button>
+        <button
+          class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          <span class="material-icons-round">person_outline</span>
+          <span class="text-[10px] font-medium">Profil</span>
+        </button>
+      </div>
+    </nav>
+  </body>
+</html>
