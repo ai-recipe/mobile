@@ -63,12 +63,14 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
 
   return (
     <View style={containerStyle}>
-      {showBackButton && (
-        <TouchableOpacity onPress={() => router.back()} className="p-5">
-          <MaterialIcons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-      )}
-      {title && <Text className="text-xl font-bold p-5">{title}</Text>}
+      <View className="flex-row items-center">
+        {showBackButton && (
+          <TouchableOpacity onPress={() => router.back()} className="p-5">
+            <MaterialIcons name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
+        )}
+        {title && <Text className="text-xl font-bold p-5">{title}</Text>}
+      </View>
       {children}
     </View>
   );

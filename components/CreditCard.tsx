@@ -1,8 +1,10 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export const CreditCard = () => {
+  const router = useRouter();
   const [credit, setCredit] = React.useState(1);
   const maxCredit = 50;
   return (
@@ -38,6 +40,7 @@ export const CreditCard = () => {
         {/* Action Buttons */}
         <View className="flex-row gap-3">
           <TouchableOpacity
+            onPress={() => router.push("/(protected)/top-up")}
             activeOpacity={0.9}
             className="flex-1 flex-row items-center justify-center gap-2 bg-primary py-3.5 rounded-2xl "
           >
