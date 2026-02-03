@@ -1,5 +1,6 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -12,6 +13,7 @@ const PACKAGES = [
 ];
 
 export default function TopUpScreen() {
+  const router = useRouter();
   const [selectedId, setSelectedId] = React.useState("3");
 
   return (
@@ -24,6 +26,27 @@ export default function TopUpScreen() {
         className="flex-1 bg-[#f8f7f5] dark:bg-[#221910]"
         showsVerticalScrollIndicator={false}
       >
+        {/* Pro Plan Banner */}
+        <View className="px-4 pt-4">
+          <TouchableOpacity
+            onPress={() => router.push("/subscription")}
+            activeOpacity={0.9}
+            className="w-full bg-[#f48c25] rounded-2xl p-5 flex-row items-center overflow-hidden"
+          >
+            <View className="flex-1">
+              <Text className="text-white text-lg font-black leading-tight">
+                Üyelik Planını Yükselt
+              </Text>
+              <Text className="text-white/80 text-xs font-medium mt-1">
+                Sınırsız kredi ve premium özellikleri keşfet
+              </Text>
+            </View>
+            <View className="bg-white/20 p-2 rounded-xl">
+              <MaterialIcons name="auto-awesome" size={24} color="white" />
+            </View>
+          </TouchableOpacity>
+        </View>
+
         {/* Account Overview Card */}
         <View className="p-4">
           <View className="flex-row items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#2d2218] p-5 border border-[#e6e0db] dark:border-[#3d3126]">

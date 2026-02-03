@@ -52,9 +52,8 @@ export const CreditCard = () => {
             className="flex-1 flex-row items-center justify-center gap-2 bg-white dark:bg-zinc-700 border border-slate-200 dark:border-zinc-600 py-3.5 rounded-2xl "
             onPress={() => router.push("/(protected)/earn-credit-survey")}
           >
-            <MaterialIcons name="stars" size={18} color="#f39849" />
             <Text className="text-slate-700 dark:text-slate-200 font-bold text-sm">
-              Kredi Kazan
+              Hemen Kazan
             </Text>
           </TouchableOpacity>
         </View>

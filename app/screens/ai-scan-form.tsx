@@ -1,4 +1,8 @@
 import { analyseImage } from "@/api/recipe";
+import {
+  MultiStepForm,
+  type MultiStepFormStep,
+} from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -9,16 +13,18 @@ import {
 } from "@/store/slices/recipeSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
+import * as yup from "yup";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 // Sub-components
 import { LoadingStep } from "./components/LoadingStep";
 import { RecipeResults } from "./components/RecipeResults";
-import { StepGeneralInformation } from "./components/StepGeneralInformation";
+import { StepDietPreference } from "./components/StepDietPreference";
 import { StepScan } from "./components/StepScan";
+import { StepTimePreference } from "./components/StepTimePreference";
 
 const LOADING_MESSAGES = [
   "Malzemeler Tanımlanıyor...",
@@ -27,83 +33,75 @@ const LOADING_MESSAGES = [
   "En İyi Tarifler Hazırlanıyor...",
 ];
 
+const scanFormSchema = yup.object({
+  timePreference: yup.number().required().default(30),
+  dietPreferences: yup.array().of(yup.string()).default([]),
+});
+
+type ScanFormData = yup.InferType<typeof scanFormSchema>;
+
 export default function AiScanFormScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
   const { formData, recipes } = useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
-  // 1: Review, 2: Form, 3: Loading, 4: Results
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [direction, setDirection] = useState<"forward" | "backward">("forward");
-  const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
-  const [imageUrlOverride, setImageUrlOverride] = useState("");
 
-  const goToStep = useCallback(
-    (nextStep: 1 | 2 | 3 | 4) => {
-      setDirection(nextStep > step ? "forward" : "backward");
-      setStep(nextStep);
+  // 1: Form (MultiStepForm), 2: Loading, 3: Results
+  const [appStep, setAppStep] = useState<"form" | "loading" | "results">(
+    "form",
+  );
+  const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
+
+  const handleFetchRecipes = useCallback(
+    async (data: ScanFormData) => {
+      // Sync with redux for consistency if needed, but we'll use local 'data' for API
+      dispatch(
+        setFormData({
+          ...formData,
+          timePreference: data.timePreference,
+          ingredients: data.dietPreferences,
+        }),
+      );
+
+      setAppStep("loading");
+      dispatch(setRecipeLoading(true));
+      dispatch(setAnalyseError(null));
+
+      try {
+        const result = await analyseImage({
+          imageUrl: "", // We use empty string as placeholder for now since we're in development/mock phase
+          ingredients: (data.dietPreferences ?? []).filter(
+            (i): i is string => !!i,
+          ),
+          timeMinutes: data.timePreference ?? 30,
+        });
+
+        dispatch(setRecipes(result.recipes ?? []));
+        dispatch(setRecipeLoading(false));
+        setAppStep("results");
+      } catch (err) {
+        dispatch(setRecipeLoading(false));
+        dispatch(
+          setAnalyseError(
+            err instanceof Error ? err.message : "Analiz başarısız",
+          ),
+        );
+        Alert.alert(
+          "Analiz Hatası",
+          err instanceof Error
+            ? err.message
+            : "Tarifler alınamadı. Lütfen tekrar deneyin.",
+          [{ text: "Tamam", onPress: () => setAppStep("form") }],
+        );
+      }
     },
-    [step],
+    [formData, dispatch],
   );
 
-  const handleFormDataChange = (key: string, value: any) => {
-    dispatch(setFormData({ ...formData, [key]: value }));
-  };
-
-  const handleFetchRecipes = useCallback(async () => {
-    const imageUri = imageUrlOverride.trim() || formData.image;
-    const isLocalUri =
-      !imageUrlOverride.trim() &&
-      (imageUri?.startsWith("file://") || imageUri?.startsWith("content://"));
-
-    if (isLocalUri) {
-      Alert.alert(
-        "URL Gerekli",
-        "Analiz için görselin herkese açık bir URL'si olmalıdır. Aşağıdaki alana bir görsel URL'si girebilirsiniz.",
-      );
-      return;
-    }
-
-    if (!imageUri) {
-      Alert.alert("Hata", "Lütfen önce bir görsel seçin veya URL girin.");
-      return;
-    }
-
-    goToStep(3);
-    dispatch(setRecipeLoading(true));
-    dispatch(setAnalyseError(null));
-
-    try {
-      const result = await analyseImage({
-        imageUrl: imageUri,
-        ingredients: formData.ingredients ?? [],
-        timeMinutes: formData.timePreference ?? 30,
-      });
-
-      dispatch(setRecipes(result.recipes ?? []));
-      dispatch(setRecipeLoading(false));
-      goToStep(4);
-    } catch (err) {
-      dispatch(setRecipeLoading(false));
-      dispatch(
-        setAnalyseError(
-          err instanceof Error ? err.message : "Analiz başarısız",
-        ),
-      );
-      Alert.alert(
-        "Analiz Hatası",
-        err instanceof Error
-          ? err.message
-          : "Tarifler alınamadı. Lütfen tekrar deneyin.",
-        [{ text: "Tamam", onPress: () => goToStep(2) }],
-      );
-    }
-  }, [formData, imageUrlOverride, dispatch, goToStep]);
-
-  // Rotate loading messages when on step 3
+  // Rotate loading messages when on loading step
   useEffect(() => {
-    if (step !== 3) return;
+    if (appStep !== "loading") return;
     const id = setInterval(() => {
       setLoadingText((prev) => {
         const idx = LOADING_MESSAGES.indexOf(prev);
@@ -111,57 +109,72 @@ export default function AiScanFormScreen() {
       });
     }, 2000);
     return () => clearInterval(id);
-  }, [step]);
+  }, [appStep]);
 
-  return (
-    <ScreenWrapper withTabNavigation={step !== 3 && step !== 4}>
-      {/* Dynamic Header: Only show back/progress on steps 1 & 2 */}
-      {(step === 1 || step === 2) && (
-        <View className="px-5 py-2 flex-row items-center justify-between z-10">
-          <TouchableOpacity
-            onPress={() => (step === 1 ? router.back() : goToStep(1))}
-            className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center"
-          >
-            <MaterialIcons
-              name="arrow-back"
-              size={24}
-              color={colorScheme === "dark" ? "#fff" : "#181411"}
-            />
-          </TouchableOpacity>
+  const steps: MultiStepFormStep[] = useMemo(
+    () => [
+      {
+        id: "scan",
+        title: "Malzemeler",
+        subtitle: "Taranan malzemeleri kontrol edin.",
+        fields: [], // No validation needed for scan review, it's just display + actions
+        render: ({ nextStep }) => (
+          <StepScan
+            imageUri={formData.image}
+            onNext={nextStep}
+            onNewCapture={() => router.back()}
+            onPickFromGallery={() => router.back()}
+            direction="forward"
+          />
+        ),
+      },
+      {
+        id: "time",
+        title: "Süre",
+        subtitle: "Hazırlık için ne kadar vaktiniz var?",
+        fields: ["timePreference"],
+        render: ({ data, setValue, nextStep }) => (
+          <StepTimePreference
+            value={data.timePreference}
+            onChange={(v) => setValue("timePreference", v)}
+            onNext={nextStep}
+            direction="forward"
+          />
+        ),
+      },
+      {
+        id: "diet",
+        title: "Beslenme",
+        subtitle: "Beslenme tercihinizi seçin.",
+        fields: ["dietPreferences"],
+        render: ({ data, setValue, nextStep }) => (
+          <StepDietPreference
+            value={data.dietPreferences || []}
+            onChange={(v) => setValue("dietPreferences", v)}
+            onSubmit={nextStep}
+            direction="forward"
+          />
+        ),
+      },
+    ],
+    [formData.image, router],
+  );
 
-          <View className="flex-row gap-1.5">
-            <View
-              className={`h-2 w-8 rounded-full ${
-                step >= 1 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
-              }`}
-            />
-            <View
-              className={`h-2 w-8 rounded-full ${
-                step >= 2 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
-              }`}
-            />
-            <View
-              className={`h-2 w-8 rounded-full ${
-                step >= 3 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
-              }`}
-            />
-            <View
-              className={`h-2 w-8 rounded-full ${
-                step >= 4 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
-              }`}
-            />
-          </View>
+  if (appStep === "loading") {
+    return (
+      <ScreenWrapper withTabNavigation={false}>
+        <LoadingStep loadingText={loadingText} direction="forward" />
+      </ScreenWrapper>
+    );
+  }
 
-          {/* Spacer to balance header center */}
-          <View className="size-10" />
-        </View>
-      )}
-
-      {/* Header for Step 4 (Results) */}
-      {step === 4 && (
+  if (appStep === "results") {
+    return (
+      <ScreenWrapper withTabNavigation={false}>
+        {/* Header for Step: Results */}
         <View className="px-5 py-2 flex-row items-center justify-between">
           <TouchableOpacity
-            onPress={() => goToStep(1)}
+            onPress={() => setAppStep("form")}
             className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full"
           >
             <MaterialIcons
@@ -179,41 +192,31 @@ export default function AiScanFormScreen() {
             </Text>
           </View>
         </View>
-      )}
-
-      {/* Main Content Area */}
-      <View className="flex-1 mt-2">
-        {step === 1 && (
-          <StepScan
-            imageUri={formData.image}
-            onNext={() => goToStep(2)}
-            onNewCapture={() => {}}
-            onPickFromGallery={() => {}}
-            direction={direction}
-          />
-        )}
-        {step === 2 && (
-          <StepGeneralInformation
-            formData={formData}
-            imageUrlOverride={imageUrlOverride}
-            setImageUrlOverride={setImageUrlOverride}
-            onFormDataChange={handleFormDataChange}
-            onSubmit={handleFetchRecipes}
-            direction={direction}
-          />
-        )}
-        {step === 3 && (
-          <LoadingStep loadingText={loadingText} direction={direction} />
-        )}
-        {step === 4 && (
+        <View className="flex-1 mt-2">
           <RecipeResults
             recipes={recipes}
             baseImageUri={formData.image}
             colorScheme={colorScheme}
-            direction={direction}
+            direction="forward"
           />
-        )}
-      </View>
-    </ScreenWrapper>
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <MultiStepForm
+        steps={steps}
+        onFinish={(data) => handleFetchRecipes(data as ScanFormData)}
+        headerTitle="Tarif Oluştur"
+        backButtonBehavior="pop"
+        validationSchema={scanFormSchema}
+        initialData={{
+          timePreference: formData.timePreference || 30,
+          dietPreferences: formData.ingredients || [],
+        }}
+      />
+    </View>
   );
 }

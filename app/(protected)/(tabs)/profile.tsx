@@ -4,6 +4,7 @@ import { useAppSelector } from "@/store/hooks";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -26,6 +27,7 @@ const ProfileScreen = () => {
   const [themeModalVisible, setThemeModalVisible] = useState(false);
   const currentTheme = useAppSelector((state) => state.ui.theme);
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   const handleSelectTheme = (theme: ThemePreference) => {
     dispatch(setTheme(theme));
@@ -59,6 +61,16 @@ const ProfileScreen = () => {
         {/* Menu Options */}
         <View className="gap-y-3">
           <ProfileMenuItem icon="notifications-none" label="Bildirimler" />
+          <TouchableOpacity
+            onPress={() => router.push("/subscription" as any)}
+            className="flex-row items-center p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border border-orange-100 dark:border-orange-500/20"
+          >
+            <MaterialIcons name="auto-awesome" size={24} color="#f48c25" />
+            <Text className="ml-4 flex-1 font-bold text-[#f48c25]">
+              {"Pro'ya Yükselt"}
+            </Text>
+            <MaterialIcons name="chevron-right" size={24} color="#f48c25" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setThemeModalVisible(true)}
             className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"

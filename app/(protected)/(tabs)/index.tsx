@@ -1,10 +1,8 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -14,6 +12,7 @@ import {
 } from "react-native-reanimated";
 import { CreditCard } from "../../../components/CreditCard";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { UpgradeProCard } from "../../../components/UpgradeProCard";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
@@ -24,10 +23,10 @@ export default function HomeScreen() {
     floatAnim.value = withRepeat(
       withSequence(
         withTiming(-8, { duration: 2000 }),
-        withTiming(0, { duration: 2000 })
+        withTiming(0, { duration: 2000 }),
       ),
       -1,
-      true
+      true,
     );
   }, [floatAnim]);
 
@@ -46,83 +45,87 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Scan Ingredients Banner */}
-        <View className="px-5 pb-2 pt-4">
-          <LinearGradient
-            colors={
-              colorScheme === "dark"
-                ? ["#c96a1a", "#e67e22", "#b85c14"]
-                : ["#f39849", "#ffb373", "#e67e22"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              borderRadius: 36,
-              overflow: "hidden",
-            }}
-          >
-            <View className="p-8 relative overflow-hidden">
-              <View
-                className={`absolute -right-16 -top-16 size-48 rounded-full blur-3xl opacity-50 ${
-                  colorScheme === "dark" ? "bg-white/10" : "bg-white/20"
-                }`}
-              />
-              <View
-                className={`absolute -left-10 -bottom-10 size-40 rounded-full blur-2xl ${
-                  colorScheme === "dark" ? "bg-white/5" : "bg-black/5"
-                }`}
-              />
 
-              <View className="relative z-10 items-center">
-                <View
-                  className={`flex-row items-center self-start px-3 py-1.5 rounded-full mb-6 backdrop-blur-md ${
-                    colorScheme === "dark"
-                      ? "bg-white/20 border border-white/30"
-                      : "bg-white/30 border border-white/40"
-                  }`}
-                >
-                  <MaterialIcons
-                    name="auto-awesome"
-                    size={14}
-                    color="white"
-                    className="text-white"
-                  />
-                  <Text className="text-white text-[10px] font-extrabold ml-1.5 uppercase tracking-widest">
-                    YAPAY ZEKA SİHİRİ
-                  </Text>
-                </View>
-                <Text className="text-white text-[32px] font-extrabold leading-[1.1] mb-3 text-left w-full">
-                  Malzemelerini{"\n"}Tarat
+        <UpgradeProCard />
+        <CreditCard />
+        {/* How it Works Section */}
+        <View className="px-5 pt-8">
+          <View className="mb-8 px-1">
+            <Text className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3">
+              Nasıl <Text className="text-[#f39849]">Çalışır?</Text>
+            </Text>
+            <Text className="text-zinc-500 dark:text-zinc-400 text-[16px] leading-relaxed font-medium">
+              Yapay zeka ile mutfakta devrim yaratmaya hazır mısınız? Sadece
+              birkaç adımda akşam yemeğiniz hazır.
+            </Text>
+          </View>
+
+          <View className="gap-y-4">
+            {/* Step 1 */}
+            <View className="bg-white/80 dark:bg-zinc-800/50 p-5 rounded-[28px] flex-row items-center border border-white/20 dark:border-zinc-700/30 ">
+              <View className="size-14 bg-orange-100 dark:bg-orange-500/10 rounded-2xl items-center justify-center mr-4">
+                <MaterialIcons name="photo-camera" size={28} color="#f39849" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[2px] mb-1">
+                  Adım 1
                 </Text>
-                <Text className="text-white/90 text-[15px] font-medium leading-relaxed mb-8 text-left w-full">
-                  Buzdolabındaki malzemeleri saniyeler içinde gurme tariflere
-                  dönüştüren yapay zeka gücü.
+                <Text className="text-zinc-900 dark:text-zinc-100 font-bold text-[17px] leading-tight">
+                  Önce ürünlerinizi tarayınız
                 </Text>
-                <TouchableOpacity
-                  activeOpacity={0.95}
-                  className={`flex-row items-center justify-center gap-3 w-full h-[60px] rounded-full ${
-                    colorScheme === "dark" ? "bg-white/95" : "bg-white"
-                  }`}
-                  onPress={() => router.push("/screens/ai-scan")}
-                >
-                  <MaterialIcons
-                    name="photo-camera"
-                    size={24}
-                    color={colorScheme === "dark" ? "#181411" : "#000"}
-                  />
-                  <Text
-                    className={`font-extrabold text-[17px] ${
-                      colorScheme === "dark" ? "text-[#181411]" : "text-black"
-                    }`}
-                  >
-                    Taramaya Başla
-                  </Text>
-                </TouchableOpacity>
               </View>
             </View>
-          </LinearGradient>
-        </View>
-        <CreditCard />
 
+            {/* Step 2 */}
+            <View className="bg-white/80 dark:bg-zinc-800/50 p-5 rounded-[28px] flex-row items-center border border-white/20 dark:border-zinc-700/30 ">
+              <View className="size-14 bg-orange-100 dark:bg-orange-500/10 rounded-2xl items-center justify-center mr-4">
+                <MaterialIcons name="fact-check" size={28} color="#f39849" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[2px] mb-1">
+                  Adım 2
+                </Text>
+                <Text className="text-zinc-900 dark:text-zinc-100 font-bold text-[17px] leading-tight">
+                  Ürünleri onaylayın veya ekleyin
+                </Text>
+              </View>
+            </View>
+
+            {/* Step 3 */}
+            <View className="bg-white/80 dark:bg-zinc-800/50 p-5 rounded-[28px] flex-row items-center border border-white/20 dark:border-zinc-700/30 ">
+              <View className="size-14 bg-orange-100 dark:bg-orange-500/10 rounded-2xl items-center justify-center mr-4">
+                <MaterialIcons name="timer" size={28} color="#f39849" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[2px] mb-1">
+                  Adım 3
+                </Text>
+                <Text className="text-zinc-900 dark:text-zinc-100 font-bold text-[17px] leading-tight">
+                  Ne kadar süreniz var?
+                </Text>
+              </View>
+            </View>
+
+            {/* Step 4 */}
+            <View className="bg-white/80 dark:bg-zinc-800/50 p-5 rounded-[28px] flex-row items-center border border-white/20 dark:border-zinc-700/30 ">
+              <View className="size-14 bg-orange-100 dark:bg-orange-500/10 rounded-2xl items-center justify-center mr-4">
+                <MaterialIcons
+                  name="manage-accounts"
+                  size={28}
+                  color="#f39849"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[2px] mb-1">
+                  Adım 4
+                </Text>
+                <Text className="text-zinc-900 dark:text-zinc-100 font-bold text-[17px] leading-tight">
+                  Diyet tercihlerinizi belirleyin
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
         {/* Mascot Speech Bubble Section 
         <View className="px-5 py-4">
           <View className="bg-[#FFF7ED] dark:bg-zinc-800/40 rounded-3xl p-5 border border-orange-100/50 dark:border-zinc-700/30 flex-row items-center gap-4">
