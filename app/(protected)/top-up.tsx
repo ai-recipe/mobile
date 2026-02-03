@@ -18,7 +18,7 @@ export default function TopUpScreen() {
     <ScreenWrapper
       withTabNavigation={false}
       showBackButton={true}
-      title="Top-up Credits"
+      title="Kredi Yükle"
     >
       <ScrollView
         className="flex-1 bg-[#f8f7f5] dark:bg-[#221910]"
@@ -29,13 +29,13 @@ export default function TopUpScreen() {
           <View className="flex-row items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#2d2218] p-5 border border-[#e6e0db] dark:border-[#3d3126]">
             <View className="flex-[2] justify-center">
               <Text className="text-[#8a7560] dark:text-[#b0a090] text-sm font-medium mb-1">
-                Account Overview
+                Hesap Özeti
               </Text>
               <Text className="text-[#181411] dark:text-white text-3xl font-black mb-1">
                 125
               </Text>
               <Text className="text-[#8a7560] dark:text-[#b0a090] text-sm font-normal">
-                Current Balance (Credits)
+                Mevcut Bakiye (Kredi)
               </Text>
             </View>
             <View className="w-24 bg-[#f48c25]/10 rounded-xl items-center justify-center aspect-square">
@@ -49,7 +49,7 @@ export default function TopUpScreen() {
         </View>
 
         <Text className="text-[#181411] dark:text-white text-lg font-black px-4 pt-4 mb-2">
-          Select a Package
+          Paket Seçin
         </Text>
 
         <View className="flex-row flex-wrap p-4 gap-3">
@@ -67,7 +67,7 @@ export default function TopUpScreen() {
               {pkg.bestValue && (
                 <View className="absolute top-0 right-0 bg-[#f48c25] px-3 py-1 rounded-bl-lg">
                   <Text className="text-white text-[10px] font-black uppercase">
-                    BEST VALUE
+                    EN İYİ FİYAT
                   </Text>
                 </View>
               )}
@@ -92,7 +92,7 @@ export default function TopUpScreen() {
                       pkg.bestValue ? "text-xl" : "text-lg"
                     } font-black`}
                   >
-                    {pkg.credits} Credits
+                    {pkg.credits} Kredi
                   </Text>
                   <Text className="text-[#f48c25] text-base font-black mt-1">
                     {pkg.price}
@@ -105,14 +105,16 @@ export default function TopUpScreen() {
 
         <View className="p-4 pb-12 space-y-4">
           <Text className="text-center text-[#8a7560] dark:text-[#b0a090] text-[10px] px-6 mb-6">
-            Credits are non-refundable and will be added to your account
-            instantly after successful payment.
+            Krediler iade edilemez ve başarılı bir ödemeden sonra anında
+            hesabınıza eklenir.
           </Text>
           <TouchableOpacity
             activeOpacity={0.9}
             className="w-full bg-[#f48c25] py-5 rounded-full items-center justify-center flex-row gap-2"
           >
-            <Text className="text-white font-black text-lg">Buy Now</Text>
+            <Text className="text-white font-black text-lg">
+              Şimdi Satın Al
+            </Text>
             <MaterialIcons
               name="shopping-cart-checkout"
               size={24}
