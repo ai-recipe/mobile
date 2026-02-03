@@ -1,8 +1,10 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import React, { useCallback, useState } from "react";
+import { Control, FieldErrors, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,24 +14,29 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as yup from "yup";
 
 export type MultiStepFormStep = {
   id: string;
   title: string;
   subtitle?: string;
+  fields: string[]; // Fields that belong to this step
   render: (ctx: {
-    data: Record<string, unknown>;
-    setValue: (key: string, value: unknown) => void;
+    data: any;
+    setValue: (key: string, value: any) => void;
     nextStep: () => void;
+    control: Control<any>;
+    errors: FieldErrors<any>;
   }) => React.ReactNode;
 };
 
 type MultiStepFormProps = {
   steps: MultiStepFormStep[];
-  initialData?: Record<string, unknown>;
-  onFinish: (data: Record<string, unknown>) => void;
+  initialData?: Record<string, any>;
+  onFinish: (data: Record<string, any>) => void;
   headerTitle?: string;
   backButtonBehavior?: "pop" | "prevStep";
+  validationSchema: yup.AnyObjectSchema;
 };
 
 export function MultiStepForm({
@@ -38,30 +45,59 @@ export function MultiStepForm({
   onFinish,
   headerTitle = "Survey",
   backButtonBehavior = "pop",
+  validationSchema,
 }: MultiStepFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
-  const [data, setData] = useState<Record<string, unknown>>(initialData);
+  const [submittedSteps, setSubmittedSteps] = useState<Record<string, boolean>>(
+    {},
+  );
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+
+  const {
+    control,
+    handleSubmit,
+    setValue: baseSetValue,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: initialData,
+    mode: "onChange",
+    reValidateMode: "onChange",
+  });
+
+  const setValueWrapper = useCallback(
+    (key: string, value: unknown) => {
+      baseSetValue(key as any, value as any, { shouldValidate: true });
+    },
+    [baseSetValue],
+  );
+
+  const data = watch();
 
   const currentStep = steps[stepIndex];
   const isFirst = stepIndex === 0;
   const isLast = stepIndex === steps.length - 1;
   const progress = ((stepIndex + 1) / steps.length) * 100;
 
-  const setValue = useCallback((key: string, value: unknown) => {
-    setData((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const nextStep = async () => {
+    // Validate current step fields
+    const fieldsToValidate = currentStep.fields;
+    setSubmittedSteps((prev) => ({ ...prev, [currentStep.id]: true }));
+    const isValid = await trigger(fieldsToValidate as any);
 
-  const nextStep = useCallback(() => {
-    if (isLast) {
-      onFinish(data);
-      return;
+    if (isValid) {
+      if (isLast) {
+        handleSubmit(onFinish)();
+        return;
+      }
+      setStepIndex((i) => Math.min(i + 1, steps.length - 1));
     }
-    setStepIndex((i) => Math.min(i + 1, steps.length - 1));
-  }, [isLast, data, onFinish, steps.length]);
+  };
 
   const handleBack = useCallback(() => {
     if (isFirst) {
@@ -162,8 +198,10 @@ export function MultiStepForm({
           )}
           {currentStep.render({
             data,
-            setValue,
+            setValue: setValueWrapper,
             nextStep,
+            control,
+            errors: !!submittedSteps[currentStep.id] ? errors : {},
           })}
         </ScrollView>
       </KeyboardAvoidingView>

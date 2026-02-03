@@ -8,6 +8,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import * as yup from "yup";
 
 const COOKING_HABITS = [
   { id: "quick_meals", label: "Quick Meals", icon: "timer" as const },
@@ -19,6 +20,34 @@ const COOKING_HABITS = [
     icon: "explore" as const,
   },
 ] as const;
+
+const surveySchema = yup.object({
+  fullName: yup
+    .string()
+    .required("Lütfen adınızı ve soyadınızı girin")
+    .min(3, "Ad soyad en az 3 karakter olmalıdır"),
+  age: yup
+    .string()
+    .required("Lütfen yaşınızı girin")
+    .test(
+      "is-number",
+      "Lütfen geçerli bir sayı girin",
+      (val) => !isNaN(Number(val)),
+    )
+    .test("age-limit", "Yaşınız 13 ile 100 arasında olmalıdır", (val) => {
+      const age = Number(val);
+      return age >= 13 && age <= 100;
+    }),
+  cookingGoal: yup.string().required("Lütfen bir hedef seçin"),
+  experience: yup.string().required("Lütfen deneyim seviyenizi seçin"),
+  habits: yup
+    .array()
+    .of(yup.string())
+    .min(1, "En az bir alışkanlık seçmelisiniz")
+    .required("Lütfen en az bir alışkanlık seçin"),
+});
+
+type SurveyFormData = yup.InferType<typeof surveySchema>;
 
 function useSurveySteps(): MultiStepFormStep[] {
   const colorScheme = useColorScheme();
@@ -33,51 +62,66 @@ function useSurveySteps(): MultiStepFormStep[] {
     () => [
       {
         id: "basic_info",
-        title: "Tell us a bit about yourself",
+        title: "Bize biraz kendinden bahset",
         subtitle:
-          "To personalize your recipe recommendations, we'd love to know your basics.",
-        render: ({ data, setValue, nextStep }) => (
+          "Sana en iyi tarif önerilerini sunabilmemiz için temel bilgilerini öğrenmek isteriz.",
+        fields: ["fullName", "age"],
+        render: ({ data, setValue, nextStep, errors }) => (
           <View className="gap-2 mt-2">
             <View className="py-3">
               <Text
                 className="text-base font-medium pb-2"
                 style={{ color: theme.text }}
               >
-                Full Name
+                Ad Soyad
               </Text>
               <TextInput
-                className="w-full rounded-xl h-14 px-4 text-base border"
+                className={`w-full rounded-xl h-14 px-4 text-base border ${
+                  errors.fullName ? "border-red-500" : ""
+                }`}
                 style={{
                   backgroundColor: inputBg,
-                  borderColor: inputBorder,
+                  borderColor: errors.fullName ? "#ef4444" : inputBorder,
                   color: theme.text,
                 }}
-                placeholder="Enter your full name"
+                placeholder="Adınızı ve soyadınızı girin"
                 placeholderTextColor={placeholderColor}
                 value={(data.fullName as string) ?? ""}
                 onChangeText={(v) => setValue("fullName", v)}
               />
+              {errors.fullName && (
+                <Text className="text-red-500 text-xs mt-1.5 ml-1">
+                  {errors.fullName.message as string}
+                </Text>
+              )}
             </View>
             <View className="py-3">
               <Text
                 className="text-base font-medium pb-2"
                 style={{ color: theme.text }}
               >
-                Age
+                Yaş
               </Text>
               <TextInput
-                className="w-full rounded-xl h-14 px-4 text-base border"
+                className={`w-full rounded-xl h-14 px-4 text-base border ${
+                  errors.age ? "border-red-500" : ""
+                }`}
                 style={{
                   backgroundColor: inputBg,
-                  borderColor: inputBorder,
+                  borderColor: errors.age ? "#ef4444" : inputBorder,
                   color: theme.text,
                 }}
-                placeholder="How old are you?"
+                placeholder="Kaç yaşındasınız?"
                 placeholderTextColor={placeholderColor}
                 keyboardType="number-pad"
                 value={(data.age as string) ?? ""}
                 onChangeText={(v) => setValue("age", v)}
               />
+              {errors.age && (
+                <Text className="text-red-500 text-xs mt-1.5 ml-1">
+                  {errors.age.message as string}
+                </Text>
+              )}
             </View>
             <View className="flex-grow min-h-[120]" />
             <TouchableOpacity
@@ -86,7 +130,7 @@ function useSurveySteps(): MultiStepFormStep[] {
               style={{ backgroundColor: theme.tint }}
               onPress={nextStep}
             >
-              <Text className="text-white text-lg font-bold">Next</Text>
+              <Text className="text-white text-lg font-bold">İleri</Text>
               <MaterialIcons name="arrow-forward" size={22} color="white" />
             </TouchableOpacity>
           </View>
@@ -94,14 +138,15 @@ function useSurveySteps(): MultiStepFormStep[] {
       },
       {
         id: "cooking_goals",
-        title: "What's your main cooking goal?",
-        subtitle: "We'll tailor recipe suggestions to match.",
-        render: ({ data, setValue, nextStep }) => {
+        title: "Ana yemek pişirme amacın ne?",
+        subtitle: "Tarif önerilerimizi buna göre özelleştireceğiz.",
+        fields: ["cookingGoal"],
+        render: ({ data, setValue, nextStep, errors }) => {
           const goals = [
-            { id: "health", label: "Eat healthier" },
-            { id: "variety", label: "Try new recipes" },
-            { id: "speed", label: "Cook faster" },
-            { id: "family", label: "Feed the family well" },
+            { id: "health", label: "Daha sağlıklı beslenmek" },
+            { id: "variety", label: "Yeni tarifler denemek" },
+            { id: "speed", label: "Daha hızlı yemek yapmak" },
+            { id: "family", label: "Aileyi iyi beslemek" },
           ];
           const selected = (data.cookingGoal as string) ?? "";
           return (
@@ -114,7 +159,12 @@ function useSurveySteps(): MultiStepFormStep[] {
                   style={{
                     backgroundColor:
                       selected === g.id ? "rgba(243,152,73,0.15)" : inputBg,
-                    borderColor: selected === g.id ? theme.tint : inputBorder,
+                    borderColor:
+                      selected === g.id
+                        ? theme.tint
+                        : errors.cookingGoal
+                          ? "#ef4444"
+                          : inputBorder,
                   }}
                   onPress={() => setValue("cookingGoal", g.id)}
                 >
@@ -133,6 +183,11 @@ function useSurveySteps(): MultiStepFormStep[] {
                   )}
                 </TouchableOpacity>
               ))}
+              {errors.cookingGoal && (
+                <Text className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.cookingGoal.message as string}
+                </Text>
+              )}
               <View className="flex-grow min-h-[120]" />
               <TouchableOpacity
                 activeOpacity={0.9}
@@ -140,7 +195,7 @@ function useSurveySteps(): MultiStepFormStep[] {
                 style={{ backgroundColor: theme.tint }}
                 onPress={nextStep}
               >
-                <Text className="text-white text-lg font-bold">Next</Text>
+                <Text className="text-white text-lg font-bold">İleri</Text>
                 <MaterialIcons name="arrow-forward" size={22} color="white" />
               </TouchableOpacity>
             </View>
@@ -149,13 +204,14 @@ function useSurveySteps(): MultiStepFormStep[] {
       },
       {
         id: "experience",
-        title: "How would you describe your cooking experience?",
-        subtitle: "This helps us set the right difficulty level.",
-        render: ({ data, setValue, nextStep }) => {
+        title: "Yemek yapma deneyimini nasıl tanımlarsın?",
+        subtitle: "Bu, doğru zorluk seviyesini belirlememize yardımcı olur.",
+        fields: ["experience"],
+        render: ({ data, setValue, nextStep, errors }) => {
           const options = [
-            { id: "beginner", label: "Beginner" },
-            { id: "intermediate", label: "Intermediate" },
-            { id: "advanced", label: "Advanced" },
+            { id: "beginner", label: "Başlangıç" },
+            { id: "intermediate", label: "Orta Seviye" },
+            { id: "advanced", label: "İleri Seviye" },
           ];
           const selected = (data.experience as string) ?? "";
           return (
@@ -168,7 +224,12 @@ function useSurveySteps(): MultiStepFormStep[] {
                   style={{
                     backgroundColor:
                       selected === o.id ? "rgba(243,152,73,0.15)" : inputBg,
-                    borderColor: selected === o.id ? theme.tint : inputBorder,
+                    borderColor:
+                      selected === o.id
+                        ? theme.tint
+                        : errors.experience
+                          ? "#ef4444"
+                          : inputBorder,
                   }}
                   onPress={() => setValue("experience", o.id)}
                 >
@@ -187,6 +248,11 @@ function useSurveySteps(): MultiStepFormStep[] {
                   )}
                 </TouchableOpacity>
               ))}
+              {errors.experience && (
+                <Text className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.experience.message as string}
+                </Text>
+              )}
               <View className="flex-grow min-h-[120]" />
               <TouchableOpacity
                 activeOpacity={0.9}
@@ -194,7 +260,7 @@ function useSurveySteps(): MultiStepFormStep[] {
                 style={{ backgroundColor: theme.tint }}
                 onPress={nextStep}
               >
-                <Text className="text-white text-lg font-bold">Next</Text>
+                <Text className="text-white text-lg font-bold">İleri</Text>
                 <MaterialIcons name="arrow-forward" size={22} color="white" />
               </TouchableOpacity>
             </View>
@@ -203,10 +269,10 @@ function useSurveySteps(): MultiStepFormStep[] {
       },
       {
         id: "cooking_habits",
-        title: "What are your cooking habits?",
-        subtitle:
-          "Select all that apply to personalize your recipe recommendations.",
-        render: ({ data, setValue, nextStep }) => {
+        title: "Yemek yapma alışkanlıkların neler?",
+        subtitle: "En uygun tarifleri önermek için sana uyanları seç.",
+        fields: ["habits"],
+        render: ({ data, setValue, nextStep, errors }) => {
           const selectedSet = new Set((data.habits as string[]) ?? []);
           const toggle = (id: string) => {
             const next = new Set(selectedSet);
@@ -225,14 +291,22 @@ function useSurveySteps(): MultiStepFormStep[] {
                     className="p-4 rounded-xl border flex-row-reverse items-center gap-3 justify-between"
                     style={{
                       backgroundColor: inputBg,
-                      borderColor: checked ? theme.tint : inputBorder,
+                      borderColor: checked
+                        ? theme.tint
+                        : errors.habits
+                          ? "#ef4444"
+                          : inputBorder,
                     }}
                     onPress={() => toggle(h.id)}
                   >
                     <View
                       className="h-6 w-6 rounded border items-center justify-center"
                       style={{
-                        borderColor: checked ? theme.tint : inputBorder,
+                        borderColor: checked
+                          ? theme.tint
+                          : errors.habits
+                            ? "#ef4444"
+                            : inputBorder,
                         backgroundColor: checked ? theme.tint : "transparent",
                       }}
                     >
@@ -250,12 +324,23 @@ function useSurveySteps(): MultiStepFormStep[] {
                         className="text-lg font-medium"
                         style={{ color: theme.text }}
                       >
-                        {h.label}
+                        {h.label === "Quick Meals"
+                          ? "Hızlı Öğünler"
+                          : h.label === "Meal Prep"
+                            ? "Öğün Hazırlığı"
+                            : h.label === "Baking"
+                              ? "Hamur İşleri"
+                              : "Yeni Mutfaklar Keşfetmek"}
                       </Text>
                     </View>
                   </TouchableOpacity>
                 );
               })}
+              {errors.habits && (
+                <Text className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.habits.message as string}
+                </Text>
+              )}
               <View className="flex-grow min-h-[120]" />
               <TouchableOpacity
                 activeOpacity={0.9}
@@ -265,21 +350,21 @@ function useSurveySteps(): MultiStepFormStep[] {
               >
                 <MaterialIcons name="check-circle" size={22} color="white" />
                 <Text className="text-white text-lg font-bold">
-                  Finish Survey
+                  Anketi Bitir
                 </Text>
               </TouchableOpacity>
               <Text
                 className="text-center text-xs mt-4"
                 style={{ color: theme.muted }}
               >
-                You can change these preferences later in settings
+                Bu tercihleri daha sonra ayarlardan değiştirebilirsin
               </Text>
             </View>
           );
         },
       },
     ],
-    [theme, isDark, inputBg, inputBorder, placeholderColor]
+    [theme, isDark, inputBg, inputBorder, placeholderColor],
   );
 }
 
@@ -298,6 +383,7 @@ export default function EarnCreditSurveyScreen() {
       onFinish={handleFinish}
       headerTitle="Kredi Kazan"
       backButtonBehavior="pop"
+      validationSchema={surveySchema}
     />
   );
 }
