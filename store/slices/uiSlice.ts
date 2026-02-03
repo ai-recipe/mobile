@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export type ThemePreference = "light" | "dark" | "system";
+
 interface UIState {
-  theme: "light" | "dark" | "system";
+  theme: ThemePreference;
   isLoading: boolean;
 }
 
@@ -14,7 +16,7 @@ export const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    setTheme: (state, action: PayloadAction<"light" | "dark" | "system">) => {
+    setTheme: (state, action: PayloadAction<ThemePreference>) => {
       state.theme = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {

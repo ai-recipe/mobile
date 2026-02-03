@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { setImage } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -9,6 +11,8 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 export default function AIScanScreen() {
   const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
+  const backgroundColor = Colors[colorScheme].background;
   const handlePickImage = async (useCamera: boolean) => {
     const permissionResult = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
@@ -17,7 +21,7 @@ export default function AIScanScreen() {
     if (permissionResult.granted === false) {
       Alert.alert(
         "İzin Gerekli",
-        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor."
       );
       return;
     }
@@ -40,7 +44,11 @@ export default function AIScanScreen() {
 
   return (
     <ScreenWrapper showBackButton withTabNavigation={false}>
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5"
+        style={{ backgroundColor }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header Section */}
         <View className="pt-8 pb-6">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
@@ -81,7 +89,7 @@ export default function AIScanScreen() {
         </View>
 
         {/* Guidelines Section */}
-        <View className="bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-[32px] border border-zinc-100 dark:border-zinc-800">
+        <View className="bg-zinc-50 dark:bg-zinc-800 p-6 rounded-[32px] border border-zinc-100 dark:border-zinc-700">
           <View className="flex-row items-center gap-2 mb-6">
             <MaterialCommunityIcons
               name="lightbulb-outline"

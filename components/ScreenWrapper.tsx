@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
@@ -28,19 +30,13 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   title = "",
 }) => {
   const insets = useSafeAreaInsets();
-
-  /**
-   * Constants for Layout
-   * TAB_BAR_HEIGHT is the estimated height of our custom tab bar
-   */
-  const TAB_BAR_HEIGHT = 70;
+  const colorScheme = useColorScheme();
+  const themeColors = Colors[colorScheme];
 
   const containerStyle = [
     styles.container,
     {
-      backgroundColor: "#fff",
-      // Generic Top Padding
-      // On Android, we sometimes need to account for StatusBar if transparency is used
+      backgroundColor: themeColors.background,
       ...(withTabNavigation
         ? {
             marginBottom: 76,
@@ -48,11 +44,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
               Platform.OS === "android"
                 ? Math.max(insets.top, StatusBar.currentHeight || 0)
                 : insets.top,
-
-            // Generic Bottom Padding
-            // If we have a tab bar, we add its height + safe area
-            // If no tab bar, just safe area (for home indicator)
-            paddingBottom: insets.bottom + 16, // Extra 16 for breathing room
+            paddingBottom: insets.bottom + 16,
           }
         : {
             marginBottom: 0,
@@ -66,10 +58,21 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       <View className="flex-row items-center">
         {showBackButton && (
           <TouchableOpacity onPress={() => router.back()} className="p-5">
-            <MaterialIcons name="arrow-back" size={24} color="black" />
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color={themeColors.text}
+            />
           </TouchableOpacity>
         )}
-        {title && <Text className="text-xl font-bold p-5">{title}</Text>}
+        {title && (
+          <Text
+            style={[styles.title, { color: themeColors.text }]}
+            className="text-xl font-bold p-5"
+          >
+            {title}
+          </Text>
+        )}
       </View>
       {children}
     </View>
@@ -79,6 +82,6 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F9FA", // Default light background from design
   },
+  title: {},
 });

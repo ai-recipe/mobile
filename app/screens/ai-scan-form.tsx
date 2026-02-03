@@ -51,7 +51,7 @@ export default function AiScanFormScreen() {
     if (isLocalUri) {
       Alert.alert(
         "URL Gerekli",
-        "Analiz için görselin herkese açık bir URL'si olmalıdır. Aşağıdaki alana bir görsel URL'si girebilirsiniz.",
+        "Analiz için görselin herkese açık bir URL'si olmalıdır. Aşağıdaki alana bir görsel URL'si girebilirsiniz."
       );
       return;
     }
@@ -78,16 +78,14 @@ export default function AiScanFormScreen() {
     } catch (err) {
       dispatch(setRecipeLoading(false));
       dispatch(
-        setAnalyseError(
-          err instanceof Error ? err.message : "Analiz başarısız",
-        ),
+        setAnalyseError(err instanceof Error ? err.message : "Analiz başarısız")
       );
       Alert.alert(
         "Analiz Hatası",
         err instanceof Error
           ? err.message
           : "Tarifler alınamadı. Lütfen tekrar deneyin.",
-        [{ text: "Tamam", onPress: () => setStep(2) }],
+        [{ text: "Tamam", onPress: () => setStep(2) }]
       );
     }
   }, [formData, imageUrlOverride, dispatch]);
@@ -111,23 +109,35 @@ export default function AiScanFormScreen() {
         <View className="px-5 py-2 flex-row items-center justify-between z-10">
           <TouchableOpacity
             onPress={() => (step === 1 ? router.back() : setStep(1))}
-            className="size-10 rounded-full bg-zinc-100 items-center justify-center"
+            className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center"
           >
-            <MaterialIcons name="arrow-back" size={24} color="black" />
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              color={colorScheme === "dark" ? "#fff" : "#181411"}
+            />
           </TouchableOpacity>
 
           <View className="flex-row gap-1.5">
             <View
-              className={`h-2 w-8 rounded-full transition-all ${step >= 1 ? "bg-[#f39849]" : "bg-zinc-200"}`}
+              className={`h-2 w-8 rounded-full ${
+                step >= 1 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
             />
             <View
-              className={`h-2 w-8 rounded-full transition-all ${step >= 2 ? "bg-[#f39849]" : "bg-zinc-200"}`}
+              className={`h-2 w-8 rounded-full ${
+                step >= 2 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
             />
             <View
-              className={`h-2 w-8 rounded-full transition-all ${step >= 3 ? "bg-[#f39849]" : "bg-zinc-200"}`}
+              className={`h-2 w-8 rounded-full ${
+                step >= 3 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
             />
             <View
-              className={`h-2 w-8 rounded-full transition-all ${step >= 4 ? "bg-[#f39849]" : "bg-zinc-200"}`}
+              className={`h-2 w-8 rounded-full ${
+                step >= 4 ? "bg-[#f39849]" : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
             />
           </View>
 
@@ -140,13 +150,19 @@ export default function AiScanFormScreen() {
       {step === 4 && (
         <View className="px-5 py-2 flex-row items-center justify-between">
           <TouchableOpacity
-            onPress={() => setStep(1)} // Start Over
-            className="flex-row items-center bg-zinc-100 px-3 py-1.5 rounded-full"
+            onPress={() => setStep(1)}
+            className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full"
           >
-            <MaterialIcons name="refresh" size={18} color="black" />
-            <Text className="text-xs font-bold ml-1">Tekrar Tara</Text>
+            <MaterialIcons
+              name="refresh"
+              size={18}
+              color={colorScheme === "dark" ? "#fff" : "#181411"}
+            />
+            <Text className="text-xs font-bold ml-1 text-zinc-900 dark:text-white">
+              Tekrar Tara
+            </Text>
           </TouchableOpacity>
-          <View className="bg-orange-100 px-3 py-1.5 rounded-full">
+          <View className="bg-orange-100 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
             <Text className="text-[#f39849] text-xs font-bold">
               AI Chef Beta
             </Text>

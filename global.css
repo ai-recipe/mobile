@@ -13,15 +13,27 @@
   --color-darker: #221810;
 }
 
+/* Dark theme – neutral zinc (class-based + media fallback) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --color-primary: #f39849;
     --color-secondary: #8a7460;
-    --color-background: #221810;
-    --color-text: #ffffff;
+    --color-background: #09090b;
+    --color-text: #fafafa;
     --color-highlight: #f39849;
-    --color-border: #3d3d3d;
-    --color-invert: #221810;
+    --color-border: #27272a;
+    --color-invert: #18181b;
     --color-darker: #000000;
   }
+}
+
+.dark {
+  --color-primary: #f39849;
+  --color-secondary: #8a7460;
+  --color-background: #09090b;
+  --color-text: #fafafa;
+  --color-highlight: #f39849;
+  --color-border: #27272a;
+  --color-invert: #18181b;
+  --color-darker: #000000;
 }

@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import "../global.css";
 
+import { ThemeSync } from "@/components/ThemeSync";
 import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
 import { useAppSelector } from "@/store/hooks";
@@ -30,13 +31,13 @@ function RootLayoutNavigator() {
   }
 
   return (
-    <>
+    <ThemeSync>
       <Stack
         screenOptions={{
           headerShown: false,
         }}
       />
-    </>
+    </ThemeSync>
   );
 }
 

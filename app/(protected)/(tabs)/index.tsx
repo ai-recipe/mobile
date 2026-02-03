@@ -1,14 +1,10 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
-import {
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -20,16 +16,18 @@ import { CreditCard } from "../../../components/CreditCard";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const backgroundColor = Colors[colorScheme].background;
   const floatAnim = useSharedValue(0);
 
   React.useEffect(() => {
     floatAnim.value = withRepeat(
       withSequence(
         withTiming(-8, { duration: 2000 }),
-        withTiming(0, { duration: 2000 }),
+        withTiming(0, { duration: 2000 })
       ),
       -1,
-      true,
+      true
     );
   }, [floatAnim]);
 
@@ -42,12 +40,19 @@ export default function HomeScreen() {
 
   return (
     <ScreenWrapper>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1"
+        style={{ backgroundColor }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Scan Ingredients Banner */}
         <View className="px-5 pb-2 pt-4">
           <LinearGradient
-            colors={["#f39849", "#ffb373", "#e67e22"]}
+            colors={
+              colorScheme === "dark"
+                ? ["#c96a1a", "#e67e22", "#b85c14"]
+                : ["#f39849", "#ffb373", "#e67e22"]
+            }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -55,12 +60,26 @@ export default function HomeScreen() {
               overflow: "hidden",
             }}
           >
-            <View className="p-8  relative overflow-hidden ">
-              <View className="absolute -right-16 -top-16 size-48 bg-white/20 rounded-full blur-3xl opacity-50" />
-              <View className="absolute -left-10 -bottom-10 size-40 bg-black/5 rounded-full blur-2xl" />
+            <View className="p-8 relative overflow-hidden">
+              <View
+                className={`absolute -right-16 -top-16 size-48 rounded-full blur-3xl opacity-50 ${
+                  colorScheme === "dark" ? "bg-white/10" : "bg-white/20"
+                }`}
+              />
+              <View
+                className={`absolute -left-10 -bottom-10 size-40 rounded-full blur-2xl ${
+                  colorScheme === "dark" ? "bg-white/5" : "bg-black/5"
+                }`}
+              />
 
               <View className="relative z-10 items-center">
-                <View className="flex-row items-center self-start px-3 py-1.5 rounded-full bg-white/30 border border-white/40 mb-6 backdrop-blur-md">
+                <View
+                  className={`flex-row items-center self-start px-3 py-1.5 rounded-full mb-6 backdrop-blur-md ${
+                    colorScheme === "dark"
+                      ? "bg-white/20 border border-white/30"
+                      : "bg-white/30 border border-white/40"
+                  }`}
+                >
                   <MaterialIcons
                     name="auto-awesome"
                     size={14}
@@ -80,12 +99,20 @@ export default function HomeScreen() {
                 </Text>
                 <TouchableOpacity
                   activeOpacity={0.95}
-                  className="flex-row items-center justify-center gap-3 bg-white w-full h-[60px] rounded-full "
+                  className={`flex-row items-center justify-center gap-3 w-full h-[60px] rounded-full ${
+                    colorScheme === "dark" ? "bg-white/95" : "bg-white"
+                  }`}
+                  onPress={() => router.push("/screens/ai-scan")}
                 >
-                  <MaterialIcons name="photo-camera" size={24} color="black" />
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={24}
+                    color={colorScheme === "dark" ? "#181411" : "#000"}
+                  />
                   <Text
-                    className="text-black font-extrabold text-[17px]"
-                    onPress={() => router.push("/screens/ai-scan")}
+                    className={`font-extrabold text-[17px] ${
+                      colorScheme === "dark" ? "text-[#181411]" : "text-black"
+                    }`}
                   >
                     Taramaya Başla
                   </Text>

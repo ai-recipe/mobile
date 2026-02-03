@@ -1,21 +1,31 @@
-import { useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useAppSelector } from "@/store/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { Appearance } from "react-native";
 
 /**
- * To support static rendering, this value needs to be re-calculated on the client side for web
+ * Resolved color scheme for web (with hydration guard for static rendering).
+ * Priority: stored theme (AsyncStorage) > device theme.
  */
-export function useColorScheme() {
+export function useColorScheme(): "light" | "dark" {
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
     setHasHydrated(true);
   }, []);
 
-  const colorScheme = useRNColorScheme();
+  const themePreference = useAppSelector((state) => state.ui.theme);
+  const deviceScheme = Appearance.getColorScheme();
 
-  if (hasHydrated) {
-    return colorScheme;
+  const resolved = useMemo(() => {
+    if (themePreference === "system") {
+      return deviceScheme === "dark" ? "dark" : "light";
+    }
+    return themePreference;
+  }, [themePreference, deviceScheme]);
+
+  if (!hasHydrated) {
+    return "light";
   }
 
-  return 'light';
+  return resolved;
 }

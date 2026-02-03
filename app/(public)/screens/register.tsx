@@ -41,7 +41,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isRegisterLoading, error: authError } = useAppSelector(
-    (state) => state.auth,
+    (state) => state.auth
   );
 
   const {
@@ -115,7 +115,7 @@ export default function RegisterScreen() {
             {/* Form Section - centered */}
             <Animated.View
               entering={FadeInDown.duration(1000).delay(200).springify()}
-              className="w-full px-6 pb-12 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20"
+              className="w-full px-6 pb-12 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
             >
               {/* Email Input */}
               <View className="mb-4">

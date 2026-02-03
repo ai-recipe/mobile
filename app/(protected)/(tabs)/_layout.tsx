@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
@@ -6,18 +8,40 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
-import { useSharedValue } from "react-native-reanimated";
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const floatAnim = useSharedValue(0);
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme];
+  const isDark = colorScheme === "dark";
+
+  const tabBarContainerStyle = [
+    styles.tabBarContainer,
+    {
+      backgroundColor: theme.card,
+      borderTopColor: theme.border,
+      shadowColor: isDark ? "#000" : "#000",
+    },
+  ];
+  const homeIndicatorStyle = [
+    styles.homeIndicator,
+    { backgroundColor: theme.border },
+  ];
+  const scanButtonTouchableStyle = [
+    styles.scanButtonTouchable,
+    { backgroundColor: theme.card, shadowColor: theme.tint },
+  ];
+  const scanButtonGradientStyle = [
+    styles.scanButtonGradient,
+    { borderColor: theme.card },
+  ];
 
   return (
-    <View style={styles.tabBarContainer}>
+    <View style={tabBarContainerStyle}>
       <BlurView
         intensity={80}
-        tint="light"
+        tint={isDark ? "dark" : "light"}
         style={[
           styles.blurWrapper,
           { paddingBottom: insets.bottom + 8, paddingTop: 12 },
@@ -51,7 +75,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               });
             };
 
-            // Central Scan Button
             if (route.name === "scan") {
               return (
                 <View key={route.key} style={styles.scanButtonContainer}>
@@ -59,11 +82,11 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                     activeOpacity={0.9}
                     onPress={onPress}
                     onLongPress={onLongPress}
-                    style={styles.scanButtonTouchable}
+                    style={scanButtonTouchableStyle}
                   >
                     <LinearGradient
                       colors={["#FFB76B", "#F48D4D"]}
-                      style={styles.scanButtonGradient}
+                      style={scanButtonGradientStyle}
                     >
                       <MaterialIcons
                         name="center-focus-strong"
@@ -72,7 +95,9 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                       />
                     </LinearGradient>
                   </TouchableOpacity>
-                  <Text style={styles.scanLabel}>Tarat</Text>
+                  <Text style={[styles.scanLabel, { color: theme.tint }]}>
+                    Tarat
+                  </Text>
                 </View>
               );
             }
@@ -107,6 +132,9 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               }
             };
 
+            const iconColor = isFocused ? theme.tint : theme.tabIconDefault;
+            const labelColor = isFocused ? theme.tint : theme.icon;
+
             return (
               <TouchableOpacity
                 key={route.key}
@@ -121,22 +149,16 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 <MaterialIcons
                   name={getIcon(route.name, isFocused) as any}
                   size={24}
-                  color={isFocused ? "#F48D4D" : "#94A3B8"}
+                  color={iconColor}
                 />
-                <Text
-                  style={[
-                    styles.tabLabel,
-                    { color: isFocused ? "#F48D4D" : "#64748B" },
-                  ]}
-                >
+                <Text style={[styles.tabLabel, { color: labelColor }]}>
                   {getLabel(route.name)}
                 </Text>
               </TouchableOpacity>
             );
           })}
         </View>
-        {/* iOS style home indicator hint */}
-        <View style={styles.homeIndicator} />
+        <View style={homeIndicatorStyle} />
       </BlurView>
     </View>
   );
@@ -190,11 +212,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "white",
     borderTopWidth: 1,
-    borderTopColor: "#F1F5F9",
-    // Add shadow for premium feel
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -223,7 +241,7 @@ const styles = StyleSheet.create({
   },
   scanButtonContainer: {
     alignItems: "center",
-    marginTop: -40, // Elevated Look
+    marginTop: -40,
     position: "relative",
     zIndex: 50,
   },
@@ -231,10 +249,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "white",
     padding: 4,
-    // Shadow for FAB
-    shadowColor: "#F48D4D",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -247,18 +262,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 4,
-    borderColor: "white",
   },
   scanLabel: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#F48D4D",
     marginTop: 4,
   },
   homeIndicator: {
     width: 128,
     height: 5,
-    backgroundColor: "#E2E8F0",
     borderRadius: 100,
     alignSelf: "center",
     marginTop: 20,
