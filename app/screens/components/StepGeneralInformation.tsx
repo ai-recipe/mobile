@@ -7,7 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, { FadeOut, SlideInRight } from "react-native-reanimated";
+import Animated, {
+  SlideInLeft,
+  SlideInRight,
+  SlideOutLeft,
+  SlideOutRight,
+} from "react-native-reanimated";
 
 const TIME_OPTIONS = [15, 30, 60];
 const DIET_OPTIONS = [
@@ -27,6 +32,7 @@ interface StepGeneralInformationProps {
   setImageUrlOverride: (url: string) => void;
   onFormDataChange: (key: string, value: any) => void;
   onSubmit: () => void;
+  direction?: "forward" | "backward";
 }
 
 export function StepGeneralInformation({
@@ -35,11 +41,15 @@ export function StepGeneralInformation({
   setImageUrlOverride,
   onFormDataChange,
   onSubmit,
+  direction = "forward",
 }: StepGeneralInformationProps) {
+  const entering = direction === "forward" ? SlideInRight : SlideInLeft;
+  const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
   return (
     <Animated.View
-      entering={SlideInRight}
-      exiting={FadeOut}
+      entering={entering}
+      exiting={exiting}
       className="flex-1 px-5 pt-2"
     >
       <ScrollView

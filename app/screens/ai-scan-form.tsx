@@ -35,8 +35,17 @@ export default function AiScanFormScreen() {
   const dispatch = useAppDispatch();
   // 1: Review, 2: Form, 3: Loading, 4: Results
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
   const [imageUrlOverride, setImageUrlOverride] = useState("");
+
+  const goToStep = useCallback(
+    (nextStep: 1 | 2 | 3 | 4) => {
+      setDirection(nextStep > step ? "forward" : "backward");
+      setStep(nextStep);
+    },
+    [step],
+  );
 
   const handleFormDataChange = (key: string, value: any) => {
     dispatch(setFormData({ ...formData, [key]: value }));
@@ -51,7 +60,7 @@ export default function AiScanFormScreen() {
     if (isLocalUri) {
       Alert.alert(
         "URL Gerekli",
-        "Analiz için görselin herkese açık bir URL'si olmalıdır. Aşağıdaki alana bir görsel URL'si girebilirsiniz."
+        "Analiz için görselin herkese açık bir URL'si olmalıdır. Aşağıdaki alana bir görsel URL'si girebilirsiniz.",
       );
       return;
     }
@@ -61,7 +70,7 @@ export default function AiScanFormScreen() {
       return;
     }
 
-    setStep(3);
+    goToStep(3);
     dispatch(setRecipeLoading(true));
     dispatch(setAnalyseError(null));
 
@@ -74,21 +83,23 @@ export default function AiScanFormScreen() {
 
       dispatch(setRecipes(result.recipes ?? []));
       dispatch(setRecipeLoading(false));
-      setStep(4);
+      goToStep(4);
     } catch (err) {
       dispatch(setRecipeLoading(false));
       dispatch(
-        setAnalyseError(err instanceof Error ? err.message : "Analiz başarısız")
+        setAnalyseError(
+          err instanceof Error ? err.message : "Analiz başarısız",
+        ),
       );
       Alert.alert(
         "Analiz Hatası",
         err instanceof Error
           ? err.message
           : "Tarifler alınamadı. Lütfen tekrar deneyin.",
-        [{ text: "Tamam", onPress: () => setStep(2) }]
+        [{ text: "Tamam", onPress: () => goToStep(2) }],
       );
     }
-  }, [formData, imageUrlOverride, dispatch]);
+  }, [formData, imageUrlOverride, dispatch, goToStep]);
 
   // Rotate loading messages when on step 3
   useEffect(() => {
@@ -108,7 +119,7 @@ export default function AiScanFormScreen() {
       {(step === 1 || step === 2) && (
         <View className="px-5 py-2 flex-row items-center justify-between z-10">
           <TouchableOpacity
-            onPress={() => (step === 1 ? router.back() : setStep(1))}
+            onPress={() => (step === 1 ? router.back() : goToStep(1))}
             className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center"
           >
             <MaterialIcons
@@ -150,7 +161,7 @@ export default function AiScanFormScreen() {
       {step === 4 && (
         <View className="px-5 py-2 flex-row items-center justify-between">
           <TouchableOpacity
-            onPress={() => setStep(1)}
+            onPress={() => goToStep(1)}
             className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full"
           >
             <MaterialIcons
@@ -175,9 +186,10 @@ export default function AiScanFormScreen() {
         {step === 1 && (
           <StepScan
             imageUri={formData.image}
-            onNext={() => setStep(2)}
+            onNext={() => goToStep(2)}
             onNewCapture={() => {}}
             onPickFromGallery={() => {}}
+            direction={direction}
           />
         )}
         {step === 2 && (
@@ -187,14 +199,18 @@ export default function AiScanFormScreen() {
             setImageUrlOverride={setImageUrlOverride}
             onFormDataChange={handleFormDataChange}
             onSubmit={handleFetchRecipes}
+            direction={direction}
           />
         )}
-        {step === 3 && <LoadingStep loadingText={loadingText} />}
+        {step === 3 && (
+          <LoadingStep loadingText={loadingText} direction={direction} />
+        )}
         {step === 4 && (
           <RecipeResults
             recipes={recipes}
             baseImageUri={formData.image}
             colorScheme={colorScheme}
+            direction={direction}
           />
         )}
       </View>

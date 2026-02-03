@@ -1,15 +1,30 @@
 import React from "react";
 import { ActivityIndicator, StatusBar, Text, View } from "react-native";
-import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeOut,
+  SlideInLeft,
+  SlideInRight,
+  SlideOutLeft,
+  SlideOutRight,
+} from "react-native-reanimated";
 
 interface LoadingStepProps {
   loadingText: string;
+  direction?: "forward" | "backward";
 }
 
-export function LoadingStep({ loadingText }: LoadingStepProps) {
+export function LoadingStep({
+  loadingText,
+  direction = "forward",
+}: LoadingStepProps) {
+  const entering = direction === "forward" ? SlideInRight : SlideInLeft;
+  const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
   return (
     <Animated.View
-      entering={FadeIn.duration(500)}
+      entering={entering}
+      exiting={exiting}
       className="flex-1 items-center justify-center px-8 bg-white dark:bg-zinc-900"
     >
       <StatusBar barStyle="dark-content" />

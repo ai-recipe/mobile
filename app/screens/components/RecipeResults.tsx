@@ -1,7 +1,13 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  SlideInLeft,
+  SlideInRight,
+  SlideOutLeft,
+  SlideOutRight,
+} from "react-native-reanimated";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -18,15 +24,20 @@ interface RecipeResultsProps {
   recipes: Recipe[];
   baseImageUri: string;
   colorScheme: "light" | "dark" | null | undefined;
+  direction?: "forward" | "backward";
 }
 
 export function RecipeResults({
   recipes,
   baseImageUri,
   colorScheme,
+  direction = "forward",
 }: RecipeResultsProps) {
+  const entering = direction === "forward" ? SlideInRight : SlideInLeft;
+  const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
   return (
-    <Animated.View entering={FadeIn.duration(600)} className="flex-1">
+    <Animated.View entering={entering} exiting={exiting} className="flex-1">
       <View className="px-5 pt-4 pb-2">
         <Text className="text-zinc-500 font-bold uppercase tracking-wider text-xs mb-1">
           Sonuçlar Hazır

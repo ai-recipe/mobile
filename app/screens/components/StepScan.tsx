@@ -1,13 +1,19 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import Animated, { SlideInRight, SlideOutLeft } from "react-native-reanimated";
+import Animated, {
+  SlideInLeft,
+  SlideInRight,
+  SlideOutLeft,
+  SlideOutRight,
+} from "react-native-reanimated";
 
 interface StepScanProps {
   imageUri: string;
   onNext: () => void;
   onNewCapture?: () => void;
   onPickFromGallery?: () => void;
+  direction?: "forward" | "backward";
 }
 
 export function StepScan({
@@ -15,11 +21,15 @@ export function StepScan({
   onNext,
   onNewCapture,
   onPickFromGallery,
+  direction = "forward",
 }: StepScanProps) {
+  const entering = direction === "forward" ? SlideInRight : SlideInLeft;
+  const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
   return (
     <Animated.View
-      entering={SlideInRight}
-      exiting={SlideOutLeft}
+      entering={entering}
+      exiting={exiting}
       className="flex-1 px-5 pt-4"
     >
       <View className="flex-1 bg-zinc-100 dark:bg-zinc-800 rounded-[32px] overflow-hidden border border-zinc-200 dark:border-zinc-700 relative mb-6">
