@@ -1,5 +1,8 @@
-import type { RecipeFromAPI } from "@/api/recipe";
-import { analyseImage } from "@/api/recipe";
+import {
+  discoverRecipes,
+  RecipeFromAPI,
+  type RecipeSuggestion,
+} from "@/api/recipe";
 import { scanImage as scanImageAPI } from "@/api/scanImage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -28,6 +31,7 @@ interface RecipeState {
     shortSteps: string[];
   };
   recipes: RecipeFromAPI[];
+  suggestions: RecipeSuggestion | null;
   isLoadingScan: boolean;
   isLoadingRecipes: boolean;
   scannedImage: string | null;
@@ -38,6 +42,7 @@ interface RecipeState {
 const initialState: RecipeState = {
   appStep: AppStep.StepScan,
   recipes: [],
+  suggestions: null,
   isLoadingScan: false,
   isLoadingRecipes: false,
   scannedImage: null,
@@ -77,19 +82,20 @@ export const fetchRecipes = createAsyncThunk(
   "recipe/fetchRecipes",
   async (
     params: {
-      imageUrl: string;
-      ingredients: string[];
-      timeMinutes: number;
+      ingredientIds: string[];
+      maxPrepTime: number;
+      dietaryPreferences: string[];
     },
     { rejectWithValue },
   ) => {
     try {
-      const response = await analyseImage({
-        imageUrl: params.imageUrl,
-        ingredients: params.ingredients,
-        timeMinutes: params.timeMinutes,
+      const response = await discoverRecipes({
+        ingredientIds: params.ingredientIds,
+        maxPrepTime: params.maxPrepTime,
+        dietaryPreferences: params.dietaryPreferences,
+        locale: "tr", // Default locale as per requirements
       });
-      return response.recipes;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarif oluşturma başarısız",
@@ -149,6 +155,7 @@ export const recipeSlice = createSlice({
     resetRecipeState: (state) => {
       state.appStep = AppStep.StepScan;
       state.recipes = [];
+      state.suggestions = null;
       state.isLoadingScan = false;
       state.isLoadingRecipes = false;
       state.scanError = null;
@@ -187,7 +194,8 @@ export const recipeSlice = createSlice({
     });
     builder.addCase(fetchRecipes.fulfilled, (state, action) => {
       state.isLoadingRecipes = false;
-      state.recipes = action.payload;
+      state.recipes = action.payload.recipes;
+      state.suggestions = action.payload.suggestions;
       state.appStep = AppStep.Results;
     });
     builder.addCase(fetchRecipes.rejected, (state, action) => {

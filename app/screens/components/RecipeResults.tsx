@@ -9,19 +9,13 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 
+import type { RecipeFromAPI } from "@/api/recipe";
+
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
-interface Recipe {
-  recipe_name: string;
-  recipe_time: string;
-  recipe_difficulty: string;
-  recipe_ingredients: string[];
-  why_this_recipe?: string;
-}
-
 interface RecipeResultsProps {
-  recipes: Recipe[];
+  recipes: RecipeFromAPI[];
   baseImageUri: string;
   colorScheme: "light" | "dark" | null | undefined;
   direction?: "forward" | "backward";
@@ -50,7 +44,7 @@ export function RecipeResults({
 
       <FlatList
         data={recipes}
-        keyExtractor={(item, idx) => `${item.recipe_name}-${idx}`}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: 100,
@@ -65,13 +59,15 @@ export function RecipeResults({
             {/* Image Section */}
             <View className="h-48 relative">
               <Image
-                source={{ uri: baseImageUri || PLACEHOLDER_IMAGE }}
+                source={{
+                  uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE,
+                }}
                 className="w-full h-full object-cover"
               />
               <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
                 <MaterialIcons name="schedule" size={14} color="#f39849" />
                 <Text className="text-[#f39849] font-black text-xs ml-1">
-                  {item.recipe_time}
+                  {item.totalTimeMinutes} dk
                 </Text>
               </View>
             </View>
@@ -80,8 +76,13 @@ export function RecipeResults({
             <View className="p-5">
               <View className="flex-row justify-between items-start mb-2">
                 <Text className="text-xl font-bold text-zinc-900 dark:text-white flex-1 mr-2">
-                  {item.recipe_name}
+                  {item.title}
                 </Text>
+                <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">
+                  <Text className="text-green-700 dark:text-green-400 text-[10px] font-bold">
+                    %{item.matchPercentage.toFixed(0)} Uyum
+                  </Text>
+                </View>
               </View>
 
               {/* Time & Ingredients Header */}
@@ -89,7 +90,7 @@ export function RecipeResults({
                 <View className="flex-row items-center">
                   <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
                   <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                    {item.recipe_time}
+                    {item.totalTimeMinutes} dk
                   </Text>
                 </View>
                 <View className="flex-row items-center">
@@ -99,35 +100,31 @@ export function RecipeResults({
                     color="#a1a1aa"
                   />
                   <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                    {item.recipe_difficulty}
+                    {item.difficulty}
                   </Text>
                 </View>
               </View>
 
-              {item.recipe_ingredients?.length > 0 && (
+              {item.matchedIngredients?.length > 0 && (
                 <View className="mb-4">
                   <Text className="text-zinc-500 text-xs font-bold mb-1.5">
                     Malzemeler
                   </Text>
                   <Text className="text-zinc-700 dark:text-zinc-300 text-sm">
-                    {item.recipe_ingredients.join(", ")}
+                    {item.matchedIngredients.join(", ")}
                   </Text>
                 </View>
               )}
 
-              {item.why_this_recipe ? (
-                <Text className="text-zinc-500 text-sm mb-4 italic">
-                  {item.why_this_recipe}
-                </Text>
-              ) : null}
+              <Text className="text-zinc-500 text-sm mb-4">
+                {item.description}
+              </Text>
 
               {/* Action Button */}
               <TouchableOpacity
                 activeOpacity={0.9}
                 className="w-full h-12 bg-zinc-900 dark:bg-white rounded-xl items-center justify-center flex-row gap-2"
-                onPress={() =>
-                  console.log("Navigate to Detail", item.recipe_name)
-                }
+                onPress={() => console.log("Navigate to Detail", item.title)}
               >
                 <Text className="text-white dark:text-black font-bold text-sm">
                   Tarifi Gör

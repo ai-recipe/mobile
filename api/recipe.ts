@@ -1,13 +1,47 @@
+import { api } from "./axios";
+
 const ANALYSE_IMAGE_WEBHOOK =
   "https://n8n-production-cf278.up.railway.app/webhook/analyse-image";
 
 export interface RecipeFromAPI {
-  recipe_name: string;
-  recipe_time: string;
-  recipe_difficulty: string;
-  why_this_recipe: string;
-  recipe_ingredients: string[];
-  recipe_steps: string[];
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  totalTimeMinutes: number;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  servings: number;
+  matchPercentage: number;
+  matchedIngredients: string[];
+  missingIngredients: string[];
+  dietaryTags: string[];
+  nutritionSummary: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+}
+
+export interface RecipeSuggestion {
+  additionalIngredients: string[];
+  tip: string;
+}
+
+export interface RecipeDiscoverResponse {
+  requestId: string;
+  recipes: RecipeFromAPI[];
+  suggestions: RecipeSuggestion;
+  processingTimeMs: number;
+}
+
+export interface DiscoverRecipesParams {
+  ingredientIds: string[];
+  maxPrepTime?: number;
+  dietaryPreferences?: string[];
+  locale?: string;
 }
 
 export interface AnalyseImageResponse {
@@ -18,6 +52,32 @@ export interface AnalyseImageParams {
   imageUrl: string;
   ingredients?: string[];
   timeMinutes?: number;
+}
+
+/**
+ * Generate a unique idempotency key
+ */
+function generateIdempotencyKey(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+}
+
+export async function discoverRecipes(
+  params: DiscoverRecipesParams,
+): Promise<RecipeDiscoverResponse> {
+  const idempotencyKey = generateIdempotencyKey();
+
+  const response = await api.post<RecipeDiscoverResponse>(
+    "/recipes/discover",
+    params,
+    {
+      headers: {
+        "idempotency-key": idempotencyKey,
+        "Idempotency-Key": idempotencyKey,
+      },
+    },
+  );
+
+  return response.data;
 }
 
 export async function analyseImage({
@@ -46,7 +106,9 @@ export async function analyseImage({
   });
 
   if (!response.ok) {
-    throw new Error(`Analyse image failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Analyse image failed: ${response.status} ${response.statusText}`,
+    );
   }
 
   const data = (await response.json()) as AnalyseImageResponse;

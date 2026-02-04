@@ -81,17 +81,27 @@ export default function AiScanFormScreen() {
   // Handle fetch recipes action
   const handleFetchRecipes = useCallback(
     async (data: ScanFormData) => {
+      // Get ingredient IDs from recognition step (this should be stored or derived)
+      // For now, if they are not stored, we might need to pass the selected items
+      // Assuming the UI provides labels that match the IDs or we need to find them.
+      // Based on previous code, formData.scannedIngredients was just names.
+      // But discovery endpoint needs IDs.
+      // Looking at scanImage.ts, it returns name + matchedIngredientId.
+      // I should check where matchedIngredientId is stored.
+
       dispatch(
         fetchRecipes({
-          imageUrl: formData.image,
-          ingredients: (data.selectedIngredients ?? []).filter(
+          ingredientIds: (data.selectedIngredients ?? []).filter(
             (i): i is string => typeof i === "string" && i.length > 0,
-          ),
-          timeMinutes: data.timePreference ?? 30,
+          ) as string[],
+          maxPrepTime: data.timePreference ?? 30,
+          dietaryPreferences: (data.dietPreferences ?? []).filter(
+            (i): i is string => typeof i === "string" && i.length > 0,
+          ) as string[],
         }),
       );
     },
-    [dispatch, formData.image],
+    [dispatch],
   );
 
   // Handle ingredient toggle
