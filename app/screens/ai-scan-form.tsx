@@ -18,16 +18,17 @@ import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 // Sub-components
-import { nextStep } from "@/store/slices/multiStepFormSlice";
+import { nextStep, setStep } from "@/store/slices/multiStepFormSlice";
 import { LoadingStep } from "./components/LoadingStep";
 import { RecipeResults } from "./components/RecipeResults";
 import { createFormSteps } from "./helpers/ai-scan-form.helpers";
 import { ScanFormData, scanFormSchema } from "./types/ai-scan-form.types";
 
 const LOADING_MESSAGES_SCAN = [
-  "Yapay Zeka Uyanıyor...",
+  "Görüntü Yükleniyor...",
+  "Yapay Zeka İşleme Başlatıyor...",
   "Malzemeler Tanımlanıyor...",
-  "Sonuçlar optimize ediliyor...",
+  "Sonuçlar Hazırlanıyor...",
 ];
 
 const LOADING_MESSAGES_GENERATE_RECIPE = [
@@ -49,12 +50,16 @@ export default function AiScanFormScreen() {
     isLoadingRecipes,
     scanError,
     analyseError,
+    scannedImage,
   } = useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
 
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
 
   // Determine loading messages based on current step
+
+  console.log("scannedImage", scannedImage);
+  console.log("formData.image", formData.image);
   const loadingMessages = useMemo(() => {
     if (appStep === AppStep.LoadingScan) {
       return LOADING_MESSAGES_SCAN;
@@ -64,10 +69,14 @@ export default function AiScanFormScreen() {
 
   // Handle scan image action
   const handleScanImage = useCallback(() => {
+    if (scannedImage === formData.image) {
+      dispatch(nextStep());
+      return;
+    }
     dispatch(scanImage(formData.image)).then(() => {
       dispatch(nextStep());
     });
-  }, [dispatch, formData.image]);
+  }, [dispatch, formData.image, scannedImage]);
 
   // Handle fetch recipes action
   const handleFetchRecipes = useCallback(
@@ -147,7 +156,10 @@ export default function AiScanFormScreen() {
       Alert.alert("Tarama Hatası", scanError, [
         {
           text: "Tamam",
-          onPress: () => dispatch(setAppStep(AppStep.StepScan)),
+          onPress: () => {
+            dispatch(setStep(0));
+            dispatch(setAppStep(AppStep.StepScan));
+          },
         },
       ]);
     }
@@ -159,11 +171,20 @@ export default function AiScanFormScreen() {
       Alert.alert("Tarif Oluşturma Hatası", analyseError, [
         {
           text: "Tamam",
-          onPress: () => dispatch(setAppStep(AppStep.DietPreference)),
+          onPress: () => {
+            dispatch(setStep(2));
+            dispatch(setAppStep(AppStep.DietPreference));
+          },
         },
       ]);
     }
   }, [analyseError, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetRecipeState());
+    };
+  }, []);
 
   // Loading state for scanning
   if (appStep === AppStep.LoadingScan) {

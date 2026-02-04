@@ -30,6 +30,7 @@ interface RecipeState {
   recipes: RecipeFromAPI[];
   isLoadingScan: boolean;
   isLoadingRecipes: boolean;
+  scannedImage: string | null;
   scanError: string | null;
   analyseError: string | null;
 }
@@ -39,6 +40,7 @@ const initialState: RecipeState = {
   recipes: [],
   isLoadingScan: false,
   isLoadingRecipes: false,
+  scannedImage: null,
   scanError: null,
   analyseError: null,
   formData: {
@@ -57,11 +59,12 @@ const initialState: RecipeState = {
 // Async thunk for scanning image
 export const scanImage = createAsyncThunk(
   "recipe/scanImage",
-  async (imageUrl: string, { rejectWithValue }) => {
+  async (imageUri: string, { rejectWithValue }) => {
     try {
-      const response = await scanImageAPI({ imageUrl });
+      const response = await scanImageAPI({ imageUri });
       return response.ingredients;
     } catch (error) {
+      console.log("scanImage error", JSON.stringify(error, null, 2));
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarama başarısız",
       );
@@ -153,6 +156,7 @@ export const recipeSlice = createSlice({
       state.formData.scannedIngredients = [];
       state.formData.selectedIngredients = [];
       state.formData.dietPreferences = [];
+      state.scannedImage = null;
     },
   },
   extraReducers: (builder) => {
@@ -166,6 +170,7 @@ export const recipeSlice = createSlice({
       state.isLoadingScan = false;
       state.formData.scannedIngredients = action.payload;
       state.formData.selectedIngredients = action.payload;
+      state.scannedImage = action.meta.arg;
       state.appStep = AppStep.IngredientsSelection;
     });
     builder.addCase(scanImage.rejected, (state, action) => {

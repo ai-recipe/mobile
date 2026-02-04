@@ -1,44 +1,156 @@
-const SCAN_IMAGE_WEBHOOK =
-  "https://n8n-production-cf278.up.railway.app/webhook/scan-image";
+import { api } from "./axios";
 
-export interface ScanImageResponse {
-  ingredients: string[];
+// API Response Types
+export interface DetectedIngredient {
+  name: string;
+  confidence: number;
+  matchedIngredientId: string;
+}
+
+export interface UploadImageResponse {
+  requestId: string;
+  detectedIngredients: DetectedIngredient[];
+  processingTimeMs: number;
+}
+
+export interface JobStatus {
+  jobId: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  imageUrl?: string;
+  fileName?: string;
+  errorMessage?: string;
+  detectedIngredients?: DetectedIngredient[];
+  createdAt: string;
+  completedAt?: string;
 }
 
 export interface ScanImageParams {
-  imageUrl: string;
+  imageUri: string;
 }
 
-export async function scanImage({
-  imageUrl,
-}: ScanImageParams): Promise<ScanImageResponse> {
-  // TODO: Replace with actual endpoint when available
-  // For now, using mock data for development
+export interface ScanImageResponse {
+  ingredients: string[];
+  jobId: string;
+}
 
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+/**
+ * Generate a unique idempotency key
+ */
+function generateIdempotencyKey(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+}
 
-  // Mock response with Turkish ingredients
-  return {
-    ingredients: ["yumurta", "sucuk", "domates", "biber", "soğan", "peynir"],
-  };
+/**
+ * Upload an image for ingredient recognition
+ * Returns a job ID that can be used to poll for results
+ */
+export async function uploadImageForRecognition(
+  imageUri: string,
+): Promise<{ jobId: string }> {
+  const formData = new FormData();
 
-  /* Uncomment when actual endpoint is ready:
-  const url = new URL(SCAN_IMAGE_WEBHOOK);
-  url.searchParams.set("image_url", imageUrl);
+  // Extract filename from URI or generate one
+  const filename = imageUri.split("/").pop() || `image-${Date.now()}.jpg`;
 
-  const response = await fetch(url.toString(), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  console.log("filename", filename);
+  console.log("imageUri", imageUri);
+  // Create file object for upload
+  formData.append("image", {
+    uri: imageUri,
+    type: "image/jpeg",
+    name: filename,
+  } as any);
 
-  if (!response.ok) {
-    throw new Error(`Scan image failed: ${response.status} ${response.statusText}`);
+  const idempotencyKey = generateIdempotencyKey();
+
+  try {
+    const response = await api.post<UploadImageResponse>(
+      "/recognition/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "idempotency-key": idempotencyKey,
+          "Idempotency-Key": idempotencyKey,
+        },
+      },
+    );
+    return { jobId: response.data.requestId };
+  } catch (error) {
+    console.log(
+      "uploadImageForRecognition error",
+      JSON.stringify(error, null, 2),
+    );
+    throw error;
+  }
+}
+
+/**
+ * Get the status of an image recognition job
+ */
+export async function getJobStatus(jobId: string): Promise<JobStatus> {
+  const response = await api.get<JobStatus>(`/recognition/jobs/${jobId}`);
+  return response.data;
+}
+
+/**
+ * Poll job status until completion or failure
+ * @param jobId - The job ID to poll
+ * @param maxAttempts - Maximum number of polling attempts (default: 60)
+ * @param intervalMs - Polling interval in milliseconds (default: 2000)
+ */
+export async function pollJobStatus(
+  jobId: string,
+  maxAttempts: number = 60,
+  intervalMs: number = 2000,
+): Promise<JobStatus> {
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    const status = await getJobStatus(jobId);
+
+    if (status.status === "completed") {
+      return status;
+    }
+
+    if (status.status === "failed") {
+      throw new Error(status.errorMessage || "Job failed");
+    }
+
+    // Wait before next poll
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    attempts++;
   }
 
-  const data = (await response.json()) as ScanImageResponse;
-  return data;
-  */
+  throw new Error("Job polling timeout - maximum attempts reached");
+}
+
+/**
+ * Main function to scan image and get ingredients
+ * Handles the full flow: upload → poll → return ingredients
+ */
+export async function scanImage({
+  imageUri,
+}: ScanImageParams): Promise<ScanImageResponse> {
+  try {
+    // Step 1: Upload image and get job ID
+    const { jobId } = await uploadImageForRecognition(imageUri);
+
+    // Step 2: Poll for job completion
+    const jobStatus = await pollJobStatus(jobId);
+
+    // Step 3: Extract ingredients from completed job
+    const ingredients =
+      jobStatus.detectedIngredients?.map((ing) => ing.name) || [];
+
+    return {
+      ingredients,
+      jobId,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Görüntü tarama başarısız: ${error.message}`);
+    }
+    throw new Error("Görüntü tarama başarısız");
+  }
 }

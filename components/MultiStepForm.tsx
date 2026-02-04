@@ -11,7 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Control, FieldErrors, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -99,9 +99,16 @@ export function MultiStepForm({
   const data = watch();
 
   const currentStep = steps[stepIndex];
-  const isFirst = stepIndex === 0;
-  const isLast = stepIndex === steps.length - 1;
-  const progress = ((stepIndex + 1) / steps.length) * 100;
+  console.log(currentStep, stepIndex);
+  const isFirst = useMemo(() => stepIndex === 0, [stepIndex]);
+  const isLast = useMemo(
+    () => stepIndex === steps.length - 1,
+    [stepIndex, steps.length],
+  );
+  const progress = useMemo(
+    () => ((stepIndex + 1) / steps.length) * 100,
+    [stepIndex, steps.length],
+  );
 
   const nextStep = async () => {
     // Validate current step fields
@@ -112,9 +119,9 @@ export function MultiStepForm({
     if (isValid) {
       if (isLast) {
         handleSubmit(onFinish)();
-        return;
+      } else {
+        dispatch(nextStepAction());
       }
-      dispatch(nextStepAction());
     }
   };
 

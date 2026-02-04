@@ -62,9 +62,11 @@ export const initDeviceAsync = createAsyncThunk(
         appVersion: "1.0.0",
         locale,
       });
+      await AsyncStorage.setItem("token", response.data?.data?.anonymousToken);
       console.log("response", JSON.stringify(response.data));
       return response.data?.data;
     } catch (error: any) {
+      console.log("error", JSON.stringify(error));
       return rejectWithValue(
         error.response?.data?.message || "Cihaz başlatma başarısız",
       );
