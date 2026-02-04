@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 // Sub-components
+import { nextStep } from "@/store/slices/multiStepFormSlice";
 import { LoadingStep } from "./components/LoadingStep";
 import { RecipeResults } from "./components/RecipeResults";
 import { createFormSteps } from "./helpers/ai-scan-form.helpers";
@@ -50,7 +51,6 @@ export default function AiScanFormScreen() {
     analyseError,
   } = useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
-  const [nextStep, setNextStep] = useState<(() => void) | null>(null);
 
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
 
@@ -65,7 +65,7 @@ export default function AiScanFormScreen() {
   // Handle scan image action
   const handleScanImage = useCallback(() => {
     dispatch(scanImage(formData.image)).then(() => {
-      //nextStep && nextStep();
+      dispatch(nextStep());
     });
   }, [dispatch, formData.image]);
 
@@ -224,7 +224,6 @@ export default function AiScanFormScreen() {
   return (
     <View style={{ flex: 1 }}>
       <MultiStepForm
-        setNextStep={setNextStep}
         steps={steps}
         onFinish={(data) => handleFetchRecipes(data as ScanFormData)}
         headerTitle="Tarif Oluştur"

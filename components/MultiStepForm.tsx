@@ -1,9 +1,17 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  clearMultistepFormState,
+  markStepAsSubmitted,
+  nextStep as nextStepAction,
+  prevStep as prevStepAction,
+  setTotalSteps,
+} from "@/store/slices/multiStepFormSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Control, FieldErrors, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -37,7 +45,6 @@ type MultiStepFormProps = {
   headerTitle?: string;
   backButtonBehavior?: "pop" | "prevStep";
   validationSchema: yup.AnyObjectSchema;
-  setNextStep: any;
 };
 
 export function MultiStepForm({
@@ -47,16 +54,26 @@ export function MultiStepForm({
   headerTitle = "Survey",
   backButtonBehavior = "pop",
   validationSchema,
-  setNextStep,
 }: MultiStepFormProps) {
-  const [stepIndex, setStepIndex] = useState(0);
-  const [submittedSteps, setSubmittedSteps] = useState<Record<string, boolean>>(
-    {},
+  const dispatch = useAppDispatch();
+  const stepIndex = useAppSelector((state) => state.multiStepForm.currentStep);
+  const submittedSteps = useAppSelector(
+    (state) => state.multiStepForm.submittedSteps,
   );
+
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+
+  // Initialize total steps and cleanup on unmount
+  useEffect(() => {
+    dispatch(setTotalSteps(steps.length));
+
+    return () => {
+      dispatch(clearMultistepFormState());
+    };
+  }, [dispatch, steps.length]);
 
   const {
     control,
@@ -89,7 +106,7 @@ export function MultiStepForm({
   const nextStep = async () => {
     // Validate current step fields
     const fieldsToValidate = currentStep.fields;
-    setSubmittedSteps((prev) => ({ ...prev, [currentStep.id]: true }));
+    dispatch(markStepAsSubmitted(currentStep.id));
     const isValid = await trigger(fieldsToValidate as any);
 
     if (isValid) {
@@ -97,7 +114,7 @@ export function MultiStepForm({
         handleSubmit(onFinish)();
         return;
       }
-      setStepIndex((i) => Math.min(i + 1, steps.length - 1));
+      dispatch(nextStepAction());
     }
   };
 
@@ -106,8 +123,8 @@ export function MultiStepForm({
       if (backButtonBehavior === "pop") router.back();
       return;
     }
-    setStepIndex((i) => Math.max(i - 1, 0));
-  }, [isFirst, backButtonBehavior]);
+    dispatch(prevStepAction());
+  }, [isFirst, backButtonBehavior, dispatch]);
 
   if (!currentStep) return null;
 
