@@ -12,8 +12,6 @@ import { useAppSelector } from "@/store/hooks";
 
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
-  const { isOnboarded } = useAppSelector((state) => state.auth);
-  console.log("isOnboarded layout", isOnboarded);
   useInitApp();
 
   if (isLoading) {

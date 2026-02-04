@@ -14,12 +14,12 @@ export const initI18n = createAsyncThunk("app/initI18n", async () => {
 
 interface AppState {
   isLoading: boolean;
-  currentLanguage: string | null;
+  currentLanguage: string;
 }
 
 const initialState: AppState = {
   isLoading: false,
-  currentLanguage: null,
+  currentLanguage: "en",
 };
 
 export const appSlice = createSlice({

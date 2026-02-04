@@ -21,6 +21,7 @@ export const OnboardingStepFinish = ({
   const { isInitDeviceLoading } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const token = useSelector((state: any) => state.auth.token);
 
   const onSubmit = () => {
     if (isInitDeviceLoading) {
@@ -84,13 +85,13 @@ export const OnboardingStepFinish = ({
       <View className="p-10 pb-12">
         <Pressable
           onPress={onSubmit}
-          disabled={isSubmitClicked && isInitDeviceLoading}
+          disabled={isSubmitClicked && isInitDeviceLoading && !token}
           className={`w-full bg-primary py-5 rounded-full shadow-xl shadow-primary/30 flex-row items-center justify-center gap-2 active:opacity-95
             ${isSubmitClicked && isInitDeviceLoading ? "opacity-50" : ""}
             `}
         >
           <Text className="text-white text-lg font-bold">
-            {isSubmitClicked && isInitDeviceLoading
+            {isSubmitClicked && isInitDeviceLoading && !token
               ? "Yükleniyor..."
               : "Hadi Başlayalım"}
           </Text>

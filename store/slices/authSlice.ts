@@ -7,14 +7,20 @@ import { Platform } from "react-native";
 interface User {
   id: string;
   email: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   token: string | null;
+  creditGrantType: string | null;
+  creditRemaining: number | null;
+  isNewUser: boolean;
+  isNewDevice: boolean;
   isOnboarded: boolean;
+  isOnboardingStateLoaded: boolean;
   isLoginLoading: boolean;
   isRegisterLoading: boolean;
   isInitDeviceLoading: boolean;
@@ -25,7 +31,12 @@ const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
   token: null,
+  creditGrantType: null,
+  creditRemaining: null,
+  isNewUser: false,
+  isNewDevice: false,
   isOnboarded: false,
+  isOnboardingStateLoaded: false,
   isLoginLoading: false,
   isRegisterLoading: false,
   isInitDeviceLoading: false,
@@ -34,38 +45,28 @@ const initialState: AuthState = {
 
 export const initDeviceAsync = createAsyncThunk(
   "auth/initDevice",
-  async (_, { rejectWithValue }) => {
+  async ({ locale }: { locale: string }, { rejectWithValue }) => {
     try {
-      let deviceID: string;
+      let deviceId: string;
       if (Platform.OS === "ios") {
-        deviceID = (await Application.getIosIdForVendorAsync()) || "unknown";
+        deviceId = (await Application.getIosIdForVendorAsync()) || "unknown";
       } else if (Platform.OS === "android") {
-        deviceID = Application.getAndroidId() || "unknown";
+        deviceId = Application.getAndroidId() || "unknown";
       } else {
-        deviceID = "unknown";
+        deviceId = "unknown";
       }
 
-      const response = await AuthService.initDeviceAPI({ deviceID });
-      return response.data;
+      const response = await AuthService.initDeviceAPI({
+        deviceId,
+        platform: Platform.OS,
+        appVersion: "1.0.0",
+        locale,
+      });
+      console.log("response", JSON.stringify(response.data));
+      return response.data?.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Cihaz başlatma başarısız",
-      );
-    }
-  },
-);
-
-export const loginWithEmailAsync = createAsyncThunk(
-  "auth/loginWithEmail",
-  async (data: any, { rejectWithValue }) => {
-    try {
-      const response = await AuthService.loginWithEmailAPI(data);
-      const { token, user } = response.data;
-      await AsyncStorage.setItem("token", token);
-      return { token, user };
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Giriş başarısız",
       );
     }
   },
@@ -108,8 +109,8 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setIsOnboarded: (state, action: PayloadAction<boolean>) => {
-      console.log("setIsOnboarded", action.payload);
       state.isOnboarded = action.payload;
+      state.isOnboardingStateLoaded = true;
     },
     setAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
@@ -126,7 +127,16 @@ export const authSlice = createSlice({
       .addCase(initDeviceAsync.pending, (state) => {
         state.isInitDeviceLoading = true;
       })
-      .addCase(initDeviceAsync.fulfilled, (state) => {
+      .addCase(initDeviceAsync.fulfilled, (state, action) => {
+        state.creditGrantType = action.payload?.grantType;
+        state.creditRemaining = action.payload?.remaining;
+        //
+        state.isNewUser = action.payload?.isNewUser;
+        state.isNewDevice = action.payload?.isNewDevice;
+        //
+        state.user = action.payload?.user;
+        state.token = action.payload?.anonymousToken;
+        //
         state.isAuthenticated = true;
         state.isInitDeviceLoading = false;
       })

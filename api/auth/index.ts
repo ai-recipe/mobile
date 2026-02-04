@@ -13,8 +13,23 @@ class AuthService {
     return api.post("/auth/logout");
   }
 
-  public initDeviceAPI({ deviceID }: any) {
-    return api.post("/auth/initDevice", { deviceID });
+  public initDeviceAPI({
+    deviceId,
+    platform,
+    appVersion,
+    locale,
+  }: {
+    deviceId: string;
+    platform: string;
+    appVersion: string;
+    locale: string;
+  }) {
+    return api.post("/auth/anonymous/init", {
+      deviceId,
+      platform,
+      appVersion,
+      locale,
+    });
   }
 }
 
