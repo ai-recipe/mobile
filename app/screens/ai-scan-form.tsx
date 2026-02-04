@@ -1,12 +1,14 @@
-import { analyseImage } from "@/api/recipe";
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch } from "@/store/hooks";
 import {
-  setAnalyseError,
-  setFormData,
-  setRecipeLoading,
-  setRecipes,
+  addCustomIngredient,
+  AppStep,
+  fetchRecipes,
+  resetRecipeState,
+  scanImage,
+  setAppStep,
+  toggleIngredient,
 } from "@/store/slices/recipeSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -38,85 +40,133 @@ export default function AiScanFormScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const { formData, recipes } = useSelector((state: any) => state.recipe);
+  const {
+    appStep,
+    formData,
+    recipes,
+    isLoadingScan,
+    isLoadingRecipes,
+    scanError,
+    analyseError,
+  } = useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
+  const [nextStep, setNextStep] = useState<(() => void) | null>(null);
 
-  // 1: Form (MultiStepForm), 2: Loading, 3: Results
-  const [appStep, setAppStep] = useState<"form" | "loading" | "results">(
-    "form",
-  );
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
 
+  // Determine loading messages based on current step
   const loadingMessages = useMemo(() => {
-    if (appStep === "loading") {
+    if (appStep === AppStep.LoadingScan) {
       return LOADING_MESSAGES_SCAN;
     }
     return LOADING_MESSAGES_GENERATE_RECIPE;
   }, [appStep]);
 
+  // Handle scan image action
+  const handleScanImage = useCallback(() => {
+    dispatch(scanImage(formData.image)).then(() => {
+      //nextStep && nextStep();
+    });
+  }, [dispatch, formData.image]);
+
+  // Handle fetch recipes action
   const handleFetchRecipes = useCallback(
     async (data: ScanFormData) => {
-      // Sync with redux for consistency if needed, but we'll use local 'data' for API
       dispatch(
-        setFormData({
-          ...formData,
-          timePreference: data.timePreference,
-          ingredients: data.dietPreferences,
-        }),
-      );
-
-      setAppStep("loading");
-      dispatch(setRecipeLoading(true));
-      dispatch(setAnalyseError(null));
-
-      try {
-        const result = await analyseImage({
-          imageUrl: "", // We use empty string as placeholder for now since we're in development/mock phase
-          ingredients: (data.dietPreferences ?? []).filter(
-            (i): i is string => !!i,
+        fetchRecipes({
+          imageUrl: formData.image,
+          ingredients: (data.selectedIngredients ?? []).filter(
+            (i): i is string => typeof i === "string" && i.length > 0,
           ),
           timeMinutes: data.timePreference ?? 30,
-        });
-
-        dispatch(setRecipes(result.recipes ?? []));
-        dispatch(setRecipeLoading(false));
-        setAppStep("results");
-      } catch (err) {
-        dispatch(setRecipeLoading(false));
-        dispatch(
-          setAnalyseError(
-            err instanceof Error ? err.message : "Analiz başarısız",
-          ),
-        );
-        Alert.alert(
-          "Analiz Hatası",
-          err instanceof Error
-            ? err.message
-            : "Tarifler alınamadı. Lütfen tekrar deneyin.",
-          [{ text: "Tamam", onPress: () => setAppStep("form") }],
-        );
-      }
+        }),
+      );
     },
-    [formData, dispatch],
+    [dispatch, formData.image],
   );
 
-  const steps = useMemo(
-    () => createFormSteps({ formData, router }),
-    [formData, router],
+  // Handle ingredient toggle
+  const handleToggleIngredient = useCallback(
+    (ingredient: string) => {
+      dispatch(toggleIngredient(ingredient));
+    },
+    [dispatch],
   );
-  // Rotate loading messages when on loading step
+
+  // Handle add custom ingredient
+  const handleAddIngredient = useCallback(
+    (ingredient: string) => {
+      dispatch(addCustomIngredient(ingredient));
+    },
+    [dispatch],
+  );
+
+  // Handle restart
+  const handleRestart = useCallback(() => {
+    dispatch(resetRecipeState());
+  }, [dispatch]);
+
+  // Create form steps with all necessary callbacks
+  const steps = useMemo(
+    () =>
+      createFormSteps({
+        formData,
+        router,
+        scannedIngredients: formData.scannedIngredients,
+        onScanImage: handleScanImage,
+        onToggleIngredient: handleToggleIngredient,
+        onAddIngredient: handleAddIngredient,
+      }),
+    [
+      formData,
+      router,
+      handleScanImage,
+      handleToggleIngredient,
+      handleAddIngredient,
+    ],
+  );
+
+  // Rotate loading messages
   useEffect(() => {
-    if (appStep !== "loading") return;
+    if (appStep !== AppStep.LoadingScan && appStep !== AppStep.LoadingGenerate)
+      return;
+
     const id = setInterval(() => {
       setLoadingText((prev) => {
-        const idx = LOADING_MESSAGES.indexOf(prev);
-        return LOADING_MESSAGES[(idx + 1) % LOADING_MESSAGES.length];
+        const idx = loadingMessages.indexOf(prev);
+        return loadingMessages[(idx + 1) % loadingMessages.length];
       });
     }, 2000);
-    return () => clearInterval(id);
-  }, [appStep]);
 
-  if (appStep === "loading") {
+    return () => clearInterval(id);
+  }, [appStep, loadingMessages]);
+
+  // Handle scan error
+  useEffect(() => {
+    if (scanError) {
+      Alert.alert("Tarama Hatası", scanError, [
+        {
+          text: "Tamam",
+          onPress: () => dispatch(setAppStep(AppStep.StepScan)),
+        },
+      ]);
+    }
+  }, [scanError, dispatch]);
+
+  // Handle recipe generation error
+  useEffect(() => {
+    if (analyseError) {
+      Alert.alert("Tarif Oluşturma Hatası", analyseError, [
+        {
+          text: "Tamam",
+          onPress: () => dispatch(setAppStep(AppStep.DietPreference)),
+        },
+      ]);
+    }
+  }, [analyseError, dispatch]);
+
+  // Loading state for scanning
+  if (appStep === AppStep.LoadingScan) {
     return (
       <ScreenWrapper withTabNavigation={false}>
         <LoadingStep loadingText={loadingText} direction="forward" />
@@ -124,13 +174,23 @@ export default function AiScanFormScreen() {
     );
   }
 
-  if (appStep === "results") {
+  // Loading state for recipe generation
+  if (appStep === AppStep.LoadingGenerate) {
+    return (
+      <ScreenWrapper withTabNavigation={false}>
+        <LoadingStep loadingText={loadingText} direction="forward" />
+      </ScreenWrapper>
+    );
+  }
+
+  // Results view
+  if (appStep === AppStep.Results) {
     return (
       <ScreenWrapper withTabNavigation={false}>
         {/* Header for Step: Results */}
         <View className="px-5 py-2 flex-row items-center justify-between">
           <TouchableOpacity
-            onPress={() => setAppStep("form")}
+            onPress={handleRestart}
             className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full"
           >
             <MaterialIcons
@@ -160,17 +220,20 @@ export default function AiScanFormScreen() {
     );
   }
 
+  // Form view (all steps except loading and results)
   return (
     <View style={{ flex: 1 }}>
       <MultiStepForm
+        setNextStep={setNextStep}
         steps={steps}
         onFinish={(data) => handleFetchRecipes(data as ScanFormData)}
         headerTitle="Tarif Oluştur"
         backButtonBehavior="pop"
         validationSchema={scanFormSchema}
         initialData={{
+          selectedIngredients: formData.selectedIngredients || [],
           timePreference: formData.timePreference || 30,
-          dietPreferences: formData.ingredients || [],
+          dietPreferences: formData.dietPreferences || [],
         }}
       />
     </View>

@@ -37,6 +37,7 @@ type MultiStepFormProps = {
   headerTitle?: string;
   backButtonBehavior?: "pop" | "prevStep";
   validationSchema: yup.AnyObjectSchema;
+  setNextStep: any;
 };
 
 export function MultiStepForm({
@@ -46,6 +47,7 @@ export function MultiStepForm({
   headerTitle = "Survey",
   backButtonBehavior = "pop",
   validationSchema,
+  setNextStep,
 }: MultiStepFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [submittedSteps, setSubmittedSteps] = useState<Record<string, boolean>>(
