@@ -28,6 +28,7 @@ export type MultiStepFormStep = {
   id: string;
   title?: string;
   subtitle?: string;
+  shouldHandleNextStep?: boolean;
   fields: string[]; // Fields that belong to this step
   render: (ctx: {
     data: any;
@@ -115,6 +116,9 @@ export function MultiStepForm({
     const fieldsToValidate = currentStep.fields;
     dispatch(markStepAsSubmitted(currentStep.id));
     const isValid = await trigger(fieldsToValidate as any);
+    const shouldHandleNextStep = steps[stepIndex].shouldHandleNextStep;
+    console.log(shouldHandleNextStep);
+    if (!shouldHandleNextStep) return;
 
     if (isValid) {
       if (isLast) {

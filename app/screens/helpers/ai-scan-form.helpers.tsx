@@ -23,6 +23,7 @@ export const createFormSteps = ({
   {
     id: "scan",
     fields: [], // No validation needed for scan review
+    shouldHandleNextStep: false,
     render: () => (
       <StepScan
         imageUri={formData.image}
@@ -37,6 +38,7 @@ export const createFormSteps = ({
   },
   {
     id: "ingredients",
+    shouldHandleNextStep: false,
     fields: ["selectedIngredients"],
     render: ({ data, setValue, nextStep }) => (
       <StepIngredientsSelection
@@ -63,6 +65,7 @@ export const createFormSteps = ({
   },
   {
     id: "time",
+    shouldHandleNextStep: true,
     fields: ["timePreference"],
     render: ({ data, setValue, nextStep }) => (
       <StepTimePreference
@@ -75,6 +78,7 @@ export const createFormSteps = ({
   },
   {
     id: "diet",
+    shouldHandleNextStep: false,
     fields: ["dietPreferences"],
     render: ({ data, setValue, nextStep }) => (
       <StepDietPreference

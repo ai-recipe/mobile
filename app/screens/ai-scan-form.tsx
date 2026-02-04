@@ -73,9 +73,7 @@ export default function AiScanFormScreen() {
       dispatch(nextStep());
       return;
     }
-    dispatch(scanImage(formData.image)).then(() => {
-      dispatch(nextStep());
-    });
+    dispatch(scanImage(formData.image));
   }, [dispatch, formData.image, scannedImage]);
 
   // Handle fetch recipes action

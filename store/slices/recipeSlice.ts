@@ -5,6 +5,7 @@ import {
 } from "@/api/recipe";
 import { scanImage as scanImageAPI } from "@/api/scanImage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { nextStep } from "./multiStepFormSlice";
 
 // Enum for app step states
 export enum AppStep {
@@ -64,9 +65,11 @@ const initialState: RecipeState = {
 // Async thunk for scanning image
 export const scanImage = createAsyncThunk(
   "recipe/scanImage",
-  async (imageUri: string, { rejectWithValue }) => {
+  async (imageUri: string, { rejectWithValue, dispatch }) => {
     try {
       const response = await scanImageAPI({ imageUri });
+      dispatch(nextStep());
+      console.log("scanImage response", JSON.stringify(response, null, 2));
       return response.ingredients;
     } catch (error) {
       console.log("scanImage error", JSON.stringify(error, null, 2));
@@ -86,7 +89,7 @@ export const fetchRecipes = createAsyncThunk(
       maxPrepTime: number;
       dietaryPreferences: string[];
     },
-    { rejectWithValue },
+    { rejectWithValue, dispatch },
   ) => {
     try {
       const response = await discoverRecipes({
@@ -95,6 +98,7 @@ export const fetchRecipes = createAsyncThunk(
         dietaryPreferences: params.dietaryPreferences,
         locale: "tr", // Default locale as per requirements
       });
+      dispatch(setAppStep(AppStep.Results));
       return response;
     } catch (error) {
       return rejectWithValue(
