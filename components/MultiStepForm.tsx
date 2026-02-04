@@ -18,7 +18,7 @@ import * as yup from "yup";
 
 export type MultiStepFormStep = {
   id: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   fields: string[]; // Fields that belong to this step
   render: (ctx: {

@@ -71,7 +71,9 @@ export function StepScan({
           activeOpacity={0.9}
           className="bg-[#f39849] w-full py-4 rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
         >
-          <Text className="text-white font-extrabold text-lg">Devam Et</Text>
+          <Text className="text-white font-extrabold text-lg">
+            İçerikleri Bul
+          </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>
       </View>

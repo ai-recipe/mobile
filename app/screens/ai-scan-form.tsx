@@ -1,8 +1,5 @@
 import { analyseImage } from "@/api/recipe";
-import {
-  MultiStepForm,
-  type MultiStepFormStep,
-} from "@/components/MultiStepForm";
+import { MultiStepForm } from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -16,29 +13,26 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
-import * as yup from "yup";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 // Sub-components
 import { LoadingStep } from "./components/LoadingStep";
 import { RecipeResults } from "./components/RecipeResults";
-import { StepDietPreference } from "./components/StepDietPreference";
-import { StepScan } from "./components/StepScan";
-import { StepTimePreference } from "./components/StepTimePreference";
+import { createFormSteps } from "./helpers/ai-scan-form.helpers";
+import { ScanFormData, scanFormSchema } from "./types/ai-scan-form.types";
 
-const LOADING_MESSAGES = [
+const LOADING_MESSAGES_SCAN = [
+  "Yapay Zeka Uyanıyor...",
   "Malzemeler Tanımlanıyor...",
-  "Lezzet Eşleşmeleri Yapılıyor...",
-  "Şef Yapay Zeka Düşünüyor...",
-  "En İyi Tarifler Hazırlanıyor...",
+  "Sonuçlar optimize ediliyor...",
 ];
 
-const scanFormSchema = yup.object({
-  timePreference: yup.number().required().default(30),
-  dietPreferences: yup.array().of(yup.string()).default([]),
-});
-
-type ScanFormData = yup.InferType<typeof scanFormSchema>;
+const LOADING_MESSAGES_GENERATE_RECIPE = [
+  "Şef Yapay Zeka Düşünüyor...",
+  "Tarifler Oluşturuluyor...",
+  "Lezzetler Eşleştiriliyor...",
+  "En İyi Tarifler Hazırlanıyor...",
+];
 
 export default function AiScanFormScreen() {
   const router = useRouter();
@@ -52,6 +46,13 @@ export default function AiScanFormScreen() {
     "form",
   );
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
+
+  const loadingMessages = useMemo(() => {
+    if (appStep === "loading") {
+      return LOADING_MESSAGES_SCAN;
+    }
+    return LOADING_MESSAGES_GENERATE_RECIPE;
+  }, [appStep]);
 
   const handleFetchRecipes = useCallback(
     async (data: ScanFormData) => {
@@ -99,6 +100,10 @@ export default function AiScanFormScreen() {
     [formData, dispatch],
   );
 
+  const steps = useMemo(
+    () => createFormSteps({ formData, router }),
+    [formData, router],
+  );
   // Rotate loading messages when on loading step
   useEffect(() => {
     if (appStep !== "loading") return;
@@ -110,55 +115,6 @@ export default function AiScanFormScreen() {
     }, 2000);
     return () => clearInterval(id);
   }, [appStep]);
-
-  const steps: MultiStepFormStep[] = useMemo(
-    () => [
-      {
-        id: "scan",
-        title: "Malzemeler",
-        subtitle: "Taranan malzemeleri kontrol edin.",
-        fields: [], // No validation needed for scan review, it's just display + actions
-        render: ({ nextStep }) => (
-          <StepScan
-            imageUri={formData.image}
-            onNext={nextStep}
-            onNewCapture={() => router.back()}
-            onPickFromGallery={() => router.back()}
-            direction="forward"
-          />
-        ),
-      },
-      {
-        id: "time",
-        title: "Süre",
-        subtitle: "Hazırlık için ne kadar vaktiniz var?",
-        fields: ["timePreference"],
-        render: ({ data, setValue, nextStep }) => (
-          <StepTimePreference
-            value={data.timePreference}
-            onChange={(v) => setValue("timePreference", v)}
-            onNext={nextStep}
-            direction="forward"
-          />
-        ),
-      },
-      {
-        id: "diet",
-        title: "Beslenme",
-        subtitle: "Beslenme tercihinizi seçin.",
-        fields: ["dietPreferences"],
-        render: ({ data, setValue, nextStep }) => (
-          <StepDietPreference
-            value={data.dietPreferences || []}
-            onChange={(v) => setValue("dietPreferences", v)}
-            onSubmit={nextStep}
-            direction="forward"
-          />
-        ),
-      },
-    ],
-    [formData.image, router],
-  );
 
   if (appStep === "loading") {
     return (
