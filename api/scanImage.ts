@@ -39,14 +39,12 @@ export interface ScanImageResponse {
  */
 export async function uploadImageForRecognition(
   imageUri: string,
-): Promise<{ jobId: string }> {
+): Promise<{ jobId: string; detectedIngredients: { name: string }[] }> {
   const formData = new FormData();
 
   // Extract filename from URI or generate one
   const filename = imageUri.split("/").pop() || `image-${Date.now()}.jpg`;
 
-  console.log("filename", filename);
-  console.log("imageUri", imageUri);
   // Create file object for upload
   formData.append("image", {
     uri: imageUri,
@@ -55,7 +53,7 @@ export async function uploadImageForRecognition(
   } as any);
 
   try {
-    const response = await api.post<UploadImageResponse>(
+    const response = (await api.post<UploadImageResponse>(
       "/recognition/upload",
       formData,
       {
@@ -63,11 +61,13 @@ export async function uploadImageForRecognition(
           "Content-Type": "multipart/form-data",
         },
       },
-    );
-    return { jobId: response.data.requestId };
-  } catch (error) {
-    console.log("uploadImageForRecognition error", error?.response?.message);
-    throw error;
+    )) as any;
+    return {
+      jobId: response.data?.data?.requestId,
+      detectedIngredients: response.data?.data?.detectedIngredients,
+    };
+  } catch (error: any) {
+    throw error?.response?.data?.message;
   }
 }
 
@@ -93,7 +93,6 @@ export async function pollJobStatus(
   let attempts = 0;
 
   while (attempts < maxAttempts) {
-    console.log("pollJobStatus", jobId);
     const status = await getJobStatus(jobId);
 
     if (status.status === "completed") {
@@ -121,85 +120,10 @@ export async function scanImage({
 }: ScanImageParams): Promise<ScanImageResponse> {
   try {
     // Step 1: Upload image and get job ID
-    /*const { detectedIngredients, requestId } = (await uploadImageForRecognition(
+    const { detectedIngredients, requestId } = (await uploadImageForRecognition(
       imageUri,
-    )) as any;*/
-    const response = {
-      data: {
-        requestId: "500a3260-99b8-4164-86c7-181878f2f2ef",
-        detectedIngredients: [
-          {
-            name: "pineapple",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "blueberries",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "eggs",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "lettuce",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "asparagus",
-            confidence: 0.9,
-            matchedIngredientId: null,
-          },
-          {
-            name: "tomato",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "cucumber",
-            confidence: 0.9,
-            matchedIngredientId: null,
-          },
-          {
-            name: "cabbage",
-            confidence: 0.9,
-            matchedIngredientId: null,
-          },
-          {
-            name: "bell pepper",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "carrot",
-            confidence: 0.9,
-            matchedIngredientId: null,
-          },
-          {
-            name: "cheese",
-            confidence: 0.95,
-            matchedIngredientId: null,
-          },
-          {
-            name: "ground meat",
-            confidence: 0.85,
-            matchedIngredientId: null,
-          },
-          {
-            name: "ice cream",
-            confidence: 0.9,
-            matchedIngredientId: null,
-          },
-        ],
-        processingTimeMs: 8698,
-      },
-      statusCode: 200,
-      timestamp: "2026-02-05T15:34:15.844Z",
-    };
-    const { detectedIngredients, requestId } = response.data;
+    )) as any;
+
     // Step 2: Poll for job completion
     //const jobStatus = await pollJobStatus(jobId);
 
@@ -211,7 +135,6 @@ export async function scanImage({
       jobId: requestId,
     };
   } catch (error: any) {
-    console.log("scanImage error", error?.response?.data?.message);
     throw new Error(
       `Görüntü tarama başarısız: ${error?.response?.data?.message}`,
     );

@@ -19,7 +19,6 @@ function RootLayoutNavigator() {
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("currentLanguage", currentLanguage);
     if (currentLanguage) {
       dispatch(initDeviceAsync() as any);
     }

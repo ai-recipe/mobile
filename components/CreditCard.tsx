@@ -2,11 +2,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export const CreditCard = () => {
   const router = useRouter();
-  const [credit, setCredit] = React.useState(1);
-  const maxCredit = 50;
+  const { creditRemaining } = useSelector((state: any) => state.auth);
+  const isSurveyCompleted = true;
+  const maxCredit = 500;
   return (
     <View className="px-5 pt-4">
       <View className="bg-white dark:bg-zinc-800 p-5 rounded-3xl border border-slate-100 dark:border-zinc-700 ">
@@ -17,7 +19,7 @@ export const CreditCard = () => {
             </Text>
             <View className="flex-row items-baseline">
               <Text className="text-2xl font-black text-slate-900 dark:text-white">
-                {credit}
+                {creditRemaining}
               </Text>
               <Text className="text-slate-400 dark:text-zinc-500 font-bold text-sm ml-1">
                 / {maxCredit} Kredi
@@ -33,7 +35,7 @@ export const CreditCard = () => {
         <View className="w-full h-2.5 bg-slate-100 dark:bg-zinc-700/50 rounded-full overflow-hidden mb-6">
           <View
             className="h-full bg-primary rounded-full"
-            style={{ width: `${(credit / maxCredit) * 100}%` }}
+            style={{ width: `${(creditRemaining / maxCredit) * 100}%` }}
           />
         </View>
 
@@ -47,15 +49,17 @@ export const CreditCard = () => {
             <MaterialIcons name="add-circle" size={18} color="white" />
             <Text className="text-white font-black text-sm">Kredi Yükle</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="flex-1 flex-row items-center justify-center gap-2 bg-white dark:bg-zinc-700 border border-slate-200 dark:border-zinc-600 py-3.5 rounded-2xl "
-            onPress={() => router.push("/(protected)/earn-credit-survey")}
-          >
-            <Text className="text-slate-700 dark:text-slate-200 font-bold text-sm">
-              Hemen Kazan
-            </Text>
-          </TouchableOpacity>
+          {!isSurveyCompleted && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="flex-1 flex-row items-center justify-center gap-2 bg-white dark:bg-zinc-700 border border-slate-200 dark:border-zinc-600 py-3.5 rounded-2xl "
+              onPress={() => router.push("/(protected)/earn-credit-survey")}
+            >
+              <Text className="text-slate-700 dark:text-slate-200 font-bold text-sm">
+                Hemen Kazan
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>

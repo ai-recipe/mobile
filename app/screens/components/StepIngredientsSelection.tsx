@@ -48,7 +48,6 @@ export function StepIngredientsSelection({
   };
 
   const isSelected = (ingredient: string) => {
-    console.log("XXXX isSelectd", selectedIngredients, ingredient);
     return selectedIngredients.includes(ingredient);
   };
 

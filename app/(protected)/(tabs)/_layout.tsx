@@ -108,10 +108,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   return "home";
                 case "recipes":
                   return "menu-book";
-                case "favorites":
-                  return focused ? "favorite" : "favorite-border";
-                case "profile":
-                  return focused ? "person" : "person-outline";
                 default:
                   return "help-outline";
               }
@@ -123,10 +119,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   return "Ana Sayfa";
                 case "recipes":
                   return "Tarifler";
-                case "favorites":
-                  return "Favoriler";
-                case "profile":
-                  return "Profil";
+
                 default:
                   return name;
               }
@@ -178,28 +171,18 @@ export default function TabLayout() {
           title: "Ana Sayfa",
         }}
       />
-      <Tabs.Screen
-        name="recipes"
-        options={{
-          title: "Tarifler",
-        }}
-      />
+
       <Tabs.Screen
         name="scan"
         options={{
           title: "Tarat",
         }}
       />
+
       <Tabs.Screen
-        name="favorites"
+        name="recipes"
         options={{
-          title: "Favoriler",
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profil",
+          title: "Tarifler",
         }}
       />
     </Tabs>

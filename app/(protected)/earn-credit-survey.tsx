@@ -77,6 +77,7 @@ function useSurveySteps(): MultiStepFormStep[] {
       {
         id: "basic_info",
         title: "Bize biraz kendinden bahset",
+        shouldHandleNextStep: true,
         subtitle:
           "Sana en iyi tarif önerilerini sunabilmemiz için temel bilgilerini öğrenmek isteriz.",
         fields: ["fullName", "age"],
@@ -154,6 +155,7 @@ function useSurveySteps(): MultiStepFormStep[] {
         id: "cooking_goals",
         title: "Ana yemek pişirme amacın ne?",
         subtitle: "Tarif önerilerimizi buna göre özelleştireceğiz.",
+        shouldHandleNextStep: true,
         fields: ["cookingGoal"],
         render: ({ data, setValue, nextStep, errors }) => {
           const goals = [
@@ -221,6 +223,7 @@ function useSurveySteps(): MultiStepFormStep[] {
         title: "Yemek yapma deneyimini nasıl tanımlarsın?",
         subtitle: "Bu, doğru zorluk seviyesini belirlememize yardımcı olur.",
         fields: ["experience"],
+        shouldHandleNextStep: true,
         render: ({ data, setValue, nextStep, errors }) => {
           const options = [
             { id: "beginner", label: "Başlangıç" },
@@ -285,6 +288,7 @@ function useSurveySteps(): MultiStepFormStep[] {
         id: "cooking_habits",
         title: "Yemek yapma alışkanlıkların neler?",
         subtitle: "En uygun tarifleri önermek için sana uyanları seç.",
+        shouldHandleNextStep: true,
         fields: ["habits"],
         render: ({ data, setValue, nextStep, errors }) => {
           const selectedSet = new Set((data.habits as string[]) ?? []);

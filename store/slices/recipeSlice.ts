@@ -69,12 +69,10 @@ export const scanImage = createAsyncThunk(
     try {
       const response = await scanImageAPI({ imageUri });
 
-      console.log("scanImage response", JSON.stringify(response, null, 2));
       dispatch(setStep(1));
       dispatch(setAppStep(AppStep.IngredientsSelection));
       return response.ingredients;
     } catch (error) {
-      console.log("scanImage error", JSON.stringify(error, null, 2));
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarama başarısız",
       );
@@ -181,6 +179,7 @@ export const recipeSlice = createSlice({
     });
     builder.addCase(scanImage.fulfilled, (state, action) => {
       state.isLoadingScan = false;
+
       state.formData.scannedIngredients = action.payload;
       state.formData.selectedIngredients = action.payload;
       state.scannedImage = action.meta.arg;

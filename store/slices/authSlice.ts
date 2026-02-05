@@ -62,7 +62,6 @@ export const initDeviceAsync = createAsyncThunk(
         appVersion: "1.0.0",
       });
       await AsyncStorage.setItem("token", response.data?.data?.anonymousToken);
-      console.log("response", JSON.stringify(response.data));
       return response.data?.data;
     } catch (error: any) {
       console.log("error", error?.response?.data?.message);
@@ -129,8 +128,12 @@ export const authSlice = createSlice({
         state.isInitDeviceLoading = true;
       })
       .addCase(initDeviceAsync.fulfilled, (state, action) => {
+        console.log(
+          "initDeviceAsync.fulfilled",
+          JSON.stringify(action.payload),
+        );
         state.creditGrantType = action.payload?.grantType;
-        state.creditRemaining = action.payload?.remaining;
+        state.creditRemaining = action.payload?.credits?.remaining;
         //
         state.isNewUser = action.payload?.isNewUser;
         state.isNewDevice = action.payload?.isNewDevice;

@@ -46,8 +46,6 @@ export default function AiScanFormScreen() {
     useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
 
-  console.log("formData", formData);
-
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
 
   // Determine loading messages based on current step
