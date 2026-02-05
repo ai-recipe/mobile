@@ -25,6 +25,29 @@ export interface RecipeFromAPI {
   };
 }
 
+export interface RecipeListItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  difficulty: string;
+  totalTimeMinutes: number;
+  imageUrl: string;
+}
+
+export interface FavoriteItem {
+  id: string;
+  recipeId: string;
+  createdAt: string;
+}
+
+export interface FavoritesResponse {
+  items: FavoriteItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export interface RecipeSuggestion {
   additionalIngredients: string[];
   tip: string;
@@ -54,29 +77,35 @@ export interface AnalyseImageParams {
   timeMinutes?: number;
 }
 
-/**
- * Generate a unique idempotency key
- */
-function generateIdempotencyKey(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-}
-
 export async function discoverRecipes(
   params: DiscoverRecipesParams,
 ): Promise<RecipeDiscoverResponse> {
-  const idempotencyKey = generateIdempotencyKey();
-
   const response = await api.post<RecipeDiscoverResponse>(
     "/recipes/discover",
     params,
-    {
-      headers: {
-        "idempotency-key": idempotencyKey,
-        "Idempotency-Key": idempotencyKey,
-      },
-    },
   );
 
+  return response.data;
+}
+
+export async function fetchRecipeList(params: {
+  query: string;
+  limit?: number;
+  offset?: number;
+}): Promise<RecipeListItem[]> {
+  const response = await api.get<RecipeListItem[]>("/recipes", {
+    params,
+  });
+  return response.data;
+}
+
+export async function fetchFavorites(params?: {
+  limit?: number;
+  offset?: number;
+}): Promise<FavoritesResponse> {
+  const response = await api.get<FavoritesResponse>("/favorites", {
+    params,
+  });
   return response.data;
 }
 

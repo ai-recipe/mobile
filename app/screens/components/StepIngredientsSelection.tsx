@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -13,10 +13,9 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 
 interface StepIngredientsSelectionProps {
-  ingredients: string[];
-  selectedIngredients: string[];
   onToggleIngredient: (ingredient: string) => void;
   onAddIngredient: (ingredient: string) => void;
   onNext: () => void;
@@ -24,13 +23,18 @@ interface StepIngredientsSelectionProps {
 }
 
 export function StepIngredientsSelection({
-  ingredients,
-  selectedIngredients,
   onToggleIngredient,
   onAddIngredient,
   onNext,
   direction = "forward",
 }: StepIngredientsSelectionProps) {
+  const { formData } = useSelector((state: any) => state.recipe);
+
+  const selectedIngredients = formData.selectedIngredients || [];
+  const ingredients = formData.scannedIngredients || [];
+
+  const scrollRef = useRef<ScrollView>(null);
+
   const [newIngredient, setNewIngredient] = useState("");
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
@@ -39,23 +43,26 @@ export function StepIngredientsSelection({
     if (newIngredient.trim()) {
       onAddIngredient(newIngredient);
       setNewIngredient("");
+      scrollRef.current?.scrollToEnd({ animated: true });
     }
   };
 
-  const isSelected = (ingredient: string) =>
-    selectedIngredients.includes(ingredient);
+  const isSelected = (ingredient: string) => {
+    console.log("XXXX isSelectd", selectedIngredients, ingredient);
+    return selectedIngredients.includes(ingredient);
+  };
 
   return (
     <Animated.View
       entering={entering}
       exiting={exiting}
-      className="flex-1 px-5 pt-4"
+      className="flex-1 px-5"
     >
       <View className="mb-4">
-        <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-          Malzemeler
+        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
+          Taranan <Text className="text-[#f39849]">Malzemeler</Text>
         </Text>
-        <Text className="text-zinc-600 dark:text-zinc-400">
+        <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-2">
           Taranan malzemeleri kontrol edin ve düzenleyin
         </Text>
       </View>
@@ -83,6 +90,8 @@ export function StepIngredientsSelection({
         className="flex-1 mb-4"
         showsVerticalScrollIndicator={false}
         contentContainerClassName="gap-3"
+        style={{ height: 400 }}
+        scrollViewRef={scrollRef}
       >
         {ingredients.map((ingredient, index) => {
           const selected = isSelected(ingredient);

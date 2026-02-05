@@ -1,66 +1,89 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const AI_RECIPES = [
+const STATIC_RECIPES = [
   {
     id: "1",
-    title: "Dolaptaki Sebze Sote",
-    date: "2 Saat Önce",
-    ingredients: "Kabak, Havuç, Biber",
-    matchScore: 95,
+    title: "Akdeniz Usulü Levrek",
+    category: "Deniz Ürünleri",
+    time: "35 dk",
+    difficulty: "Orta",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2",
   },
   {
     id: "2",
-    title: "Pratik Tavuk Curry",
-    date: "Dün",
-    ingredients: "Tavuk, Krema, Köri",
-    matchScore: 88,
+    title: "Ev Yapımı Fettuccine",
+    category: "Makarnalar",
+    time: "20 dk",
+    difficulty: "Kolay",
+    rating: 4.9,
+    image: "https://images.unsplash.com/photo-1546549032-9571cd6b27df",
   },
 ];
 
-const MyAiRecipesScreen = () => {
+const FavoritesScreen = () => {
   return (
     <ScreenWrapper>
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
-        <View className="flex-row items-center mb-6">
-          <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            Favori <Text className="text-[#f39849]">Tariflerim</Text>
-          </Text>
+        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-4">
+          Favori <Text className="text-[#f39849]">Tariflerim</Text>
+        </Text>
+
+        {/* Search Bar */}
+        <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3 mb-6">
+          <MaterialIcons name="search" size={20} color="#a1a1aa" />
+          <TextInput
+            placeholder="Tarif ara..."
+            className="ml-2 flex-1 text-zinc-900 dark:text-white"
+            placeholderTextColor="#a1a1aa"
+          />
         </View>
 
         <FlatList
-          data={AI_RECIPES}
+          data={STATIC_RECIPES}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <TouchableOpacity className="mb-4 p-5 bg-orange-50/50 dark:bg-zinc-800/50 rounded-[24px] border border-orange-100 dark:border-zinc-700">
-              <View className="flex-row justify-between items-start mb-2">
-                <View className="flex-1">
-                  <Text className="text-zinc-500 text-[10px] font-bold uppercase mb-1">
-                    {item.date}
+            <TouchableOpacity className="mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden shadow-sm border border-zinc-100 dark:border-zinc-700">
+              <Image source={{ uri: item.image }} className="w-full h-48" />
+              <View className="p-4">
+                <View className="flex-row justify-between items-center mb-1">
+                  <Text className="text-xs font-bold text-[#f39849] uppercase">
+                    {item.category}
                   </Text>
-                  <Text className="text-lg font-bold text-zinc-900 dark:text-white">
-                    {item.title}
-                  </Text>
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="star" size={14} color="#f39849" />
+                    <Text className="text-xs font-bold ml-1">
+                      {item.rating}
+                    </Text>
+                  </View>
                 </View>
-                <View className="bg-[#f39849] px-2 py-1 rounded-lg">
-                  <Text className="text-white text-[10px] font-black">
-                    %{item.matchScore} UYUM
-                  </Text>
-                </View>
-              </View>
-              <Text className="text-zinc-500 dark:text-zinc-400 text-sm italic">
-                "{item.ingredients}..."
-              </Text>
-              <View className="mt-4 flex-row items-center justify-end">
-                <Text className="text-[#f39849] font-bold text-xs mr-1">
-                  Tarife Git
+                <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-3">
+                  {item.title}
                 </Text>
-                <MaterialCommunityIcons
-                  name="chevron-right"
-                  size={16}
-                  color="#f39849"
-                />
+                <View className="flex-row gap-4">
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="timer" size={16} color="#a1a1aa" />
+                    <Text className="text-xs text-zinc-500 ml-1">
+                      {item.time}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="bar-chart" size={16} color="#a1a1aa" />
+                    <Text className="text-xs text-zinc-500 ml-1">
+                      {item.difficulty}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </TouchableOpacity>
           )}
@@ -69,5 +92,4 @@ const MyAiRecipesScreen = () => {
     </ScreenWrapper>
   );
 };
-
-export default MyAiRecipesScreen;
+export default FavoritesScreen;

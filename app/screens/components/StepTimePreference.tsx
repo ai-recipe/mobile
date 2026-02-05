@@ -36,7 +36,7 @@ export function StepTimePreference({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, flex: 1 }}
       >
-        <View className="flex-1 justify-center flex ">
+        <View className="flex-1 flex ">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
             Hazırlık <Text className="text-[#f39849]">Süresi</Text>
           </Text>

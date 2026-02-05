@@ -20,6 +20,7 @@ export const multiStepFormSlice = createSlice({
       state.currentStep = action.payload;
     },
     nextStep: (state) => {
+      console.log("XXXX Here", state.currentStep, state.totalSteps);
       if (state.currentStep < state.totalSteps - 1) {
         state.currentStep += 1;
       }

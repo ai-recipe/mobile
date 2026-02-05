@@ -34,13 +34,6 @@ export interface ScanImageResponse {
 }
 
 /**
- * Generate a unique idempotency key
- */
-function generateIdempotencyKey(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-}
-
-/**
  * Upload an image for ingredient recognition
  * Returns a job ID that can be used to poll for results
  */
@@ -61,8 +54,6 @@ export async function uploadImageForRecognition(
     name: filename,
   } as any);
 
-  const idempotencyKey = generateIdempotencyKey();
-
   try {
     const response = await api.post<UploadImageResponse>(
       "/recognition/upload",
@@ -70,17 +61,12 @@ export async function uploadImageForRecognition(
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "idempotency-key": idempotencyKey,
-          "Idempotency-Key": idempotencyKey,
         },
       },
     );
     return { jobId: response.data.requestId };
   } catch (error) {
-    console.log(
-      "uploadImageForRecognition error",
-      JSON.stringify(error, null, 2),
-    );
+    console.log("uploadImageForRecognition error", error?.response?.message);
     throw error;
   }
 }
@@ -107,6 +93,7 @@ export async function pollJobStatus(
   let attempts = 0;
 
   while (attempts < maxAttempts) {
+    console.log("pollJobStatus", jobId);
     const status = await getJobStatus(jobId);
 
     if (status.status === "completed") {
@@ -134,23 +121,99 @@ export async function scanImage({
 }: ScanImageParams): Promise<ScanImageResponse> {
   try {
     // Step 1: Upload image and get job ID
-    const { jobId } = await uploadImageForRecognition(imageUri);
-
+    /*const { detectedIngredients, requestId } = (await uploadImageForRecognition(
+      imageUri,
+    )) as any;*/
+    const response = {
+      data: {
+        requestId: "500a3260-99b8-4164-86c7-181878f2f2ef",
+        detectedIngredients: [
+          {
+            name: "pineapple",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "blueberries",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "eggs",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "lettuce",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "asparagus",
+            confidence: 0.9,
+            matchedIngredientId: null,
+          },
+          {
+            name: "tomato",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "cucumber",
+            confidence: 0.9,
+            matchedIngredientId: null,
+          },
+          {
+            name: "cabbage",
+            confidence: 0.9,
+            matchedIngredientId: null,
+          },
+          {
+            name: "bell pepper",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "carrot",
+            confidence: 0.9,
+            matchedIngredientId: null,
+          },
+          {
+            name: "cheese",
+            confidence: 0.95,
+            matchedIngredientId: null,
+          },
+          {
+            name: "ground meat",
+            confidence: 0.85,
+            matchedIngredientId: null,
+          },
+          {
+            name: "ice cream",
+            confidence: 0.9,
+            matchedIngredientId: null,
+          },
+        ],
+        processingTimeMs: 8698,
+      },
+      statusCode: 200,
+      timestamp: "2026-02-05T15:34:15.844Z",
+    };
+    const { detectedIngredients, requestId } = response.data;
     // Step 2: Poll for job completion
-    const jobStatus = await pollJobStatus(jobId);
+    //const jobStatus = await pollJobStatus(jobId);
 
     // Step 3: Extract ingredients from completed job
-    const ingredients =
-      jobStatus.detectedIngredients?.map((ing) => ing.name) || [];
+    const ingredients = detectedIngredients?.map((ing: any) => ing.name) || [];
 
     return {
       ingredients,
-      jobId,
+      jobId: requestId,
     };
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Görüntü tarama başarısız: ${error.message}`);
-    }
-    throw new Error("Görüntü tarama başarısız");
+  } catch (error: any) {
+    console.log("scanImage error", error?.response?.data?.message);
+    throw new Error(
+      `Görüntü tarama başarısız: ${error?.response?.data?.message}`,
+    );
   }
 }

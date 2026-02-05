@@ -19,6 +19,7 @@ export const Colors = {
     border: "#e6e0db",
     card: "#ffffff",
     muted: "#8a7460",
+    primary: "#f39849",
   },
   dark: {
     text: "#fafafa",
@@ -30,6 +31,7 @@ export const Colors = {
     border: "#27272a",
     card: "#18181b",
     muted: "#a1a1aa",
+    primary: "#f39849",
   },
 };
 

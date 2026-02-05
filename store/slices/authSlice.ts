@@ -45,7 +45,7 @@ const initialState: AuthState = {
 
 export const initDeviceAsync = createAsyncThunk(
   "auth/initDevice",
-  async ({ locale }: { locale: string }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       let deviceId: string;
       if (Platform.OS === "ios") {
@@ -60,13 +60,12 @@ export const initDeviceAsync = createAsyncThunk(
         deviceId,
         platform: Platform.OS,
         appVersion: "1.0.0",
-        locale,
       });
       await AsyncStorage.setItem("token", response.data?.data?.anonymousToken);
       console.log("response", JSON.stringify(response.data));
       return response.data?.data;
     } catch (error: any) {
-      console.log("error", JSON.stringify(error));
+      console.log("error", error?.response?.data?.message);
       return rejectWithValue(
         error.response?.data?.message || "Cihaz başlatma başarısız",
       );

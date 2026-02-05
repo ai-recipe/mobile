@@ -1,4 +1,3 @@
-import { Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -6,25 +5,27 @@ import { Provider, useDispatch } from "react-redux";
 import "../global.css";
 
 import { ThemeSync } from "@/components/ThemeSync";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
-
+import { Stack } from "expo-router";
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
   useInitApp();
-  const { token } = useAppSelector((state) => state.auth);
+  const { token, isInitDeviceLoading } = useAppSelector((state) => state.auth);
   console.log(token);
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useDispatch();
   useEffect(() => {
     console.log("currentLanguage", currentLanguage);
     if (currentLanguage) {
-      dispatch(initDeviceAsync({ locale: currentLanguage }) as any);
+      dispatch(initDeviceAsync() as any);
     }
   }, [dispatch, currentLanguage]);
-  if (isLoading) {
+  const colors = useThemeColor();
+  if (isLoading || isInitDeviceLoading) {
     return (
       <View
         style={{
@@ -33,11 +34,10 @@ function RootLayoutNavigator() {
           alignItems: "center",
         }}
       >
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
-
   return (
     <ThemeSync>
       <Stack

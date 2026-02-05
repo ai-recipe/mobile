@@ -1,5 +1,6 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -53,7 +54,10 @@ const RecipesScreen = () => {
           data={STATIC_RECIPES}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <TouchableOpacity className="mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden shadow-sm border border-zinc-100 dark:border-zinc-700">
+            <TouchableOpacity
+              className="mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden shadow-sm border border-zinc-100 dark:border-zinc-700"
+              onPress={() => router.push(`/screens/recipe/${item.id}`)}
+            >
               <Image source={{ uri: item.image }} className="w-full h-48" />
               <View className="p-4">
                 <View className="flex-row justify-between items-center mb-1">

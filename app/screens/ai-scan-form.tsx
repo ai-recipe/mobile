@@ -4,7 +4,7 @@ import { useAppDispatch } from "@/store/hooks";
 import {
   addCustomIngredient,
   AppStep,
-  fetchRecipes,
+  discoverRecipesAsync,
   resetRecipeState,
   scanImage,
   setAppStep,
@@ -42,24 +42,16 @@ export default function AiScanFormScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const {
-    appStep,
-    formData,
-    recipes,
-    isLoadingScan,
-    isLoadingRecipes,
-    scanError,
-    analyseError,
-    scannedImage,
-  } = useSelector((state: any) => state.recipe);
+  const { appStep, formData, recipes, scanError, analyseError, scannedImage } =
+    useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
+
+  console.log("formData", formData);
 
   const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
 
   // Determine loading messages based on current step
 
-  console.log("scannedImage", scannedImage);
-  console.log("formData.image", formData.image);
   const loadingMessages = useMemo(() => {
     if (appStep === AppStep.LoadingScan) {
       return LOADING_MESSAGES_SCAN;
@@ -77,18 +69,11 @@ export default function AiScanFormScreen() {
   }, [dispatch, formData.image, scannedImage]);
 
   // Handle fetch recipes action
-  const handleFetchRecipes = useCallback(
+  const handleDiscoverRecipesAsync = useCallback(
     async (data: ScanFormData) => {
-      // Get ingredient IDs from recognition step (this should be stored or derived)
-      // For now, if they are not stored, we might need to pass the selected items
-      // Assuming the UI provides labels that match the IDs or we need to find them.
-      // Based on previous code, formData.scannedIngredients was just names.
-      // But discovery endpoint needs IDs.
-      // Looking at scanImage.ts, it returns name + matchedIngredientId.
-      // I should check where matchedIngredientId is stored.
-
+      console.log("data", data);
       dispatch(
-        fetchRecipes({
+        discoverRecipesAsync({
           ingredientIds: (data.selectedIngredients ?? []).filter(
             (i): i is string => typeof i === "string" && i.length > 0,
           ) as string[],
@@ -129,7 +114,6 @@ export default function AiScanFormScreen() {
       createFormSteps({
         formData,
         router,
-        scannedIngredients: formData.scannedIngredients,
         onScanImage: handleScanImage,
         onToggleIngredient: handleToggleIngredient,
         onAddIngredient: handleAddIngredient,
@@ -254,7 +238,7 @@ export default function AiScanFormScreen() {
     <View style={{ flex: 1 }}>
       <MultiStepForm
         steps={steps}
-        onFinish={(data) => handleFetchRecipes(data as ScanFormData)}
+        onFinish={(data) => handleDiscoverRecipesAsync(data as ScanFormData)}
         headerTitle="Tarif Oluştur"
         backButtonBehavior="pop"
         validationSchema={scanFormSchema}

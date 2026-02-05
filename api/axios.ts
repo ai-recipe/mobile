@@ -9,12 +9,26 @@ export const api = axios.create({
   },
 });
 
+/**
+ * Generate a unique idempotency key
+ */
+export function generateIdempotencyKey(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+}
+
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = await AsyncStorage.getItem("token");
+    const localeStorageCurrentLanguage =
+      await AsyncStorage.getItem("CURRENT_LANGUAGE");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
+    const idempotencyKey = generateIdempotencyKey();
+
+    config.headers["Accept-Language"] = localeStorageCurrentLanguage;
+    config.headers["idempotency-key"] = idempotencyKey;
+    config.headers["Idempotency-Key"] = idempotencyKey;
     return config;
   },
   (error) => {

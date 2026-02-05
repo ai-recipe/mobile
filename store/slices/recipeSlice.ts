@@ -5,7 +5,7 @@ import {
 } from "@/api/recipe";
 import { scanImage as scanImageAPI } from "@/api/scanImage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { nextStep } from "./multiStepFormSlice";
+import { setStep } from "./multiStepFormSlice";
 
 // Enum for app step states
 export enum AppStep {
@@ -68,8 +68,10 @@ export const scanImage = createAsyncThunk(
   async (imageUri: string, { rejectWithValue, dispatch }) => {
     try {
       const response = await scanImageAPI({ imageUri });
-      dispatch(nextStep());
+
       console.log("scanImage response", JSON.stringify(response, null, 2));
+      dispatch(setStep(1));
+      dispatch(setAppStep(AppStep.IngredientsSelection));
       return response.ingredients;
     } catch (error) {
       console.log("scanImage error", JSON.stringify(error, null, 2));
@@ -81,8 +83,8 @@ export const scanImage = createAsyncThunk(
 );
 
 // Async thunk for fetching recipes
-export const fetchRecipes = createAsyncThunk(
-  "recipe/fetchRecipes",
+export const discoverRecipesAsync = createAsyncThunk(
+  "recipe/discoverRecipesAsync",
   async (
     params: {
       ingredientIds: string[];
@@ -191,18 +193,18 @@ export const recipeSlice = createSlice({
     });
 
     // Fetch Recipes
-    builder.addCase(fetchRecipes.pending, (state) => {
+    builder.addCase(discoverRecipesAsync.pending, (state) => {
       state.isLoadingRecipes = true;
       state.analyseError = null;
       state.appStep = AppStep.LoadingGenerate;
     });
-    builder.addCase(fetchRecipes.fulfilled, (state, action) => {
+    builder.addCase(discoverRecipesAsync.fulfilled, (state, action) => {
       state.isLoadingRecipes = false;
       state.recipes = action.payload.recipes;
       state.suggestions = action.payload.suggestions;
       state.appStep = AppStep.Results;
     });
-    builder.addCase(fetchRecipes.rejected, (state, action) => {
+    builder.addCase(discoverRecipesAsync.rejected, (state, action) => {
       state.isLoadingRecipes = false;
       state.analyseError = action.payload as string;
       state.appStep = AppStep.DietPreference; // Return to last step

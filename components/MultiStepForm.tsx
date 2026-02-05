@@ -58,6 +58,7 @@ export function MultiStepForm({
 }: MultiStepFormProps) {
   const dispatch = useAppDispatch();
   const stepIndex = useAppSelector((state) => state.multiStepForm.currentStep);
+  const totalSteps = useAppSelector((state) => state.multiStepForm.totalSteps);
   const submittedSteps = useAppSelector(
     (state) => state.multiStepForm.submittedSteps,
   );
@@ -100,7 +101,9 @@ export function MultiStepForm({
   const data = watch();
 
   const currentStep = steps[stepIndex];
-  console.log(currentStep, stepIndex);
+  console.log("currentStep", currentStep);
+  console.log("stepIndex", stepIndex);
+  console.log("totalSteps", totalSteps);
   const isFirst = useMemo(() => stepIndex === 0, [stepIndex]);
   const isLast = useMemo(
     () => stepIndex === steps.length - 1,
@@ -117,6 +120,7 @@ export function MultiStepForm({
     dispatch(markStepAsSubmitted(currentStep.id));
     const isValid = await trigger(fieldsToValidate as any);
     const shouldHandleNextStep = steps[stepIndex].shouldHandleNextStep;
+    console.log("isValid", isValid);
     console.log(shouldHandleNextStep);
     if (!shouldHandleNextStep) return;
 

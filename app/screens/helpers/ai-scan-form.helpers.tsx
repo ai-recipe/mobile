@@ -1,21 +1,51 @@
 import { MultiStepFormStep } from "@/components/MultiStepForm";
+import { store } from "@/store";
+import { setImage } from "@/store/slices/recipeSlice";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { Alert } from "react-native";
 import { StepDietPreference } from "../components/StepDietPreference";
 import { StepIngredientsSelection } from "../components/StepIngredientsSelection";
 import { StepScan } from "../components/StepScan";
 import { StepTimePreference } from "../components/StepTimePreference";
 
+const handlePickImage = async (useCamera: boolean) => {
+  const dispatch = store.dispatch;
+  const permissionResult = useCamera
+    ? await ImagePicker.requestCameraPermissionsAsync()
+    : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    Alert.alert(
+      "İzin Gerekli",
+      "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+    );
+    return;
+  }
+
+  const result = useCamera
+    ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
+    : await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.8,
+        // Use fullScreen to avoid PHPicker/PageSheet issues on iOS
+        presentationStyle:
+          ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
+      });
+
+  if (!result.canceled) {
+    dispatch(setImage(result.assets[0].uri));
+  }
+};
 export const createFormSteps = ({
   formData,
   router,
-  scannedIngredients,
   onScanImage,
   onToggleIngredient,
   onAddIngredient,
 }: {
   formData: any;
   router: ReturnType<typeof useRouter>;
-  scannedIngredients: string[];
   onScanImage: () => void;
   onToggleIngredient: (ingredient: string) => void;
   onAddIngredient: (ingredient: string) => void;
@@ -30,20 +60,18 @@ export const createFormSteps = ({
         onNext={() => {
           onScanImage();
         }}
-        onNewCapture={() => router.back()}
-        onPickFromGallery={() => router.back()}
+        onNewCapture={() => handlePickImage(true)}
+        onPickFromGallery={() => handlePickImage(false)}
         direction="forward"
       />
     ),
   },
   {
     id: "ingredients",
-    shouldHandleNextStep: false,
+    shouldHandleNextStep: true,
     fields: ["selectedIngredients"],
     render: ({ data, setValue, nextStep }) => (
       <StepIngredientsSelection
-        ingredients={scannedIngredients}
-        selectedIngredients={data.selectedIngredients || []}
         onToggleIngredient={(ingredient) => {
           onToggleIngredient(ingredient);
           // Update form data as well
@@ -78,7 +106,7 @@ export const createFormSteps = ({
   },
   {
     id: "diet",
-    shouldHandleNextStep: false,
+    shouldHandleNextStep: true,
     fields: ["dietPreferences"],
     render: ({ data, setValue, nextStep }) => (
       <StepDietPreference

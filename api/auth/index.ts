@@ -17,18 +17,15 @@ class AuthService {
     deviceId,
     platform,
     appVersion,
-    locale,
   }: {
     deviceId: string;
     platform: string;
     appVersion: string;
-    locale: string;
   }) {
     return api.post("/auth/anonymous/init", {
       deviceId,
       platform,
       appVersion,
-      locale,
     });
   }
 }
