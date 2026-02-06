@@ -1,8 +1,7 @@
 import { MultiStepFormStep } from "@/components/MultiStepForm";
 import { store } from "@/store";
-import { setImage } from "@/store/slices/recipeSlice";
+import { addIngredient, setImage } from "@/store/slices/recipeSlice";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 import { StepDietPreference } from "../components/StepDietPreference";
 import { StepIngredientsSelection } from "../components/StepIngredientsSelection";
@@ -38,17 +37,11 @@ const handlePickImage = async (useCamera: boolean) => {
   }
 };
 export const createFormSteps = ({
-  formData,
-  router,
+  dispatch,
   onScanImage,
-  onToggleIngredient,
-  onAddIngredient,
 }: {
-  formData: any;
-  router: ReturnType<typeof useRouter>;
+  dispatch: any;
   onScanImage: () => void;
-  onToggleIngredient: (ingredient: string) => void;
-  onAddIngredient: (ingredient: string) => void;
 }): MultiStepFormStep[] => [
   {
     id: "scan",
@@ -56,7 +49,6 @@ export const createFormSteps = ({
     shouldHandleNextStep: false,
     render: () => (
       <StepScan
-        imageUri={formData.image}
         onNext={() => {
           onScanImage();
         }}
@@ -73,7 +65,6 @@ export const createFormSteps = ({
     render: ({ data, setValue, nextStep }) => (
       <StepIngredientsSelection
         onToggleIngredient={(ingredient) => {
-          onToggleIngredient(ingredient);
           // Update form data as well
           const current = data.selectedIngredients || [];
           const updated = current.includes(ingredient)
@@ -82,10 +73,11 @@ export const createFormSteps = ({
           setValue("selectedIngredients", updated);
         }}
         onAddIngredient={(ingredient) => {
-          onAddIngredient(ingredient);
           const current = data.selectedIngredients || [];
+          dispatch(addIngredient(ingredient));
           setValue("selectedIngredients", [...current, ingredient]);
         }}
+        data={data}
         onNext={nextStep}
         direction="forward"
       />

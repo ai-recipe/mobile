@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TopNavBar } from "./TopNavBar";
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ interface ScreenWrapperProps {
   showBackButton?: boolean;
   withTabNavigation?: boolean;
   title?: string;
+  showTopNavBar?: boolean;
 }
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
@@ -28,6 +30,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   showBackButton = false,
   withTabNavigation = true,
   title = "",
+  showTopNavBar = true,
 }) => {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
@@ -74,6 +77,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
           </Text>
         )}
       </View>
+      {showTopNavBar && <TopNavBar />}
       {children}
     </View>
   );

@@ -1,14 +1,12 @@
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  addCustomIngredient,
   AppStep,
   discoverRecipesAsync,
   resetRecipeState,
   scanImage,
   setAppStep,
-  toggleIngredient,
 } from "@/store/slices/recipeSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -18,7 +16,10 @@ import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 // Sub-components
-import { nextStep, setStep } from "@/store/slices/multiStepFormSlice";
+import { usePrev } from "@/hooks/usePrev";
+import { setStep } from "@/store/slices/multiStepFormSlice";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormProvider, useForm } from "react-hook-form";
 import { LoadingStep } from "./components/LoadingStep";
 import { RecipeResults } from "./components/RecipeResults";
 import { createFormSteps } from "./helpers/ai-scan-form.helpers";
@@ -42,7 +43,18 @@ export default function AiScanFormScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const { appStep, formData, recipes, scanError, analyseError, scannedImage } =
+  const form = useForm<ScanFormData>({
+    resolver: yupResolver(scanFormSchema),
+    defaultValues: {
+      selectedIngredients: [],
+      timePreference: 30,
+      dietPreferences: [],
+    },
+    mode: "onChange",
+    reValidateMode: "onChange",
+  });
+
+  const { appStep, scannedIngredients, scanError, analyseError, scannedImage } =
     useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
 
@@ -57,46 +69,27 @@ export default function AiScanFormScreen() {
     return LOADING_MESSAGES_GENERATE_RECIPE;
   }, [appStep]);
 
+  const prevScannedImage = usePrev(scannedImage);
+
   // Handle scan image action
   const handleScanImage = useCallback(() => {
-    if (scannedImage === formData.image) {
-      dispatch(nextStep());
-      return;
-    }
-    dispatch(scanImage(formData.image));
-  }, [dispatch, formData.image, scannedImage]);
+    form.setValue("selectedIngredients", []);
+    dispatch(scanImage(scannedImage));
+  }, [dispatch, scannedImage]);
 
   // Handle fetch recipes action
   const handleDiscoverRecipesAsync = useCallback(
     async (data: ScanFormData) => {
-      console.log("data", data);
+      console.log("handleDiscoverRecipesAsync", data);
       dispatch(
         discoverRecipesAsync({
-          ingredientIds: (data.selectedIngredients ?? []).filter(
-            (i): i is string => typeof i === "string" && i.length > 0,
-          ) as string[],
-          maxPrepTime: data.timePreference ?? 30,
+          ingredients: data.selectedIngredients as any,
+          maxPrepTime: Number(data.timePreference || "30") ?? 30,
           dietaryPreferences: (data.dietPreferences ?? []).filter(
             (i): i is string => typeof i === "string" && i.length > 0,
           ) as string[],
         }),
       );
-    },
-    [dispatch],
-  );
-
-  // Handle ingredient toggle
-  const handleToggleIngredient = useCallback(
-    (ingredient: string) => {
-      dispatch(toggleIngredient(ingredient));
-    },
-    [dispatch],
-  );
-
-  // Handle add custom ingredient
-  const handleAddIngredient = useCallback(
-    (ingredient: string) => {
-      dispatch(addCustomIngredient(ingredient));
     },
     [dispatch],
   );
@@ -110,19 +103,13 @@ export default function AiScanFormScreen() {
   const steps = useMemo(
     () =>
       createFormSteps({
-        formData,
-        router,
+        dispatch,
         onScanImage: handleScanImage,
-        onToggleIngredient: handleToggleIngredient,
-        onAddIngredient: handleAddIngredient,
       }),
-    [
-      formData,
-      router,
-      handleScanImage,
-      handleToggleIngredient,
-      handleAddIngredient,
-    ],
+    [router, handleScanImage],
+  );
+  const currentStep = useAppSelector(
+    (state) => state.multiStepForm.currentStep,
   );
 
   // Rotate loading messages
@@ -179,7 +166,7 @@ export default function AiScanFormScreen() {
   // Loading state for scanning
   if (appStep === AppStep.LoadingScan) {
     return (
-      <ScreenWrapper withTabNavigation={false}>
+      <ScreenWrapper withTabNavigation={false} showTopNavBar={false}>
         <LoadingStep loadingText={loadingText} direction="forward" />
       </ScreenWrapper>
     );
@@ -188,7 +175,7 @@ export default function AiScanFormScreen() {
   // Loading state for recipe generation
   if (appStep === AppStep.LoadingGenerate) {
     return (
-      <ScreenWrapper withTabNavigation={false}>
+      <ScreenWrapper withTabNavigation={false} showTopNavBar={false}>
         <LoadingStep loadingText={loadingText} direction="forward" />
       </ScreenWrapper>
     );
@@ -197,7 +184,7 @@ export default function AiScanFormScreen() {
   // Results view
   if (appStep === AppStep.Results) {
     return (
-      <ScreenWrapper withTabNavigation={false}>
+      <ScreenWrapper withTabNavigation={false} showTopNavBar={false}>
         {/* Header for Step: Results */}
         <View className="px-5 py-2 flex-row items-center justify-between">
           <TouchableOpacity
@@ -220,12 +207,7 @@ export default function AiScanFormScreen() {
           </View>
         </View>
         <View className="flex-1 mt-2">
-          <RecipeResults
-            recipes={recipes}
-            baseImageUri={formData.image}
-            colorScheme={colorScheme}
-            direction="forward"
-          />
+          <RecipeResults direction="forward" />
         </View>
       </ScreenWrapper>
     );
@@ -234,18 +216,20 @@ export default function AiScanFormScreen() {
   // Form view (all steps except loading and results)
   return (
     <View style={{ flex: 1 }}>
-      <MultiStepForm
-        steps={steps}
-        onFinish={(data) => handleDiscoverRecipesAsync(data as ScanFormData)}
-        headerTitle="Tarif Oluştur"
-        backButtonBehavior="pop"
-        validationSchema={scanFormSchema}
-        initialData={{
-          selectedIngredients: formData.selectedIngredients || [],
-          timePreference: formData.timePreference || 30,
-          dietPreferences: formData.dietPreferences || [],
-        }}
-      />
+      <FormProvider {...form}>
+        <MultiStepForm
+          steps={steps}
+          onFinish={(data) => handleDiscoverRecipesAsync(data as ScanFormData)}
+          headerTitle="Tarif Oluştur"
+          backButtonBehavior="pop"
+          validationSchema={scanFormSchema}
+          initialData={{
+            selectedIngredients: scannedIngredients || [],
+            timePreference: 30,
+            dietPreferences: [],
+          }}
+        />
+      </FormProvider>
     </View>
   );
 }

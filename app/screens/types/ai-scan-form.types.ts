@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const scanFormSchema = yup.object({
-  selectedIngredients: yup.array().of(yup.string()).default([]),
+  selectedIngredients: yup.array().of(yup.string()).required(),
   timePreference: yup.number().required().default(30),
   dietPreferences: yup.array().of(yup.string()).default([]),
 });

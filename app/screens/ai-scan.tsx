@@ -21,7 +21,7 @@ export default function AIScanScreen() {
     if (permissionResult.granted === false) {
       Alert.alert(
         "İzin Gerekli",
-        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor."
+        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
       );
       return;
     }
@@ -43,7 +43,11 @@ export default function AIScanScreen() {
   };
 
   return (
-    <ScreenWrapper showBackButton withTabNavigation={false}>
+    <ScreenWrapper
+      showBackButton
+      withTabNavigation={false}
+      showTopNavBar={false}
+    >
       <ScrollView
         className="flex-1 px-5"
         style={{ backgroundColor }}

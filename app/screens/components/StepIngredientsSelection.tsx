@@ -14,12 +14,14 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
+import { ScanFormData } from "../types/ai-scan-form.types";
 
 interface StepIngredientsSelectionProps {
   onToggleIngredient: (ingredient: string) => void;
   onAddIngredient: (ingredient: string) => void;
   onNext: () => void;
   direction?: "forward" | "backward";
+  data: ScanFormData;
 }
 
 export function StepIngredientsSelection({
@@ -27,13 +29,10 @@ export function StepIngredientsSelection({
   onAddIngredient,
   onNext,
   direction = "forward",
+  data,
 }: StepIngredientsSelectionProps) {
-  const { formData } = useSelector((state: any) => state.recipe);
-
-  const selectedIngredients = formData.selectedIngredients || [];
-  const ingredients = formData.scannedIngredients || [];
-
   const scrollRef = useRef<ScrollView>(null);
+  const { scannedIngredients } = useSelector((state: any) => state.recipe);
 
   const [newIngredient, setNewIngredient] = useState("");
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
@@ -48,7 +47,7 @@ export function StepIngredientsSelection({
   };
 
   const isSelected = (ingredient: string) => {
-    return selectedIngredients.includes(ingredient);
+    return data.selectedIngredients?.includes(ingredient);
   };
 
   return (
@@ -92,7 +91,7 @@ export function StepIngredientsSelection({
         style={{ height: 400 }}
         scrollViewRef={scrollRef}
       >
-        {ingredients.map((ingredient, index) => {
+        {scannedIngredients.map((ingredient, index) => {
           const selected = isSelected(ingredient);
           return (
             <TouchableOpacity
@@ -132,16 +131,16 @@ export function StepIngredientsSelection({
       <View className="pb-8">
         <TouchableOpacity
           onPress={onNext}
-          disabled={selectedIngredients.length === 0}
+          disabled={data.selectedIngredients?.length === 0}
           activeOpacity={0.9}
           className={`w-full py-4 rounded-2xl items-center justify-center shadow-lg flex-row gap-2 ${
-            selectedIngredients.length === 0
+            data.selectedIngredients?.length === 0
               ? "bg-zinc-300 dark:bg-zinc-700"
               : "bg-[#f39849] shadow-orange-500/30"
           }`}
         >
           <Text className="text-white font-extrabold text-lg">
-            Devam Et ({selectedIngredients.length})
+            Devam Et ({data.selectedIngredients?.length})
           </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>

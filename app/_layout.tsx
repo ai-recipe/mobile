@@ -5,6 +5,8 @@ import { Provider, useDispatch } from "react-redux";
 import "../global.css";
 
 import { ThemeSync } from "@/components/ThemeSync";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
@@ -24,6 +26,8 @@ function RootLayoutNavigator() {
     }
   }, [dispatch, currentLanguage]);
   const colors = useThemeColor();
+  const colorScheme = useColorScheme();
+
   if (isLoading || isInitDeviceLoading) {
     return (
       <View
@@ -31,6 +35,7 @@ function RootLayoutNavigator() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: Colors[colorScheme].background,
         }}
       >
         <ActivityIndicator size="large" color={colors.primary} />

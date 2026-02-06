@@ -20,17 +20,6 @@ export enum AppStep {
 
 interface RecipeState {
   appStep: AppStep;
-  formData: {
-    image: string;
-    scannedIngredients: string[]; // From scan API
-    selectedIngredients: string[]; // User-modified selection
-    timePreference: number;
-    dietPreferences: string[];
-    name: string;
-    estimatedTime: string;
-    difficulty: "EASY" | "MEDIUM" | "HARD";
-    shortSteps: string[];
-  };
   recipes: RecipeFromAPI[];
   suggestions: RecipeSuggestion | null;
   isLoadingScan: boolean;
@@ -38,6 +27,8 @@ interface RecipeState {
   scannedImage: string | null;
   scanError: string | null;
   analyseError: string | null;
+
+  scannedIngredients: string[]; // From scan API
 }
 
 const initialState: RecipeState = {
@@ -49,17 +40,8 @@ const initialState: RecipeState = {
   scannedImage: null,
   scanError: null,
   analyseError: null,
-  formData: {
-    image: "",
-    scannedIngredients: [],
-    selectedIngredients: [],
-    timePreference: 30,
-    dietPreferences: [],
-    name: "",
-    estimatedTime: "",
-    difficulty: "EASY",
-    shortSteps: [],
-  },
+  image: "",
+  scannedIngredients: [],
 };
 
 // Async thunk for scanning image
@@ -85,25 +67,31 @@ export const discoverRecipesAsync = createAsyncThunk(
   "recipe/discoverRecipesAsync",
   async (
     params: {
-      ingredientIds: string[];
+      ingredients: string[];
       maxPrepTime: number;
       dietaryPreferences: string[];
     },
     { rejectWithValue, dispatch },
   ) => {
     try {
+      console.log(
+        "params",
+        JSON.stringify({
+          ingredients: params.ingredients,
+          maxPrepTime: params.maxPrepTime,
+          dietaryPreferences: params.dietaryPreferences,
+        }),
+      );
       const response = await discoverRecipes({
-        ingredientIds: params.ingredientIds,
+        ingredients: params.ingredients,
         maxPrepTime: params.maxPrepTime,
         dietaryPreferences: params.dietaryPreferences,
-        locale: "tr", // Default locale as per requirements
       });
+      console.log("response", JSON.stringify(response, null, 2));
       dispatch(setAppStep(AppStep.Results));
-      return response;
-    } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Tarif oluşturma başarısız",
-      );
+      return response?.data;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data.message);
     }
   },
 );
@@ -113,48 +101,18 @@ export const recipeSlice = createSlice({
   initialState,
   reducers: {
     setImage: (state, action: PayloadAction<string>) => {
-      state.formData.image = action.payload;
+      state.scannedImage = action.payload;
     },
     setAppStep: (state, action: PayloadAction<AppStep>) => {
       state.appStep = action.payload;
     },
     setScannedIngredients: (state, action: PayloadAction<string[]>) => {
-      state.formData.scannedIngredients = action.payload;
-      state.formData.selectedIngredients = action.payload; // Initialize selection
+      state.scannedIngredients = action.payload;
     },
-    setSelectedIngredients: (state, action: PayloadAction<string[]>) => {
-      state.formData.selectedIngredients = action.payload;
-    },
-    toggleIngredient: (state, action: PayloadAction<string>) => {
-      const ingredient = action.payload;
-      const index = state.formData.selectedIngredients.indexOf(ingredient);
-      if (index > -1) {
-        state.formData.selectedIngredients.splice(index, 1);
-      } else {
-        state.formData.selectedIngredients.push(ingredient);
+    addIngredient: (state, action: PayloadAction<string>) => {
+      if (!state.scannedIngredients.includes(action.payload)) {
+        state.scannedIngredients.push(action.payload);
       }
-    },
-    addCustomIngredient: (state, action: PayloadAction<string>) => {
-      const ingredient = action.payload.trim();
-      if (
-        ingredient &&
-        !state.formData.selectedIngredients.includes(ingredient)
-      ) {
-        state.formData.selectedIngredients.push(ingredient);
-        state.formData.scannedIngredients.push(ingredient);
-      }
-    },
-    setTimePreference: (state, action: PayloadAction<number>) => {
-      state.formData.timePreference = action.payload;
-    },
-    setDietPreferences: (state, action: PayloadAction<string[]>) => {
-      state.formData.dietPreferences = action.payload;
-    },
-    setFormData: (
-      state,
-      action: PayloadAction<Partial<typeof initialState.formData>>,
-    ) => {
-      state.formData = { ...state.formData, ...action.payload };
     },
     resetRecipeState: (state) => {
       state.appStep = AppStep.StepScan;
@@ -164,9 +122,7 @@ export const recipeSlice = createSlice({
       state.isLoadingRecipes = false;
       state.scanError = null;
       state.analyseError = null;
-      state.formData.scannedIngredients = [];
-      state.formData.selectedIngredients = [];
-      state.formData.dietPreferences = [];
+      state.scannedIngredients = [];
       state.scannedImage = null;
     },
   },
@@ -180,8 +136,7 @@ export const recipeSlice = createSlice({
     builder.addCase(scanImage.fulfilled, (state, action) => {
       state.isLoadingScan = false;
 
-      state.formData.scannedIngredients = action.payload;
-      state.formData.selectedIngredients = action.payload;
+      state.scannedIngredients = action.payload;
       state.scannedImage = action.meta.arg;
       state.appStep = AppStep.IngredientsSelection;
     });
@@ -215,13 +170,8 @@ export const {
   setImage,
   setAppStep,
   setScannedIngredients,
-  setSelectedIngredients,
-  toggleIngredient,
-  addCustomIngredient,
-  setTimePreference,
-  setDietPreferences,
-  setFormData,
   resetRecipeState,
+  addIngredient,
 } = recipeSlice.actions;
 
 export default recipeSlice.reducer;

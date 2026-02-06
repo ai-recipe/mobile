@@ -54,17 +54,18 @@ export interface RecipeSuggestion {
 }
 
 export interface RecipeDiscoverResponse {
-  requestId: string;
-  recipes: RecipeFromAPI[];
-  suggestions: RecipeSuggestion;
-  processingTimeMs: number;
+  data: {
+    requestId: string;
+    recipes: RecipeFromAPI[];
+    suggestions: RecipeSuggestion;
+    processingTimeMs: number;
+  };
 }
 
 export interface DiscoverRecipesParams {
-  ingredientIds: string[];
+  ingredients: string[];
   maxPrepTime?: number;
   dietaryPreferences?: string[];
-  locale?: string;
 }
 
 export interface AnalyseImageResponse {

@@ -1,6 +1,13 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import Animated, {
   FadeInDown,
   SlideInLeft,
@@ -9,26 +16,24 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 
-import type { RecipeFromAPI } from "@/api/recipe";
+import { useAppSelector } from "@/store/hooks";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
 interface RecipeResultsProps {
-  recipes: RecipeFromAPI[];
-  baseImageUri: string;
-  colorScheme: "light" | "dark" | null | undefined;
   direction?: "forward" | "backward";
 }
 
-export function RecipeResults({
-  recipes,
-  baseImageUri,
-  colorScheme,
-  direction = "forward",
-}: RecipeResultsProps) {
+export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
+  const { recipes, baseImageUri, suggestions } = useAppSelector(
+    (state: any) => state.recipe,
+  );
+
+  const colorScheme = useColorScheme();
 
   return (
     <Animated.View entering={entering} exiting={exiting} className="flex-1">
@@ -38,7 +43,7 @@ export function RecipeResults({
         </Text>
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
           Sizin İçin{" "}
-          <Text className="text-[#f39849]">{recipes.length} Tarif</Text> Bulduk
+          <Text className="text-[#f39849]">{recipes?.length} Tarif</Text> Bulduk
         </Text>
       </View>
 
@@ -105,20 +110,108 @@ export function RecipeResults({
                 </View>
               </View>
 
+              {/* Matched Ingredients */}
               {item.matchedIngredients?.length > 0 && (
-                <View className="mb-4">
+                <View className="mb-3">
                   <Text className="text-zinc-500 text-xs font-bold mb-1.5">
-                    Malzemeler
+                    Eşleşen Malzemeler
                   </Text>
-                  <Text className="text-zinc-700 dark:text-zinc-300 text-sm">
-                    {item.matchedIngredients.join(", ")}
-                  </Text>
+                  <View className="flex-row flex-wrap gap-2">
+                    {item.matchedIngredients.map(
+                      (ingredient: string, idx: number) => (
+                        <View
+                          key={idx}
+                          className="bg-green-100 dark:bg-green-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
+                        >
+                          <MaterialIcons
+                            name="check-circle"
+                            size={12}
+                            color="#22c55e"
+                          />
+                          <Text className="text-green-700 dark:text-green-400 text-xs font-semibold ml-1">
+                            {ingredient}
+                          </Text>
+                        </View>
+                      ),
+                    )}
+                  </View>
                 </View>
               )}
 
-              <Text className="text-zinc-500 text-sm mb-4">
+              {/* Missing Ingredients */}
+              {item.missingIngredients?.length > 0 && (
+                <View className="mb-3">
+                  <Text className="text-zinc-500 text-xs font-bold mb-1.5">
+                    Eksik Malzemeler
+                  </Text>
+                  <View className="flex-row flex-wrap gap-2">
+                    {item.missingIngredients.map(
+                      (ingredient: string, idx: number) => (
+                        <View
+                          key={idx}
+                          className="bg-amber-100 dark:bg-amber-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
+                        >
+                          <MaterialIcons
+                            name="warning"
+                            size={12}
+                            color="#f59e0b"
+                          />
+                          <Text className="text-amber-700 dark:text-amber-400 text-xs font-semibold ml-1">
+                            {ingredient}
+                          </Text>
+                        </View>
+                      ),
+                    )}
+                  </View>
+                </View>
+              )}
+
+              <Text className="text-zinc-500 text-sm mb-3">
                 {item.description}
               </Text>
+
+              {/* Nutrition Summary */}
+              {item.nutritionSummary && (
+                <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
+                  <Text className="text-zinc-500 text-xs font-bold mb-2">
+                    Besin Değerleri
+                  </Text>
+                  <View className="flex-row justify-between">
+                    <View className="items-center flex-1">
+                      <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                        {item.nutritionSummary.calories}
+                      </Text>
+                      <Text className="text-zinc-500 text-[10px] font-semibold">
+                        Kalori
+                      </Text>
+                    </View>
+                    <View className="items-center flex-1">
+                      <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                        {item.nutritionSummary.protein}g
+                      </Text>
+                      <Text className="text-zinc-500 text-[10px] font-semibold">
+                        Protein
+                      </Text>
+                    </View>
+                    <View className="items-center flex-1">
+                      <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                        {item.nutritionSummary.carbs}g
+                      </Text>
+                      <Text className="text-zinc-500 text-[10px] font-semibold">
+                        Karbonhidrat
+                      </Text>
+                    </View>
+                    <View className="items-center flex-1">
+                      <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                        {item.nutritionSummary.fat}g
+                      </Text>
+                      <Text className="text-zinc-500 text-[10px] font-semibold">
+                        Yağ
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
 
               {/* Action Button */}
               <TouchableOpacity

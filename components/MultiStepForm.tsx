@@ -1,3 +1,4 @@
+import { ScanFormData } from "@/app/screens/types/ai-scan-form.types";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -9,10 +10,9 @@ import {
   setTotalSteps,
 } from "@/store/slices/multiStepFormSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Control, FieldErrors, useForm } from "react-hook-form";
+import { Control, FieldErrors, useFormContext } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -50,15 +50,12 @@ type MultiStepFormProps = {
 
 export function MultiStepForm({
   steps,
-  initialData = {},
   onFinish,
   headerTitle = "Survey",
   backButtonBehavior = "pop",
-  validationSchema,
 }: MultiStepFormProps) {
   const dispatch = useAppDispatch();
   const stepIndex = useAppSelector((state) => state.multiStepForm.currentStep);
-  const totalSteps = useAppSelector((state) => state.multiStepForm.totalSteps);
   const submittedSteps = useAppSelector(
     (state) => state.multiStepForm.submittedSteps,
   );
@@ -68,6 +65,16 @@ export function MultiStepForm({
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
 
+  const form = useFormContext<ScanFormData>();
+  const {
+    handleSubmit,
+    trigger,
+    watch,
+    setValue: baseSetValue,
+    formState: { errors },
+    control,
+  } = form;
+
   // Initialize total steps and cleanup on unmount
   useEffect(() => {
     dispatch(setTotalSteps(steps.length));
@@ -76,20 +83,6 @@ export function MultiStepForm({
       dispatch(clearMultistepFormState());
     };
   }, [dispatch, steps.length]);
-
-  const {
-    control,
-    handleSubmit,
-    setValue: baseSetValue,
-    watch,
-    trigger,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-    defaultValues: initialData,
-    mode: "onChange",
-    reValidateMode: "onChange",
-  });
 
   const setValueWrapper = useCallback(
     (key: string, value: unknown) => {

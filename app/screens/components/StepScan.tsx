@@ -7,9 +7,9 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 
 interface StepScanProps {
-  imageUri: string;
   onNext: () => void;
   onNewCapture?: () => void;
   onPickFromGallery?: () => void;
@@ -17,7 +17,6 @@ interface StepScanProps {
 }
 
 export function StepScan({
-  imageUri,
   onNext,
   onNewCapture,
   onPickFromGallery,
@@ -26,6 +25,7 @@ export function StepScan({
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
+  const { scannedImage } = useSelector((state: any) => state.recipe);
   return (
     <Animated.View
       entering={entering}
@@ -34,8 +34,8 @@ export function StepScan({
     >
       <View className="flex-1 bg-zinc-100 dark:bg-zinc-800 rounded-[32px] overflow-hidden border border-zinc-200 dark:border-zinc-700 relative mb-6">
         <Image
-          source={{ uri: imageUri }}
-          className="w-full h-full object-cover"
+          source={{ uri: scannedImage }}
+          className="w-full h-full object-contain"
         />
         <View className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-5">
           <Text className="text-white font-bold text-center text-lg">
@@ -68,6 +68,7 @@ export function StepScan({
 
         <TouchableOpacity
           onPress={onNext}
+          disabled={!scannedImage}
           activeOpacity={0.9}
           className="bg-[#f39849] w-full py-4 rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
         >
