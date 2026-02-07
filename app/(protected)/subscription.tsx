@@ -13,6 +13,7 @@ export default function SubscriptionScreen() {
       showBackButton
       title="Pro'ya Yükselt"
       withTabNavigation={false}
+      showTopNavBar={false}
     >
       <ScrollView
         className="flex-1 bg-zinc-50 dark:bg-zinc-950"

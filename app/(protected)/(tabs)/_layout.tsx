@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
 import React from "react";
@@ -8,6 +9,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
+import { CopilotStep, walkthroughable } from "react-native-copilot";
+
+const CopilotView = walkthroughable(View);
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -77,43 +81,69 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 
             if (route.name === "scan") {
               return (
-                <View key={route.key} style={styles.scanButtonContainer}>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={onPress}
-                    onLongPress={onLongPress}
-                    style={scanButtonTouchableStyle}
+                <CopilotStep
+                  text="Kamera ile elindeki malzemeleri tarayarak anında tarif bulabilirsin."
+                  order={2}
+                  name="tarat"
+                  key={route.name}
+                >
+                  <CopilotView
+                    key={route.key}
+                    style={styles.scanButtonContainer}
                   >
-                    <LinearGradient
-                      colors={["#FFB76B", "#F48D4D"]}
-                      style={scanButtonGradientStyle}
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={onPress}
+                      onLongPress={onLongPress}
+                      style={scanButtonTouchableStyle}
                     >
-                      <MaterialIcons
-                        name="center-focus-strong"
-                        size={32}
-                        color="white"
-                      />
-                    </LinearGradient>
-                  </TouchableOpacity>
-                  <Text style={[styles.scanLabel, { color: theme.tint }]}>
-                    Tarat
-                  </Text>
-                </View>
+                      <LinearGradient
+                        colors={["#FFB76B", "#F48D4D"]}
+                        style={scanButtonGradientStyle}
+                      >
+                        <MaterialIcons
+                          name="center-focus-strong"
+                          size={32}
+                          color="white"
+                        />
+                      </LinearGradient>
+                    </TouchableOpacity>
+                    <Text style={[styles.scanLabel, { color: theme.tint }]}>
+                      Tarat
+                    </Text>
+                  </CopilotView>
+                </CopilotStep>
               );
             }
 
-            const getIcon = (name: string, focused: boolean) => {
+            const getIcon = (name: string) => {
               switch (name) {
                 case "index":
-                  return "home";
+                  return (
+                    <MaterialIcons name="home" size={24} color={iconColor} />
+                  );
                 case "recipes":
-                  return "menu-book";
+                  return <AntDesign name="robot" size={24} color={iconColor} />;
                 case "favorites":
-                  return "favorite";
+                  return (
+                    <MaterialIcons
+                      name="favorite"
+                      size={24}
+                      color={iconColor}
+                    />
+                  );
                 case "explore":
-                  return "explore";
+                  return (
+                    <MaterialIcons name="explore" size={24} color={iconColor} />
+                  );
                 default:
-                  return "help-outline";
+                  return (
+                    <MaterialIcons
+                      name="help-outline"
+                      size={24}
+                      color={iconColor}
+                    />
+                  );
               }
             };
 
@@ -122,7 +152,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 case "index":
                   return "Ana Sayfa";
                 case "recipes":
-                  return "Tariflerim";
+                  return "AI Tariflerim";
                 case "favorites":
                   return "Favoriler";
                 case "explore":
@@ -135,6 +165,42 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             const iconColor = isFocused ? theme.tint : theme.tabIconDefault;
             const labelColor = isFocused ? theme.tint : theme.icon;
 
+            const getStepProps = (name: string) => {
+              switch (name) {
+                case "explore":
+                  return {
+                    order: 3,
+                    name: "kesfet",
+                    text: "Sana özel önerileri ve trend tarifleri buradan keşfet.",
+                  };
+                case "favorites":
+                  return {
+                    order: 4,
+                    name: "favoriler",
+                    text: "Beğendiğin tariflere buradan kolayca ulaş.",
+                  };
+                case "recipes":
+                  return {
+                    order: 5,
+                    name: "tariflerim",
+                    text: "AI ile oluşturduğun tüm tariflerini burada saklıyoruz.",
+                  };
+                default:
+                  return null;
+              }
+            };
+
+            const stepProps = getStepProps(route.name);
+
+            const tabItemContent = (
+              <CopilotView style={styles.tabItem}>
+                {getIcon(route.name)}
+                <Text style={[styles.tabLabel, { color: labelColor }]}>
+                  {getLabel(route.name)}
+                </Text>
+              </CopilotView>
+            );
+
             return (
               <TouchableOpacity
                 key={route.key}
@@ -144,16 +210,20 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 testID={options.tabBarTestID}
                 onPress={onPress}
                 onLongPress={onLongPress}
-                style={styles.tabItem}
+                style={{ flex: 1 }}
               >
-                <MaterialIcons
-                  name={getIcon(route.name, isFocused) as any}
-                  size={24}
-                  color={iconColor}
-                />
-                <Text style={[styles.tabLabel, { color: labelColor }]}>
-                  {getLabel(route.name)}
-                </Text>
+                {stepProps ? (
+                  <CopilotStep
+                    key={route.name}
+                    order={stepProps.order}
+                    name={stepProps.name}
+                    text={stepProps.text}
+                  >
+                    {tabItemContent}
+                  </CopilotStep>
+                ) : (
+                  tabItemContent
+                )}
               </TouchableOpacity>
             );
           })}

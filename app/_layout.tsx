@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
+import { CopilotProvider } from "react-native-copilot";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useDispatch } from "react-redux";
+import { TourTooltip } from "../components/TourTooltip";
 import "../global.css";
 
 import { ThemeSync } from "@/components/ThemeSync";
@@ -60,7 +62,27 @@ export default function RootLayout() {
         className={`bg-background  ${Platform.OS === "ios" ? "pb-0 " : ""}`}
         style={{ flex: 1 }}
       >
-        <RootLayoutNavigator />
+        <CopilotProvider
+          tooltipComponent={TourTooltip}
+          tooltipStyle={{
+            backgroundColor: "transparent",
+            boxShadow: "none",
+            margin: 0,
+            padding: 0,
+            borderRadius: 0,
+          }}
+          stepNumberComponent={() => null}
+          overlay="view"
+          animated={true}
+          labels={{
+            finish: "Tamam",
+            next: "Sıradaki",
+            previous: "Geri",
+            skip: "Atla",
+          }}
+        >
+          <RootLayoutNavigator />
+        </CopilotProvider>
       </GestureHandlerRootView>
     </Provider>
   );

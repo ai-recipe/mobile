@@ -2,8 +2,10 @@ import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -14,10 +16,14 @@ import {
 import { CreditCard } from "../../../components/CreditCard";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { UpgradeProCard } from "../../../components/UpgradeProCard";
+
+const CopilotView = walkthroughable(View);
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme].background;
   const floatAnim = useSharedValue(0);
+
+  const { start, copilotEvents } = useCopilot();
 
   React.useEffect(() => {
     floatAnim.value = withRepeat(
@@ -28,7 +34,22 @@ export default function HomeScreen() {
       -1,
       true,
     );
-  }, [floatAnim]);
+
+    const checkFirstTime = async () => {
+      const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+      if (false) {
+        setTimeout(() => {
+          start();
+        }, 1000);
+      }
+    };
+
+    checkFirstTime();
+
+    copilotEvents.on("stop", () => {
+      AsyncStorage.setItem("hasSeenTour", "true");
+    });
+  }, [floatAnim, start, copilotEvents]);
 
   const animatedMascotStyle = useAnimatedStyle(() => ({
     transform: [
@@ -90,15 +111,22 @@ export default function HomeScreen() {
         <CreditCard />
         {/* How it Works Section */}
         <View className="px-5 pt-8">
-          <View className="mb-8 px-1">
-            <Text className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3">
-              Nasıl <Text className="text-[#f39849]">Çalışır?</Text>
-            </Text>
-            <Text className="text-zinc-500 dark:text-zinc-400 text-[16px] leading-relaxed font-medium">
-              Yapay zeka ile mutfakta devrim yaratmaya hazır mısınız? Sadece
-              birkaç adımda akşam yemeğiniz hazır.
-            </Text>
-          </View>
+          <CopilotStep
+            order={1}
+            name="hosgeldiniz"
+            text="Tarif AI'ya hoş geldin! Mutfağındaki ürünlerle harikalar yaratmaya hazır mısın? Hadi turumuza başlayalım."
+            key="hosgeldiniz"
+          >
+            <CopilotView className="mb-8 px-1">
+              <Text className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3">
+                Nasıl <Text className="text-[#f39849]">Çalışır?</Text>
+              </Text>
+              <Text className="text-zinc-500 dark:text-zinc-400 text-[16px] leading-relaxed font-medium">
+                Yapay zeka ile mutfakta devrim yaratmaya hazır mısınız? Sadece
+                birkaç adımda akşam yemeğiniz hazır.
+              </Text>
+            </CopilotView>
+          </CopilotStep>
 
           <View className="gap-y-4">
             {/* Step 1 */}

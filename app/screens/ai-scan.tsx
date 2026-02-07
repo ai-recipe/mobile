@@ -4,8 +4,15 @@ import { setImage } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
@@ -13,32 +20,50 @@ export default function AIScanScreen() {
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme].background;
-  const handlePickImage = async (useCamera: boolean) => {
-    const permissionResult = useCamera
-      ? await ImagePicker.requestCameraPermissionsAsync()
-      : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
-      Alert.alert(
-        "İzin Gerekli",
-        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
-      );
-      return;
+  const [isLoadingCamera, setIsLoadingCamera] = useState(false);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
+  const handlePickImage = async (useCamera: boolean) => {
+    if (useCamera) {
+      setIsLoadingCamera(true);
+    } else {
+      setIsLoadingGallery(true);
     }
 
-    const result = useCamera
-      ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
-      : await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ["images"],
-          quality: 0.8,
-          // Use fullScreen to avoid PHPicker/PageSheet issues on iOS
-          presentationStyle:
-            ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
-        });
+    try {
+      const permissionResult = useCamera
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.granted === false) {
+        Alert.alert(
+          "İzin Gerekli",
+          "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+        );
+        return;
+      }
 
-    if (!result.canceled) {
-      dispatch(setImage(result.assets[0].uri));
-      router.push("/screens/ai-scan-form");
+      const result = useCamera
+        ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
+        : await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            quality: 0.8,
+            // Use fullScreen to avoid PHPicker/PageSheet issues on iOS
+            presentationStyle:
+              ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
+          });
+
+      if (!result.canceled) {
+        dispatch(setImage(result.assets[0].uri));
+        router.push("/screens/ai-scan-form");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      if (useCamera) {
+        setIsLoadingCamera(false);
+      } else {
+        setIsLoadingGallery(false);
+      }
     }
   };
 
@@ -72,7 +97,11 @@ export default function AIScanScreen() {
             className="flex-1 bg-zinc-900 dark:bg-orange-500 h-48 rounded-[32px] items-center justify-center"
           >
             <View className="size-16 bg-white/10 rounded-full items-center justify-center mb-3">
-              <MaterialIcons name="photo-camera" size={32} color="white" />
+              {isLoadingCamera ? (
+                <ActivityIndicator size="large" color="white" />
+              ) : (
+                <MaterialIcons name="photo-camera" size={32} color="white" />
+              )}
             </View>
             <Text className="text-white font-bold text-lg">Fotoğraf Çek</Text>
           </TouchableOpacity>
@@ -84,7 +113,11 @@ export default function AIScanScreen() {
             className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-48 rounded-[32px] items-center justify-center"
           >
             <View className="size-16 bg-orange-100 dark:bg-zinc-700 rounded-full items-center justify-center mb-3">
-              <MaterialIcons name="collections" size={32} color="#f39849" />
+              {isLoadingGallery ? (
+                <ActivityIndicator size="large" color="#f39849" />
+              ) : (
+                <MaterialIcons name="collections" size={32} color="#f39849" />
+              )}
             </View>
             <Text className="text-zinc-900 dark:text-white font-bold text-lg">
               Galeriden Seç
