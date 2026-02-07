@@ -66,9 +66,6 @@ export function StepSurveyItem({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          {question.title}
-        </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
           {question.type === "multi_select"
             ? "Birden fazla seçebilirsiniz."

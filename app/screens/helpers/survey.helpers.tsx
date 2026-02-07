@@ -24,6 +24,7 @@ export const createSurveySteps = ({
   return questions.map((question, index) => {
     return {
       id: question.key,
+      title: question.title,
       fields: [question.key],
       shouldHandleNextStep: true,
       render: ({ data, setValue, nextStep }) => (
