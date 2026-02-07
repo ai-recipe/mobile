@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useRef, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   SlideInLeft,
@@ -57,10 +58,17 @@ export function StepPaywall({
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
+  const scrollRef = useRef<ScrollView>(null);
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }, []),
+  );
   return (
     <Animated.View entering={entering} exiting={exiting} className="flex-1">
       <ScrollView
         showsVerticalScrollIndicator={false}
+        ref={scrollRef}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: 40,
@@ -156,6 +164,13 @@ export function StepPaywall({
               ? "Ücretsiz Denemeyi Başlat"
               : "Abone Ol"}
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onFinish}
+          activeOpacity={0.7}
+          className="mt-4 items-center"
+        >
+          <Text className="text-zinc-400 font-medium">Belki Daha Sonra</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>

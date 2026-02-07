@@ -43,21 +43,19 @@ export default function SurveyScreen() {
       answers: value as string[],
     }));
 
-    // Only submit if there are responses (could be skip/empty for RateUs/Paywall)
     if (responses.length > 0) {
       const result = await dispatch(submitSurveyAsync(responses));
       if (submitSurveyAsync.fulfilled.match(result)) {
-        router.replace("/(protected)/(tabs)/");
+        router.replace("/screens/post-survey-experience");
       }
     } else {
-      router.replace("/(protected)/(tabs)/");
+      router.replace("/screens/post-survey-experience");
     }
   };
 
   const steps = useMemo(
-    () =>
-      createSurveySteps({ questions: surveyQuestions, onFinish: handleFinish }),
-    [surveyQuestions, handleFinish],
+    () => createSurveySteps({ questions: surveyQuestions }),
+    [surveyQuestions],
   );
 
   if (isSurveyQuestionsLoading && !isInitialized) {

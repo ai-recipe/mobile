@@ -10,7 +10,7 @@ import {
 } from "@/store/slices/multiStepFormSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Control, FieldErrors, useFormContext } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -28,6 +28,7 @@ export type MultiStepFormStep = {
   title?: string;
   subtitle?: string;
   shouldHandleNextStep?: boolean;
+  dontShowBackButton?: boolean;
   fields: string[]; // Fields that belong to this step
   render: (ctx: {
     data: any;
@@ -50,7 +51,7 @@ type MultiStepFormProps = {
 export function MultiStepForm<T extends Record<string, any>>({
   steps,
   onFinish,
-  headerTitle = "Survey",
+  headerTitle,
   backButtonBehavior = "pop",
   validationSchema,
 }: MultiStepFormProps & { validationSchema?: yup.AnyObjectSchema }) {
@@ -129,6 +130,10 @@ export function MultiStepForm<T extends Record<string, any>>({
     dispatch(prevStepAction());
   }, [isFirst, backButtonBehavior, dispatch]);
 
+  const scrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [stepIndex]);
   if (!currentStep) return null;
 
   return (
@@ -145,17 +150,19 @@ export function MultiStepForm<T extends Record<string, any>>({
             borderBottomColor: theme.border,
           }}
         >
-          <TouchableOpacity
-            onPress={handleBack}
-            className="size-12 items-center justify-center"
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          >
-            <MaterialIcons
-              name={currentStep.id === "paywall" ? "close" : "arrow-back-ios"}
-              size={currentStep.id === "paywall" ? 24 : 20}
-              color={theme.text}
-            />
-          </TouchableOpacity>
+          {!currentStep.dontShowBackButton && (
+            <TouchableOpacity
+              onPress={handleBack}
+              className="size-12 items-center justify-center"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
+              <MaterialIcons
+                name={"arrow-back-ios"}
+                size={20}
+                color={theme.text}
+              />
+            </TouchableOpacity>
+          )}
           <Text
             className="flex-1 text-center text-lg font-bold pr-12"
             style={{ color: theme.text }}
@@ -207,6 +214,7 @@ export function MultiStepForm<T extends Record<string, any>>({
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          ref={scrollRef}
         >
           <Text
             className="text-[32px] font-bold leading-tight pt-2 pb-1"

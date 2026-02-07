@@ -1,6 +1,5 @@
 import { useAppSelector } from "@/store/hooks";
 import { Redirect, Stack } from "expo-router";
-import { useDispatch } from "react-redux";
 
 export default function PublicLayout() {
   const { isOnboarded } = useAppSelector((state) => state.auth);

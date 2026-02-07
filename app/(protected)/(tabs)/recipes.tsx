@@ -37,16 +37,6 @@ const RecipesScreen = () => {
     dispatch(fetchRecipes({ limit: 20, page: 1 }));
   }, [dispatch]);
 
-  const handleSearch = () => {
-    dispatch(
-      fetchRecipes({
-        limit: 20,
-        page: 1,
-        ...(searchQuery && { title: searchQuery }),
-      }),
-    );
-  };
-
   const handleLoadMore = () => {
     if (!isLoadingMore && hasMore) {
       dispatch(
@@ -99,26 +89,15 @@ const RecipesScreen = () => {
         </Text>
 
         {/* Search Bar */}
-        <View className="flex-row items-center gap-2 mb-6">
-          <View className="flex-1 flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3">
-            <MaterialIcons name="search" size={20} color="#a1a1aa" />
-            <TextInput
-              placeholder="Tarif ara..."
-              className="ml-2 flex-1 text-zinc-900 dark:text-white"
-              placeholderTextColor="#a1a1aa"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              onSubmitEditing={handleSearch}
-              returnKeyType="search"
-            />
-          </View>
-          <TouchableOpacity
-            onPress={handleSearch}
-            className="bg-[#f39849] rounded-2xl px-4 py-3 h-[40px] items-center justify-center"
-            activeOpacity={0.8}
-          >
-            <MaterialIcons name="search" size={24} color="white" />
-          </TouchableOpacity>
+        <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3 mb-6">
+          <MaterialIcons name="search" size={20} color="#a1a1aa" />
+          <TextInput
+            placeholder="Tarif ara..."
+            className="ml-2 flex-1 text-zinc-900 dark:text-white"
+            placeholderTextColor="#a1a1aa"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
 
         <FlatList

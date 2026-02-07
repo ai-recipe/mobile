@@ -1,6 +1,13 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   FadeInDown,
   SlideInLeft,
@@ -41,6 +48,19 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
+  const onReview = () => {
+    if (Platform.OS === "android") {
+      // open play store
+      Linking.openURL(
+        "https://play.google.com/store/apps/details?id=com.chefai",
+      );
+    } else {
+      // open app store
+      Linking.openURL(
+        "https://play.google.com/store/apps/details?id=com.chefai",
+      );
+    }
+  };
   return (
     <Animated.View
       entering={entering}
@@ -120,7 +140,7 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
 
       <View className="pb-8 pt-2">
         <TouchableOpacity
-          onPress={onNext}
+          onPress={onReview}
           activeOpacity={0.9}
           className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
         >

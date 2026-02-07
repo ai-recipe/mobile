@@ -31,6 +31,7 @@ interface RecipeDetailModalProps {
     ingredients?: string[];
     steps?: string[];
     dietaryTags?: string[];
+    isFavorite?: boolean;
     nutritionSummary?: {
       calories: number;
       protein: number;
@@ -270,40 +271,20 @@ export function RecipeDetailModal({
                       <Text className="text-zinc-500 text-xs font-bold mb-2">
                         Elinizde Var
                       </Text>
-                      {recipe.matchedIngredients.map((item, index) => (
-                        <TouchableOpacity
-                          key={`matched-${index}`}
-                          activeOpacity={0.7}
-                          onPress={() => toggleIngredient(index)}
-                          className="flex-row items-center gap-3 p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
-                        >
+                      <View className="flex flex-row flex-wrap gap-2">
+                        {recipe.matchedIngredients.map((item, index) => (
                           <View
-                            className={`w-5 h-5 rounded border ${
-                              checkedIngredients[index]
-                                ? "bg-green-600 border-green-600"
-                                : "border-green-400 dark:border-green-600"
-                            } items-center justify-center`}
+                            key={`matched-${index}`}
+                            className="p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
                           >
-                            {checkedIngredients[index] && (
-                              <MaterialIcons
-                                name="check"
-                                size={12}
-                                color="white"
-                              />
-                            )}
+                            <Text
+                              className={`flex-1 text-zinc-700 dark:text-zinc-300 w-fit`}
+                            >
+                              {item}
+                            </Text>
                           </View>
-
-                          <Text
-                            className={`flex-1 text-zinc-700 dark:text-zinc-300 ${
-                              checkedIngredients[index]
-                                ? "line-through opacity-50"
-                                : ""
-                            }`}
-                          >
-                            {item}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                        ))}
+                      </View>
                     </View>
                   )}
 
@@ -313,44 +294,23 @@ export function RecipeDetailModal({
                       <Text className="text-zinc-500 text-xs font-bold mb-2">
                         Almanız Gerekenler
                       </Text>
-                      {recipe.missingIngredients?.map((item, index) => {
-                        const adjustedIndex =
-                          index + recipe.matchedIngredients?.length;
-                        return (
-                          <TouchableOpacity
-                            key={`missing-${index}`}
-                            activeOpacity={0.7}
-                            onPress={() => toggleIngredient(adjustedIndex)}
-                            className="flex-row items-center gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-2"
-                          >
-                            <View
-                              className={`w-5 h-5 rounded border ${
-                                checkedIngredients[adjustedIndex]
-                                  ? "bg-amber-600 border-amber-600"
-                                  : "border-amber-400 dark:border-amber-600"
-                              } items-center justify-center`}
+                      <View className="flex flex-row flex-wrap gap-2">
+                        {recipe.missingIngredients?.map((item, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={`missing-${index}`}
+                              activeOpacity={0.7}
+                              className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-2"
                             >
-                              {checkedIngredients[adjustedIndex] && (
-                                <MaterialIcons
-                                  name="check"
-                                  size={12}
-                                  color="white"
-                                />
-                              )}
-                            </View>
-
-                            <Text
-                              className={`flex-1 text-zinc-700 dark:text-zinc-300 ${
-                                checkedIngredients[adjustedIndex]
-                                  ? "line-through opacity-50"
-                                  : ""
-                              }`}
-                            >
-                              {item}
-                            </Text>
-                          </TouchableOpacity>
-                        );
-                      })}
+                              <Text
+                                className={`flex-1 text-zinc-700 dark:text-zinc-300`}
+                              >
+                                {item}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
                     </View>
                   )}
                 </View>

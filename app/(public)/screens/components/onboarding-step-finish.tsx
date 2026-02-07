@@ -31,11 +31,7 @@ export const OnboardingStepFinish = ({
     }
 
     AsyncStorage.setItem("isOnboarded", "true");
-    if (false) {
-      // todo
-    } else {
-      router.replace("/screens/survey");
-    }
+    router.replace("/screens/survey");
     dispatch(setIsOnboarded(true));
   };
   return (
