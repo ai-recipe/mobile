@@ -1,6 +1,8 @@
 import {
+  addFavorite,
   discoverRecipes,
   RecipeFromAPI,
+  removeFavorite,
   type RecipeSuggestion,
 } from "@/api/recipe";
 import { scanImage as scanImageAPI } from "@/api/scanImage";
@@ -40,7 +42,6 @@ const initialState: RecipeState = {
   scannedImage: null,
   scanError: null,
   analyseError: null,
-  image: "",
   scannedIngredients: [],
 };
 
@@ -96,6 +97,27 @@ export const discoverRecipesAsync = createAsyncThunk(
   },
 );
 
+export const toggleFavoriteFromScan = createAsyncThunk(
+  "recipe/toggleFavorite",
+  async (
+    { recipeId, isFavorite }: { recipeId: string; isFavorite: boolean },
+    { rejectWithValue },
+  ) => {
+    try {
+      if (isFavorite) {
+        await removeFavorite(recipeId);
+      } else {
+        await addFavorite(recipeId);
+      }
+      return { recipeId, isFavorite: !isFavorite };
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "İşlem başarısız",
+      );
+    }
+  },
+);
+
 export const recipeSlice = createSlice({
   name: "recipe",
   initialState,
@@ -124,6 +146,16 @@ export const recipeSlice = createSlice({
       state.analyseError = null;
       state.scannedIngredients = [];
       state.scannedImage = null;
+    },
+    updateRecipeFavoriteStatus: (
+      state,
+      action: PayloadAction<{ recipeId: string; isFavorite: boolean }>,
+    ) => {
+      const { recipeId, isFavorite } = action.payload;
+      const recipe = state.recipes.find((r) => r.id === recipeId);
+      if (recipe) {
+        recipe.isFavorite = isFavorite;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -163,6 +195,15 @@ export const recipeSlice = createSlice({
       state.analyseError = action.payload as string;
       state.appStep = AppStep.DietPreference; // Return to last step
     });
+
+    // Toggle Favorite
+    builder.addCase(toggleFavoriteFromScan.fulfilled, (state, action) => {
+      const { recipeId, isFavorite } = action.payload;
+      const recipe = state.recipes.find((r) => r.id === recipeId);
+      if (recipe) {
+        recipe.isFavorite = isFavorite;
+      }
+    });
   },
 });
 
@@ -172,6 +213,7 @@ export const {
   setScannedIngredients,
   resetRecipeState,
   addIngredient,
+  updateRecipeFavoriteStatus,
 } = recipeSlice.actions;
 
 export default recipeSlice.reducer;

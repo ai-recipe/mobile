@@ -1,5 +1,7 @@
 import {
+  addFavorite,
   fetchRecipeList,
+  removeFavorite,
   type FavoriteItem,
   type RecipeListItem,
 } from "@/api/recipe";
@@ -82,6 +84,31 @@ export const loadMoreRecipes = createAsyncThunk(
   },
 );
 
+export const toggleFavorite = createAsyncThunk(
+  "recipeList/toggleFavorite",
+  async (
+    { recipeId, isFavorite }: { recipeId: string; isFavorite: boolean },
+    { rejectWithValue },
+  ) => {
+    try {
+      if (isFavorite) {
+        console.log("Removing favorite");
+        await removeFavorite(recipeId);
+      } else {
+        console.log("Adding favorite");
+        const response = await addFavorite(recipeId);
+        console.log(response);
+      }
+      return { recipeId, isFavorite: !isFavorite };
+    } catch (error: any) {
+      console.log(error?.response?.data?.message);
+      return rejectWithValue(
+        error instanceof Error ? error.message : "İşlem başarısız",
+      );
+    }
+  },
+);
+
 export const recipeListSlice = createSlice({
   name: "recipeList",
   initialState,
@@ -92,6 +119,16 @@ export const recipeListSlice = createSlice({
       state.currentPage = 1;
       state.totalRecipes = 0;
       state.hasMore = true;
+    },
+    updateRecipeFavoriteStatus: (
+      state,
+      action: { payload: { recipeId: string; isFavorite: boolean } },
+    ) => {
+      const { recipeId, isFavorite } = action.payload;
+      const recipe = state.recipes.find((r) => r.id === recipeId);
+      if (recipe) {
+        recipe.isFavorite = isFavorite;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -131,8 +168,18 @@ export const recipeListSlice = createSlice({
       state.isLoadingMore = false;
       state.recipeError = action.payload as string;
     });
+
+    // Toggle Favorite
+    builder.addCase(toggleFavorite.fulfilled, (state, action) => {
+      const { recipeId, isFavorite } = action.payload;
+      const recipe = state.recipes.find((r) => r.id === recipeId);
+      if (recipe) {
+        recipe.isFavorite = isFavorite;
+      }
+    });
   },
 });
 
-export const { clearRecipes } = recipeListSlice.actions;
+export const { clearRecipes, updateRecipeFavoriteStatus } =
+  recipeListSlice.actions;
 export default recipeListSlice.reducer;

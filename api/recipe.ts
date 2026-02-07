@@ -23,6 +23,7 @@ export interface RecipeFromAPI {
     carbs: number;
     fat: number;
   };
+  isFavorite?: boolean;
 }
 
 export interface RecipeListItem {
@@ -33,6 +34,7 @@ export interface RecipeListItem {
   difficulty: string;
   totalTimeMinutes: number;
   imageUrl: string | null;
+  isFavorite?: boolean;
 }
 
 export interface RecipeListResponse {
@@ -155,4 +157,16 @@ export async function analyseImage({
 
   const data = (await response.json()) as AnalyseImageResponse;
   return data;
+}
+
+export async function addFavorite(recipeId: string): Promise<void> {
+  console.log(recipeId);
+  const response = await api.post("/recipes/favorites", { recipeId });
+  console.log(response.data);
+  return response.data;
+}
+
+export async function removeFavorite(recipeId: string): Promise<void> {
+  const response = await api.delete(`/recipes/favorites/${recipeId}`);
+  return response.data;
 }

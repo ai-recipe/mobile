@@ -108,6 +108,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   return "home";
                 case "recipes":
                   return "menu-book";
+                case "favorites":
+                  return "favorite";
+                case "explore":
+                  return "explore";
                 default:
                   return "help-outline";
               }
@@ -118,8 +122,11 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 case "index":
                   return "Ana Sayfa";
                 case "recipes":
-                  return "Tarifler";
-
+                  return "Tariflerim";
+                case "favorites":
+                  return "Favoriler";
+                case "explore":
+                  return "Keşfet";
                 default:
                   return name;
               }
@@ -173,12 +180,24 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Keşfet",
+        }}
+      />
+
+      <Tabs.Screen
         name="scan"
         options={{
           title: "Tarat",
         }}
       />
-
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: "Favoriler",
+        }}
+      />
       <Tabs.Screen
         name="recipes"
         options={{

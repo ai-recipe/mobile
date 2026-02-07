@@ -145,11 +145,6 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           key={idx}
                           className="bg-green-100 dark:bg-green-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
                         >
-                          <MaterialIcons
-                            name="check-circle"
-                            size={12}
-                            color="#22c55e"
-                          />
                           <Text className="text-green-700 dark:text-green-400 text-xs font-semibold ml-1">
                             {ingredient}
                           </Text>
@@ -173,11 +168,6 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           key={idx}
                           className="bg-amber-100 dark:bg-amber-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
                         >
-                          <MaterialIcons
-                            name="warning"
-                            size={12}
-                            color="#f59e0b"
-                          />
                           <Text className="text-amber-700 dark:text-amber-400 text-xs font-semibold ml-1">
                             {ingredient}
                           </Text>
@@ -280,6 +270,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
           onClose={handleCloseModal}
           recipe={selectedRecipe}
           baseImageUri={baseImageUri}
+          dontShowFavoriteButton
         />
       )}
     </Animated.View>

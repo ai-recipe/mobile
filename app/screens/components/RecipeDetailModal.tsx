@@ -1,3 +1,6 @@
+import { useAppDispatch } from "@/store/hooks";
+import { toggleFavorite } from "@/store/slices/recipeListSlice";
+import { toggleFavoriteFromScan } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -47,6 +50,7 @@ export function RecipeDetailModal({
   onClose,
   recipe,
   baseImageUri,
+  dontShowFavoriteButton,
 }: RecipeDetailModalProps) {
   const [activeTab, setActiveTab] = useState<"ingredients" | "preparation">(
     "ingredients",
@@ -54,12 +58,30 @@ export function RecipeDetailModal({
   const [checkedIngredients, setCheckedIngredients] = useState<
     Record<number, boolean>
   >({});
+  const dispatch = useAppDispatch();
+  const [isFavorite, setIsFavorite] = useState(recipe.isFavorite);
 
-  const toggleIngredient = (index: number) => {
-    setCheckedIngredients((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+  const handleToggleFavorite = async () => {
+    const newStatus = !isFavorite;
+    setIsFavorite(newStatus);
+    try {
+      // Dispatch to both slices to ensure consistency
+      await Promise.all([
+        dispatch(
+          toggleFavorite({ recipeId: recipe.id, isFavorite: !!isFavorite }),
+        ),
+        dispatch(
+          toggleFavoriteFromScan({
+            recipeId: recipe.id,
+            isFavorite: !!isFavorite,
+          }),
+        ),
+      ]);
+    } catch (error) {
+      // Rollback if failed
+      setIsFavorite(!newStatus);
+      console.error("Favoriting failed:", error);
+    }
   };
 
   return (
@@ -90,13 +112,18 @@ export function RecipeDetailModal({
               >
                 <MaterialIcons name="close" size={24} color="white" />
               </TouchableOpacity>
-              <TouchableOpacity className="p-3 rounded-full bg-black/30 backdrop-blur-md">
-                <MaterialIcons
-                  name="favorite-border"
-                  size={24}
-                  color="#f39849"
-                />
-              </TouchableOpacity>
+              {!dontShowFavoriteButton && (
+                <TouchableOpacity
+                  onPress={handleToggleFavorite}
+                  className="p-3 rounded-full bg-black/30 backdrop-blur-md"
+                >
+                  <MaterialIcons
+                    name={isFavorite ? "favorite" : "favorite-border"}
+                    size={24}
+                    color={isFavorite ? "#f43f5e" : "#f39849"}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View className="absolute bottom-12 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
               <MaterialIcons name="schedule" size={16} color="#f39849" />
@@ -260,12 +287,32 @@ export function RecipeDetailModal({
                 </Text>
               </TouchableOpacity>
             </View>
-
             {/* Tab Content */}
             <View>
               {activeTab === "ingredients" ? (
                 <View className="space-y-3">
                   {/* Matched Ingredients */}
+                  {!!recipe.ingredients?.length && (
+                    <View className="mb-4">
+                      <Text className="text-zinc-500 text-xs font-bold mb-2">
+                        Malzemeler
+                      </Text>
+                      <View className="flex flex-row flex-wrap gap-2">
+                        {recipe.ingredients.map((item, index) => (
+                          <View
+                            key={`matched-${index}`}
+                            className="p-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
+                          >
+                            <Text
+                              className={`text-zinc-700 dark:text-zinc-300 w-full text-sm`}
+                            >
+                              {item}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
                   {!!recipe.matchedIngredients?.length && (
                     <View className="mb-4">
                       <Text className="text-zinc-500 text-xs font-bold mb-2">
@@ -275,10 +322,10 @@ export function RecipeDetailModal({
                         {recipe.matchedIngredients.map((item, index) => (
                           <View
                             key={`matched-${index}`}
-                            className="p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
+                            className="p-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
                           >
                             <Text
-                              className={`flex-1 text-zinc-700 dark:text-zinc-300 w-fit`}
+                              className={`text-zinc-700 dark:text-zinc-300 w-fi text-sm`}
                             >
                               {item}
                             </Text>
@@ -300,10 +347,10 @@ export function RecipeDetailModal({
                             <TouchableOpacity
                               key={`missing-${index}`}
                               activeOpacity={0.7}
-                              className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-2"
+                              className="p-2 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-2"
                             >
                               <Text
-                                className={`flex-1 text-zinc-700 dark:text-zinc-300`}
+                                className={`text-zinc-700 dark:text-zinc-300 text-sm`}
                               >
                                 {item}
                               </Text>
