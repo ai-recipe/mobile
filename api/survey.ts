@@ -8,6 +8,10 @@ class SurveyService {
   async getUserPreferencesAPI() {
     return api.get("/survey/preferences");
   }
+
+  async getSurveyQuestionsAPI() {
+    return api.get("/survey/questions");
+  }
 }
 
 export default new SurveyService();

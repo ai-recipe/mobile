@@ -31,8 +31,8 @@ export const OnboardingStepFinish = ({
     }
 
     AsyncStorage.setItem("isOnboarded", "true");
-    if (preferences) {
-      router.replace("/(protected)/(tabs)/");
+    if (false) {
+      // todo
     } else {
       router.replace("/screens/survey");
     }

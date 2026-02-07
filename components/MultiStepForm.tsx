@@ -1,4 +1,3 @@
-import { ScanFormData } from "@/app/screens/types/ai-scan-form.types";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -45,15 +44,16 @@ type MultiStepFormProps = {
   onFinish: (data: Record<string, any>) => void;
   headerTitle?: string;
   backButtonBehavior?: "pop" | "prevStep";
-  validationSchema: yup.AnyObjectSchema;
+  validationSchema?: yup.AnyObjectSchema;
 };
 
-export function MultiStepForm({
+export function MultiStepForm<T extends Record<string, any>>({
   steps,
   onFinish,
   headerTitle = "Survey",
   backButtonBehavior = "pop",
-}: MultiStepFormProps) {
+  validationSchema,
+}: MultiStepFormProps & { validationSchema?: yup.AnyObjectSchema }) {
   const dispatch = useAppDispatch();
   const stepIndex = useAppSelector((state) => state.multiStepForm.currentStep);
   const submittedSteps = useAppSelector(
@@ -65,7 +65,7 @@ export function MultiStepForm({
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
 
-  const form = useFormContext<ScanFormData>();
+  const form = useFormContext<T>();
   const {
     handleSubmit,
     trigger,

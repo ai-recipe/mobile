@@ -27,9 +27,24 @@ interface UserPreferences {
   completedAt: any;
 }
 
+interface SurveyOption {
+  icon: string;
+  label: string;
+  value: string;
+}
+
+interface SurveyQuestion {
+  key: string;
+  title: string;
+  type: "single_select" | "multi_select";
+  options: SurveyOption[];
+  isRequired: boolean;
+}
+
 interface AuthState {
   user: User | null;
   preferences: UserPreferences | null;
+  surveyQuestions: SurveyQuestion[];
   isAuthenticated: boolean;
   token: string | null;
   creditGrantType: string | null;
@@ -42,12 +57,15 @@ interface AuthState {
   isRegisterLoading: boolean;
   isInitDeviceLoading: boolean;
   isPreferencesLoading: boolean;
+  isSurveyQuestionsLoading: boolean;
+  isSurveySubmitting: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
   preferences: null,
+  surveyQuestions: [],
   isAuthenticated: false,
   token: null,
   creditGrantType: null,
@@ -60,18 +78,54 @@ const initialState: AuthState = {
   isRegisterLoading: false,
   isInitDeviceLoading: false,
   isPreferencesLoading: false,
+  isSurveyQuestionsLoading: false,
+  isSurveySubmitting: false,
   error: null,
 };
 
 export const fetchUserPreferencesAsync = createAsyncThunk(
   "auth/fetchUserPreferences",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
+      if (!response.data?.data || true) {
+        // todo
+        dispatch(fetchSurveyQuestionsAsync());
+      }
       return response.data?.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Tercihler yüklenemedi",
+      );
+    }
+  },
+);
+
+export const fetchSurveyQuestionsAsync = createAsyncThunk(
+  "auth/fetchSurveyQuestions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await SurveyService.getSurveyQuestionsAPI();
+      console.log("response", JSON.stringify(response.data?.data?.questions));
+      return response.data?.data?.questions;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Anket soruları yüklenemedi",
+      );
+    }
+  },
+);
+
+export const submitSurveyAsync = createAsyncThunk(
+  "auth/submitSurvey",
+  async (responses: any, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await SurveyService.submitSurveyAPI({ responses });
+      await dispatch(fetchUserPreferencesAsync());
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Anket gönderilemedi",
       );
     }
   },
@@ -192,6 +246,27 @@ export const authSlice = createSlice({
       })
       .addCase(fetchUserPreferencesAsync.rejected, (state) => {
         state.isPreferencesLoading = false;
+      })
+      // Survey Questions
+      .addCase(fetchSurveyQuestionsAsync.pending, (state) => {
+        state.isSurveyQuestionsLoading = true;
+      })
+      .addCase(fetchSurveyQuestionsAsync.fulfilled, (state, action) => {
+        state.surveyQuestions = action.payload;
+        state.isSurveyQuestionsLoading = false;
+      })
+      .addCase(fetchSurveyQuestionsAsync.rejected, (state) => {
+        state.isSurveyQuestionsLoading = false;
+      })
+      // Submit Survey
+      .addCase(submitSurveyAsync.pending, (state) => {
+        state.isSurveySubmitting = true;
+      })
+      .addCase(submitSurveyAsync.fulfilled, (state) => {
+        state.isSurveySubmitting = false;
+      })
+      .addCase(submitSurveyAsync.rejected, (state) => {
+        state.isSurveySubmitting = false;
       });
   },
 });
