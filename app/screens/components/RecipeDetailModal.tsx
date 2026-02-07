@@ -26,11 +26,12 @@ interface RecipeDetailModalProps {
     difficulty: string;
     servings: number;
     matchPercentage: number;
-    matchedIngredients: string[];
-    missingIngredients: string[];
-    steps: string[];
-    dietaryTags: string[];
-    nutritionSummary: {
+    matchedIngredients?: string[];
+    missingIngredients?: string[];
+    ingredients?: string[];
+    steps?: string[];
+    dietaryTags?: string[];
+    nutritionSummary?: {
       calories: number;
       protein: number;
       carbs: number;
@@ -96,7 +97,7 @@ export function RecipeDetailModal({
                 />
               </TouchableOpacity>
             </View>
-            <View className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+            <View className="absolute bottom-12 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
               <MaterialIcons name="schedule" size={16} color="#f39849" />
               <Text className="text-[#f39849] font-black text-sm ml-1">
                 {recipe.totalTimeMinutes} dk
@@ -112,11 +113,13 @@ export function RecipeDetailModal({
                 <Text className="text-3xl font-bold leading-tight text-zinc-900 dark:text-white max-w-[75%]">
                   {recipe.title}
                 </Text>
-                <View className="bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-xl">
-                  <Text className="text-green-700 dark:text-green-400 text-sm font-bold">
-                    %{recipe.matchPercentage.toFixed(0)} Uyum
-                  </Text>
-                </View>
+                {!!recipe.matchPercentage && (
+                  <View className="bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-xl">
+                    <Text className="text-green-700 dark:text-green-400 text-sm font-bold">
+                      %{recipe.matchPercentage.toFixed(0)} Uyum
+                    </Text>
+                  </View>
+                )}
               </View>
 
               <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-4">
@@ -160,18 +163,15 @@ export function RecipeDetailModal({
             </View>
 
             {/* Dietary Tags */}
-            {recipe.dietaryTags.length > 0 && (
+            {!!recipe.dietaryTags?.length && (
               <View className="mb-6">
-                <Text className="text-zinc-500 text-xs font-bold mb-2">
-                  Diyet Etiketleri
-                </Text>
                 <View className="flex-row flex-wrap gap-2">
-                  {recipe.dietaryTags.map((tag, idx) => (
+                  {recipe.dietaryTags?.map((tag, idx) => (
                     <View
                       key={idx}
-                      className="bg-purple-100 dark:bg-purple-900/30 px-3 py-1.5 rounded-lg"
+                      className="bg-gray-100 dark:bg-gray-900/30 px-3 py-1.5 rounded-lg"
                     >
-                      <Text className="text-purple-700 dark:text-purple-400 text-xs font-semibold">
+                      <Text className="text-gray-700 dark:text-gray-400 text-xs font-semibold">
                         {tag}
                       </Text>
                     </View>
@@ -180,49 +180,40 @@ export function RecipeDetailModal({
               </View>
             )}
 
-            {/* Nutrition Summary */}
-            <View className="mb-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl p-4">
-              <Text className="text-zinc-900 dark:text-white text-base font-bold mb-3">
-                Besin Değerleri (Porsiyon Başı)
+            <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
+              <Text className="text-zinc-500 text-xs font-bold mb-2">
+                Besin Değerleri
               </Text>
               <View className="flex-row justify-between">
                 <View className="items-center flex-1">
-                  <View className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-500/10 items-center justify-center mb-2">
-                    <Text className="text-[#f39849] text-xl font-bold">
-                      {recipe.nutritionSummary.calories}
-                    </Text>
-                  </View>
-                  <Text className="text-zinc-500 text-xs font-semibold">
+                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                    {recipe?.nutritionSummary?.calories}
+                  </Text>
+                  <Text className="text-zinc-500 text-[10px] font-semibold">
                     Kalori
                   </Text>
                 </View>
                 <View className="items-center flex-1">
-                  <View className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-500/10 items-center justify-center mb-2">
-                    <Text className="text-blue-600 dark:text-blue-400 text-xl font-bold">
-                      {recipe.nutritionSummary.protein}g
-                    </Text>
-                  </View>
-                  <Text className="text-zinc-500 text-xs font-semibold">
+                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                    {recipe?.nutritionSummary?.protein}g
+                  </Text>
+                  <Text className="text-zinc-500 text-[10px] font-semibold">
                     Protein
                   </Text>
                 </View>
                 <View className="items-center flex-1">
-                  <View className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-500/10 items-center justify-center mb-2">
-                    <Text className="text-green-600 dark:text-green-400 text-xl font-bold">
-                      {recipe.nutritionSummary.carbs}g
-                    </Text>
-                  </View>
-                  <Text className="text-zinc-500 text-xs font-semibold">
+                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                    {recipe?.nutritionSummary?.carbs}g
+                  </Text>
+                  <Text className="text-zinc-500 text-[10px] font-semibold">
                     Karbonhidrat
                   </Text>
                 </View>
                 <View className="items-center flex-1">
-                  <View className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-500/10 items-center justify-center mb-2">
-                    <Text className="text-amber-600 dark:text-amber-400 text-xl font-bold">
-                      {recipe.nutritionSummary.fat}g
-                    </Text>
-                  </View>
-                  <Text className="text-zinc-500 text-xs font-semibold">
+                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                    {recipe?.nutritionSummary?.fat}g
+                  </Text>
+                  <Text className="text-zinc-500 text-[10px] font-semibold">
                     Yağ
                   </Text>
                 </View>
@@ -274,7 +265,7 @@ export function RecipeDetailModal({
               {activeTab === "ingredients" ? (
                 <View className="space-y-3">
                   {/* Matched Ingredients */}
-                  {recipe.matchedIngredients.length > 0 && (
+                  {!!recipe.matchedIngredients?.length && (
                     <View className="mb-4">
                       <Text className="text-zinc-500 text-xs font-bold mb-2">
                         Elinizde Var
@@ -301,11 +292,7 @@ export function RecipeDetailModal({
                               />
                             )}
                           </View>
-                          <MaterialIcons
-                            name="check-circle"
-                            size={16}
-                            color="#22c55e"
-                          />
+
                           <Text
                             className={`flex-1 text-zinc-700 dark:text-zinc-300 ${
                               checkedIngredients[index]
@@ -321,14 +308,14 @@ export function RecipeDetailModal({
                   )}
 
                   {/* Missing Ingredients */}
-                  {recipe.missingIngredients.length > 0 && (
+                  {!!recipe.missingIngredients?.length && (
                     <View>
                       <Text className="text-zinc-500 text-xs font-bold mb-2">
                         Almanız Gerekenler
                       </Text>
-                      {recipe.missingIngredients.map((item, index) => {
+                      {recipe.missingIngredients?.map((item, index) => {
                         const adjustedIndex =
-                          index + recipe.matchedIngredients.length;
+                          index + recipe.matchedIngredients?.length;
                         return (
                           <TouchableOpacity
                             key={`missing-${index}`}
@@ -351,11 +338,7 @@ export function RecipeDetailModal({
                                 />
                               )}
                             </View>
-                            <MaterialIcons
-                              name="warning"
-                              size={16}
-                              color="#f59e0b"
-                            />
+
                             <Text
                               className={`flex-1 text-zinc-700 dark:text-zinc-300 ${
                                 checkedIngredients[adjustedIndex]
@@ -372,8 +355,8 @@ export function RecipeDetailModal({
                   )}
                 </View>
               ) : (
-                <View className="space-y-6">
-                  {recipe.steps.map((step, index) => (
+                <View className="flex flex-col gap-4">
+                  {recipe?.steps?.map((step, index) => (
                     <View key={index} className="flex-row gap-4">
                       <View className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-500/10 items-center justify-center">
                         <Text className="text-[#f39849] font-bold text-lg">

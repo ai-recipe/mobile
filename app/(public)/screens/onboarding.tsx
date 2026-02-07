@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { OnboardingLanguageSelector } from "./components/onboarding-language-selector";
 import { OnboardingProgressBar } from "./components/onboarding-progress-bar";
 import { OnboardingStepFinish } from "./components/onboarding-step-finish";
-import { OnboardingStepPreferences } from "./components/onboarding-step-preferences";
 import { OnboardingStepWelcome } from "./components/onboarding-step-welcome";
 
 const STEPS = [
@@ -26,14 +25,9 @@ const STEPS = [
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCfIOgyd-AArVUDn1vb4CK8i67wcKT_M3vbkOOK8sLATy9sWjjGWTkVsKUniY-YMzQ5EsUUlioSsVy-A0JpUhqZeDnS-kr6MsPQePrWnEMQaXgpGxQg58LSGOfiWXblMOYUwtYVyaG10MQjHhJLQ4xVfaVh8OP9UPXUo8X6OVBLDa7lbl80-3kOMowAFVzdXK3B-ePh2lHjjPa8YQzOY45LNBsDal19fkfDFvMWo7X_KBWWPJWA49zi7IKR-2vs0iRk7NW7TIcFHs4r",
   },
+
   {
     id: 2,
-    title: "Akıllı Tercihler",
-    description:
-      "Yapay zeka, beslenme alışkanlıklarınıza ve vaktinize göre seçimlerinizi optimize eder.",
-  },
-  {
-    id: 3,
     title: "AI Şefiniz Hazır",
     description:
       "Algoritmalarımız milyonlarca tarif arasından dolabındaki malzemelere en uygun olanı senin için hazırladı.",
@@ -42,42 +36,9 @@ const STEPS = [
   },
 ];
 
-const PREP_TIMES = [
-  {
-    id: "15",
-    label: "15 Dakika",
-    sub: "Hızlı ve pratik tarifler",
-    icon: "clock-outline",
-  },
-  {
-    id: "30",
-    label: "30 Dakika",
-    sub: "Standart akşam yemekleri",
-    icon: "timer-outline",
-  },
-  {
-    id: "60",
-    label: "60+ Dakika",
-    sub: "Gurme deneyimler için",
-    icon: "history",
-  },
-];
-
-const DIETARY = [
-  "Vegan",
-  "Vejetaryen",
-  "Glutensiz",
-  "Keto",
-  "Paleo",
-  "Laktozsuz",
-  "Düşük Karbonhidrat",
-];
-
 export default function OnboardingScreen() {
   const { t, i18n } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedPrepTime] = useState("30");
-  const [selectedDietary] = useState(["Vegan", "Glutensiz"]);
   const dispatch = useAppDispatch();
   const currentLanguage = useAppSelector((state) => state.app.currentLanguage);
 
@@ -139,20 +100,12 @@ export default function OnboardingScreen() {
           welcomeText={t("welcome")}
         />
       )}
+
       {currentStep === 1 && (
-        <OnboardingStepPreferences
-          onNext={nextStep}
-          selectedPrepTime={selectedPrepTime}
-          selectedDietary={selectedDietary}
-          prepTimes={PREP_TIMES}
-          dietaryOptions={DIETARY}
-        />
-      )}
-      {currentStep === 2 && (
         <OnboardingStepFinish
-          image={STEPS[2].image!}
-          title={STEPS[2].title}
-          description={STEPS[2].description}
+          image={STEPS[1].image!}
+          title={STEPS[1].title}
+          description={STEPS[1].description}
         />
       )}
     </SafeAreaView>

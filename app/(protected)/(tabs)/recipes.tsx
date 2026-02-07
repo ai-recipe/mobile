@@ -1,8 +1,11 @@
+import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchRecipes, loadMoreRecipes } from "@/store/slices/recipeListSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Text,
@@ -14,32 +17,80 @@ import {
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
-const STATIC_RECIPES = [
-  {
-    id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-    title: "Mediterranean Salad",
-    description:
-      "Fresh and healthy salad with tomatoes, cucumber, and feta cheese",
-    imageUrl: null,
-    prepTimeMinutes: 10,
-    cookTimeMinutes: 0,
-    totalTimeMinutes: 10,
-    difficulty: "EASY",
-    servings: 4,
-    matchPercentage: 20,
-    ingredients: ["tomato"],
-    steps: ["Chop vegetables", "Mix and serve"],
-    dietaryTags: ["VEGETARIAN", "LOW_CARB", "GLUTEN_FREE"],
-    nutritionSummary: {
-      calories: 180,
-      protein: 8,
-      carbs: 12,
-      fat: 14,
-    },
-  },
-];
-
 const RecipesScreen = () => {
+  const dispatch = useAppDispatch();
+  const {
+    recipes,
+    isLoadingRecipes,
+    isLoadingMore,
+    hasMore,
+    currentPage,
+    limit,
+  } = useAppSelector((state) => state.recipeList);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // Initial fetch
+  useEffect(() => {
+    dispatch(fetchRecipes({ limit: 20, page: 1 }));
+  }, [dispatch]);
+
+  const handleSearch = () => {
+    dispatch(
+      fetchRecipes({
+        limit: 20,
+        page: 1,
+        ...(searchQuery && { title: searchQuery }),
+      }),
+    );
+  };
+
+  const handleLoadMore = () => {
+    if (!isLoadingMore && hasMore) {
+      dispatch(
+        loadMoreRecipes({
+          limit,
+          page: currentPage + 1,
+          ...(searchQuery && { title: searchQuery }),
+        }),
+      );
+    }
+  };
+
+  const handleOpenRecipe = (recipe: any) => {
+    setSelectedRecipe(recipe);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setTimeout(() => setSelectedRecipe(null), 300);
+  };
+
+  const renderFooter = () => {
+    if (!isLoadingMore) return null;
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="large" color="#f39849" />
+      </View>
+    );
+  };
+
+  if (isLoadingRecipes && recipes.length === 0) {
+    return (
+      <ScreenWrapper>
+        <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
+          <ActivityIndicator size="large" color="#f39849" />
+          <Text className="text-zinc-500 mt-4 font-semibold">
+            Tarifler yükleniyor...
+          </Text>
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
   return (
     <ScreenWrapper>
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
@@ -48,23 +99,40 @@ const RecipesScreen = () => {
         </Text>
 
         {/* Search Bar */}
-        <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3 mb-6">
-          <MaterialIcons name="search" size={20} color="#a1a1aa" />
-          <TextInput
-            placeholder="Tarif ara..."
-            className="ml-2 flex-1 text-zinc-900 dark:text-white"
-            placeholderTextColor="#a1a1aa"
-          />
+        <View className="flex-row items-center gap-2 mb-6">
+          <View className="flex-1 flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3">
+            <MaterialIcons name="search" size={20} color="#a1a1aa" />
+            <TextInput
+              placeholder="Tarif ara..."
+              className="ml-2 flex-1 text-zinc-900 dark:text-white"
+              placeholderTextColor="#a1a1aa"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onSubmitEditing={handleSearch}
+              returnKeyType="search"
+            />
+          </View>
+          <TouchableOpacity
+            onPress={handleSearch}
+            className="bg-[#f39849] rounded-2xl px-4 py-3 h-[40px] items-center justify-center"
+            activeOpacity={0.8}
+          >
+            <MaterialIcons name="search" size={24} color="white" />
+          </TouchableOpacity>
         </View>
 
         <FlatList
-          data={STATIC_RECIPES}
+          data={recipes}
+          keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
           renderItem={({ item }) => (
             <TouchableOpacity
               className="mb-6 bg-white dark:bg-zinc-800 rounded-[28px] overflow-hidden border border-zinc-100 dark:border-zinc-700"
-              onPress={() => router.push(`/screens/recipe/${item.id}`)}
+              onPress={() => handleOpenRecipe(item)}
             >
               {/* Image Section */}
               <View className="h-48 relative">
@@ -110,81 +178,22 @@ const RecipesScreen = () => {
                       {item.difficulty}
                     </Text>
                   </View>
-                  <View className="flex-row items-center">
-                    <MaterialCommunityIcons
-                      name="account-group"
-                      size={16}
-                      color="#a1a1aa"
-                    />
-                    <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                      {item.servings} Kişilik
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Dietary Tags */}
-                {item.dietaryTags.length > 0 && (
-                  <View className="mb-3">
-                    <View className="flex-row flex-wrap gap-2">
-                      {item.dietaryTags.map((tag, idx) => (
-                        <View
-                          key={idx}
-                          className="bg-purple-100 dark:bg-purple-900/30 px-2.5 py-1 rounded-lg"
-                        >
-                          <Text className="text-purple-700 dark:text-purple-400 text-xs font-semibold">
-                            {tag}
-                          </Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                )}
-
-                {/* Nutrition Summary */}
-                <View className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
-                  <Text className="text-zinc-500 text-xs font-bold mb-2">
-                    Besin Değerleri
-                  </Text>
-                  <View className="flex-row justify-between">
-                    <View className="items-center flex-1">
-                      <Text className="text-zinc-900 dark:text-white text-base font-bold">
-                        {item.nutritionSummary.calories}
-                      </Text>
-                      <Text className="text-zinc-500 text-[10px] font-semibold">
-                        Kalori
-                      </Text>
-                    </View>
-                    <View className="items-center flex-1">
-                      <Text className="text-zinc-900 dark:text-white text-base font-bold">
-                        {item.nutritionSummary.protein}g
-                      </Text>
-                      <Text className="text-zinc-500 text-[10px] font-semibold">
-                        Protein
-                      </Text>
-                    </View>
-                    <View className="items-center flex-1">
-                      <Text className="text-zinc-900 dark:text-white text-base font-bold">
-                        {item.nutritionSummary.carbs}g
-                      </Text>
-                      <Text className="text-zinc-500 text-[10px] font-semibold">
-                        Karbonhidrat
-                      </Text>
-                    </View>
-                    <View className="items-center flex-1">
-                      <Text className="text-zinc-900 dark:text-white text-base font-bold">
-                        {item.nutritionSummary.fat}g
-                      </Text>
-                      <Text className="text-zinc-500 text-[10px] font-semibold">
-                        Yağ
-                      </Text>
-                    </View>
-                  </View>
                 </View>
               </View>
             </TouchableOpacity>
           )}
         />
       </View>
+
+      {/* Recipe Detail Modal */}
+      {selectedRecipe && (
+        <RecipeDetailModal
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          recipe={selectedRecipe}
+          baseImageUri={selectedRecipe.imageUrl || PLACEHOLDER_IMAGE}
+        />
+      )}
     </ScreenWrapper>
   );
 };

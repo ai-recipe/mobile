@@ -26,10 +26,10 @@ export const TopNavBar = () => {
     dispatch(setTheme(nextTheme));
   };
 
-  const toggleLanguage = () => {
-    const nextLang = currentLanguage === "en" ? "tr" : "en";
-    i18n.changeLanguage(nextLang);
-    dispatch(setCurrentLanguage(nextLang));
+  const toggleLanguage = (lang: string) => {
+    if (lang === currentLanguage) return;
+    i18n.changeLanguage(lang);
+    dispatch(setCurrentLanguage(lang));
   };
 
   return (
@@ -48,18 +48,52 @@ export const TopNavBar = () => {
         </Text>
       </View>
 
-      <TouchableOpacity onPress={toggleLanguage} style={styles.iconButton}>
-        <Text style={[styles.langText, { color: theme.text }]}>
-          {currentLanguage.toUpperCase()}
-        </Text>
-      </TouchableOpacity>
+      <View
+        style={[
+          styles.langSwitchContainer,
+          { backgroundColor: isDark ? "#18181b" : "#f1f5f9" },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={() => toggleLanguage("tr")}
+          style={[
+            styles.langSwitchOption,
+            currentLanguage === "tr" && styles.activeOption,
+          ]}
+        >
+          <Text
+            style={[
+              styles.langText,
+              { color: currentLanguage === "tr" ? "white" : theme.text },
+            ]}
+          >
+            TR
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => toggleLanguage("en")}
+          style={[
+            styles.langSwitchOption,
+            currentLanguage === "en" && styles.activeOption,
+          ]}
+        >
+          <Text
+            style={[
+              styles.langText,
+              { color: currentLanguage === "en" ? "white" : theme.text },
+            ]}
+          >
+            EN
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    height: 56,
+    height: 64,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -81,8 +115,25 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.5,
   },
+  langSwitchContainer: {
+    flexDirection: "row",
+    borderRadius: 20,
+    padding: 2,
+    alignItems: "center",
+  },
+  langSwitchOption: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 18,
+    minWidth: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  activeOption: {
+    backgroundColor: "#f39849",
+  },
   langText: {
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 11,
+    fontWeight: "800",
   },
 });

@@ -1,42 +1,56 @@
 import {
-  fetchFavorites,
   fetchRecipeList,
   type FavoriteItem,
-  type FavoritesResponse,
   type RecipeListItem,
 } from "@/api/recipe";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface RecipeListState {
   recipes: RecipeListItem[];
   favorites: FavoriteItem[];
   isLoadingRecipes: boolean;
+  isLoadingMore: boolean;
   isLoadingFavorites: boolean;
   recipeError: string | null;
   favoriteError: string | null;
   totalFavorites: number;
+  // Pagination state
+  currentPage: number;
+  totalRecipes: number;
+  limit: number;
+  hasMore: boolean;
 }
 
 const initialState: RecipeListState = {
   recipes: [],
   favorites: [],
   isLoadingRecipes: false,
+  isLoadingMore: false,
   isLoadingFavorites: false,
   recipeError: null,
   favoriteError: null,
   totalFavorites: 0,
+  currentPage: 1,
+  totalRecipes: 0,
+  limit: 20,
+  hasMore: true,
 };
 
-// Async thunk for fetching recipe list
+// Async thunk for fetching recipe list (initial load)
 export const fetchRecipes = createAsyncThunk(
   "recipeList/fetchRecipes",
   async (
-    params: { query: string; limit?: number; offset?: number },
+    params: {
+      title?: string;
+      description?: string;
+      limit?: number;
+      page?: number;
+    },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchRecipeList(params);
-      return response;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarifler yüklenemedi",
@@ -45,19 +59,24 @@ export const fetchRecipes = createAsyncThunk(
   },
 );
 
-// Async thunk for fetching favorites
-export const fetchUserFavorites = createAsyncThunk(
-  "recipeList/fetchFavorites",
+// Async thunk for loading more recipes (pagination)
+export const loadMoreRecipes = createAsyncThunk(
+  "recipeList/loadMoreRecipes",
   async (
-    params: { limit?: number; offset?: number } | undefined,
+    params: {
+      title?: string;
+      description?: string;
+      limit?: number;
+      page: number;
+    },
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchFavorites(params);
-      return response;
+      const response = await fetchRecipeList(params);
+      return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Favoriler yüklenemedi",
+        error instanceof Error ? error.message : "Tarifler yüklenemedi",
       );
     }
   },
@@ -70,39 +89,47 @@ export const recipeListSlice = createSlice({
     clearRecipes: (state) => {
       state.recipes = [];
       state.recipeError = null;
+      state.currentPage = 1;
+      state.totalRecipes = 0;
+      state.hasMore = true;
     },
   },
   extraReducers: (builder) => {
-    // Fetch Recipes
+    // Fetch Recipes (initial load)
     builder.addCase(fetchRecipes.pending, (state) => {
       state.isLoadingRecipes = true;
       state.recipeError = null;
     });
     builder.addCase(fetchRecipes.fulfilled, (state, action) => {
       state.isLoadingRecipes = false;
-      state.recipes = action.payload;
+      state.recipes = action.payload.items;
+      state.currentPage = action.payload.page;
+      state.totalRecipes = action.payload.total;
+      state.limit = action.payload.limit;
+      state.hasMore =
+        action.payload.page * action.payload.limit < action.payload.total;
     });
     builder.addCase(fetchRecipes.rejected, (state, action) => {
       state.isLoadingRecipes = false;
       state.recipeError = action.payload as string;
     });
 
-    // Fetch Favorites
-    builder.addCase(fetchUserFavorites.pending, (state) => {
-      state.isLoadingFavorites = true;
-      state.favoriteError = null;
+    // Load More Recipes (pagination)
+    builder.addCase(loadMoreRecipes.pending, (state) => {
+      state.isLoadingMore = true;
+      state.recipeError = null;
     });
-    builder.addCase(
-      fetchUserFavorites.fulfilled,
-      (state, action: PayloadAction<FavoritesResponse>) => {
-        state.isLoadingFavorites = false;
-        state.favorites = action.payload.items;
-        state.totalFavorites = action.payload.total;
-      },
-    );
-    builder.addCase(fetchUserFavorites.rejected, (state, action) => {
-      state.isLoadingFavorites = false;
-      state.favoriteError = action.payload as string;
+    builder.addCase(loadMoreRecipes.fulfilled, (state, action) => {
+      state.isLoadingMore = false;
+      state.recipes = [...state.recipes, ...action.payload.items];
+      state.currentPage = action.payload.page;
+      state.totalRecipes = action.payload.total;
+      state.hasMore =
+        action.payload.page * action.payload.limit < action.payload.total;
+    });
+    builder.addCase(loadMoreRecipes.rejected, (state, action) => {
+      state.isLoadingMore = false;
+      state.recipeError = action.payload as string;
     });
   },
 });

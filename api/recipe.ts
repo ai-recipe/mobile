@@ -32,7 +32,18 @@ export interface RecipeListItem {
   description: string;
   difficulty: string;
   totalTimeMinutes: number;
-  imageUrl: string;
+  imageUrl: string | null;
+}
+
+export interface RecipeListResponse {
+  data: {
+    items: RecipeListItem[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface FavoriteItem {
@@ -90,11 +101,12 @@ export async function discoverRecipes(
 }
 
 export async function fetchRecipeList(params: {
-  query: string;
+  title?: string;
+  description?: string;
   limit?: number;
-  offset?: number;
-}): Promise<RecipeListItem[]> {
-  const response = await api.get<RecipeListItem[]>("/recipes", {
+  page?: number;
+}): Promise<RecipeListResponse> {
+  const response = await api.get<RecipeListResponse>("/recipes", {
     params,
   });
   return response.data;

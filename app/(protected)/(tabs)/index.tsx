@@ -1,8 +1,9 @@
+import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Button, ScrollView, Text, View } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -13,7 +14,6 @@ import {
 import { CreditCard } from "../../../components/CreditCard";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { UpgradeProCard } from "../../../components/UpgradeProCard";
-
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme].background;
@@ -37,6 +37,38 @@ export default function HomeScreen() {
     ],
   }));
 
+  const [selectedRecipe, setSelectedRecipe] = React.useState({
+    id: "48c2b9e2-64ee-4c63-a884-14e2e61af9cf",
+    title: "Vegetable Fried Rice",
+    description:
+      "Quick and flavorful fried rice loaded with colorful vegetables",
+    imageUrl:
+      "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=480",
+    prepTimeMinutes: 15,
+    cookTimeMinutes: 15,
+    totalTimeMinutes: 30,
+    difficulty: "EASY",
+    servings: 4,
+    matchPercentage: 40,
+    matchedIngredients: ["onion", "garlic"],
+    missingIngredients: ["Rice", "Egg", "Bell Pepper"],
+    steps: [
+      "Cook rice and let it cool (or use day-old rice)",
+      "Scramble eggs in wok, set aside",
+      "Stir-fry vegetables until tender-crisp",
+      "Add rice and eggs, season with soy sauce",
+    ],
+    dietaryTags: ["VEGETARIAN"],
+    nutritionSummary: {
+      calories: 320,
+      protein: 10,
+      carbs: 52,
+      fat: 8,
+    },
+  });
+
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+
   return (
     <ScreenWrapper>
       <ScrollView
@@ -52,7 +84,15 @@ export default function HomeScreen() {
           </View>
         </View>
         {/* Scan Ingredients Banner */}
-
+        <Button
+          title="Scan Ingredients"
+          onPress={() => setIsModalVisible(true)}
+        />
+        <RecipeDetailModal
+          recipe={selectedRecipe}
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+        />
         <UpgradeProCard />
         <CreditCard />
         {/* How it Works Section */}
