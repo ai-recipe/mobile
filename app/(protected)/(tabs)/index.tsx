@@ -3,7 +3,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Button, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -76,18 +76,11 @@ export default function HomeScreen() {
         style={{ backgroundColor }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 dark:bg-zinc-900 px-5 pt-4">
-          <View className="flex-row items-center mb-6">
-            <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-              Tivity <Text className="text-[#f39849]">AI</Text>
-            </Text>
-          </View>
-        </View>
-        {/* Scan Ingredients Banner */}
+        {/* Scan Ingredients Banner 
         <Button
           title="Scan Ingredients"
           onPress={() => setIsModalVisible(true)}
-        />
+        />*/}
         <RecipeDetailModal
           recipe={selectedRecipe}
           visible={isModalVisible}

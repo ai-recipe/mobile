@@ -65,6 +65,17 @@ export interface FavoritesResponse {
   timestamp: string;
 }
 
+export interface PersonalizedRecipesResponse {
+  data: {
+    items: RecipeListItem[];
+    total: number;
+    limit: number;
+    offset: number;
+  };
+  statusCode: number;
+  timestamp: string;
+}
+
 export interface RecipeSuggestion {
   additionalIngredients: string[];
   tip: string;
@@ -125,6 +136,19 @@ export async function fetchFavorites(params?: {
   const response = await api.get<FavoritesResponse>("/recipes/favorites", {
     params,
   });
+  return response.data;
+}
+
+export async function fetchPersonalizedRecipes(params?: {
+  limit?: number;
+  offset?: number;
+}): Promise<PersonalizedRecipesResponse> {
+  const response = await api.get<PersonalizedRecipesResponse>(
+    "/recipes/personalized",
+    {
+      params,
+    },
+  );
   return response.data;
 }
 
