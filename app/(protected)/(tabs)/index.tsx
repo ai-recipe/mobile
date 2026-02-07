@@ -37,11 +37,6 @@ export default function HomeScreen() {
 
     const checkFirstTime = async () => {
       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-      if (false) {
-        setTimeout(() => {
-          start();
-        }, 1000);
-      }
     };
 
     checkFirstTime();
@@ -128,7 +123,7 @@ export default function HomeScreen() {
             </CopilotView>
           </CopilotStep>
 
-          <View className="gap-y-4">
+          <View className="gap-y-4 mt-4">
             {/* Step 1 */}
             <View className="bg-white/80 dark:bg-zinc-800/50 p-5 rounded-[28px] flex-row items-center border border-white/20 dark:border-zinc-700/30 ">
               <View className="size-14 bg-orange-100 dark:bg-orange-500/10 rounded-2xl items-center justify-center mr-4">

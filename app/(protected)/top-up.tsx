@@ -21,6 +21,7 @@ export default function TopUpScreen() {
       withTabNavigation={false}
       showBackButton={true}
       title="Kredi Yükle"
+      showTopNavBar={false}
     >
       <ScrollView
         className="flex-1 bg-[#f8f7f5] dark:bg-[#221910]"
@@ -96,7 +97,9 @@ export default function TopUpScreen() {
               )}
 
               <View
-                className={`${pkg.bestValue ? "flex-row items-center gap-4" : ""}`}
+                className={`${
+                  pkg.bestValue ? "flex-row items-center gap-4" : ""
+                }`}
               >
                 <View
                   className={`${

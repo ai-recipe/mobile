@@ -6,20 +6,60 @@ import {
   loadMoreFavorites,
 } from "@/store/slices/favoritesListSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
+
+const EmptyRecipesPlaceholder = (
+  searchQuery: string,
+  setSearchQuery: (value: string) => void,
+): React.ReactNode => {
+  const router = useRouter();
+
+  return (
+    <View className="flex-1 items-center justify-center pt-16 px-10">
+      <View className="size-24 bg-orange-100 dark:bg-orange-500/10 rounded-full items-center justify-center mb-6">
+        <MaterialCommunityIcons
+          name="silverware-fork-knife"
+          size={48}
+          color="#f39849"
+        />
+      </View>
+      <Text className="text-2xl font-black text-zinc-900 dark:text-white text-center mb-3">
+        {searchQuery ? "Tarif bulunamadı" : "Henüz Tarif Üretilmemiş"}
+      </Text>
+      <Text className="text-zinc-500 dark:text-zinc-400 text-center leading-relaxed font-medium mb-8">
+        {searchQuery
+          ? "Aradığınız tarife uygun tarif bulunamadı."
+          : "Henüz favori tarifiniz bulunamadı."}
+      </Text>
+      <TouchableOpacity
+        onPress={() => {
+          if (searchQuery) {
+            setSearchQuery("");
+          } else {
+            router.push("/screens/explore");
+          }
+        }}
+        className="bg-[#f39849] px-8 py-4 rounded-3xl shadow-lg shadow-orange-200 dark:shadow-none"
+      >
+        <Text className="text-white font-black text-base uppercase tracking-wider">
+          {searchQuery ? "Tarif Ara" : "Tarifleri Keşfet"}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const FavoritesScreen = () => {
   const dispatch = useAppDispatch();
@@ -90,21 +130,12 @@ const FavoritesScreen = () => {
   return (
     <ScreenWrapper>
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
-        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-4">
+        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
           Favori <Text className="text-[#f39849]">Tariflerim</Text>
         </Text>
-
-        {/* Search Bar */}
-        <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3 mb-6">
-          <MaterialIcons name="search" size={20} color="#a1a1aa" />
-          <TextInput
-            placeholder="Tarif ara..."
-            className="ml-2 flex-1 text-zinc-900 dark:text-white"
-            placeholderTextColor="#a1a1aa"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
+        <Text className="text-zinc-500 dark:text-zinc-400 mb-8">
+          Favoriye eklediğiniz tarifleri buradan görüntüleyebilirsiniz.
+        </Text>
 
         <FlatList
           data={recipes}
@@ -114,6 +145,14 @@ const FavoritesScreen = () => {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={
+            isLoading ? null : (
+              <EmptyRecipesPlaceholder
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            )
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               className="mb-6 bg-white dark:bg-zinc-800 rounded-[28px] overflow-hidden border border-zinc-100 dark:border-zinc-700"

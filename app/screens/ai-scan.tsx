@@ -155,7 +155,7 @@ export default function AIScanScreen() {
               desc="Malzemelerin birbirini kapatmadığından emin olun."
             />
             <GuidelineItem
-              icon="Checklist"
+              icon="checklist"
               title="Etiketleri Okutun"
               desc="Mümkünse ürün paketlerinin üzerindeki isimleri gösterin."
             />

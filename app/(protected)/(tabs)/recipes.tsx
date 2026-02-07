@@ -3,7 +3,7 @@ import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchRecipes, loadMoreRecipes } from "@/store/slices/recipeListSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,6 +14,47 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+const EmptyRecipesPlaceholder = (
+  searchQuery: string,
+  setSearchQuery: (value: string) => void,
+): React.ReactNode => {
+  const router = useRouter();
+
+  return (
+    <View className="flex-1 items-center justify-center pt-16 px-10">
+      <View className="size-24 bg-orange-100 dark:bg-orange-500/10 rounded-full items-center justify-center mb-6">
+        <MaterialCommunityIcons
+          name="silverware-fork-knife"
+          size={48}
+          color="#f39849"
+        />
+      </View>
+      <Text className="text-2xl font-black text-zinc-900 dark:text-white text-center mb-3">
+        {searchQuery ? "Tarif bulunamadı" : "Henüz Tarif Üretilmemiş"}
+      </Text>
+      <Text className="text-zinc-500 dark:text-zinc-400 text-center leading-relaxed font-medium mb-8">
+        {searchQuery
+          ? "Aradığınız tarife uygun tarif bulunamadı."
+          : "Buzdolabındaki malzemelerle neler yapabileceğini merak ediyor musun? İlk tarifini hemen oluştur!"}
+      </Text>
+      <TouchableOpacity
+        onPress={() => {
+          if (searchQuery) {
+            setSearchQuery("");
+          } else {
+            router.push("/screens/ai-scan");
+          }
+        }}
+        className="bg-[#f39849] px-8 py-4 rounded-3xl shadow-lg shadow-orange-200 dark:shadow-none"
+      >
+        <Text className="text-white font-black text-base uppercase tracking-wider">
+          {searchQuery ? "Tarif Ara" : "Malzeme Tara"}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -95,6 +136,10 @@ const RecipesScreen = () => {
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-4">
           Üretilen <Text className="text-[#f39849]">Tarifler</Text>
         </Text>
+        <Text className="text-zinc-500 dark:text-zinc-400 mb-8">
+          Tarat kısmından yapay zekaya resim sağlayıp sizin için özel olarak
+          üretilen tarifleri buradan görüntüleyebilirsiniz.
+        </Text>
 
         {/* Search Bar */}
         <View className="flex-row items-center gap-2">
@@ -128,6 +173,14 @@ const RecipesScreen = () => {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={
+            isLoadingRecipes ? null : (
+              <EmptyRecipesPlaceholder
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            )
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               className="mb-6 bg-white dark:bg-zinc-800 rounded-[28px] overflow-hidden border border-zinc-100 dark:border-zinc-700"
