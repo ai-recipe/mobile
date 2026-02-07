@@ -1,6 +1,8 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
+import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
+import { setCurrentLanguage } from "@/store/slices/appSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -23,9 +25,16 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: "system", label: "System (device)" },
 ];
 
+const LANGUAGE_OPTIONS = [
+  { value: "tr", label: "Türkçe" },
+  { value: "en", label: "English" },
+];
+
 const ProfileScreen = () => {
   const [themeModalVisible, setThemeModalVisible] = useState(false);
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const currentTheme = useAppSelector((state) => state.ui.theme);
+  const currentLanguage = useAppSelector((state) => state.app.currentLanguage);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
@@ -34,8 +43,20 @@ const ProfileScreen = () => {
     setThemeModalVisible(false);
   };
 
+  const handleSelectLanguage = (lang: string) => {
+    if (lang === currentLanguage) return;
+    i18n.changeLanguage(lang);
+    dispatch(setCurrentLanguage(lang));
+    setLanguageModalVisible(false);
+  };
+
   return (
-    <ScreenWrapper>
+    <ScreenWrapper
+      showBackButton={true}
+      title="Profil"
+      showTopNavBar={false}
+      withTabNavigation={false}
+    >
       <ScrollView className="flex-1 bg-white dark:bg-zinc-900 px-5">
         {/* Header */}
         <View className="items-center mt-8 mb-8">
@@ -46,9 +67,7 @@ const ProfileScreen = () => {
               }}
               className="size-24 rounded-full border-4 border-orange-100 dark:border-orange-900/50"
             />
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-[#f39849] p-2 rounded-full border-4 border-white dark:border-zinc-900">
-              <MaterialIcons name="edit" size={16} color="white" />
-            </TouchableOpacity>
+            <TouchableOpacity className="absolute bottom-0 right-0 bg-green-500 p-2 rounded-full border-4 border-white dark:border-zinc-900"></TouchableOpacity>
           </View>
           <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white mt-4">
             Şahin Kundakcı
@@ -60,7 +79,6 @@ const ProfileScreen = () => {
 
         {/* Menu Options */}
         <View className="gap-y-3">
-          <ProfileMenuItem icon="notifications-none" label="Bildirimler" />
           <TouchableOpacity
             onPress={() => router.push("/subscription" as any)}
             className="flex-row items-center p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border border-orange-100 dark:border-orange-500/20"
@@ -81,6 +99,20 @@ const ProfileScreen = () => {
             </Text>
             <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 capitalize">
               {currentTheme}
+            </Text>
+            <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setLanguageModalVisible(true)}
+            className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
+          >
+            <MaterialIcons name="language" size={24} color="#f39849" />
+            <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
+              Uygulama Dili
+            </Text>
+            <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 uppercase">
+              {currentLanguage}
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
           </TouchableOpacity>
@@ -117,6 +149,44 @@ const ProfileScreen = () => {
                   {label}
                 </Text>
                 {currentTheme === value && (
+                  <MaterialIcons name="check" size={24} color="#f39849" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Language Modal */}
+      <Modal
+        visible={languageModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLanguageModalVisible(false)}
+      >
+        <Pressable
+          className="flex-1 bg-black/50 justify-center px-6"
+          onPress={() => setLanguageModalVisible(false)}
+        >
+          <Pressable
+            className="bg-white dark:bg-zinc-800 rounded-2xl overflow-hidden"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View className="p-4 border-b border-zinc-100 dark:border-zinc-700">
+              <Text className="text-lg font-bold text-zinc-900 dark:text-white">
+                Dil Seçimi
+              </Text>
+            </View>
+            {LANGUAGE_OPTIONS.map(({ value, label }) => (
+              <TouchableOpacity
+                key={value}
+                onPress={() => handleSelectLanguage(value)}
+                className="flex-row items-center justify-between px-4 py-4 border-b border-zinc-100 dark:border-zinc-700 last:border-b-0"
+              >
+                <Text className="text-base text-zinc-900 dark:text-white">
+                  {label}
+                </Text>
+                {currentLanguage === value && (
                   <MaterialIcons name="check" size={24} color="#f39849" />
                 )}
               </TouchableOpacity>
