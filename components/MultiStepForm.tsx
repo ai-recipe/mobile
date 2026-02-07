@@ -150,7 +150,11 @@ export function MultiStepForm<T extends Record<string, any>>({
             className="size-12 items-center justify-center"
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
-            <MaterialIcons name="arrow-back-ios" size={20} color={theme.text} />
+            <MaterialIcons
+              name={currentStep.id === "paywall" ? "close" : "arrow-back-ios"}
+              size={currentStep.id === "paywall" ? 24 : 20}
+              color={theme.text}
+            />
           </TouchableOpacity>
           <Text
             className="flex-1 text-center text-lg font-bold pr-12"

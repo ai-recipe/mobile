@@ -37,22 +37,28 @@ export default function SurveyScreen() {
     }
   }, [surveyQuestions, defaultValues, form, isInitialized]);
 
-  const steps = useMemo(
-    () => createSurveySteps({ questions: surveyQuestions }),
-    [surveyQuestions],
-  );
-
-  const handleFinish = async (data: any) => {
+  const handleFinish = async (data: any = {}) => {
     const responses = Object.entries(data).map(([key, value]) => ({
       questionKey: key,
       answers: value as string[],
     }));
 
-    const result = await dispatch(submitSurveyAsync(responses));
-    if (submitSurveyAsync.fulfilled.match(result)) {
+    // Only submit if there are responses (could be skip/empty for RateUs/Paywall)
+    if (responses.length > 0) {
+      const result = await dispatch(submitSurveyAsync(responses));
+      if (submitSurveyAsync.fulfilled.match(result)) {
+        router.replace("/(protected)/(tabs)/");
+      }
+    } else {
       router.replace("/(protected)/(tabs)/");
     }
   };
+
+  const steps = useMemo(
+    () =>
+      createSurveySteps({ questions: surveyQuestions, onFinish: handleFinish }),
+    [surveyQuestions, handleFinish],
+  );
 
   if (isSurveyQuestionsLoading && !isInitialized) {
     return (
