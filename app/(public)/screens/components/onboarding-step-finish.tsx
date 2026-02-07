@@ -1,3 +1,4 @@
+import { useAppSelector } from "@/store/hooks";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,7 +7,6 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-
 interface OnboardingStepFinishProps {
   image: string;
   title: string;
@@ -22,6 +22,7 @@ export const OnboardingStepFinish = ({
   const dispatch = useDispatch();
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const token = useSelector((state: any) => state.auth.token);
+  const preferences = useAppSelector((state) => state.auth.preferences);
 
   const onSubmit = () => {
     if (isInitDeviceLoading) {
@@ -30,7 +31,11 @@ export const OnboardingStepFinish = ({
     }
 
     AsyncStorage.setItem("isOnboarded", "true");
-    router.replace("/(protected)/(tabs)/");
+    if (preferences) {
+      router.replace("/(protected)/(tabs)/");
+    } else {
+      router.replace("/screens/survey");
+    }
     dispatch(setIsOnboarded(true));
   };
   return (

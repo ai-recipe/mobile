@@ -1,4 +1,5 @@
 import AuthService from "@/api/auth";
+import SurveyService from "@/api/survey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as Application from "expo-application";
@@ -11,8 +12,24 @@ interface User {
   lastName?: string;
 }
 
+interface UserPreferences {
+  dietType: string;
+  allergens: string[];
+  preferredIngredients: string[];
+  maxCookTime: number;
+  skillLevel: string;
+  spicePreference: string;
+  goals: string[];
+  servingSize: string;
+  cuisinePreferences: string[];
+  ingredientInputPreference: string;
+  missingIngredientTolerance: string;
+  completedAt: any;
+}
+
 interface AuthState {
   user: User | null;
+  preferences: UserPreferences | null;
   isAuthenticated: boolean;
   token: string | null;
   creditGrantType: string | null;
@@ -24,11 +41,13 @@ interface AuthState {
   isLoginLoading: boolean;
   isRegisterLoading: boolean;
   isInitDeviceLoading: boolean;
+  isPreferencesLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  preferences: null,
   isAuthenticated: false,
   token: null,
   creditGrantType: null,
@@ -40,12 +59,27 @@ const initialState: AuthState = {
   isLoginLoading: false,
   isRegisterLoading: false,
   isInitDeviceLoading: false,
+  isPreferencesLoading: false,
   error: null,
 };
 
+export const fetchUserPreferencesAsync = createAsyncThunk(
+  "auth/fetchUserPreferences",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await SurveyService.getUserPreferencesAPI();
+      return response.data?.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Tercihler yüklenemedi",
+      );
+    }
+  },
+);
+
 export const initDeviceAsync = createAsyncThunk(
   "auth/initDevice",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       let deviceId: string;
       if (Platform.OS === "ios") {
@@ -61,8 +95,13 @@ export const initDeviceAsync = createAsyncThunk(
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
-      await AsyncStorage.setItem("token", response.data?.data?.anonymousToken);
-      return response.data?.data;
+      const data = response.data?.data;
+      await AsyncStorage.setItem("token", data?.anonymousToken);
+
+      // Dispatch preferences after init completes
+      await dispatch(fetchUserPreferencesAsync());
+
+      return data;
     } catch (error: any) {
       console.log("error", error?.response?.data?.message);
       return rejectWithValue(
@@ -119,34 +158,40 @@ export const authSlice = createSlice({
       state.isAuthenticated = false;
       state.token = null;
       state.user = null;
+      state.preferences = null;
       AsyncStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
+      // Init Device
       .addCase(initDeviceAsync.pending, (state) => {
         state.isInitDeviceLoading = true;
       })
       .addCase(initDeviceAsync.fulfilled, (state, action) => {
-        console.log(
-          "initDeviceAsync.fulfilled",
-          JSON.stringify(action.payload),
-        );
         state.creditGrantType = action.payload?.grantType;
         state.creditRemaining = action.payload?.credits?.remaining;
-        //
         state.isNewUser = action.payload?.isNewUser;
         state.isNewDevice = action.payload?.isNewDevice;
-        //
         state.user = action.payload?.user;
         state.token = action.payload?.anonymousToken;
-        //
         state.isAuthenticated = true;
         state.isInitDeviceLoading = false;
       })
       .addCase(initDeviceAsync.rejected, (state) => {
         state.isAuthenticated = false;
         state.isInitDeviceLoading = false;
+      })
+      // User Preferences
+      .addCase(fetchUserPreferencesAsync.pending, (state) => {
+        state.isPreferencesLoading = true;
+      })
+      .addCase(fetchUserPreferencesAsync.fulfilled, (state, action) => {
+        state.preferences = action.payload;
+        state.isPreferencesLoading = false;
+      })
+      .addCase(fetchUserPreferencesAsync.rejected, (state) => {
+        state.isPreferencesLoading = false;
       });
   },
 });
