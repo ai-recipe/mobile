@@ -1,7 +1,10 @@
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchRecipes, loadMoreRecipes } from "@/store/slices/recipeListSlice";
+import {
+  fetchFavoriteRecipes,
+  loadMoreFavorites,
+} from "@/store/slices/favoritesListSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
@@ -18,16 +21,16 @@ import {
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
-const RecipesScreen = () => {
+const FavoritesScreen = () => {
   const dispatch = useAppDispatch();
   const {
-    recipes,
-    isLoadingRecipes,
+    favorites: recipes,
+    isLoading,
     isLoadingMore,
     hasMore,
-    currentPage,
+    offset,
     limit,
-  } = useAppSelector((state) => state.recipeList);
+  } = useAppSelector((state) => state.favoritesList);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
@@ -36,18 +39,17 @@ const RecipesScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      console.log("RecipesScreen focused");
-      dispatch(fetchRecipes({ limit: 20, page: 1 }));
+      console.log("FavoritesScreen focused");
+      dispatch(fetchFavoriteRecipes({ limit: 20, offset: 0 }));
     }, [dispatch]),
   );
 
   const handleLoadMore = () => {
     if (!isLoadingMore && hasMore) {
       dispatch(
-        loadMoreRecipes({
+        loadMoreFavorites({
           limit,
-          page: currentPage + 1,
-          ...(searchQuery && { title: searchQuery }),
+          offset: offset + limit,
         }),
       );
     }
@@ -72,13 +74,13 @@ const RecipesScreen = () => {
     );
   };
 
-  if (isLoadingRecipes && recipes.length === 0) {
+  if (isLoading && recipes.length === 0) {
     return (
       <ScreenWrapper>
         <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
           <ActivityIndicator size="large" color="#f39849" />
           <Text className="text-zinc-500 mt-4 font-semibold">
-            Tarifler yükleniyor...
+            Favorileriniz yükleniyor...
           </Text>
         </View>
       </ScreenWrapper>
@@ -89,7 +91,7 @@ const RecipesScreen = () => {
     <ScreenWrapper>
       <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-4">
-          Üretilen <Text className="text-[#f39849]">Tarifler</Text>
+          Favori <Text className="text-[#f39849]">Tariflerim</Text>
         </Text>
 
         {/* Search Bar */}
@@ -185,4 +187,4 @@ const RecipesScreen = () => {
     </ScreenWrapper>
   );
 };
-export default RecipesScreen;
+export default FavoritesScreen;

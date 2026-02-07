@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "./slices/appSlice";
 import authReducer from "./slices/authSlice";
+import favoritesListReducer from "./slices/favoritesListSlice";
 import multiStepFormReducer from "./slices/multiStepFormSlice";
 import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
@@ -13,6 +14,7 @@ export const store = configureStore({
     auth: authReducer,
     recipe: recipeReducer,
     recipeList: recipeListReducer,
+    favoritesList: favoritesListReducer,
     app: appReducer,
     survey: surveyReducer,
     multiStepForm: multiStepFormReducer,

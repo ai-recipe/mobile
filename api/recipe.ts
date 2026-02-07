@@ -55,10 +55,14 @@ export interface FavoriteItem {
 }
 
 export interface FavoritesResponse {
-  items: FavoriteItem[];
-  total: number;
-  limit: number;
-  offset: number;
+  data: {
+    items: RecipeListItem[];
+    total: number;
+    limit: number;
+    offset: number;
+  };
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface RecipeSuggestion {
@@ -118,7 +122,7 @@ export async function fetchFavorites(params?: {
   limit?: number;
   offset?: number;
 }): Promise<FavoritesResponse> {
-  const response = await api.get<FavoritesResponse>("/favorites", {
+  const response = await api.get<FavoritesResponse>("/recipes/favorites", {
     params,
   });
   return response.data;
