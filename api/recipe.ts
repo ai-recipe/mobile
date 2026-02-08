@@ -24,6 +24,7 @@ export interface RecipeFromAPI {
     fat: number;
   };
   isFavorite?: boolean;
+  isTrending?: boolean;
 }
 
 export interface RecipeListItem {
@@ -35,6 +36,7 @@ export interface RecipeListItem {
   totalTimeMinutes: number;
   imageUrl: string | null;
   isFavorite?: boolean;
+  isTrending?: boolean;
 }
 
 export interface RecipeListResponse {

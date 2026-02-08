@@ -91,8 +91,10 @@ const ExploreScreen = () => {
     );
   }
 
-  const featuredRecipe = recipes[0];
-  const gridRecipes = recipes.slice(1);
+  const trendingRecipes = recipes.filter((r) => r.isTrending);
+  const recommendedRecipes = recipes.filter((r) => !r.isTrending);
+
+  const gridRecipes = recommendedRecipes;
 
   return (
     <ScreenWrapper>
@@ -160,70 +162,72 @@ const ExploreScreen = () => {
             </ScrollView>
 
             {/* Trend Section */}
-            {featuredRecipe && (
-              <View className="px-5 mb-10">
-                <View className="flex-row items-center justify-between mb-4">
+            {trendingRecipes.length > 0 && (
+              <View className="mb-10">
+                <View className="flex-row items-center justify-between mb-4 px-5">
                   <Text className="text-xl font-bold text-zinc-900 dark:text-white">
                     Trend Olanlar
                   </Text>
-                  {false && (
-                    <TouchableOpacity>
-                      <Text className="text-[#f39849] font-bold text-sm">
-                        Tümünü Gör
-                      </Text>
-                    </TouchableOpacity>
-                  )}
                 </View>
 
-                <TouchableOpacity
-                  onPress={() => handleOpenRecipe(featuredRecipe)}
-                  className="relative h-64 w-full rounded-[32px] overflow-hidden shadow-xl"
-                  activeOpacity={0.9}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
                 >
-                  <Image
-                    source={{
-                      uri: featuredRecipe.imageUrl || PLACEHOLDER_IMAGE,
-                    }}
-                    className="w-full h-full object-cover"
-                  />
-                  <View className="absolute inset-0 bg-black/40" />
-                  <View className="absolute top-4 right-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                    <MaterialIcons name="timer" size={14} color="#f39849" />
-                    <Text className="text-[#f39849] font-black text-xs ml-1">
-                      {featuredRecipe.totalTimeMinutes} dk
-                    </Text>
-                  </View>
-                  <View className="absolute bottom-6 left-6 right-6">
-                    <Text className="text-orange-400 text-[10px] font-black uppercase tracking-[2px] mb-1">
-                      Popüler
-                    </Text>
-                    <Text className="text-white text-2xl font-black leading-tight">
-                      {featuredRecipe.title}
-                    </Text>
-                    <View className="flex-row items-center mt-3 gap-4">
-                      <View className="flex-row items-center">
-                        <MaterialIcons
-                          name="local-fire-department"
-                          size={14}
-                          color="#d1d5db"
-                        />
-                        <Text className="text-gray-300 text-xs font-bold ml-1">
-                          450 kcal
+                  {trendingRecipes.map((recipe) => (
+                    <TouchableOpacity
+                      key={recipe.id}
+                      onPress={() => handleOpenRecipe(recipe)}
+                      className="relative h-64 w-[300px] rounded-[32px] overflow-hidden shadow-xl"
+                      activeOpacity={0.9}
+                    >
+                      <Image
+                        source={{
+                          uri: recipe.imageUrl || PLACEHOLDER_IMAGE,
+                        }}
+                        className="w-full h-full object-cover"
+                      />
+                      <View className="absolute inset-0 bg-black/40" />
+                      <View className="absolute top-4 right-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                        <MaterialIcons name="timer" size={14} color="#f39849" />
+                        <Text className="text-[#f39849] font-black text-xs ml-1">
+                          {recipe.totalTimeMinutes} dk
                         </Text>
                       </View>
-                      <View className="flex-row items-center">
-                        <MaterialIcons
-                          name="signal-cellular-alt"
-                          size={14}
-                          color="#d1d5db"
-                        />
-                        <Text className="text-gray-300 text-xs font-bold ml-1">
-                          {featuredRecipe.difficulty}
+                      <View className="absolute bottom-6 left-6 right-6">
+                        <Text className="text-orange-400 text-[10px] font-black uppercase tracking-[2px] mb-1">
+                          Popüler
                         </Text>
+                        <Text className="text-white text-2xl font-black leading-tight">
+                          {recipe.title}
+                        </Text>
+                        <View className="flex-row items-center mt-3 gap-4">
+                          <View className="flex-row items-center">
+                            <MaterialIcons
+                              name="local-fire-department"
+                              size={14}
+                              color="#d1d5db"
+                            />
+                            <Text className="text-gray-300 text-xs font-bold ml-1">
+                              450 kcal
+                            </Text>
+                          </View>
+                          <View className="flex-row items-center">
+                            <MaterialIcons
+                              name="signal-cellular-alt"
+                              size={14}
+                              color="#d1d5db"
+                            />
+                            <Text className="text-gray-300 text-xs font-bold ml-1">
+                              {recipe.difficulty}
+                            </Text>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
               </View>
             )}
 
