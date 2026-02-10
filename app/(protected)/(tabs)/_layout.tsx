@@ -160,7 +160,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 case "daily-log":
                   return "Daily Log";
                 case "favorites":
-                  return "Favorite";
+                  return "Favorites";
                 case "explore":
                   return "Keşfet";
                 default:
