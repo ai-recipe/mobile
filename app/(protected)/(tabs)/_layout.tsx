@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
@@ -122,8 +122,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   return (
                     <MaterialIcons name="home" size={24} color={iconColor} />
                   );
-                case "recipes":
-                  return <AntDesign name="robot" size={24} color={iconColor} />;
+                case "daily-log":
+                  return (
+                    <MaterialIcons
+                      name="calendar-today"
+                      size={24}
+                      color={iconColor}
+                    />
+                  );
                 case "favorites":
                   return (
                     <MaterialIcons
@@ -151,10 +157,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               switch (name) {
                 case "index":
                   return "Ana Sayfa";
-                case "recipes":
-                  return "AI Tariflerim";
+                case "daily-log":
+                  return "Daily Log";
                 case "favorites":
-                  return "Favoriler";
+                  return "Favorite";
                 case "explore":
                   return "Keşfet";
                 default:
@@ -263,15 +269,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="favorites"
+        name="daily-log"
         options={{
-          title: "Favoriler",
+          title: "Daily Log",
         }}
       />
       <Tabs.Screen
-        name="recipes"
+        name="favorites"
         options={{
-          title: "Tarifler",
+          title: "Favoriler",
         }}
       />
     </Tabs>

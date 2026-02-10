@@ -116,7 +116,16 @@ const ProfileScreen = () => {
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
           </TouchableOpacity>
-          <ProfileMenuItem icon="help-outline" label="Yardım ve Destek" />
+          <ProfileMenuItem
+            icon="history"
+            label="Geçmiş Tarifler"
+            onPress={() => router.push("/screens/ai-recipes" as any)}
+          />
+          <ProfileMenuItem
+            icon="help-outline"
+            label="Yardım ve Destek"
+            onPress={() => {}}
+          />
         </View>
       </ScrollView>
 
@@ -198,8 +207,19 @@ const ProfileScreen = () => {
   );
 };
 
-const ProfileMenuItem = ({ icon, label }: { icon: string; label: string }) => (
-  <TouchableOpacity className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700">
+const ProfileMenuItem = ({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
+  >
     <MaterialIcons name={icon as any} size={24} color="#f39849" />
     <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
       {label}
