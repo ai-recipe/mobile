@@ -20,6 +20,8 @@ export const Colors = {
     card: "#ffffff",
     muted: "#8a7460",
     primary: "#f39849",
+    success: "#22c55e", //green
+    warning: "#e8823a",
   },
   dark: {
     text: "#fafafa",
@@ -32,6 +34,8 @@ export const Colors = {
     card: "#18181b",
     muted: "#a1a1aa",
     primary: "#f39849",
+    success: "#22c55e", //green
+    warning: "#e8823a",
   },
 };
 

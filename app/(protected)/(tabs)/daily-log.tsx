@@ -1,3 +1,4 @@
+import { MealEntryModal } from "@/app/screens/components/MealEntryModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -11,6 +12,7 @@ const DailyLog = () => {
   const backgroundColor = Colors[colorScheme].background;
   const [selectedDate, setSelectedDate] = React.useState(8);
   const [isFabExpanded, setIsFabExpanded] = React.useState(false);
+  const [isMealModalVisible, setIsMealModalVisible] = React.useState(false);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
 
   // Mock data
@@ -263,8 +265,7 @@ const DailyLog = () => {
             <Pressable
               onPress={() => {
                 toggleFab();
-                // Handle manual entry
-                console.log("Manual entry");
+                setIsMealModalVisible(true);
               }}
               className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700 flex-row gap-2 px-4"
               style={{ elevation: 0 }}
@@ -320,6 +321,16 @@ const DailyLog = () => {
           </Animated.View>
         </View>
       </View>
+
+      {/* Meal Entry Modal */}
+      <MealEntryModal
+        visible={isMealModalVisible}
+        onClose={() => setIsMealModalVisible(false)}
+        onSave={(mealData) => {
+          console.log("Meal saved:", mealData);
+          // TODO: Add meal to daily log
+        }}
+      />
     </ScreenWrapper>
   );
 };

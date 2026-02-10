@@ -5,6 +5,7 @@ import React from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { CalendarModal } from "../../screens/components/CalendarModal";
 
 type TabType = "health" | "recipes";
 
@@ -15,6 +16,13 @@ export default function HomeScreen() {
   const [selectedDifficulty, setSelectedDifficulty] = React.useState<
     "FAST" | "MED" | "HARD"
   >("FAST");
+  const [date, setDate] = React.useState(new Date());
+  const [showCalendar, setShowCalendar] = React.useState(false);
+
+  const handleDateConfirm = (selectedDate: Date) => {
+    setDate(selectedDate);
+    // You can add logic here to fetch data for the selected date
+  };
 
   // Mock data - can be replaced with Redux state later
   const dailyGoal = {
@@ -83,7 +91,10 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
-          <Pressable className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center ">
+          <Pressable
+            onPress={() => setShowCalendar(true)}
+            className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center "
+          >
             <MaterialIcons
               name="calendar-today"
               size={20}
@@ -91,6 +102,13 @@ export default function HomeScreen() {
             />
           </Pressable>
         </View>
+
+        <CalendarModal
+          visible={showCalendar}
+          onClose={() => setShowCalendar(false)}
+          onConfirm={handleDateConfirm}
+          initialDate={date}
+        />
 
         {/* Tab Navigation */}
         <View className="px-6 mb-4">
@@ -156,8 +174,14 @@ export default function HomeScreen() {
                         x2="100%"
                         y2="0%"
                       >
-                        <Stop offset="0%" stopColor="#f39849" />
-                        <Stop offset="100%" stopColor="#e8823a" />
+                        <Stop
+                          offset="0%"
+                          stopColor={Colors[colorScheme].success}
+                        />
+                        <Stop
+                          offset="100%"
+                          stopColor={Colors[colorScheme].warning}
+                        />
                       </LinearGradient>
                     </Defs>
                     {/* Background circle */}
