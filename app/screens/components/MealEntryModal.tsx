@@ -16,9 +16,11 @@ interface MealEntryModalProps {
   visible: boolean;
   onClose: () => void;
   onSave?: (mealData: MealData) => void;
+  initialData?: MealData;
 }
 
 export interface MealData {
+  id?: string;
   name: string;
   servings: number;
   calories: number;
@@ -40,6 +42,7 @@ export function MealEntryModal({
   visible,
   onClose,
   onSave,
+  initialData,
 }: MealEntryModalProps) {
   const colorScheme = useColorScheme();
   const [mealName, setMealName] = useState("");
@@ -55,6 +58,7 @@ export function MealEntryModal({
   const handleSave = () => {
     if (onSave) {
       onSave({
+        id: initialData?.id,
         name: mealName || "Unnamed Meal",
         servings,
         calories: Number(calories) || 0,
@@ -66,18 +70,28 @@ export function MealEntryModal({
     }
   };
 
-  // Reset form when modal becomes visible
+  // Reset/Pre-fill form when modal becomes visible
   React.useEffect(() => {
     if (visible) {
-      setMealName("");
-      setCalories("0");
-      setProtein("0");
-      setCarbs("0");
-      setFat("0");
-      setServings(1);
-      setMealType("LUNCH");
+      if (initialData) {
+        setMealName(initialData.name);
+        setCalories(initialData.calories.toString());
+        setProtein(initialData.protein.toString());
+        setCarbs(initialData.carbs.toString());
+        setFat(initialData.fat.toString());
+        setServings(initialData.servings);
+        setMealType(initialData.mealType || "LUNCH");
+      } else {
+        setMealName("");
+        setCalories("0");
+        setProtein("0");
+        setCarbs("0");
+        setFat("0");
+        setServings(1);
+        setMealType("LUNCH");
+      }
     }
-  }, [visible]);
+  }, [visible, initialData]);
 
   // Close modal when loading finishes and it was successful (this is a bit tricky without a success flag)
   // For now, we'll rely on the parent to close it or handle the flow.
@@ -397,7 +411,7 @@ export function MealEntryModal({
               <ActivityIndicator color="white" size="small" />
             ) : (
               <Text className="text-white font-bold text-lg text-center">
-                Add to Diary
+                {initialData ? "Update Entry" : "Add to Diary"}
               </Text>
             )}
           </Pressable>

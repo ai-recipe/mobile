@@ -7,7 +7,9 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   addFoodLogAsync,
+  deleteFoodLogAsync,
   fetchFoodLogsAsync,
+  updateFoodLogAsync,
 } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, isSameDay, subDays } from "date-fns";
@@ -15,6 +17,7 @@ import { useFocusEffect } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Pressable,
   ScrollView,
@@ -36,6 +39,7 @@ const DailyLog = () => {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [isFabExpanded, setIsFabExpanded] = React.useState(false);
   const [isMealModalVisible, setIsMealModalVisible] = React.useState(false);
+  const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
 
   // Generate a week of dates around the current date
@@ -106,22 +110,70 @@ const DailyLog = () => {
   const handleAddMeal = async (mealData: MealData) => {
     try {
       const dateStr = format(selectedDate, "yyyy-MM-dd");
-      await dispatch(
-        addFoodLogAsync({
-          mealName: mealData.name,
-          calories: mealData.calories,
-          proteinGrams: mealData.protein,
-          carbsGrams: mealData.carbs,
-          fatGrams: mealData.fat,
-          quantity: mealData.servings,
-          loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
-        }),
-      ).unwrap();
+      if (mealData.id) {
+        // Update existing meal
+        await dispatch(
+          updateFoodLogAsync({
+            id: mealData.id,
+            date: dateStr,
+            data: {
+              mealName: mealData.name,
+              calories: mealData.calories,
+              proteinGrams: mealData.protein,
+              carbsGrams: mealData.carbs,
+              fatGrams: mealData.fat,
+              quantity: mealData.servings,
+              loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+            },
+          }),
+        ).unwrap();
+      } else {
+        // Add new meal
+        await dispatch(
+          addFoodLogAsync({
+            mealName: mealData.name,
+            calories: mealData.calories,
+            proteinGrams: mealData.protein,
+            carbsGrams: mealData.carbs,
+            fatGrams: mealData.fat,
+            quantity: mealData.servings,
+            loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+          }),
+        ).unwrap();
+      }
       setIsMealModalVisible(false);
+      setEditingMeal(null);
     } catch (error) {
-      console.error("Failed to add meal:", error);
-      // Logic for error feedback could be added here (e.g., Alert)
+      console.error("Failed to add/update meal:", error);
     }
+  };
+
+  const handleDeleteMeal = (id: string) => {
+    Alert.alert("Delete Entry", "Are you sure you want to delete this entry?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          const dateStr = format(selectedDate, "yyyy-MM-dd");
+          dispatch(deleteFoodLogAsync({ id, date: dateStr }));
+        },
+      },
+    ]);
+  };
+
+  const handleEditMeal = (entry: any) => {
+    setEditingMeal({
+      id: entry.id,
+      name: entry.mealName,
+      calories: entry.calories,
+      protein: entry.proteinGrams,
+      carbs: entry.carbsGrams,
+      fat: entry.fatGrams,
+      servings: entry.quantity,
+      mealType: "LUNCH", // Default or map if available
+    });
+    setIsMealModalVisible(true);
   };
   console.log("entries", entries);
   return (
@@ -314,9 +366,34 @@ const DailyLog = () => {
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-zinc-900 dark:text-white font-bold">
-                    {entry.calories} kcal
-                  </Text>
+
+                  <View className="flex-row items-center gap-4">
+                    <Text className="text-zinc-900 dark:text-white font-bold mr-2">
+                      {entry.calories} kcal
+                    </Text>
+                    <View className="flex-row gap-2">
+                      <Pressable
+                        onPress={() => handleEditMeal(entry)}
+                        className="p-1"
+                      >
+                        <MaterialIcons
+                          name="edit"
+                          size={20}
+                          color={colorScheme === "dark" ? "#a1a1aa" : "#71717a"}
+                        />
+                      </Pressable>
+                      <Pressable
+                        onPress={() => handleDeleteMeal(entry.id)}
+                        className="p-1"
+                      >
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={20}
+                          color="#ef4444"
+                        />
+                      </Pressable>
+                    </View>
+                  </View>
                 </View>
               ))}
             </View>
@@ -402,7 +479,11 @@ const DailyLog = () => {
 
       <MealEntryModal
         visible={isMealModalVisible}
-        onClose={() => setIsMealModalVisible(false)}
+        initialData={editingMeal || undefined}
+        onClose={() => {
+          setIsMealModalVisible(false);
+          setEditingMeal(null);
+        }}
         onSave={handleAddMeal}
       />
     </ScreenWrapper>
