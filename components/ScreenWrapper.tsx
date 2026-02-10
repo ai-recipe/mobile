@@ -26,7 +26,6 @@ interface ScreenWrapperProps {
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   children,
-  backgroundColor = "transparent",
   showBackButton = false,
   withTabNavigation = true,
   title = "",

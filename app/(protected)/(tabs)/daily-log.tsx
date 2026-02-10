@@ -2,6 +2,7 @@ import { MealEntryModal } from "@/app/screens/components/MealEntryModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
 import React from "react";
 import { Animated, Pressable, ScrollView, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
@@ -93,6 +94,13 @@ const DailyLog = () => {
     inputRange: [0, 1],
     outputRange: ["0deg", "45deg"],
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFabExpanded(false);
+      fabAnimation.setValue(0);
+    }, []),
+  );
 
   return (
     <ScreenWrapper>
