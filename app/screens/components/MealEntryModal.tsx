@@ -1,7 +1,9 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppSelector } from "@/store/hooks";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Modal,
   Pressable,
   ScrollView,
@@ -16,14 +18,23 @@ interface MealEntryModalProps {
   onSave?: (mealData: MealData) => void;
 }
 
-interface MealData {
+export interface MealData {
   name: string;
   servings: number;
-  calories: number | string;
-  protein: number | string;
-  carbs: number | string;
-  fat: number | string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
 }
+
+const MEAL_TYPES: { label: string; value: MealData["mealType"]; icon: any }[] =
+  [
+    { label: "Breakfast", value: "BREAKFAST", icon: "wb-sunny" },
+    { label: "Lunch", value: "LUNCH", icon: "restaurant" },
+    { label: "Dinner", value: "DINNER", icon: "nights-stay" },
+    { label: "Snack", value: "SNACK", icon: "fastfood" },
+  ];
 
 export function MealEntryModal({
   visible,
@@ -31,53 +42,72 @@ export function MealEntryModal({
   onSave,
 }: MealEntryModalProps) {
   const colorScheme = useColorScheme();
-  const [mealName, setMealName] = useState("Haşlanmış Yumurta");
+  const [mealName, setMealName] = useState("");
   const [servings, setServings] = useState(1);
-  const [calories, setCalories] = useState("");
-  const [protein, setProtein] = useState("");
-  const [carbs, setCarbs] = useState("");
-  const [fat, setFat] = useState("");
+  const [calories, setCalories] = useState("0");
+  const [protein, setProtein] = useState("0");
+  const [carbs, setCarbs] = useState("0");
+  const [fat, setFat] = useState("0");
+  const [mealType, setMealType] = useState<MealData["mealType"]>("LUNCH");
+
+  const { isLoading } = useAppSelector((state) => state.dailyLogs);
 
   const handleSave = () => {
     if (onSave) {
       onSave({
-        name: mealName,
+        name: mealName || "Unnamed Meal",
         servings,
-        calories,
-        protein,
-        carbs,
-        fat,
+        calories: Number(calories) || 0,
+        protein: Number(protein) || 0,
+        carbs: Number(carbs) || 0,
+        fat: Number(fat) || 0,
+        mealType,
       });
     }
-    onClose();
   };
 
-  // Calculate macro percentages
+  // Reset form when modal becomes visible
+  React.useEffect(() => {
+    if (visible) {
+      setMealName("");
+      setCalories("0");
+      setProtein("0");
+      setCarbs("0");
+      setFat("0");
+      setServings(1);
+      setMealType("LUNCH");
+    }
+  }, [visible]);
+
+  // Close modal when loading finishes and it was successful (this is a bit tricky without a success flag)
+  // For now, we'll rely on the parent to close it or handle the flow.
+  // Actually, let's keep the onClose in the handleSave if we want it to close immediately,
+  // but the requirement said "only close on success".
+  // I'll adjust the daily-log.tsx to handle closing.
+
+  // Convert string inputs to numbers for calculation
+  const nProtein = Number(protein) || 0;
+  const nCarbs = Number(carbs) || 0;
+  const nFat = Number(fat) || 0;
 
   const totalMacros = useMemo(() => {
-    if (
-      typeof protein !== "number" ||
-      typeof carbs !== "number" ||
-      typeof fat !== "number"
-    )
-      return 0;
-    return protein * 4 + carbs * 4 + fat * 9;
-  }, [protein, carbs, fat]);
+    return nProtein * 4 + nCarbs * 4 + nFat * 9;
+  }, [nProtein, nCarbs, nFat]);
 
   const proteinPercent = useMemo(() => {
-    if (typeof protein !== "number" || !totalMacros) return 0;
-    return ((protein * 4) / totalMacros) * 100;
-  }, [protein, totalMacros]);
+    if (!totalMacros) return 0;
+    return ((nProtein * 4) / totalMacros) * 100;
+  }, [nProtein, totalMacros]);
 
   const carbsPercent = useMemo(() => {
-    if (typeof carbs !== "number" || !totalMacros) return 0;
-    return ((carbs * 4) / totalMacros) * 100;
-  }, [carbs, totalMacros]);
+    if (!totalMacros) return 0;
+    return ((nCarbs * 4) / totalMacros) * 100;
+  }, [nCarbs, totalMacros]);
 
   const fatPercent = useMemo(() => {
-    if (typeof fat !== "number" || !totalMacros) return 0;
-    return ((fat * 9) / totalMacros) * 100;
-  }, [fat, totalMacros]);
+    if (!totalMacros) return 0;
+    return ((nFat * 9) / totalMacros) * 100;
+  }, [nFat, totalMacros]);
 
   return (
     <Modal
@@ -88,19 +118,19 @@ export function MealEntryModal({
     >
       <View className="flex-1 bg-zinc-50 dark:bg-zinc-950">
         {/* Header Image Area */}
-        <View className="relative w-full h-[30vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
+        <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
           {/* Top Bar */}
           <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
             <Pressable
               onPress={onClose}
               className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/10 flex items-center justify-center"
             >
-              <MaterialIcons name="arrow-back" size={20} color="white" />
+              <MaterialIcons name="close" size={24} color="white" />
             </Pressable>
           </View>
 
           {/* Food Icon Placeholder */}
-          <View className="w-64 h-64 flex items-center justify-center opacity-80">
+          <View className="opacity-80">
             <MaterialIcons
               name="restaurant"
               size={120}
@@ -124,7 +154,7 @@ export function MealEntryModal({
                 value={mealName}
                 onChangeText={setMealName}
                 className="text-2xl font-bold leading-tight text-zinc-900 dark:text-white"
-                placeholder="Meal name"
+                placeholder="Meal name (e.g. Boiled Egg)"
                 placeholderTextColor={
                   colorScheme === "dark" ? "#71717a" : "#a1a1aa"
                 }
@@ -159,6 +189,45 @@ export function MealEntryModal({
             </View>
           </View>
 
+          {/* Meal Type Selection */}
+          <View className="mb-8">
+            <Text className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">
+              Meal Type
+            </Text>
+            <View className="flex-row gap-2">
+              {MEAL_TYPES.map((type) => (
+                <Pressable
+                  key={type.value}
+                  onPress={() => setMealType(type.value)}
+                  className={`flex-1 flex-col items-center justify-center p-3 rounded-2xl border ${
+                    mealType === type.value
+                      ? "bg-[#f39849] border-[#f39849]"
+                      : "bg-zinc-50 dark:bg-zinc-800 border-zinc-100 dark:border-zinc-700"
+                  }`}
+                >
+                  <MaterialIcons
+                    name={type.icon}
+                    size={20}
+                    color={
+                      mealType === type.value
+                        ? "white"
+                        : colorScheme === "dark"
+                        ? "#a1a1aa"
+                        : "#71717a"
+                    }
+                  />
+                  <Text
+                    className={`text-[10px] mt-1 font-bold ${
+                      mealType === type.value ? "text-white" : "text-zinc-500"
+                    }`}
+                  >
+                    {type.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
           {/* Calories Card */}
           <View className="bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-2xl p-4 mb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-4">
@@ -174,20 +243,18 @@ export function MealEntryModal({
                   Calories
                 </Text>
                 <TextInput
-                  value={calories.toString()}
-                  onChangeText={(text) => setCalories(parseInt(text) || 0)}
+                  value={calories}
+                  onChangeText={setCalories}
                   keyboardType="numeric"
                   className="text-2xl font-bold text-zinc-900 dark:text-white"
                 />
               </View>
             </View>
-            <Pressable>
-              <MaterialIcons
-                name="edit"
-                size={18}
-                color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
-              />
-            </Pressable>
+            <MaterialIcons
+              name="edit"
+              size={18}
+              color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
+            />
           </View>
 
           {/* Macros Grid */}
@@ -206,14 +273,15 @@ export function MealEntryModal({
                   Protein
                 </Text>
               </View>
-              <TextInput
-                value={protein}
-                onChangeText={(text) => setProtein(parseInt(text) || 0)}
-                keyboardType="numeric"
-                className="text-lg font-bold text-zinc-900 dark:text-white pl-1"
-                placeholder="0"
-              />
-              <Text className="text-xs text-zinc-400 pl-1">g</Text>
+              <View className="flex-row items-baseline">
+                <TextInput
+                  value={protein}
+                  onChangeText={setProtein}
+                  keyboardType="numeric"
+                  className="text-lg font-bold text-zinc-900 dark:text-white min-w-[30px]"
+                />
+                <Text className="text-xs text-zinc-400 ml-1">g</Text>
+              </View>
             </View>
 
             {/* Carbs */}
@@ -226,14 +294,15 @@ export function MealEntryModal({
                   Carbs
                 </Text>
               </View>
-              <TextInput
-                value={carbs.toString()}
-                onChangeText={(text) => setCarbs(parseInt(text) || 0)}
-                keyboardType="numeric"
-                className="text-lg font-bold text-zinc-900 dark:text-white pl-1"
-                placeholder="0"
-              />
-              <Text className="text-xs text-zinc-400 pl-1">g</Text>
+              <View className="flex-row items-baseline">
+                <TextInput
+                  value={carbs}
+                  onChangeText={setCarbs}
+                  keyboardType="numeric"
+                  className="text-lg font-bold text-zinc-900 dark:text-white min-w-[30px]"
+                />
+                <Text className="text-xs text-zinc-400 ml-1">g</Text>
+              </View>
             </View>
 
             {/* Fat */}
@@ -246,14 +315,15 @@ export function MealEntryModal({
                   Fat
                 </Text>
               </View>
-              <TextInput
-                value={fat.toString()}
-                onChangeText={(text) => setFat(parseInt(text) || 0)}
-                keyboardType="numeric"
-                className="text-lg font-bold text-zinc-900 dark:text-white pl-1"
-                placeholder="0"
-              />
-              <Text className="text-xs text-zinc-400 pl-1">g</Text>
+              <View className="flex-row items-baseline">
+                <TextInput
+                  value={fat}
+                  onChangeText={setFat}
+                  keyboardType="numeric"
+                  className="text-lg font-bold text-zinc-900 dark:text-white min-w-[30px]"
+                />
+                <Text className="text-xs text-zinc-400 ml-1">g</Text>
+              </View>
             </View>
           </View>
 
@@ -262,7 +332,7 @@ export function MealEntryModal({
             <Text className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">
               Macro Balance
             </Text>
-            <View className="h-3 w-full rounded-full flex-row overflow-hidden mb-4">
+            <View className="h-3 w-full rounded-full flex-row overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
               <View
                 className="bg-blue-400 dark:bg-blue-500"
                 style={{ width: `${proteinPercent}%` }}
@@ -318,11 +388,18 @@ export function MealEntryModal({
         <View className="bg-white dark:bg-zinc-900 px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 pb-8">
           <Pressable
             onPress={handleSave}
-            className="w-full bg-[#0F172A] dark:bg-zinc-100 py-3.5 rounded-full active:opacity-90"
+            disabled={isLoading}
+            className={`w-full py-4 rounded-full shadow-sm flex-row items-center justify-center ${
+              isLoading ? "bg-[#f39849]/70" : "bg-[#f39849]"
+            }`}
           >
-            <Text className="text-white dark:text-zinc-900 font-semibold text-lg text-center">
-              Save
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <Text className="text-white font-bold text-lg text-center">
+                Add to Diary
+              </Text>
+            )}
           </Pressable>
         </View>
       </View>

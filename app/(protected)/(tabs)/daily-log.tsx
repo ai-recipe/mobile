@@ -1,72 +1,69 @@
-import { MealEntryModal } from "@/app/screens/components/MealEntryModal";
+import {
+  MealData,
+  MealEntryModal,
+} from "@/app/screens/components/MealEntryModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addFoodLogAsync,
+  fetchFoodLogsAsync,
+} from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
+import { format, isSameDay, subDays } from "date-fns";
 import { useFocusEffect } from "expo-router";
-import React from "react";
-import { Animated, Pressable, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 const DailyLog = () => {
   const colorScheme = useColorScheme();
-  const backgroundColor = Colors[colorScheme].background;
-  const [selectedDate, setSelectedDate] = React.useState(8);
+  const dispatch = useAppDispatch();
+  const themeColors = Colors[colorScheme];
+  const backgroundColor = themeColors.background;
+
+  const { entries, summary, isLoading } = useAppSelector(
+    (state) => state.dailyLogs,
+  );
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [isFabExpanded, setIsFabExpanded] = React.useState(false);
   const [isMealModalVisible, setIsMealModalVisible] = React.useState(false);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
 
-  // Mock data
-  const dailyTotal = {
-    consumed: 0,
-    goal: 2587,
-    deficit: -2587,
-  };
+  // Generate a week of dates around the current date
+  const dates = useMemo(() => {
+    return Array.from({ length: 30 }).map((_, i) => {
+      const date = subDays(new Date(), 15 - i);
+      return {
+        date,
+        day: format(date, "d"),
+        month: format(date, "MMM"),
+        isToday: isSameDay(date, new Date()),
+      };
+    });
+  }, []);
 
-  const macros = {
-    protein: 0,
-    carbs: 0,
-    fats: 0,
-  };
-
-  const dates = [
-    { day: 1, month: "Feb" },
-    { day: 2, month: "Feb" },
-    { day: 3, month: "Feb" },
-    { day: 4, month: "Feb" },
-    { day: 5, month: "Feb" },
-    { day: 6, month: "Feb" },
-    { day: 7, month: "Feb" },
-    { day: 8, month: "Feb" },
-    { day: 9, month: "Feb" },
-    { day: 10, month: "Feb" },
-    { day: 11, month: "Feb" },
-    { day: 12, month: "Feb" },
-    { day: 13, month: "Feb" },
-    { day: 14, month: "Feb" },
-    { day: 15, month: "Feb" },
-    { day: 16, month: "Feb" },
-    { day: 17, month: "Feb" },
-    { day: 18, month: "Feb" },
-    { day: 19, month: "Feb" },
-    { day: 20, month: "Feb" },
-    { day: 21, month: "Feb" },
-    { day: 22, month: "Feb" },
-    { day: 23, month: "Feb" },
-    { day: 24, month: "Feb" },
-    { day: 25, month: "Feb" },
-    { day: 26, month: "Feb" },
-    { day: 27, month: "Feb" },
-    { day: 28, month: "Feb" },
-    { day: 29, month: "Feb" },
-  ];
+  useEffect(() => {
+    const dateStr = format(selectedDate, "yyyy-MM-dd");
+    dispatch(fetchFoodLogsAsync({ startDate: dateStr, endDate: dateStr }));
+  }, [selectedDate, dispatch]);
 
   // Calculate progress percentage for circular ring
+  const calorieGoal = 2500; // This should ideally come from user profile
+  const consumedCalories = summary?.totalCalories || 0;
   const progressPercentage =
-    dailyTotal.goal > 0 ? (dailyTotal.consumed / dailyTotal.goal) * 100 : 0;
+    calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
   const circumference = 2 * Math.PI * 40;
   const strokeDashoffset =
-    circumference - (progressPercentage / 100) * circumference;
+    circumference - (Math.min(progressPercentage, 100) / 100) * circumference;
 
   // Toggle FAB expansion
   const toggleFab = () => {
@@ -102,6 +99,31 @@ const DailyLog = () => {
     }, []),
   );
 
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const handleAddMeal = async (mealData: MealData) => {
+    try {
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      await dispatch(
+        addFoodLogAsync({
+          mealName: mealData.name,
+          calories: mealData.calories,
+          proteinGrams: mealData.protein,
+          carbsGrams: mealData.carbs,
+          fatGrams: mealData.fat,
+          quantity: mealData.servings,
+          loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+        }),
+      ).unwrap();
+      setIsMealModalVisible(false);
+    } catch (error) {
+      console.error("Failed to add meal:", error);
+      // Logic for error feedback could be added here (e.g., Alert)
+    }
+  };
+  console.log("entries", entries);
   return (
     <ScreenWrapper>
       <View className="flex-1" style={{ backgroundColor }}>
@@ -111,43 +133,50 @@ const DailyLog = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             className="flex-row"
+            ref={(ref) => {
+              // Simple way to scroll to middle approx
+              if (ref)
+                setTimeout(
+                  () => ref.scrollTo({ x: 600, animated: false }),
+                  100,
+                );
+            }}
           >
             <View className="flex-row gap-3 px-2 py-2">
-              {dates.map((date, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => setSelectedDate(date.day)}
-                  className={`flex items-center justify-center w-16 h-20 rounded-2xl border ${
-                    selectedDate === date.day
-                      ? "bg-primary dark:bg-yellow-600 border-primary dark:border-yellow-600"
-                      : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
-                  }`}
-                  style={
-                    selectedDate === date.day
-                      ? { transform: [{ scale: 1.05 }] }
-                      : {}
-                  }
-                >
-                  <Text
-                    className={`text-lg ${
-                      selectedDate === date.day
-                        ? "text-white font-bold"
-                        : "text-zinc-600 dark:text-zinc-400 font-medium"
+              {dates.map((item, index) => {
+                const isActive = isSameDay(item.date, selectedDate);
+                return (
+                  <Pressable
+                    key={index}
+                    onPress={() => handleDateSelect(item.date)}
+                    className={`flex items-center justify-center w-16 h-20 rounded-2xl border ${
+                      isActive
+                        ? "bg-[#f39849] border-[#f39849]"
+                        : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
                     }`}
+                    style={isActive ? { transform: [{ scale: 1.05 }] } : {}}
                   >
-                    {date.day}
-                  </Text>
-                  <Text
-                    className={`text-xs font-medium ${
-                      selectedDate === date.day
-                        ? "text-white/90"
-                        : "text-zinc-400 dark:text-zinc-500"
-                    }`}
-                  >
-                    {date.month}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Text
+                      className={`text-lg ${
+                        isActive
+                          ? "text-white font-bold"
+                          : "text-zinc-600 dark:text-zinc-400 font-medium"
+                      }`}
+                    >
+                      {item.day}
+                    </Text>
+                    <Text
+                      className={`text-xs font-medium ${
+                        isActive
+                          ? "text-white/90"
+                          : "text-zinc-400 dark:text-zinc-500"
+                      }`}
+                    >
+                      {item.month}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </ScrollView>
         </View>
@@ -165,8 +194,15 @@ const DailyLog = () => {
 
             {/* Deficit/Surplus Badge */}
             <View className="w-full items-end mb-6">
-              <Text className="text-[#1F8B83] dark:text-teal-400 font-bold text-sm">
-                {dailyTotal.deficit} kcal deficit
+              <Text
+                className={`${
+                  consumedCalories > calorieGoal
+                    ? "text-red-500"
+                    : "text-[#1F8B83]"
+                } dark:text-teal-400 font-bold text-sm`}
+              >
+                {Math.abs(calorieGoal - consumedCalories)} kcal{" "}
+                {consumedCalories > calorieGoal ? "surplus" : "deficit"}
               </Text>
             </View>
 
@@ -193,7 +229,7 @@ const DailyLog = () => {
                     cx="48"
                     cy="48"
                     r="40"
-                    stroke={colorScheme === "dark" ? "#3f3f46" : "#d1d5db"}
+                    stroke={themeColors.primary}
                     strokeWidth="8"
                     fill="transparent"
                     strokeDasharray={circumference}
@@ -207,14 +243,14 @@ const DailyLog = () => {
               <View className="flex-col items-start">
                 <View className="flex-row items-baseline gap-2">
                   <Text className="text-5xl font-bold text-zinc-900 dark:text-white">
-                    {dailyTotal.consumed}
+                    {consumedCalories}
                   </Text>
                   <Text className="text-4xl font-light text-zinc-300 dark:text-zinc-600">
                     /
                   </Text>
                 </View>
                 <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                  {dailyTotal.goal} calories
+                  {calorieGoal} calories
                 </Text>
               </View>
             </View>
@@ -227,7 +263,7 @@ const DailyLog = () => {
                   Protein
                 </Text>
                 <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  {macros.protein} g
+                  {summary?.totalProteinGrams || 0} g
                 </Text>
               </View>
               <View className="flex-col items-center">
@@ -236,7 +272,7 @@ const DailyLog = () => {
                   Carb
                 </Text>
                 <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  {macros.carbs} g
+                  {summary?.totalCarbsGrams || 0} g
                 </Text>
               </View>
               <View className="flex-col items-center">
@@ -245,19 +281,53 @@ const DailyLog = () => {
                   Fat
                 </Text>
                 <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  {macros.fats} g
+                  {summary?.totalFatGrams || 0} g
                 </Text>
               </View>
             </View>
           </View>
 
-          {/* Empty State */}
-          <View className="flex-col items-center justify-center py-12 gap-4">
-            <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
-              You haven't consumed anything this day.
-            </Text>
-            <Text className="text-4xl">😋</Text>
-          </View>
+          {/* Entries List */}
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#f39849" className="my-10" />
+          ) : entries.length > 0 ? (
+            <View className="gap-4">
+              {entries.map((entry) => (
+                <View
+                  key={entry.id}
+                  className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center gap-3">
+                    <View className="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 items-center justify-center">
+                      <MaterialIcons
+                        name="restaurant"
+                        size={20}
+                        color="#f39849"
+                      />
+                    </View>
+                    <View>
+                      <Text className="text-zinc-900 dark:text-white font-bold">
+                        {entry.mealName}
+                      </Text>
+                      <Text className="text-zinc-500 text-xs">
+                        {entry.quantity} servings
+                      </Text>
+                    </View>
+                  </View>
+                  <Text className="text-zinc-900 dark:text-white font-bold">
+                    {entry.calories} kcal
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className="flex-col items-center justify-center py-12 gap-4">
+              <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
+                You haven't consumed anything this day.
+              </Text>
+              <Text className="text-4xl">😋</Text>
+            </View>
+          )}
         </ScrollView>
 
         {/* Floating Action Buttons */}
@@ -330,14 +400,10 @@ const DailyLog = () => {
         </View>
       </View>
 
-      {/* Meal Entry Modal */}
       <MealEntryModal
         visible={isMealModalVisible}
         onClose={() => setIsMealModalVisible(false)}
-        onSave={(mealData) => {
-          console.log("Meal saved:", mealData);
-          // TODO: Add meal to daily log
-        }}
+        onSave={handleAddMeal}
       />
     </ScreenWrapper>
   );

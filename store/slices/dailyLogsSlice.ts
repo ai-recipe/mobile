@@ -25,13 +25,18 @@ const initialState: DailyLogsState = {
 
 export const fetchFoodLogsAsync = createAsyncThunk(
   "dailyLogs/fetchFoodLogs",
-  async (params: { date?: string } | undefined, { rejectWithValue }) => {
+  async (
+    params: { startDate?: string; endDate?: string } | undefined,
+    { rejectWithValue },
+  ) => {
     try {
       const response = await fetchFoodLogs(params);
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to fetch food logs",
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to fetch food logs",
       );
     }
   },
@@ -41,12 +46,16 @@ export const addFoodLogAsync = createAsyncThunk(
   "dailyLogs/addFoodLog",
   async (data: AddFoodLogParams, { rejectWithValue, dispatch }) => {
     try {
+      console.log("Adding food log:", data);
       const response = await addFoodLog(data);
-      dispatch(fetchFoodLogsAsync({ date: data.loggedAt?.split("T")[0] }));
+      const date = data.loggedAt?.split("T")[0];
+      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to add food log",
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to add food log",
       );
     }
   },
@@ -64,11 +73,13 @@ export const updateFoodLogAsync = createAsyncThunk(
   ) => {
     try {
       const response = await updateFoodLog(id, data);
-      dispatch(fetchFoodLogsAsync({ date }));
+      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to update food log",
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to update food log",
       );
     }
   },
@@ -82,11 +93,13 @@ export const deleteFoodLogAsync = createAsyncThunk(
   ) => {
     try {
       const response = await deleteFoodLog(id);
-      dispatch(fetchFoodLogsAsync({ date }));
+      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to delete food log",
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to delete food log",
       );
     }
   },
@@ -110,7 +123,8 @@ const dailyLogsSlice = createSlice({
     });
     builder.addCase(fetchFoodLogsAsync.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.entries = action.payload.items;
+      // Map entries from the first day in the days array
+      state.entries = action.payload.days[0]?.entries || [];
       state.summary = action.payload.summary;
     });
     builder.addCase(fetchFoodLogsAsync.rejected, (state, action) => {

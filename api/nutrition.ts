@@ -2,46 +2,53 @@ import { api } from "./axios";
 
 export interface FoodLogEntry {
   id: string;
-  foodName: string;
+  mealName: string;
   calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  servingSize: string;
-  servingAmount: number;
-  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
+  quantity: number;
   loggedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface DailySummary {
   totalCalories: number;
-  totalProtein: number;
-  totalCarbs: number;
-  totalFat: number;
+  totalProteinGrams: number;
+  totalCarbsGrams: number;
+  totalFatGrams: number;
 }
 
 export interface FoodLogResponse {
   data: {
-    items: FoodLogEntry[];
+    startDate: string;
+    endDate: string;
     summary: DailySummary;
+    days: {
+      date: string;
+      summary: DailySummary;
+      entries: FoodLogEntry[];
+    }[];
   };
   statusCode: number;
   timestamp: string;
 }
 
 export interface AddFoodLogParams {
-  foodName: string;
+  mealName: string;
   calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  servingSize: string;
-  servingAmount: number;
-  mealType: string;
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
+  quantity: number;
   loggedAt?: string;
 }
 
-export const fetchFoodLogs = async (params?: { date?: string }) => {
+export const fetchFoodLogs = async (params?: {
+  startDate?: string;
+  endDate?: string;
+}) => {
   const response = await api.get<FoodLogResponse>("/nutrition/food-log", {
     params,
   });
