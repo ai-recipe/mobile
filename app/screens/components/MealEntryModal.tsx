@@ -1,6 +1,6 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -19,10 +19,10 @@ interface MealEntryModalProps {
 interface MealData {
   name: string;
   servings: number;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
+  calories: number | string;
+  protein: number | string;
+  carbs: number | string;
+  fat: number | string;
 }
 
 export function MealEntryModal({
@@ -32,11 +32,11 @@ export function MealEntryModal({
 }: MealEntryModalProps) {
   const colorScheme = useColorScheme();
   const [mealName, setMealName] = useState("Haşlanmış Yumurta");
-  const [servings, setServings] = useState(4);
-  const [calories, setCalories] = useState(250);
-  const [protein, setProtein] = useState(25);
-  const [carbs, setCarbs] = useState(15);
-  const [fat, setFat] = useState(10);
+  const [servings, setServings] = useState(1);
+  const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
 
   const handleSave = () => {
     if (onSave) {
@@ -53,10 +53,31 @@ export function MealEntryModal({
   };
 
   // Calculate macro percentages
-  const totalMacros = protein * 4 + carbs * 4 + fat * 9;
-  const proteinPercent = ((protein * 4) / totalMacros) * 100;
-  const carbsPercent = ((carbs * 4) / totalMacros) * 100;
-  const fatPercent = ((fat * 9) / totalMacros) * 100;
+
+  const totalMacros = useMemo(() => {
+    if (
+      typeof protein !== "number" ||
+      typeof carbs !== "number" ||
+      typeof fat !== "number"
+    )
+      return 0;
+    return protein * 4 + carbs * 4 + fat * 9;
+  }, [protein, carbs, fat]);
+
+  const proteinPercent = useMemo(() => {
+    if (typeof protein !== "number" || !totalMacros) return 0;
+    return ((protein * 4) / totalMacros) * 100;
+  }, [protein, totalMacros]);
+
+  const carbsPercent = useMemo(() => {
+    if (typeof carbs !== "number" || !totalMacros) return 0;
+    return ((carbs * 4) / totalMacros) * 100;
+  }, [carbs, totalMacros]);
+
+  const fatPercent = useMemo(() => {
+    if (typeof fat !== "number" || !totalMacros) return 0;
+    return ((fat * 9) / totalMacros) * 100;
+  }, [fat, totalMacros]);
 
   return (
     <Modal
@@ -67,7 +88,7 @@ export function MealEntryModal({
     >
       <View className="flex-1 bg-zinc-50 dark:bg-zinc-950">
         {/* Header Image Area */}
-        <View className="relative w-full h-[45vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
+        <View className="relative w-full h-[30vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
           {/* Top Bar */}
           <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
             <Pressable
@@ -186,7 +207,7 @@ export function MealEntryModal({
                 </Text>
               </View>
               <TextInput
-                value={protein.toString()}
+                value={protein}
                 onChangeText={(text) => setProtein(parseInt(text) || 0)}
                 keyboardType="numeric"
                 className="text-lg font-bold text-zinc-900 dark:text-white pl-1"
