@@ -12,7 +12,7 @@ import {
   updateFoodLogAsync,
 } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { format, isSameDay, subDays } from "date-fns";
+import { format, isSameDay, parseISO, subDays } from "date-fns";
 import { useFocusEffect } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
@@ -362,7 +362,8 @@ const DailyLog = () => {
                         {entry.mealName}
                       </Text>
                       <Text className="text-zinc-500 text-xs">
-                        {entry.quantity} servings
+                        {entry.quantity} servings •{" "}
+                        {format(parseISO(entry.loggedAt), "HH:mm")}
                       </Text>
                     </View>
                   </View>
