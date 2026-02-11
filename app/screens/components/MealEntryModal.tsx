@@ -13,6 +13,11 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 interface MealEntryModalProps {
   visible: boolean;
@@ -117,6 +122,28 @@ export function MealEntryModal({
     if (!totalMacros) return 0;
     return ((nFat * 4) / totalMacros) * 100;
   }, [nFat, totalMacros]);
+
+  const proteinWidthShared = useSharedValue(0);
+  const carbsWidthShared = useSharedValue(0);
+  const fatWidthShared = useSharedValue(0);
+
+  React.useEffect(() => {
+    proteinWidthShared.value = withTiming(proteinPercent, { duration: 500 });
+    carbsWidthShared.value = withTiming(carbsPercent, { duration: 500 });
+    fatWidthShared.value = withTiming(fatPercent, { duration: 500 });
+  }, [proteinPercent, carbsPercent, fatPercent]);
+
+  const proteinAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${proteinWidthShared.value}%`,
+  }));
+
+  const carbsAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${carbsWidthShared.value}%`,
+  }));
+
+  const fatAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${fatWidthShared.value}%`,
+  }));
 
   const caloriesRef = useRef<TextInput>(null);
   const proteinRef = useRef<TextInput>(null);
@@ -368,17 +395,17 @@ export function MealEntryModal({
                 Macro Balance
               </Text>
               <View className="h-3 w-full rounded-full flex-row overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
-                <View
-                  className="bg-blue-400 dark:bg-blue-500"
-                  style={{ width: `${proteinPercent}%` }}
+                <Animated.View
+                  className="bg-blue-400 dark:bg-blue-500 h-full"
+                  style={proteinAnimatedStyle}
                 />
-                <View
-                  className="bg-green-400 dark:bg-green-500"
-                  style={{ width: `${carbsPercent}%` }}
+                <Animated.View
+                  className="bg-green-400 dark:bg-green-500 h-full"
+                  style={carbsAnimatedStyle}
                 />
-                <View
-                  className="bg-orange-300 dark:bg-orange-400"
-                  style={{ width: `${fatPercent}%` }}
+                <Animated.View
+                  className="bg-orange-300 dark:bg-orange-400 h-full"
+                  style={fatAnimatedStyle}
                 />
               </View>
               <View className="flex-row gap-4">

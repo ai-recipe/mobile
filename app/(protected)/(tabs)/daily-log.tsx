@@ -25,8 +25,15 @@ import {
   Text,
   View,
 } from "react-native";
+import AnimatedReanimated, {
+  useAnimatedProps,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+
+const AnimatedCircle = AnimatedReanimated.createAnimatedComponent(Circle);
 
 const dates = Array.from({ length: 30 }).map((_, i) => {
   const date = subDays(new Date(), 15 - i);
@@ -83,8 +90,19 @@ const DailyLog = () => {
   const progressPercentage =
     calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
   const circumference = 2 * Math.PI * 40;
-  const strokeDashoffset =
-    circumference - (Math.min(progressPercentage, 100) / 100) * circumference;
+
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    progress.value = withTiming(progressPercentage, { duration: 1000 });
+  }, [progressPercentage]);
+
+  const animatedCircleProps = useAnimatedProps(() => {
+    return {
+      strokeDashoffset:
+        circumference - (Math.min(progress.value, 100) / 100) * circumference,
+    };
+  });
 
   // Toggle FAB expansion
   const toggleFab = () => {
@@ -267,6 +285,7 @@ const DailyLog = () => {
         <ScrollView
           className="flex-1 px-6"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
         >
           {/* Daily Total Card */}
           <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
@@ -307,7 +326,7 @@ const DailyLog = () => {
                     fill="transparent"
                   />
                   {/* Progress circle */}
-                  <Circle
+                  <AnimatedCircle
                     cx="48"
                     cy="48"
                     r="40"
@@ -319,7 +338,7 @@ const DailyLog = () => {
                     strokeWidth="8"
                     fill="transparent"
                     strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
+                    animatedProps={animatedCircleProps}
                     strokeLinecap="round"
                   />
                 </Svg>
