@@ -69,6 +69,7 @@ const DailyLog = () => {
   const waterGoal = 2500;
   const waterProgress = (waterIntake / waterGoal) * 100;
   const scrollRef = React.useRef<ScrollView>(null);
+  const mainScrollRef = React.useRef<ScrollView>(null);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
   const initialScrollDone = React.useRef(false);
 
@@ -89,6 +90,11 @@ const DailyLog = () => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     dispatch(fetchFoodLogsAsync({ startDate: dateStr, endDate: dateStr }));
   }, [selectedDate, dispatch]);
+
+  // Scroll to top when tab changes
+  useEffect(() => {
+    mainScrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [activeTab]);
 
   // Calculate progress percentage for circular ring
   const calorieGoal = 2500; // This should ideally come from user profile
@@ -345,6 +351,13 @@ const DailyLog = () => {
       }
     }, [selectedDate]),
   );
+
+  useEffect(() => {
+    if (activeTab === "water") {
+      setIsFabExpanded(false);
+      fabAnimation.setValue(0);
+    }
+  }, [activeTab]);
   return (
     <ScreenWrapper>
       <View className="flex-1" style={{ backgroundColor }}>
@@ -417,7 +430,9 @@ const DailyLog = () => {
               </Text>
             </Pressable>
             <Pressable
-              onPress={() => setActiveTab("water")}
+              onPress={() => {
+                setActiveTab("water");
+              }}
               className={`flex-1 py-3 rounded-xl ${
                 activeTab === "water"
                   ? "bg-white dark:bg-zinc-800"
@@ -439,6 +454,7 @@ const DailyLog = () => {
 
         {/* Main Content */}
         <ScrollView
+          ref={mainScrollRef}
           className="flex-1 px-6"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}
@@ -695,73 +711,75 @@ const DailyLog = () => {
         </ScrollView>
 
         {/* Floating Action Buttons */}
-        <View className="absolute bottom-8 right-6 z-20">
-          {/* Manual Button */}
-          <Animated.View
-            style={{
-              transform: [{ translateY: manualButtonTranslate }],
-              opacity: fabAnimation,
-            }}
-            className="absolute bottom-0 right-0 mb-2"
-          >
-            <Pressable
-              onPress={() => {
-                toggleFab();
-                setIsMealModalVisible(true);
+        {activeTab === "meal" && (
+          <View className="absolute bottom-8 right-6 z-20">
+            {/* Manual Button */}
+            <Animated.View
+              style={{
+                transform: [{ translateY: manualButtonTranslate }],
+                opacity: fabAnimation,
               }}
-              className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700 flex-row gap-2 px-4"
-              style={{ elevation: 0 }}
+              className="absolute bottom-0 right-0 mb-2"
             >
-              <MaterialIcons name="edit" size={20} color="#f39849" />
-            </Pressable>
-            {isFabExpanded && (
-              <View className="absolute right-16 top-2 h-10">
-                <Text className="text-sm font-bold text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 min-w-[80px] text-center">
-                  Manual
-                </Text>
-              </View>
-            )}
-          </Animated.View>
+              <Pressable
+                onPress={() => {
+                  toggleFab();
+                  setIsMealModalVisible(true);
+                }}
+                className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700 flex-row gap-2 px-4"
+                style={{ elevation: 0 }}
+              >
+                <MaterialIcons name="edit" size={20} color="#f39849" />
+              </Pressable>
+              {isFabExpanded && (
+                <View className="absolute right-16 top-2 h-10">
+                  <Text className="text-sm font-bold text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 min-w-[80px] text-center">
+                    Manual
+                  </Text>
+                </View>
+              )}
+            </Animated.View>
 
-          {/* Scan Button */}
-          <Animated.View
-            style={{
-              transform: [{ translateY: scanButtonTranslate }],
-              opacity: fabAnimation,
-            }}
-            className="absolute bottom-0 right-0 mb-2"
-          >
-            <Pressable
-              onPress={() => {
-                toggleFab();
-                // Handle scan
-                console.log("Scan");
+            {/* Scan Button */}
+            <Animated.View
+              style={{
+                transform: [{ translateY: scanButtonTranslate }],
+                opacity: fabAnimation,
               }}
-              className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700"
-              style={{ elevation: 0 }}
+              className="absolute bottom-0 right-0 mb-2"
             >
-              <MaterialIcons name="camera-alt" size={20} color="#f39849" />
-            </Pressable>
-            {isFabExpanded && (
-              <View className="absolute right-16 top-2 h-10">
-                <Text className="text-sm font-bold text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 min-w-[100px] text-center">
-                  Scan Meal
-                </Text>
-              </View>
-            )}
-          </Animated.View>
+              <Pressable
+                onPress={() => {
+                  toggleFab();
+                  // Handle scan
+                  console.log("Scan");
+                }}
+                className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700"
+                style={{ elevation: 0 }}
+              >
+                <MaterialIcons name="camera-alt" size={20} color="#f39849" />
+              </Pressable>
+              {isFabExpanded && (
+                <View className="absolute right-16 top-2 h-10">
+                  <Text className="text-sm font-bold text-zinc-900 dark:text-white bg-white dark:bg-zinc-800 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 min-w-[100px] text-center">
+                    Scan Meal
+                  </Text>
+                </View>
+              )}
+            </Animated.View>
 
-          {/* Main FAB */}
-          <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-            <Pressable
-              onPress={toggleFab}
-              className="bg-[#f39849] w-16 h-16 rounded-full flex items-center justify-center active:opacity-90"
-              style={{ elevation: 0 }}
-            >
-              <MaterialIcons name="add" size={36} color="white" />
-            </Pressable>
-          </Animated.View>
-        </View>
+            {/* Main FAB */}
+            <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+              <Pressable
+                onPress={toggleFab}
+                className="bg-[#f39849] w-16 h-16 rounded-full flex items-center justify-center active:opacity-90"
+                style={{ elevation: 0 }}
+              >
+                <MaterialIcons name="add" size={36} color="white" />
+              </Pressable>
+            </Animated.View>
+          </View>
+        )}
       </View>
 
       <MealEntryModal
