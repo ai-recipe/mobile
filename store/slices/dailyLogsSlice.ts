@@ -87,10 +87,17 @@ export const updateFoodLogAsync = createAsyncThunk(
 
 export const deleteFoodLogAsync = createAsyncThunk(
   "dailyLogs/deleteFoodLog",
-  async ({ id }: { id: string }, { rejectWithValue, dispatch }) => {
+  async (
+    { id, date }: { id: string; date?: string },
+    { rejectWithValue, dispatch },
+  ) => {
     try {
       const response = await deleteFoodLog(id);
-      dispatch(fetchFoodLogsAsync());
+      dispatch(
+        fetchFoodLogsAsync(
+          date ? { startDate: date, endDate: date } : undefined,
+        ),
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(

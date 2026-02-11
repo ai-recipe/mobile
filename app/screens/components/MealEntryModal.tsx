@@ -36,16 +36,8 @@ export interface MealData {
   protein: number;
   carbs: number;
   fat: number;
-  mealType: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+  loggedAt: string;
 }
-
-const MEAL_TYPES: { label: string; value: MealData["mealType"]; icon: any }[] =
-  [
-    { label: "Breakfast", value: "BREAKFAST", icon: "wb-sunny" },
-    { label: "Lunch", value: "LUNCH", icon: "restaurant" },
-    { label: "Dinner", value: "DINNER", icon: "nights-stay" },
-    { label: "Snack", value: "SNACK", icon: "fastfood" },
-  ];
 
 export function MealEntryModal({
   visible,
@@ -61,11 +53,8 @@ export function MealEntryModal({
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
-  const [mealType, setMealType] = useState<MealData["mealType"]>("LUNCH");
 
-  const { isLoading, recentMeals, isRecentLoading } = useAppSelector(
-    (state) => state.dailyLogs,
-  );
+  const { isLoading, recentMeals } = useAppSelector((state) => state.dailyLogs);
 
   React.useEffect(() => {
     if (visible && recentMeals.length === 0) {
@@ -80,6 +69,8 @@ export function MealEntryModal({
     setCarbs(meal.carbsGrams.toString());
     setFat(meal.fatGrams.toString());
     setServings(meal.quantity || 1);
+    setFat(meal.fatGrams.toString());
+    setServings(meal.quantity || 1);
   };
 
   const handleSave = () => {
@@ -92,7 +83,7 @@ export function MealEntryModal({
         protein: Number(protein) || 0,
         carbs: Number(carbs) || 0,
         fat: Number(fat) || 0,
-        mealType,
+        loggedAt: new Date().toISOString(),
       });
     }
   };
@@ -107,7 +98,6 @@ export function MealEntryModal({
         setCarbs(initialData.carbs.toString());
         setFat(initialData.fat.toString());
         setServings(initialData.servings);
-        setMealType(initialData.mealType || "LUNCH");
       } else {
         setMealName("");
         setCalories("");
@@ -115,7 +105,6 @@ export function MealEntryModal({
         setCarbs("");
         setFat("");
         setServings(1);
-        setMealType("LUNCH");
       }
     }
   }, [visible, initialData]);
@@ -296,45 +285,6 @@ export function MealEntryModal({
                 </Pressable>
               </View>
             </View>
-
-            {/* Meal Type Selection 
-            <View className="mb-8">
-              <Text className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">
-                Meal Type
-              </Text>
-              <View className="flex-row gap-2">
-                {MEAL_TYPES.map((type) => (
-                  <Pressable
-                    key={type.value}
-                    onPress={() => setMealType(type.value)}
-                    className={`flex-1 flex-col items-center justify-center p-3 rounded-2xl border ${
-                      mealType === type.value
-                        ? "bg-[#f39849] border-[#f39849]"
-                        : "bg-zinc-50 dark:bg-zinc-800 border-zinc-100 dark:border-zinc-700"
-                    }`}
-                  >
-                    <MaterialIcons
-                      name={type.icon}
-                      size={20}
-                      color={
-                        mealType === type.value
-                          ? "white"
-                          : colorScheme === "dark"
-                          ? "#a1a1aa"
-                          : "#71717a"
-                      }
-                    />
-                    <Text
-                      className={`text-[10px] mt-1 font-bold ${
-                        mealType === type.value ? "text-white" : "text-zinc-500"
-                      }`}
-                    >
-                      {type.label}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>*/}
 
             {/* Calories Card */}
             <Pressable

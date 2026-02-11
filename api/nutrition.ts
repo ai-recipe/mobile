@@ -42,6 +42,7 @@ export interface AddFoodLogParams {
   carbsGrams: number;
   fatGrams: number;
   quantity: number;
+  mealType?: "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
   loggedAt?: string;
 }
 
