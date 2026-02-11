@@ -3,7 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
+import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { CalendarModal } from "../../screens/components/CalendarModal";
 
@@ -166,25 +166,6 @@ export default function HomeScreen() {
                     height={192}
                     style={{ transform: [{ rotate: "-90deg" }] }}
                   >
-                    <Defs>
-                      <LinearGradient
-                        id="gradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="0%"
-                      >
-                        <Stop
-                          offset="0%"
-                          stopColor={Colors[colorScheme].success}
-                        />
-                        <Stop
-                          offset="100%"
-                          stopColor={Colors[colorScheme].warning}
-                        />
-                      </LinearGradient>
-                    </Defs>
-                    {/* Background circle */}
                     <Circle
                       cx="96"
                       cy="96"
@@ -193,16 +174,18 @@ export default function HomeScreen() {
                       strokeWidth="12"
                       fill="transparent"
                     />
-                    {/* Progress circle */}
                     <Circle
                       cx="96"
                       cy="96"
                       r="88"
-                      stroke="url(#gradient)"
+                      stroke={Colors[colorScheme].success}
                       strokeWidth="12"
                       fill="transparent"
-                      strokeDasharray={circumference}
-                      strokeDashoffset={strokeDashoffset}
+                      strokeDasharray={2 * Math.PI * 88}
+                      strokeDashoffset={
+                        2 * Math.PI * 88 -
+                        (Math.min(30, 100) / 100) * (2 * Math.PI * 88)
+                      }
                       strokeLinecap="round"
                     />
                   </Svg>
@@ -213,11 +196,6 @@ export default function HomeScreen() {
                     <Text className="text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">
                       / {dailyGoal.target} cal
                     </Text>
-                    <View className="mt-1 px-2 py-0.5 bg-orange-100 dark:bg-orange-500/10 rounded-full">
-                      <Text className="text-[10px] font-bold text-[#f39849] italic">
-                        {dailyGoal.remaining} Left
-                      </Text>
-                    </View>
                   </View>
                 </View>
                 <View className="w-full mt-6 flex-row">

@@ -710,6 +710,14 @@ const DailyLog = () => {
           )}
         </ScrollView>
 
+        {/* Floating Action Buttons Overlay */}
+        {isFabExpanded && (
+          <Pressable
+            className="absolute inset-0 z-10 bg-black/5"
+            onPress={toggleFab}
+          />
+        )}
+
         {/* Floating Action Buttons */}
         {activeTab === "meal" && (
           <View className="absolute bottom-8 right-6 z-20">

@@ -36,7 +36,7 @@ interface SurveyOption {
 interface SurveyQuestion {
   key: string;
   title: string;
-  type: "single_select" | "multi_select";
+  type: "single_select" | "multi_select" | "number_input";
   options: SurveyOption[];
   isRequired: boolean;
 }
@@ -145,7 +145,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId,
+        deviceId: "1234567890",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
