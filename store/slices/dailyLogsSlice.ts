@@ -11,15 +11,19 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface DailyLogsState {
   entries: FoodLogEntry[];
+  recentMeals: FoodLogEntry[];
   summary: DailySummary | null;
   isLoading: boolean;
+  isRecentLoading: boolean;
   error: string | null;
 }
 
 const initialState: DailyLogsState = {
   entries: [],
+  recentMeals: [],
   summary: null,
   isLoading: false,
+  isRecentLoading: false,
   error: null,
 };
 
@@ -98,6 +102,41 @@ export const deleteFoodLogAsync = createAsyncThunk(
   },
 );
 
+export const fetchRecentMealsAsync = createAsyncThunk(
+  "dailyLogs/fetchRecentMeals",
+  async (_, { rejectWithValue }) => {
+    try {
+      const now = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+
+      const startDate = thirtyDaysAgo.toISOString().split("T")[0];
+      const endDate = now.toISOString().split("T")[0];
+
+      const response = await fetchFoodLogs({ startDate, endDate });
+
+      // Extract all entries from all days and get unique ones by mealName
+      const allEntries = response.data.days.flatMap((day) => day.entries);
+      const uniqueMealsMap = new Map<string, FoodLogEntry>();
+
+      allEntries.forEach((entry) => {
+        // Keep the most recent version of the meal (first encounter in flatMap if sorted)
+        if (!uniqueMealsMap.has(entry.mealName)) {
+          uniqueMealsMap.set(entry.mealName, entry);
+        }
+      });
+
+      return Array.from(uniqueMealsMap.values()).slice(0, 15); // Return top 15 unique recent meals
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to fetch recent meals",
+      );
+    }
+  },
+);
+
 const dailyLogsSlice = createSlice({
   name: "dailyLogs",
   initialState,
@@ -135,6 +174,18 @@ const dailyLogsSlice = createSlice({
     builder.addCase(addFoodLogAsync.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
+    });
+
+    // Fetch Recent Meals
+    builder.addCase(fetchRecentMealsAsync.pending, (state) => {
+      state.isRecentLoading = true;
+    });
+    builder.addCase(fetchRecentMealsAsync.fulfilled, (state, action) => {
+      state.isRecentLoading = false;
+      state.recentMeals = action.payload;
+    });
+    builder.addCase(fetchRecentMealsAsync.rejected, (state) => {
+      state.isRecentLoading = false;
     });
   },
 });

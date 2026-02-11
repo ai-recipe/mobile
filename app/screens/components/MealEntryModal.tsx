@@ -1,5 +1,7 @@
+import { FoodLogEntry } from "@/api/nutrition";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchRecentMealsAsync } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo, useRef, useState } from "react";
 import {
@@ -52,6 +54,7 @@ export function MealEntryModal({
   initialData,
 }: MealEntryModalProps) {
   const colorScheme = useColorScheme();
+  const dispatch = useAppDispatch();
   const [mealName, setMealName] = useState("");
   const [servings, setServings] = useState(1);
   const [calories, setCalories] = useState("");
@@ -60,7 +63,24 @@ export function MealEntryModal({
   const [fat, setFat] = useState("");
   const [mealType, setMealType] = useState<MealData["mealType"]>("LUNCH");
 
-  const { isLoading } = useAppSelector((state) => state.dailyLogs);
+  const { isLoading, recentMeals, isRecentLoading } = useAppSelector(
+    (state) => state.dailyLogs,
+  );
+
+  React.useEffect(() => {
+    if (visible && recentMeals.length === 0) {
+      dispatch(fetchRecentMealsAsync());
+    }
+  }, [visible, recentMeals.length, dispatch]);
+
+  const handleSelectRecent = (meal: FoodLogEntry) => {
+    setMealName(meal.mealName);
+    setCalories(meal.calories.toString());
+    setProtein(meal.proteinGrams.toString());
+    setCarbs(meal.carbsGrams.toString());
+    setFat(meal.fatGrams.toString());
+    setServings(meal.quantity || 1);
+  };
 
   const handleSave = () => {
     if (onSave) {
@@ -131,7 +151,14 @@ export function MealEntryModal({
     proteinWidthShared.value = withTiming(proteinPercent, { duration: 500 });
     carbsWidthShared.value = withTiming(carbsPercent, { duration: 500 });
     fatWidthShared.value = withTiming(fatPercent, { duration: 500 });
-  }, [proteinPercent, carbsPercent, fatPercent]);
+  }, [
+    proteinPercent,
+    carbsPercent,
+    fatPercent,
+    proteinWidthShared,
+    carbsWidthShared,
+    fatWidthShared,
+  ]);
 
   const proteinAnimatedStyle = useAnimatedStyle(() => ({
     width: `${proteinWidthShared.value}%`,
@@ -193,6 +220,40 @@ export function MealEntryModal({
           >
             {/* Drag Handle */}
             <View className="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-600 rounded-full mx-auto mb-6 mt-2" />
+
+            {/* Quick Select Section */}
+            {recentMeals.length > 0 && (
+              <View className="mb-6">
+                <Text className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3 ml-1">
+                  Quick Select
+                </Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  className="flex-row"
+                >
+                  <View className="flex-row gap-2 px-1">
+                    {recentMeals.map((meal, index) => (
+                      <Pressable
+                        key={`${meal.id}-${index}`}
+                        onPress={() => handleSelectRecent(meal)}
+                        className="bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 px-4 py-2.5 rounded-2xl flex-row items-center gap-2"
+                      >
+                        <View className="w-2 h-2 rounded-full bg-[#f39849]" />
+                        <View>
+                          <Text className="text-sm font-bold text-zinc-900 dark:text-white">
+                            {meal.mealName}
+                          </Text>
+                          <Text className="text-[10px] text-zinc-500 font-medium">
+                            {meal.calories} kcal
+                          </Text>
+                        </View>
+                      </Pressable>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            )}
 
             {/* Title and Servings */}
             <View className="flex-row justify-between items-start mb-8">
