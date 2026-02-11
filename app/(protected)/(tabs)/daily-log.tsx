@@ -280,7 +280,7 @@ const DailyLog = () => {
                 className={`${
                   consumedCalories > calorieGoal
                     ? "text-red-500"
-                    : "text-[#1F8B83]"
+                    : "text-green-500"
                 } dark:text-teal-400 font-bold text-sm`}
               >
                 {Math.abs(calorieGoal - consumedCalories)} kcal{" "}
@@ -311,7 +311,11 @@ const DailyLog = () => {
                     cx="48"
                     cy="48"
                     r="40"
-                    stroke={themeColors.primary}
+                    stroke={
+                      consumedCalories > calorieGoal
+                        ? themeColors.error
+                        : themeColors.success
+                    }
                     strokeWidth="8"
                     fill="transparent"
                     strokeDasharray={circumference}
