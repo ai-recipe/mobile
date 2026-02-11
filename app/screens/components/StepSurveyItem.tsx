@@ -81,12 +81,16 @@ export function StepSurveyItem({
     <Animated.View
       entering={entering}
       exiting={exiting}
-      className="flex-1 px-5 pt-2"
+      className="flex-1 px-5"
     >
       <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
+        <Text className="text-[32px] font-bold leading-tight pt-2 pb-1 text-zinc-900 dark:text-white">
+          {question.title}
+        </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
           {getQuestionSubtitle()}
         </Text>

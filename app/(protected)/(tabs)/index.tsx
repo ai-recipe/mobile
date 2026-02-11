@@ -178,7 +178,7 @@ export default function HomeScreen() {
                       cx="96"
                       cy="96"
                       r="88"
-                      stroke={Colors[colorScheme].success}
+                      stroke={Colors[colorScheme].primary}
                       strokeWidth="12"
                       fill="transparent"
                       strokeDasharray={2 * Math.PI * 88}

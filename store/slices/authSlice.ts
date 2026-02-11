@@ -88,7 +88,7 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
-      if (!response.data?.data) {
+      if (true) {
         // todo
         dispatch(fetchSurveyQuestionsAsync());
       }

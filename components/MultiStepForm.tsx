@@ -204,32 +204,8 @@ export function MultiStepForm<T extends Record<string, any>>({
           </View>
         </View>
 
-        {/* Step content */}
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingHorizontal: 16,
-            paddingBottom: 24,
-          }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          ref={scrollRef}
-        >
-          <Text
-            className="text-[32px] font-bold leading-tight pt-2 pb-1"
-            style={{ color: theme.text }}
-          >
-            {currentStep.title}
-          </Text>
-          {currentStep.subtitle && (
-            <Text
-              className="text-base pt-1 pb-4"
-              style={{ color: isDark ? "rgba(255,255,255,0.7)" : theme.muted }}
-            >
-              {currentStep.subtitle}
-            </Text>
-          )}
+        {/* Step content container */}
+        <View className="flex-1">
           {currentStep.render({
             data,
             setValue: setValueWrapper,
@@ -237,7 +213,7 @@ export function MultiStepForm<T extends Record<string, any>>({
             control,
             errors: !!submittedSteps[currentStep.id] ? errors : {},
           })}
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );

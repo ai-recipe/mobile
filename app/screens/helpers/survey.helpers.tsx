@@ -1,6 +1,7 @@
 import { MultiStepFormStep } from "@/components/MultiStepForm";
 import React from "react";
 import { StepSurveyItem } from "../components/StepSurveyItem";
+import { StepSurveyLoader } from "../components/StepSurveyLoader";
 
 interface SurveyOption {
   icon: string;
@@ -21,8 +22,11 @@ export const createSurveySteps = ({
 }: {
   questions: SurveyQuestion[];
 }): MultiStepFormStep[] => {
-  return questions.map((question, index) => {
-    return {
+  const steps: MultiStepFormStep[] = [];
+
+  questions.forEach((question, index) => {
+    // Add the question step
+    steps.push({
       id: question.key,
       title: question.title,
       fields: [question.key],
@@ -37,6 +41,20 @@ export const createSurveySteps = ({
           direction="forward"
         />
       ),
-    };
+    });
+
+    // Add a loader step every 5 questions, but not after the last question
+    if ((index + 1) % 5 === 0 && index !== questions.length - 1) {
+      steps.push({
+        id: `loader-${index}`,
+        title: "",
+        fields: [],
+        shouldHandleNextStep: true,
+        dontShowBackButton: true,
+        render: ({ nextStep }) => <StepSurveyLoader onNext={nextStep} />,
+      });
+    }
   });
+
+  return steps;
 };
