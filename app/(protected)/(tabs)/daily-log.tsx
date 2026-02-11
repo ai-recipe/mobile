@@ -13,7 +13,7 @@ import {
 } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, isSameDay, parseISO, subDays } from "date-fns";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -72,6 +72,33 @@ const DailyLog = () => {
   const mainScrollRef = React.useRef<ScrollView>(null);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
   const initialScrollDone = React.useRef(false);
+
+  // Handle scanned meal from the Live Meal Scanner
+  const { scannedMeal } = useLocalSearchParams<{ scannedMeal?: string }>();
+
+  useEffect(() => {
+    if (scannedMeal && scannedMeal !== "") {
+      if (scannedMeal === "__manual__") {
+        // Manual capture fallback - open empty modal
+        setEditingMeal(null);
+        setIsMealModalVisible(true);
+      } else {
+        // Pre-fill modal with scanned meal name
+        setEditingMeal({
+          name: scannedMeal,
+          servings: 1,
+          calories: 0,
+          protein: 0,
+          carbs: 0,
+          fat: 0,
+          loggedAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+        });
+        setIsMealModalVisible(true);
+      }
+      // Clear the param so it doesn't re-trigger
+      router.setParams({ scannedMeal: "" });
+    }
+  }, [scannedMeal]);
 
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
@@ -759,8 +786,7 @@ const DailyLog = () => {
               <Pressable
                 onPress={() => {
                   toggleFab();
-                  // Handle scan
-                  console.log("Scan");
+                  router.push("/screens/meal-scanner");
                 }}
                 className="bg-white dark:bg-zinc-800 w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-700"
                 style={{ elevation: 0 }}

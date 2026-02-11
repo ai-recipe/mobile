@@ -1,1 +1,8 @@
-TODO: Onboarding tamamlamışlar için initdevice da app loading state controlü yap
+Here's what to run:
+For iOS (physical device):
+npx expo run:ios --device
+npx expo run:ios --device
+For Android (physical device):
+npx expo run:android --device
+Or using EAS (cloud build for physical device):
+eas build --profile development-device --platform ios# oreas build --profile development-device --platform android

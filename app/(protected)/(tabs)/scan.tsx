@@ -24,9 +24,7 @@ export default function ScanScreen() {
   };
 
   const handleScanMeal = () => {
-    // Nutrition tracker scan is currently handled in daily-log.tsx FAB
-    // For now, navigate to daily log or show a placeholder
-    router.push("/daily-log");
+    router.push("/screens/meal-scanner");
   };
 
   return (
