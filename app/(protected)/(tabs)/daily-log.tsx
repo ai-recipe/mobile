@@ -19,6 +19,7 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  Dimensions,
   Pressable,
   ScrollView,
   Text,
@@ -27,6 +28,20 @@ import {
 import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
+const dates = Array.from({ length: 30 }).map((_, i) => {
+  const date = subDays(new Date(), 15 - i);
+  return {
+    date,
+    day: format(date, "d"),
+    month: format(date, "MMM"),
+    isToday: isSameDay(date, new Date()),
+  };
+});
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const ITEM_WIDTH = 64; // w-16
+const ITEM_GAP = 12; // gap-3
+const ITEM_TOTAL_WIDTH = ITEM_WIDTH + ITEM_GAP;
 const DailyLog = () => {
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
@@ -40,7 +55,9 @@ const DailyLog = () => {
   const [isFabExpanded, setIsFabExpanded] = React.useState(false);
   const [isMealModalVisible, setIsMealModalVisible] = React.useState(false);
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
+  const scrollRef = React.useRef<ScrollView>(null);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
+  const initialScrollDone = React.useRef(false);
 
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
@@ -115,7 +132,6 @@ const DailyLog = () => {
         await dispatch(
           updateFoodLogAsync({
             id: mealData.id,
-            date: dateStr,
             data: {
               mealName: mealData.name,
               calories: mealData.calories,
@@ -175,7 +191,28 @@ const DailyLog = () => {
     });
     setIsMealModalVisible(true);
   };
-  console.log("entries", entries);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const index = dates.findIndex((item) =>
+        isSameDay(item.date, selectedDate),
+      );
+      if (index !== -1) {
+        // Calculate the offset to center the item
+        // (index * totalWidth) + padding - (screenWidth / 2) + (itemWidth / 2)
+        const offset =
+          index * ITEM_TOTAL_WIDTH + 8 - SCREEN_WIDTH / 1.5 + ITEM_WIDTH / 2;
+
+        // Use a small delay to ensure the scrollview is ready
+        setTimeout(() => {
+          scrollRef.current?.scrollTo({
+            x: Math.max(0, offset),
+            animated: true,
+          });
+        }, 100);
+      }
+    }, [selectedDate]),
+  );
   return (
     <ScreenWrapper>
       <View className="flex-1" style={{ backgroundColor }}>
@@ -185,14 +222,7 @@ const DailyLog = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             className="flex-row"
-            ref={(ref) => {
-              // Simple way to scroll to middle approx
-              if (ref)
-                setTimeout(
-                  () => ref.scrollTo({ x: 600, animated: false }),
-                  100,
-                );
-            }}
+            ref={scrollRef}
           >
             <View className="flex-row gap-3 px-2 py-2">
               {dates.map((item, index) => {

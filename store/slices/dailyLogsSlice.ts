@@ -64,16 +64,12 @@ export const addFoodLogAsync = createAsyncThunk(
 export const updateFoodLogAsync = createAsyncThunk(
   "dailyLogs/updateFoodLog",
   async (
-    {
-      id,
-      data,
-      date,
-    }: { id: string; data: Partial<AddFoodLogParams>; date?: string },
+    { id, data }: { id: string; data: Partial<AddFoodLogParams> },
     { rejectWithValue, dispatch },
   ) => {
     try {
       const response = await updateFoodLog(id, data);
-      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
+      dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -87,13 +83,10 @@ export const updateFoodLogAsync = createAsyncThunk(
 
 export const deleteFoodLogAsync = createAsyncThunk(
   "dailyLogs/deleteFoodLog",
-  async (
-    { id, date }: { id: string; date?: string },
-    { rejectWithValue, dispatch },
-  ) => {
+  async ({ id }: { id: string }, { rejectWithValue, dispatch }) => {
     try {
       const response = await deleteFoodLog(id);
-      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
+      dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
       return rejectWithValue(
