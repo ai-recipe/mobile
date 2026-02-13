@@ -157,7 +157,7 @@ export const initDeviceAsync = createAsyncThunk(
 
       return data;
     } catch (error: any) {
-      console.log("error", error?.response?.data?.message);
+      console.log("error", JSON.stringify(error, null, 2));
       return rejectWithValue(
         error.response?.data?.message || "Cihaz başlatma başarısız",
       );

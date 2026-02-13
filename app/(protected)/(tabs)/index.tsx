@@ -231,7 +231,6 @@ const HomeScreen = () => {
     return groups;
   }, [entries]);
 
-  console.log("mealModalOpen", mealModalOpen);
   const MealSection = ({
     title,
     icon,

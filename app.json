@@ -17,7 +17,11 @@
       "bundleIdentifier": "com.m.sahinkundakci.myapp",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Uygulama, yemek tarifleri oluşturmak için seçtiğiniz malzemelerin fotoğraflarına erişir.",
-        "NSCameraUsageDescription": "Uygulama, buzdolabınızdaki malzemeleri taramak için kameranızı kullanır."
+        "NSCameraUsageDescription": "Uygulama, buzdolabınızdaki malzemeleri taramak için kameranızı kullanır.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSAllowsLocalNetworking": true
+        }
       }
     },
     "android": {
@@ -34,6 +38,15 @@
       ]
     },
     "plugins": [
+      "./plugins/withAllowHttp",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       [
         "react-native-vision-camera",
         {
