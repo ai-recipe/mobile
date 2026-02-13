@@ -262,9 +262,6 @@ const HomeScreen = () => {
               {title}
             </Text>
           </View>
-          <Text className="text-sm font-bold text-[#f39849]">
-            {totalCals} kcal
-          </Text>
         </View>
         <View className="gap-3">
           {items.map((entry) => (
@@ -447,18 +444,14 @@ const HomeScreen = () => {
               <>
                 {/* Daily Total Card */}
                 <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
-                  <Text className="text-center text-lg font-bold mb-1 text-zinc-900 dark:text-white">
-                    Daily Total
-                  </Text>
-
                   {/* Deficit/Surplus Badge */}
                   <View className="w-full items-end mb-6">
                     <Text
                       className={`${
                         consumedCalories > calorieGoal
-                          ? "text-red-500"
-                          : "text-green-500"
-                      } dark:text-teal-400 font-bold text-sm`}
+                          ? "text-red-500 bg-red-500/10 p-2 rounded-full"
+                          : "text-green-500 bg-green-500/10 p-2 rounded-full"
+                      } dark:text-teal-400 font-bold text-sm `}
                     >
                       {Math.round(Math.abs(calorieGoal - consumedCalories))}{" "}
                       kcal{" "}
@@ -494,7 +487,7 @@ const HomeScreen = () => {
                           stroke={
                             consumedCalories > calorieGoal
                               ? themeColors.error
-                              : themeColors.success
+                              : themeColors.primary
                           }
                           strokeWidth="8"
                           fill="transparent"
@@ -569,25 +562,25 @@ const HomeScreen = () => {
                       title="Breakfast"
                       icon="wb-sunny"
                       items={groupedEntries.BREAKFAST}
-                      color="#f59e0b"
+                      color={themeColors.primary}
                     />
                     <MealSection
                       title="Lunch"
                       icon="restaurant"
                       items={groupedEntries.LUNCH}
-                      color="#3b82f6"
+                      color={themeColors.primary}
                     />
                     <MealSection
                       title="Dinner"
                       icon="nights-stay"
                       items={groupedEntries.DINNER}
-                      color="#8b5cf6"
+                      color={themeColors.primary}
                     />
                     <MealSection
                       title="Snacks"
                       icon="fastfood"
                       items={groupedEntries.SNACK}
-                      color="#f39849"
+                      color={themeColors.primary}
                     />
                   </View>
                 ) : (
@@ -668,6 +661,10 @@ const HomeScreen = () => {
                         <Pressable
                           onPress={() => handleAddWater(250)}
                           disabled={waterAdding}
+                          android_ripple={{ color: "rgba(255,255,255,0.35)" }}
+                          style={({ pressed }) => [
+                            { opacity: pressed ? 0.85 : 1 },
+                          ]}
                           className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30"
                         >
                           <Text className="text-white font-bold text-base">
@@ -680,6 +677,10 @@ const HomeScreen = () => {
                         <Pressable
                           onPress={() => handleAddWater(500)}
                           disabled={waterAdding}
+                          android_ripple={{ color: "rgba(0,0,0,0.06)" }}
+                          style={({ pressed }) => [
+                            { opacity: pressed ? 0.85 : 1 },
+                          ]}
                           className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center"
                         >
                           <Text className="text-zinc-900 dark:text-white font-bold text-base">

@@ -265,11 +265,10 @@ export default function TabLayout() {
           title: "Ana Sayfa",
         }}
       />
-
       <Tabs.Screen
-        name="explore"
+        name="progress"
         options={{
-          title: "Keşfet",
+          title: "Progress",
         }}
       />
 
@@ -280,9 +279,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="progress"
+        name="explore"
         options={{
-          title: "Progress",
+          title: "Keşfet",
         }}
       />
       <Tabs.Screen

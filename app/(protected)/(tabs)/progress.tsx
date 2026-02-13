@@ -1,467 +1,485 @@
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import React, { useMemo } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Svg, { Circle, Path } from "react-native-svg";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { CalendarModal } from "../../screens/components/CalendarModal";
 
-type TabType = "health" | "recipes";
+const PRIMARY = "#f39849";
+const SECONDARY = "#4d8df3";
+
+type PeriodType = "weekly" | "monthly";
+
+const WEEK_CALORIE_BARS = [
+  { day: "Mon", height: 0.8 },
+  { day: "Tue", height: 0.95 },
+  { day: "Wed", height: 0.6 },
+  { day: "Thu", height: 0.8 },
+  { day: "Fri", height: 0.7 },
+  { day: "Sat", height: 0.4 },
+  { day: "Sun", height: 0 },
+];
+
+const MILESTONES = [
+  {
+    id: "streak",
+    title: "7 Day Streak",
+    subtitle: "Unlocked 2h ago",
+    icon: "local-fire-department" as const,
+    color: PRIMARY,
+    bgClass: "bg-orange-100 dark:bg-orange-900/30",
+    unlocked: true,
+  },
+  {
+    id: "goal",
+    title: "Goal Reached",
+    subtitle: "2,500 kcal limit",
+    icon: "emoji-events" as const,
+    color: SECONDARY,
+    bgClass: "bg-blue-100 dark:bg-blue-900/30",
+    unlocked: true,
+    bordered: true,
+  },
+  {
+    id: "water",
+    title: "Water Hero",
+    subtitle: "5 more days",
+    icon: "lock" as const,
+    color: "#71717a",
+    bgClass: "bg-zinc-100 dark:bg-zinc-800",
+    unlocked: false,
+  },
+];
+
+const BAR_HEIGHT = 96;
 
 export default function ProgressScreen() {
   const colorScheme = useColorScheme();
-  const backgroundColor = Colors[colorScheme].background;
-  const [activeTab, setActiveTab] = React.useState<TabType>("health");
-  const [selectedDifficulty, setSelectedDifficulty] = React.useState<
-    "FAST" | "MED" | "HARD"
-  >("FAST");
-  const [date, setDate] = React.useState(new Date());
-  const [showCalendar, setShowCalendar] = React.useState(false);
+  const theme = Colors[colorScheme];
+  const backgroundColor = theme.background;
+  const isDark = colorScheme === "dark";
+  const [period, setPeriod] = React.useState<PeriodType>("weekly");
 
-  const handleDateConfirm = (selectedDate: Date) => {
-    setDate(selectedDate);
-    // You can add logic here to fetch data for the selected date
-  };
+  const calorieAvg = 1840;
+  const calorieTrend = -12;
+  const waterGoalPercent = 75;
+  const avgWaterLiters = 2.1;
+  const weightKg = 72.4;
+  const weightChangeKg = -0.8;
 
-  // Mock data - can be replaced with Redux state later
-  const dailyGoal = {
-    current: 1850,
-    target: 2200,
-    remaining: 350,
-  };
+  const waterCircumference = 2 * Math.PI * 40;
+  const waterStrokeOffset = useMemo(
+    () =>
+      waterCircumference - (waterGoalPercent / 100) * waterCircumference,
+    [waterGoalPercent, waterCircumference]
+  );
 
-  const macros = {
-    protein: { current: 120, target: 160 },
-    carbs: { current: 200, target: 250 },
-    fats: { current: 45, target: 70 },
-  };
-
-  const waterIntake = {
-    current: 1500,
-    target: 2000,
-  };
-
-  const recipeStats = {
-    totalScanned: 24,
-    thisWeek: 7,
-    avgPrepTime: 25,
-    prepTimeTrend: -5,
-  };
-
-  const weekActivity = [
-    { day: "Mon", value: 60 },
-    { day: "Tue", value: 95 },
-    { day: "Wed", value: 40 },
-    { day: "Thu", value: 75 },
-    { day: "Fri", value: 55 },
-    { day: "Sat", value: 30 },
-    { day: "Sun", value: 85 },
-  ];
-
-  // Calculate progress percentage for circular ring
-  const progressPercentage = (dailyGoal.current / dailyGoal.target) * 100;
-  const circumference = 2 * Math.PI * 88;
-  const strokeDashoffset =
-    circumference - (progressPercentage / 100) * circumference;
-
-  // Calculate water progress
-  const waterProgressPercentage =
-    (waterIntake.current / waterIntake.target) * 100;
+  const mutedText = isDark ? "#a1a1aa" : "#71717a";
+  const trackBg = isDark ? "#3f3f46" : "#f4f4f5";
 
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
-          {/* Header */}
-          <View className="px-6 py-4 flex-row justify-end items-center">
-            <Pressable
-              onPress={() => setShowCalendar(true)}
-              className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center "
-            >
-              <MaterialIcons
-                name="calendar-today"
-                size={20}
-                color={Colors[colorScheme].icon}
-              />
-            </Pressable>
-          </View>
-
-          <CalendarModal
-            visible={showCalendar}
-            onClose={() => setShowCalendar(false)}
-            onConfirm={handleDateConfirm}
-            initialDate={date}
-          />
-
-          {/* Tab Navigation */}
+          {/* Tab Navigation - same design as index (Meal/Water) */}
           <View className="px-6 mb-4">
-            <View className="bg-zinc-100 dark:bg-zinc-900 rounded-xl p-1 flex-row">
+            <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
               <Pressable
-                onPress={() => setActiveTab("health")}
-                className={`flex-1 py-3 rounded-lg ${
-                  activeTab === "health"
+                onPress={() => setPeriod("weekly")}
+                className={`flex-1 py-3 rounded-xl ${
+                  period === "weekly"
                     ? "bg-white dark:bg-zinc-800"
                     : "bg-transparent"
                 }`}
               >
                 <Text
                   className={`text-center text-sm font-bold ${
-                    activeTab === "health"
+                    period === "weekly"
                       ? "text-[#f39849]"
                       : "text-zinc-500 dark:text-zinc-400"
                   }`}
                 >
-                  Personal Health
+                  Weekly
                 </Text>
               </Pressable>
               <Pressable
-                onPress={() => setActiveTab("recipes")}
-                className={`flex-1 py-3 rounded-lg ${
-                  activeTab === "recipes"
+                onPress={() => setPeriod("monthly")}
+                className={`flex-1 py-3 rounded-xl ${
+                  period === "monthly"
                     ? "bg-white dark:bg-zinc-800"
                     : "bg-transparent"
                 }`}
               >
                 <Text
                   className={`text-center text-sm font-bold ${
-                    activeTab === "recipes"
+                    period === "monthly"
                       ? "text-[#f39849]"
                       : "text-zinc-500 dark:text-zinc-400"
                   }`}
                 >
-                  Recipe Analytics
+                  Monthly
                 </Text>
               </Pressable>
             </View>
           </View>
 
-          {/* Tab Content */}
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {activeTab === "health" ? (
-              // Personal Health Tab
-              <View className="px-6 pb-24">
-                {/* Daily Calorie Progress Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6 items-center">
-                  <View className="relative w-48 h-48 items-center justify-center">
-                    {/* SVG Progress Ring */}
-                    <Svg
-                      width={192}
-                      height={192}
-                      style={{ transform: [{ rotate: "-90deg" }] }}
-                    >
-                      <Circle
-                        cx="96"
-                        cy="96"
-                        r="88"
-                        stroke={colorScheme === "dark" ? "#27272a" : "#f1f5f9"}
-                        strokeWidth="12"
-                        fill="transparent"
-                      />
-                      <Circle
-                        cx="96"
-                        cy="96"
-                        r="88"
-                        stroke={Colors[colorScheme].primary}
-                        strokeWidth="12"
-                        fill="transparent"
-                        strokeDasharray={2 * Math.PI * 88}
-                        strokeDashoffset={
-                          2 * Math.PI * 88 -
-                          (Math.min(30, 100) / 100) * (2 * Math.PI * 88)
-                        }
-                        strokeLinecap="round"
-                      />
-                    </Svg>
-                    <View className="absolute inset-0 flex-col items-center justify-center">
-                      <Text className="text-3xl font-black text-zinc-900 dark:text-white">
-                        {dailyGoal.current}
-                      </Text>
-                      <Text className="text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">
-                        / {dailyGoal.target} cal
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="w-full mt-6 flex-row">
-                    <View className="flex-1 items-center">
-                      <Text className="text-[10px] text-zinc-400 font-bold uppercase mb-1">
-                        Goal
-                      </Text>
-                      <Text className="font-bold text-sm text-zinc-900 dark:text-white">
-                        {dailyGoal.target}
-                      </Text>
-                    </View>
-                    <View className="flex-1 items-center border-x border-zinc-100 dark:border-zinc-800">
-                      <Text className="text-[10px] text-zinc-400 font-bold uppercase mb-1">
-                        Consumed
-                      </Text>
-                      <Text className="font-bold text-sm text-zinc-900 dark:text-white">
-                        {dailyGoal.current}
-                      </Text>
-                    </View>
-                    <View className="flex-1 items-center">
-                      <Text className="text-[10px] text-zinc-400 font-bold uppercase mb-1">
-                        Remaining
-                      </Text>
-                      <Text className="font-bold text-sm text-zinc-900 dark:text-white">
-                        {dailyGoal.remaining}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Macronutrients Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800 mb-6">
-                  <View className="flex-row items-center gap-2 mb-4">
-                    <MaterialIcons
-                      name="donut-small"
-                      size={16}
-                      color="#f39849"
-                    />
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Nutrition Tracking
+          {/* Main Content - same ScrollView pattern as index */}
+          <ScrollView
+            className="flex-1 px-6"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+          >
+            {/* Calorie Intake card */}
+            <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
+              <View style={styles.calorieHeader}>
+                <View>
+                  <Text
+                    style={[
+                      styles.labelUppercase,
+                      { color: mutedText },
+                    ]}
+                  >
+                    CALORIE INTAKE
+                  </Text>
+                  <Text style={[styles.calorieValue, { color: theme.text }]}>
+                    {calorieAvg.toLocaleString()}{" "}
+                    <Text style={[styles.calorieUnit, { color: mutedText }]}>
+                      avg/day
                     </Text>
-                  </View>
-                  <View className="gap-y-4">
-                    {/* Protein */}
-                    <View>
-                      <View className="flex-row justify-between mb-1.5">
-                        <Text className="text-xs font-bold text-zinc-500">
-                          Protein
-                        </Text>
-                        <Text className="text-xs font-bold text-zinc-900 dark:text-white">
-                          {macros.protein.current}g{" "}
-                          <Text className="text-zinc-300 font-normal">
-                            / {macros.protein.target}g
-                          </Text>
-                        </Text>
-                      </View>
-                      <View className="h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                        <View
-                          className="h-full bg-[#f39849] rounded-full"
-                          style={{
-                            width: `${
-                              (macros.protein.current / macros.protein.target) *
-                              100
-                            }%`,
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    {/* Carbs */}
-                    <View>
-                      <View className="flex-row justify-between mb-1.5">
-                        <Text className="text-xs font-bold text-zinc-500">
-                          Carbs
-                        </Text>
-                        <Text className="text-xs font-bold text-zinc-900 dark:text-white">
-                          {macros.carbs.current}g{" "}
-                          <Text className="text-zinc-300 font-normal">
-                            / {macros.carbs.target}g
-                          </Text>
-                        </Text>
-                      </View>
-                      <View className="h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                        <View
-                          className="h-full bg-blue-400 rounded-full"
-                          style={{
-                            width: `${
-                              (macros.carbs.current / macros.carbs.target) * 100
-                            }%`,
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    {/* Fats */}
-                    <View>
-                      <View className="flex-row justify-between mb-1.5">
-                        <Text className="text-xs font-bold text-zinc-500">
-                          Fats
-                        </Text>
-                        <Text className="text-xs font-bold text-zinc-900 dark:text-white">
-                          {macros.fats.current}g{" "}
-                          <Text className="text-zinc-300 font-normal">
-                            / {macros.fats.target}g
-                          </Text>
-                        </Text>
-                      </View>
-                      <View className="h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                        <View
-                          className="h-full bg-orange-400 rounded-full"
-                          style={{
-                            width: `${
-                              (macros.fats.current / macros.fats.target) * 100
-                            }%`,
-                          }}
-                        />
-                      </View>
-                    </View>
-                  </View>
+                  </Text>
                 </View>
-
-                {/* Water Intake Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800">
-                  <View className="flex-row items-center gap-2 mb-4">
-                    <MaterialIcons name="opacity" size={16} color="#3b82f6" />
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Daily Water Intake
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center justify-between mb-3">
-                    <View>
-                      <Text className="text-2xl font-bold text-zinc-900 dark:text-white">
-                        {waterIntake.current}ml
-                      </Text>
-                      <Text className="text-xs text-zinc-500">
-                        of {waterIntake.target}ml goal
-                      </Text>
-                    </View>
-                    <View className="items-center">
-                      <Text className="text-lg font-bold text-blue-500">
-                        {Math.round(waterProgressPercentage)}%
-                      </Text>
-                      <Text className="text-[10px] text-zinc-400 uppercase">
-                        Complete
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                <View
+                  style={[
+                    styles.trendBadge,
+                    {
+                      backgroundColor: isDark
+                        ? "rgba(34,197,94,0.25)"
+                        : "#dcfce7",
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.trendText,
+                      {
+                        color: isDark ? "#86efac" : "#166534",
+                      },
+                    ]}
+                  >
+                    {calorieTrend}% vs last week
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.barChartRow}>
+                {WEEK_CALORIE_BARS.map((item, i) => (
+                  <View
+                    key={item.day}
+                    style={[styles.barCol, { marginHorizontal: 2 }]}
+                  >
                     <View
-                      className="h-full bg-blue-500 rounded-full"
-                      style={{
-                        width: `${waterProgressPercentage}%`,
-                      }}
-                    />
-                  </View>
-                  <View className="flex-row items-center justify-between mt-3">
-                    <Text className="text-[10px] text-zinc-400">0ml</Text>
-                    <Text className="text-[10px] text-zinc-400">
-                      {waterIntake.target}ml
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              // Recipe Analytics Tab
-              <View className="px-6 pb-24">
-                {/* Recipe Stats Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
-                  <View className="flex-row items-center gap-2 mb-4">
-                    <MaterialIcons
-                      name="restaurant"
-                      size={16}
-                      color="#f39849"
-                    />
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Recipe Tracking
-                    </Text>
-                  </View>
-                  <View className="flex-row gap-4">
-                    <View className="flex-1 items-center py-4 bg-orange-50 dark:bg-orange-500/10 rounded-lg">
-                      <Text className="text-2xl font-bold text-zinc-900 dark:text-white">
-                        {recipeStats.totalScanned}
-                      </Text>
-                      <Text className="text-[10px] text-zinc-500 font-bold uppercase mt-1">
-                        Total Scanned
-                      </Text>
-                    </View>
-                    <View className="flex-1 items-center py-4 bg-orange-50 dark:bg-orange-500/10 rounded-lg">
-                      <Text className="text-2xl font-bold text-zinc-900 dark:text-white">
-                        {recipeStats.thisWeek}
-                      </Text>
-                      <Text className="text-[10px] text-zinc-500 font-bold uppercase mt-1">
-                        This Week
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Stats Row */}
-                <View className="flex-row gap-4 mb-6">
-                  {/* Avg Prep Time Card */}
-                  <View className="flex-1 bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
-                    <View className="flex-row items-center gap-2 mb-2">
-                      <MaterialIcons
-                        name="schedule"
-                        size={18}
-                        color="#f39849"
-                      />
-                      <Text className="text-[10px] font-bold text-zinc-400 uppercase">
-                        Avg Prep
-                      </Text>
-                    </View>
-                    <View className="flex-row items-baseline gap-2">
-                      <Text className="text-xl font-bold text-zinc-900 dark:text-white">
-                        {recipeStats.avgPrepTime}{" "}
-                        <Text className="text-xs font-normal text-zinc-500">
-                          min
-                        </Text>
-                      </Text>
-                      <View className="flex-row items-center">
-                        <MaterialIcons
-                          name="arrow-downward"
-                          size={12}
-                          color="#f39849"
-                        />
-                        <Text className="text-[10px] text-[#f39849] font-bold">
-                          {Math.abs(recipeStats.prepTimeTrend)}%
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  {/* Difficulty Preference Card */}
-                  <View className="flex-1 bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800">
-                    <Text className="text-[10px] font-bold text-zinc-400 uppercase text-center mb-2">
-                      Difficulty
-                    </Text>
-                    <View className="flex-row items-center justify-center">
-                      <Text className="text-xl font-bold text-zinc-900 dark:text-white">
-                        {selectedDifficulty}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Activity Chart Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800">
-                  <View className="flex-row items-center justify-between mb-6">
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Last 7 Days Activity
-                    </Text>
-                    <Text className="text-[10px] font-normal text-zinc-400">
-                      Avg 4.2/day
-                    </Text>
-                  </View>
-                  <View className="flex-row items-end justify-between h-32 px-2">
-                    {weekActivity.map((item, index) => (
+                      style={[
+                        styles.barTrack,
+                        {
+                          height: BAR_HEIGHT,
+                          backgroundColor: trackBg,
+                        },
+                      ]}
+                    >
                       <View
-                        key={index}
-                        className="flex-col items-center gap-2 flex-1"
-                      >
-                        <View
-                          className={`w-6 rounded-t-sm ${
-                            item.value >= 80
-                              ? "bg-[#f39849]"
-                              : "bg-orange-200 dark:bg-orange-500/20"
-                          }`}
-                          style={{ height: `${item.value}%` }}
-                        />
-                        <Text className="text-[9px] font-bold text-zinc-400 uppercase">
-                          {item.day}
-                        </Text>
-                      </View>
-                    ))}
+                        style={[
+                          styles.barFill,
+                          {
+                            height: BAR_HEIGHT * item.height,
+                            backgroundColor: PRIMARY,
+                          },
+                        ]}
+                      />
+                    </View>
+                    <Text
+                      style={[styles.barLabel, { color: mutedText }]}
+                    >
+                      {item.day}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Avg Water + Weight Trend row */}
+            <View className="flex-row gap-4 mb-5">
+              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 shadow-sm items-center">
+                <Text
+                  style={[styles.labelUppercase, { color: mutedText, marginBottom: 16 }]}
+                >
+                  AVG WATER
+                </Text>
+                <View style={styles.waterRingWrap}>
+                  <Svg
+                    width={96}
+                    height={96}
+                    style={{ transform: [{ rotate: "-90deg" }] }}
+                  >
+                    <Circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke={trackBg}
+                      strokeWidth="8"
+                      fill="transparent"
+                    />
+                    <Circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke={SECONDARY}
+                      strokeWidth="8"
+                      fill="transparent"
+                      strokeDasharray={waterCircumference}
+                      strokeDashoffset={waterStrokeOffset}
+                      strokeLinecap="round"
+                    />
+                  </Svg>
+                  <View style={StyleSheet.absoluteFillObject}>
+                    <View style={styles.waterRingCenter}>
+                      <Text style={[styles.waterValue, { color: theme.text }]}>
+                        {avgWaterLiters}
+                      </Text>
+                      <Text style={[styles.waterUnit, { color: mutedText }]}>
+                        Liters
+                      </Text>
+                    </View>
                   </View>
                 </View>
+                <Text
+                  style={[styles.waterGoalText, { color: mutedText }]}
+                >
+                  {waterGoalPercent}% of daily goal
+                </Text>
               </View>
-            )}
+
+              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 shadow-sm flex-col">
+                <Text
+                  style={[styles.labelUppercase, { color: mutedText, marginBottom: 8 }]}
+                >
+                  WEIGHT TREND
+                </Text>
+                <View style={{ flex: 1, justifyContent: "flex-start" }}>
+                  <Text style={[styles.weightValue, { color: theme.text }]}>
+                    {weightKg}{" "}
+                    <Text style={[styles.weightUnit, { color: mutedText }]}>
+                      kg
+                    </Text>
+                  </Text>
+                  <Text
+                    style={[styles.weightChange, { color: SECONDARY }]}
+                  >
+                    {weightChangeKg >= 0 ? "+" : ""}
+                    {weightChangeKg} kg this week
+                  </Text>
+                </View>
+                <View style={styles.weightChartWrap}>
+                  <Svg width="100%" height={48} viewBox="0 0 100 40">
+                    <Path
+                      d="M0,35 Q25,30 50,15 T100,5"
+                      fill="none"
+                      stroke={SECONDARY}
+                      strokeLinecap="round"
+                      strokeWidth="3"
+                    />
+                  </Svg>
+                </View>
+              </View>
+            </View>
+
+            {/* Milestones */}
+            <View className="mb-6">
+              <View className="flex-row justify-between items-center mb-4 px-1">
+                <Text className="text-lg font-bold text-zinc-900 dark:text-white">
+                  Milestones
+                </Text>
+                <Pressable hitSlop={12}>
+                  <Text className="text-sm font-semibold text-[#f39849]">
+                    View all
+                  </Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ flexDirection: "row", gap: 16, paddingBottom: 8 }}
+              >
+                {MILESTONES.map((m) => (
+                  <View
+                    key={m.id}
+                    className={`min-w-[140px] bg-white dark:bg-zinc-900 p-4 rounded-3xl shadow-sm flex-col items-center border ${
+                      m.bordered ? "border-[#f39849]/20" : "border-zinc-100 dark:border-zinc-800"
+                    }`}
+                    style={{ opacity: m.unlocked ? 1 : 0.5 }}
+                  >
+                    <View
+                      style={[
+                        styles.milestoneIconWrap,
+                        isDark
+                          ? m.id === "streak"
+                            ? { backgroundColor: "rgba(249,115,22,0.2)" }
+                            : m.id === "goal"
+                              ? { backgroundColor: "rgba(59,130,246,0.2)" }
+                              : { backgroundColor: "#3f3f46" }
+                          : m.id === "streak"
+                            ? { backgroundColor: "#ffedd5" }
+                            : m.id === "goal"
+                              ? { backgroundColor: "#dbeafe" }
+                              : { backgroundColor: "#f4f4f5" },
+                      ]}
+                    >
+                      <MaterialIcons
+                        name={m.icon}
+                        size={28}
+                        color={m.unlocked ? m.color : mutedText}
+                      />
+                    </View>
+                    <Text
+                      style={[styles.milestoneTitle, { color: theme.text }]}
+                      numberOfLines={1}
+                    >
+                      {m.title}
+                    </Text>
+                    <Text
+                      style={[styles.milestoneSubtitle, { color: mutedText }]}
+                      numberOfLines={1}
+                    >
+                      {m.subtitle}
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
           </ScrollView>
         </View>
       </TabScreenWrapper>
     </ScreenWrapper>
   );
 }
+
+const styles = StyleSheet.create({
+  labelUppercase: {
+    fontSize: 11,
+    fontWeight: "600",
+    letterSpacing: 0.8,
+  },
+  calorieHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 24,
+  },
+  calorieValue: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 4,
+  },
+  calorieUnit: {
+    fontSize: 14,
+    fontWeight: "400",
+  },
+  trendBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  trendText: {
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  barChartRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    height: BAR_HEIGHT + 24,
+    paddingHorizontal: 4,
+  },
+  barCol: {
+    flex: 1,
+    alignItems: "center",
+    gap: 8,
+  },
+  barTrack: {
+    width: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+    position: "relative",
+  },
+  barFill: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  barLabel: {
+    fontSize: 10,
+    fontWeight: "500",
+  },
+  waterRingWrap: {
+    width: 96,
+    height: 96,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  waterRingCenter: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  waterValue: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  waterUnit: {
+    fontSize: 10,
+  },
+  waterGoalText: {
+    marginTop: 16,
+    fontSize: 11,
+  },
+  weightValue: {
+    fontSize: 24,
+    fontWeight: "700",
+  },
+  weightUnit: {
+    fontSize: 12,
+    fontWeight: "400",
+  },
+  weightChange: {
+    fontSize: 11,
+    fontWeight: "500",
+    marginTop: 4,
+  },
+  weightChartWrap: {
+    height: 48,
+    marginTop: 8,
+    width: "100%",
+  },
+  milestoneIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  milestoneTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  milestoneSubtitle: {
+    fontSize: 10,
+    marginTop: 4,
+    textAlign: "center",
+  },
+});

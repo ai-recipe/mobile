@@ -2,16 +2,16 @@ import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "./slices/appSlice";
 import authReducer from "./slices/authSlice";
 import dailyLogsReducer from "./slices/dailyLogsSlice";
-import dashboardReducer from "./slices/dashboardSlice";
-import waterLogsReducer from "./slices/waterLogsSlice";
 import exploreListReducer from "./slices/exploreListSlice";
 import favoritesListReducer from "./slices/favoritesListSlice";
 import modalReducer from "./slices/modalSlice";
 import multiStepFormReducer from "./slices/multiStepFormSlice";
+import progressReducer from "./slices/progressSlice";
 import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
 import surveyReducer from "./slices/surveySlice";
 import uiReducer from "./slices/uiSlice";
+import waterLogsReducer from "./slices/waterLogsSlice";
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
@@ -24,9 +24,9 @@ export const store = configureStore({
     app: appReducer,
     survey: surveyReducer,
     multiStepForm: multiStepFormReducer,
-    dashboard: dashboardReducer,
     dailyLogs: dailyLogsReducer,
     waterLogs: waterLogsReducer,
+    progress: progressReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

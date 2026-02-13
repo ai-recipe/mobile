@@ -22,10 +22,13 @@ import {
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
-const EmptyRecipesPlaceholder = (
-  searchQuery: string,
-  setSearchQuery: (value: string) => void,
-): React.ReactNode => {
+const PlaceholderComponent = ({
+  searchQuery,
+  setSearchQuery,
+}: {
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+}) => {
   const router = useRouter();
 
   return (
@@ -50,7 +53,7 @@ const EmptyRecipesPlaceholder = (
           if (searchQuery) {
             setSearchQuery("");
           } else {
-            router.push("/screens/explore");
+            router.push("/(protected)/(tabs)/explore");
           }
         }}
         className="bg-[#f39849] px-8 py-4 rounded-3xl shadow-lg shadow-orange-200 dark:shadow-none"
@@ -147,7 +150,7 @@ const FavoritesScreen = () => {
             ListFooterComponent={renderFooter}
             ListEmptyComponent={
               isLoading ? null : (
-                <EmptyRecipesPlaceholder
+                <PlaceholderComponent
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
                 />
