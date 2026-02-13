@@ -1,3 +1,5 @@
+import { useOpenMealModal } from "@/app/(protected)/(tabs)/_layout";
+import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import {
   MealData,
   MealEntryModal,
@@ -49,7 +51,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
 const ITEM_GAP = 12; // gap-3
 const ITEM_TOTAL_WIDTH = ITEM_WIDTH + ITEM_GAP;
-const DailyLog = () => {
+const HomeScreen = () => {
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
   const themeColors = Colors[colorScheme];
@@ -74,7 +76,10 @@ const DailyLog = () => {
   const initialScrollDone = React.useRef(false);
 
   // Handle scanned meal from the Live Meal Scanner
-  const { scannedMeal } = useLocalSearchParams<{ scannedMeal?: string }>();
+  const { scannedMeal, openMealModal } = useLocalSearchParams<{
+    scannedMeal?: string;
+    openMealModal?: string;
+  }>();
 
   useEffect(() => {
     if (scannedMeal && scannedMeal !== "") {
@@ -99,6 +104,25 @@ const DailyLog = () => {
       router.setParams({ scannedMeal: "" });
     }
   }, [scannedMeal]);
+
+  // Open meal modal from tab "Ekle" -> Manual Log (when navigating from another tab)
+  useEffect(() => {
+    if (openMealModal === "true") {
+      setEditingMeal(null);
+      setIsMealModalVisible(true);
+      router.setParams({ openMealModal: "" });
+    }
+  }, [openMealModal]);
+
+  // Register handler so tab bar can open modal from any screen (e.g. when already on home)
+  const { registerOpenMealModal } = useOpenMealModal();
+  useEffect(() => {
+    registerOpenMealModal(() => {
+      setEditingMeal(null);
+      setIsMealModalVisible(true);
+    });
+    return () => registerOpenMealModal(null);
+  }, [registerOpenMealModal]);
 
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
@@ -387,368 +411,373 @@ const DailyLog = () => {
   }, [activeTab]);
   return (
     <ScreenWrapper>
-      <View className="flex-1" style={{ backgroundColor }}>
-        {/* Date Selector */}
-        <View className="px-4 pb-6 pt-2">
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="flex-row"
-            ref={scrollRef}
-          >
-            <View className="flex-row gap-3 px-2 py-2">
-              {dates.map((item, index) => {
-                const isActive = isSameDay(item.date, selectedDate);
-                return (
-                  <Pressable
-                    key={index}
-                    onPress={() => handleDateSelect(item.date)}
-                    className={`flex items-center justify-center w-16 h-20 rounded-2xl border ${
-                      isActive
-                        ? "bg-[#f39849] border-[#f39849]"
-                        : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
-                    }`}
-                    style={isActive ? { transform: [{ scale: 1.05 }] } : {}}
-                  >
-                    <Text
-                      className={`text-lg ${
-                        isActive
-                          ? "text-white font-bold"
-                          : "text-zinc-600 dark:text-zinc-400 font-medium"
-                      }`}
-                    >
-                      {item.day}
-                    </Text>
-                    <Text
-                      className={`text-xs font-medium ${
-                        isActive
-                          ? "text-white/90"
-                          : "text-zinc-400 dark:text-zinc-500"
-                      }`}
-                    >
-                      {item.month}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </ScrollView>
-        </View>
-
-        {/* Tab Navigation */}
-        <View className="px-6 mb-4">
-          <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
-            <Pressable
-              onPress={() => setActiveTab("meal")}
-              className={`flex-1 py-3 rounded-xl ${
-                activeTab === "meal"
-                  ? "bg-white dark:bg-zinc-800"
-                  : "bg-transparent"
-              }`}
+      <TabScreenWrapper>
+        <View className="flex-1" style={{ backgroundColor }}>
+          {/* Date Selector */}
+          <View className="px-4 pb-6 pt-2">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              className="flex-row"
+              ref={scrollRef}
             >
-              <Text
-                className={`text-center text-sm font-bold ${
-                  activeTab === "meal"
-                    ? "text-[#f39849]"
-                    : "text-zinc-500 dark:text-zinc-400"
-                }`}
-              >
-                Meal Activity
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setActiveTab("water");
-              }}
-              className={`flex-1 py-3 rounded-xl ${
-                activeTab === "water"
-                  ? "bg-white dark:bg-zinc-800"
-                  : "bg-transparent"
-              }`}
-            >
-              <Text
-                className={`text-center text-sm font-bold ${
-                  activeTab === "water"
-                    ? "text-[#f39849]"
-                    : "text-zinc-500 dark:text-zinc-400"
-                }`}
-              >
-                Water Activity
-              </Text>
-            </Pressable>
+              <View className="flex-row gap-3 px-2 py-2">
+                {dates.map((item, index) => {
+                  const isActive = isSameDay(item.date, selectedDate);
+                  return (
+                    <Pressable
+                      key={index}
+                      onPress={() => handleDateSelect(item.date)}
+                      className={`flex items-center justify-center w-16 h-20 rounded-2xl border ${
+                        isActive
+                          ? "bg-[#f39849] border-[#f39849]"
+                          : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
+                      }`}
+                      style={isActive ? { transform: [{ scale: 1.05 }] } : {}}
+                    >
+                      <Text
+                        className={`text-lg ${
+                          isActive
+                            ? "text-white font-bold"
+                            : "text-zinc-600 dark:text-zinc-400 font-medium"
+                        }`}
+                      >
+                        {item.day}
+                      </Text>
+                      <Text
+                        className={`text-xs font-medium ${
+                          isActive
+                            ? "text-white/90"
+                            : "text-zinc-400 dark:text-zinc-500"
+                        }`}
+                      >
+                        {item.month}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
-        </View>
 
-        {/* Main Content */}
-        <ScrollView
-          ref={mainScrollRef}
-          className="flex-1 px-6"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
-        >
-          {activeTab === "meal" ? (
-            <>
-              {/* Daily Total Card */}
-              <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
-                <Text className="text-center text-lg font-bold mb-1 text-zinc-900 dark:text-white">
-                  Daily Total
+          {/* Tab Navigation */}
+          <View className="px-6 mb-4">
+            <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
+              <Pressable
+                onPress={() => setActiveTab("meal")}
+                className={`flex-1 py-3 rounded-xl ${
+                  activeTab === "meal"
+                    ? "bg-white dark:bg-zinc-800"
+                    : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`text-center text-sm font-bold ${
+                    activeTab === "meal"
+                      ? "text-[#f39849]"
+                      : "text-zinc-500 dark:text-zinc-400"
+                  }`}
+                >
+                  Meal Activity
                 </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setActiveTab("water");
+                }}
+                className={`flex-1 py-3 rounded-xl ${
+                  activeTab === "water"
+                    ? "bg-white dark:bg-zinc-800"
+                    : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`text-center text-sm font-bold ${
+                    activeTab === "water"
+                      ? "text-[#f39849]"
+                      : "text-zinc-500 dark:text-zinc-400"
+                  }`}
+                >
+                  Water Activity
+                </Text>
+              </Pressable>
+            </View>
+          </View>
 
-                {/* Deficit/Surplus Badge */}
-                <View className="w-full items-end mb-6">
-                  <Text
-                    className={`${
-                      consumedCalories > calorieGoal
-                        ? "text-red-500"
-                        : "text-green-500"
-                    } dark:text-teal-400 font-bold text-sm`}
-                  >
-                    {Math.round(Math.abs(calorieGoal - consumedCalories))} kcal{" "}
-                    {consumedCalories > calorieGoal ? "surplus" : "deficit"}
+          {/* Main Content */}
+          <ScrollView
+            ref={mainScrollRef}
+            className="flex-1 px-6"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+          >
+            {activeTab === "meal" ? (
+              <>
+                {/* Daily Total Card */}
+                <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
+                  <Text className="text-center text-lg font-bold mb-1 text-zinc-900 dark:text-white">
+                    Daily Total
                   </Text>
+
+                  {/* Deficit/Surplus Badge */}
+                  <View className="w-full items-end mb-6">
+                    <Text
+                      className={`${
+                        consumedCalories > calorieGoal
+                          ? "text-red-500"
+                          : "text-green-500"
+                      } dark:text-teal-400 font-bold text-sm`}
+                    >
+                      {Math.round(Math.abs(calorieGoal - consumedCalories))}{" "}
+                      kcal{" "}
+                      {consumedCalories > calorieGoal ? "surplus" : "deficit"}
+                    </Text>
+                  </View>
+
+                  {/* Circular Progress with Calories */}
+                  <View className="flex-row items-center justify-center w-full mb-8">
+                    {/* SVG Circle */}
+                    <View className="relative w-24 h-24 mr-6 items-center justify-center">
+                      <Svg
+                        width={96}
+                        height={96}
+                        style={{ transform: [{ rotate: "-90deg" }] }}
+                      >
+                        {/* Background circle */}
+                        <Circle
+                          cx="48"
+                          cy="48"
+                          r="40"
+                          stroke={
+                            colorScheme === "dark" ? "#27272a" : "#f3f4f6"
+                          }
+                          strokeWidth="8"
+                          fill="transparent"
+                        />
+                        {/* Progress circle */}
+                        <AnimatedCircle
+                          cx="48"
+                          cy="48"
+                          r="40"
+                          stroke={
+                            consumedCalories > calorieGoal
+                              ? themeColors.error
+                              : themeColors.success
+                          }
+                          strokeWidth="8"
+                          fill="transparent"
+                          strokeDasharray={circumference}
+                          animatedProps={animatedCircleProps}
+                          strokeLinecap="round"
+                        />
+                      </Svg>
+                    </View>
+
+                    {/* Calorie Numbers */}
+                    <View className="flex-col items-start">
+                      <View className="flex-row items-baseline gap-2">
+                        <Text className="text-5xl font-bold text-zinc-900 dark:text-white">
+                          {Math.round(consumedCalories)}
+                        </Text>
+                        <Text className="text-4xl font-light text-zinc-300 dark:text-zinc-600">
+                          /
+                        </Text>
+                      </View>
+                      <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
+                        {calorieGoal} calories
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Macros Row */}
+                  <View className="flex-row justify-between w-full px-4">
+                    <View className="flex-col items-center">
+                      <Text className="text-2xl mb-1">💪</Text>
+                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
+                        Protein
+                      </Text>
+                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        {Math.round(summary?.totalProteinGrams || 0)} g
+                      </Text>
+                    </View>
+                    <View className="flex-col items-center">
+                      <Text className="text-2xl mb-1">🥔</Text>
+                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
+                        Carb
+                      </Text>
+                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        {Math.round(summary?.totalCarbsGrams || 0)} g
+                      </Text>
+                    </View>
+                    <View className="flex-col items-center">
+                      <Text className="text-2xl mb-1">🥑</Text>
+                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
+                        Fat
+                      </Text>
+                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        {Math.round(summary?.totalFatGrams || 0)} g
+                      </Text>
+                    </View>
+                  </View>
                 </View>
 
-                {/* Circular Progress with Calories */}
-                <View className="flex-row items-center justify-center w-full mb-8">
-                  {/* SVG Circle */}
-                  <View className="relative w-24 h-24 mr-6 items-center justify-center">
+                {/* Entries List */}
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#f39849"
+                    className="my-10"
+                  />
+                ) : entries.length > 0 ? (
+                  <View className="pb-10">
+                    <MealSection
+                      title="Breakfast"
+                      icon="wb-sunny"
+                      items={groupedEntries.BREAKFAST}
+                      color="#f59e0b"
+                    />
+                    <MealSection
+                      title="Lunch"
+                      icon="restaurant"
+                      items={groupedEntries.LUNCH}
+                      color="#3b82f6"
+                    />
+                    <MealSection
+                      title="Dinner"
+                      icon="nights-stay"
+                      items={groupedEntries.DINNER}
+                      color="#8b5cf6"
+                    />
+                    <MealSection
+                      title="Snacks"
+                      icon="fastfood"
+                      items={groupedEntries.SNACK}
+                      color="#f39849"
+                    />
+                  </View>
+                ) : (
+                  <View className="flex-col items-center justify-center py-12 gap-4">
+                    <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
+                      You haven't consumed anything this day.
+                    </Text>
+                    <Text className="text-4xl">😋</Text>
+                  </View>
+                )}
+              </>
+            ) : (
+              /* Water Activity Tab */
+              <View className="pb-10">
+                <View className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800 mb-8 items-center">
+                  <View className="relative w-48 h-48 items-center justify-center mb-6">
                     <Svg
-                      width={96}
-                      height={96}
+                      width={192}
+                      height={192}
                       style={{ transform: [{ rotate: "-90deg" }] }}
                     >
-                      {/* Background circle */}
                       <Circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke={colorScheme === "dark" ? "#27272a" : "#f3f4f6"}
-                        strokeWidth="8"
+                        cx="96"
+                        cy="96"
+                        r="88"
+                        stroke={colorScheme === "dark" ? "#27272a" : "#f1f5f9"}
+                        strokeWidth="12"
                         fill="transparent"
                       />
-                      {/* Progress circle */}
-                      <AnimatedCircle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke={
-                          consumedCalories > calorieGoal
-                            ? themeColors.error
-                            : themeColors.success
-                        }
-                        strokeWidth="8"
+                      <Circle
+                        cx="96"
+                        cy="96"
+                        r="88"
+                        stroke="#3b82f6"
+                        strokeWidth="12"
                         fill="transparent"
-                        strokeDasharray={circumference}
-                        animatedProps={animatedCircleProps}
+                        strokeDasharray={2 * Math.PI * 88}
+                        strokeDashoffset={
+                          2 * Math.PI * 88 -
+                          (Math.min(waterProgress, 100) / 100) *
+                            (2 * Math.PI * 88)
+                        }
                         strokeLinecap="round"
                       />
                     </Svg>
-                  </View>
-
-                  {/* Calorie Numbers */}
-                  <View className="flex-col items-start">
-                    <View className="flex-row items-baseline gap-2">
-                      <Text className="text-5xl font-bold text-zinc-900 dark:text-white">
-                        {Math.round(consumedCalories)}
+                    <View className="absolute inset-0 items-center justify-center">
+                      <MaterialIcons name="opacity" size={48} color="#3b82f6" />
+                      <Text className="text-3xl font-black text-zinc-900 dark:text-white mt-1">
+                        {waterIntake}
                       </Text>
-                      <Text className="text-4xl font-light text-zinc-300 dark:text-zinc-600">
-                        /
+                      <Text className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
+                        / {waterGoal} ml
                       </Text>
                     </View>
-                    <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                      {calorieGoal} calories
+                  </View>
+
+                  <View className="flex-row items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full mb-8">
+                    <Text className="text-xs font-bold text-blue-500">
+                      {Math.round(waterProgress)}% of daily goal reached
                     </Text>
+                  </View>
+
+                  <View className="flex-row gap-4 w-full">
+                    <Pressable
+                      onPress={() => setWaterIntake((prev) => prev + 250)}
+                      className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30"
+                    >
+                      <Text className="text-white font-bold text-base">
+                        +250ml
+                      </Text>
+                      <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
+                        One Glass
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setWaterIntake((prev) => prev + 500)}
+                      className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center"
+                    >
+                      <Text className="text-zinc-900 dark:text-white font-bold text-base">
+                        +500ml
+                      </Text>
+                      <Text className="text-zinc-400 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
+                        Bottle
+                      </Text>
+                    </Pressable>
                   </View>
                 </View>
 
-                {/* Macros Row */}
-                <View className="flex-row justify-between w-full px-4">
-                  <View className="flex-col items-center">
-                    <Text className="text-2xl mb-1">💪</Text>
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Protein
-                    </Text>
-                    <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                      {Math.round(summary?.totalProteinGrams || 0)} g
-                    </Text>
-                  </View>
-                  <View className="flex-col items-center">
-                    <Text className="text-2xl mb-1">🥔</Text>
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Carb
-                    </Text>
-                    <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                      {Math.round(summary?.totalCarbsGrams || 0)} g
-                    </Text>
-                  </View>
-                  <View className="flex-col items-center">
-                    <Text className="text-2xl mb-1">🥑</Text>
-                    <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                      Fat
-                    </Text>
-                    <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                      {Math.round(summary?.totalFatGrams || 0)} g
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Entries List */}
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color="#f39849"
-                  className="my-10"
-                />
-              ) : entries.length > 0 ? (
-                <View className="pb-10">
-                  <MealSection
-                    title="Breakfast"
-                    icon="wb-sunny"
-                    items={groupedEntries.BREAKFAST}
-                    color="#f59e0b"
-                  />
-                  <MealSection
-                    title="Lunch"
-                    icon="restaurant"
-                    items={groupedEntries.LUNCH}
-                    color="#3b82f6"
-                  />
-                  <MealSection
-                    title="Dinner"
-                    icon="nights-stay"
-                    items={groupedEntries.DINNER}
-                    color="#8b5cf6"
-                  />
-                  <MealSection
-                    title="Snacks"
-                    icon="fastfood"
-                    items={groupedEntries.SNACK}
-                    color="#f39849"
-                  />
-                </View>
-              ) : (
-                <View className="flex-col items-center justify-center py-12 gap-4">
-                  <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
-                    You haven't consumed anything this day.
-                  </Text>
-                  <Text className="text-4xl">😋</Text>
-                </View>
-              )}
-            </>
-          ) : (
-            /* Water Activity Tab */
-            <View className="pb-10">
-              <View className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800 mb-8 items-center">
-                <View className="relative w-48 h-48 items-center justify-center mb-6">
-                  <Svg
-                    width={192}
-                    height={192}
-                    style={{ transform: [{ rotate: "-90deg" }] }}
-                  >
-                    <Circle
-                      cx="96"
-                      cy="96"
-                      r="88"
-                      stroke={colorScheme === "dark" ? "#27272a" : "#f1f5f9"}
-                      strokeWidth="12"
-                      fill="transparent"
+                {/* Tips Section for Water */}
+                <View className="bg-blue-50 dark:bg-blue-500/5 p-6 rounded-3xl border border-blue-100 dark:border-blue-500/10 flex-row gap-4">
+                  <View className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-2xl items-center justify-center">
+                    <MaterialIcons
+                      name="lightbulb-outline"
+                      size={24}
+                      color="#3b82f6"
                     />
-                    <Circle
-                      cx="96"
-                      cy="96"
-                      r="88"
-                      stroke="#3b82f6"
-                      strokeWidth="12"
-                      fill="transparent"
-                      strokeDasharray={2 * Math.PI * 88}
-                      strokeDashoffset={
-                        2 * Math.PI * 88 -
-                        (Math.min(waterProgress, 100) / 100) *
-                          (2 * Math.PI * 88)
-                      }
-                      strokeLinecap="round"
-                    />
-                  </Svg>
-                  <View className="absolute inset-0 items-center justify-center">
-                    <MaterialIcons name="opacity" size={48} color="#3b82f6" />
-                    <Text className="text-3xl font-black text-zinc-900 dark:text-white mt-1">
-                      {waterIntake}
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
+                      Stay Hydrated!
                     </Text>
-                    <Text className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
-                      / {waterGoal} ml
+                    <Text className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                      Drinking enough water helps improve your energy levels,
+                      focus, and overall metabolism. Aim for small sips
+                      throughout the day!
                     </Text>
                   </View>
                 </View>
-
-                <View className="flex-row items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full mb-8">
-                  <Text className="text-xs font-bold text-blue-500">
-                    {Math.round(waterProgress)}% of daily goal reached
-                  </Text>
-                </View>
-
-                <View className="flex-row gap-4 w-full">
-                  <Pressable
-                    onPress={() => setWaterIntake((prev) => prev + 250)}
-                    className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30"
-                  >
-                    <Text className="text-white font-bold text-base">
-                      +250ml
-                    </Text>
-                    <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                      One Glass
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setWaterIntake((prev) => prev + 500)}
-                    className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center"
-                  >
-                    <Text className="text-zinc-900 dark:text-white font-bold text-base">
-                      +500ml
-                    </Text>
-                    <Text className="text-zinc-400 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                      Bottle
-                    </Text>
-                  </Pressable>
-                </View>
               </View>
+            )}
+          </ScrollView>
+        </View>
 
-              {/* Tips Section for Water */}
-              <View className="bg-blue-50 dark:bg-blue-500/5 p-6 rounded-3xl border border-blue-100 dark:border-blue-500/10 flex-row gap-4">
-                <View className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-2xl items-center justify-center">
-                  <MaterialIcons
-                    name="lightbulb-outline"
-                    size={24}
-                    color="#3b82f6"
-                  />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
-                    Stay Hydrated!
-                  </Text>
-                  <Text className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Drinking enough water helps improve your energy levels,
-                    focus, and overall metabolism. Aim for small sips throughout
-                    the day!
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
-        </ScrollView>
-      </View>
-
-      <MealEntryModal
-        visible={isMealModalVisible}
-        initialData={editingMeal || undefined}
-        onClose={() => {
-          setIsMealModalVisible(false);
-          setEditingMeal(null);
-        }}
-        onSave={handleAddMeal}
-      />
+        <MealEntryModal
+          visible={isMealModalVisible}
+          initialData={editingMeal || undefined}
+          onClose={() => {
+            setIsMealModalVisible(false);
+            setEditingMeal(null);
+          }}
+          onSave={handleAddMeal}
+        />
+      </TabScreenWrapper>
     </ScreenWrapper>
   );
 };
 
-export default DailyLog;
+export default HomeScreen;

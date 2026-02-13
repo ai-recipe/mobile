@@ -1,3 +1,4 @@
+import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -117,112 +118,124 @@ const FavoritesScreen = () => {
   if (isLoading && recipes.length === 0) {
     return (
       <ScreenWrapper>
-        <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
-          <ActivityIndicator size="large" color="#f39849" />
-          <Text className="text-zinc-500 mt-4 font-semibold">
-            Favorileriniz yükleniyor...
-          </Text>
-        </View>
+        <TabScreenWrapper>
+          <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
+            <ActivityIndicator size="large" color="#f39849" />
+            <Text className="text-zinc-500 mt-4 font-semibold">
+              Favorileriniz yükleniyor...
+            </Text>
+          </View>
+        </TabScreenWrapper>
       </ScreenWrapper>
     );
   }
 
   return (
     <ScreenWrapper>
-      <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
-        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          Favori <Text className="text-[#f39849]">Tariflerim</Text>
-        </Text>
-        <Text className="text-zinc-500 dark:text-zinc-400 mb-8">
-          Favoriye eklediğiniz tarifleri buradan görüntüleyebilirsiniz.
-        </Text>
+      <TabScreenWrapper>
+        <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
+          <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
+            Favori <Text className="text-[#f39849]">Tariflerim</Text>
+          </Text>
+          <Text className="text-zinc-500 dark:text-zinc-400 mb-8">
+            Favoriye eklediğiniz tarifleri buradan görüntüleyebilirsiniz.
+          </Text>
 
-        <FlatList
-          data={recipes}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
-          ListEmptyComponent={
-            isLoading ? null : (
-              <EmptyRecipesPlaceholder
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-              />
-            )
-          }
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="mb-6 bg-white dark:bg-zinc-800 rounded-[28px] overflow-hidden border border-zinc-100 dark:border-zinc-700"
-              onPress={() => handleOpenRecipe(item)}
-            >
-              {/* Image Section */}
-              <View className="h-48 relative">
-                <Image
-                  source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
-                  className="w-full h-full object-cover"
+          <FlatList
+            data={recipes}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={
+              isLoading ? null : (
+                <EmptyRecipesPlaceholder
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
                 />
-                <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                  <MaterialIcons name="schedule" size={14} color="#f39849" />
-                  <Text className="text-[#f39849] font-black text-xs ml-1">
-                    {item.totalTimeMinutes} dk
-                  </Text>
-                </View>
-                {item.isFavorite && (
-                  <View className="absolute top-4 left-4 bg-white/90 backdrop-blur-md p-1.5 rounded-full">
-                    <MaterialIcons name="favorite" size={16} color="#f43f5e" />
-                  </View>
-                )}
-              </View>
-
-              {/* Content Section */}
-              <View className="p-5">
-                <View className="flex-row justify-between items-start mb-2">
-                  <Text className="text-xl font-bold text-zinc-900 dark:text-white flex-1 mr-2">
-                    {item.title}
-                  </Text>
-                </View>
-
-                <Text className="text-zinc-500 text-sm mb-3">
-                  {item.description}
-                </Text>
-
-                {/* Quick Info */}
-                <View className="flex-row items-center gap-4 mb-3">
-                  <View className="flex-row items-center">
-                    <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
-                    <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+              )
+            }
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="mb-6 bg-white dark:bg-zinc-800 rounded-[28px] overflow-hidden border border-zinc-100 dark:border-zinc-700"
+                onPress={() => handleOpenRecipe(item)}
+              >
+                {/* Image Section */}
+                <View className="h-48 relative">
+                  <Image
+                    source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
+                    className="w-full h-full object-cover"
+                  />
+                  <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                    <MaterialIcons name="schedule" size={14} color="#f39849" />
+                    <Text className="text-[#f39849] font-black text-xs ml-1">
                       {item.totalTimeMinutes} dk
                     </Text>
                   </View>
-                  <View className="flex-row items-center">
-                    <MaterialCommunityIcons
-                      name="food-apple"
-                      size={16}
-                      color="#a1a1aa"
-                    />
-                    <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                      {item.difficulty}
+                  {item.isFavorite && (
+                    <View className="absolute top-4 left-4 bg-white/90 backdrop-blur-md p-1.5 rounded-full">
+                      <MaterialIcons
+                        name="favorite"
+                        size={16}
+                        color="#f43f5e"
+                      />
+                    </View>
+                  )}
+                </View>
+
+                {/* Content Section */}
+                <View className="p-5">
+                  <View className="flex-row justify-between items-start mb-2">
+                    <Text className="text-xl font-bold text-zinc-900 dark:text-white flex-1 mr-2">
+                      {item.title}
                     </Text>
                   </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
 
-      {/* Recipe Detail Modal */}
-      {selectedRecipe && (
-        <RecipeDetailModal
-          visible={modalVisible}
-          onClose={handleCloseModal}
-          recipe={selectedRecipe}
-          baseImageUri={selectedRecipe.imageUrl || PLACEHOLDER_IMAGE}
-        />
-      )}
+                  <Text className="text-zinc-500 text-sm mb-3">
+                    {item.description}
+                  </Text>
+
+                  {/* Quick Info */}
+                  <View className="flex-row items-center gap-4 mb-3">
+                    <View className="flex-row items-center">
+                      <MaterialIcons
+                        name="schedule"
+                        size={16}
+                        color="#a1a1aa"
+                      />
+                      <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+                        {item.totalTimeMinutes} dk
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <MaterialCommunityIcons
+                        name="food-apple"
+                        size={16}
+                        color="#a1a1aa"
+                      />
+                      <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+                        {item.difficulty}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+
+        {/* Recipe Detail Modal */}
+        {selectedRecipe && (
+          <RecipeDetailModal
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            recipe={selectedRecipe}
+            baseImageUri={selectedRecipe.imageUrl || PLACEHOLDER_IMAGE}
+          />
+        )}
+      </TabScreenWrapper>
     </ScreenWrapper>
   );
 };

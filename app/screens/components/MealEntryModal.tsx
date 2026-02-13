@@ -114,7 +114,7 @@ export function MealEntryModal({
   const nFat = Number(fat) || 0;
 
   const totalMacros = useMemo(() => {
-    return nProtein * 4 + nCarbs * 4 + nFat * 4;
+    return nProtein * 4 + nCarbs * 4 + nFat * 9;
   }, [nProtein, nCarbs, nFat]);
 
   const proteinPercent = useMemo(() => {
@@ -129,7 +129,7 @@ export function MealEntryModal({
 
   const fatPercent = useMemo(() => {
     if (!totalMacros) return 0;
-    return ((nFat * 4) / totalMacros) * 100;
+    return ((nFat * 9) / totalMacros) * 100;
   }, [nFat, totalMacros]);
 
   const proteinWidthShared = useSharedValue(0);

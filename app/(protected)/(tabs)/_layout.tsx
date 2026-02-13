@@ -1,15 +1,30 @@
+import { AddOptionsModal } from "@/app/(protected)/(tabs)/components/AddOptionsModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
-import React from "react";
+import React, { createContext, useCallback, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
 import { CopilotStep, walkthroughable } from "react-native-copilot";
+
+/** Called from tab bar to open the meal entry modal (e.g. Manual Log). Home screen registers the handler. */
+type OpenMealModalHandler = () => void;
+const OpenMealModalContext = createContext<{
+  requestOpenMealModal: () => void;
+  registerOpenMealModal: (handler: OpenMealModalHandler | null) => void;
+}>({
+  requestOpenMealModal: () => {},
+  registerOpenMealModal: () => {},
+});
+
+export function useOpenMealModal() {
+  return React.useContext(OpenMealModalContext);
+}
 
 const CopilotView = walkthroughable(View);
 
@@ -19,6 +34,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
+  const [addModalVisible, setAddModalVisible] = useState(false);
 
   const tabBarContainerStyle = [
     styles.tabBarContainer,
@@ -41,232 +57,279 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     { borderColor: theme.card },
   ];
 
+  const { requestOpenMealModal } = useOpenMealModal();
+  const currentRouteName = state.routes[state.index]?.name;
+
+  const handleManualLog = () => {
+    if (currentRouteName === "index") {
+      requestOpenMealModal();
+    } else {
+      router.navigate({
+        pathname: "/(protected)/(tabs)/",
+        params: { openMealModal: "true" },
+      });
+    }
+  };
+
   return (
-    <View style={tabBarContainerStyle}>
-      <BlurView
-        intensity={80}
-        tint={isDark ? "dark" : "light"}
-        style={[
-          styles.blurWrapper,
-          { paddingBottom: insets.bottom + 8, paddingTop: 12 },
-        ]}
-      >
-        <View style={styles.tabBarInner}>
-          {state.routes.map((route: any, index: number) => {
-            const { options } = descriptors[route.key];
-            const isFocused = state.index === index;
+    <>
+      <AddOptionsModal
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+        onManualLog={handleManualLog}
+      />
+      <View style={tabBarContainerStyle}>
+        <BlurView
+          intensity={80}
+          tint={isDark ? "dark" : "light"}
+          style={[
+            styles.blurWrapper,
+            { paddingBottom: insets.bottom + 8, paddingTop: 12 },
+          ]}
+        >
+          <View style={styles.tabBarInner}>
+            {state.routes.map((route: any, index: number) => {
+              const { options } = descriptors[route.key];
+              const isFocused = state.index === index;
 
-            const onPress = () => {
+              const onPress = () => {
+                if (route.name === "add") {
+                  setAddModalVisible(true);
+                  return;
+                }
+                const event = navigation.emit({
+                  type: "tabPress",
+                  target: route.key,
+                  canPreventDefault: true,
+                });
+
+                if (!isFocused && !event.defaultPrevented) {
+                  navigation.navigate(route.name);
+                }
+              };
+
+              const onLongPress = () => {
+                navigation.emit({
+                  type: "tabLongPress",
+                  target: route.key,
+                });
+              };
+
               if (route.name === "add") {
-                router.push("/screens/ai-scan");
-                return;
-              }
-              const event = navigation.emit({
-                type: "tabPress",
-                target: route.key,
-                canPreventDefault: true,
-              });
-
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name);
-              }
-            };
-
-            const onLongPress = () => {
-              navigation.emit({
-                type: "tabLongPress",
-                target: route.key,
-              });
-            };
-
-            if (route.name === "add") {
-              return (
-                <View key={route.key} style={styles.scanButtonContainer}>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={onPress}
-                    onLongPress={onLongPress}
-                    style={scanButtonTouchableStyle}
-                  >
-                    <LinearGradient
-                      colors={["#FFB76B", "#F48D4D"]}
-                      style={scanButtonGradientStyle}
+                return (
+                  <View key={route.key} style={styles.scanButtonContainer}>
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={onPress}
+                      onLongPress={onLongPress}
+                      style={scanButtonTouchableStyle}
                     >
-                      <MaterialIcons name="plus" size={32} color="white" />
-                    </LinearGradient>
-                  </TouchableOpacity>
-                  <Text style={[styles.scanLabel, { color: theme.tint }]}>
-                    Ekle
+                      <LinearGradient
+                        colors={["#FFB76B", "#F48D4D"]}
+                        style={scanButtonGradientStyle}
+                      >
+                        <MaterialIcons name="add" size={32} color="white" />
+                      </LinearGradient>
+                    </TouchableOpacity>
+                    <Text style={[styles.scanLabel, { color: theme.tint }]}>
+                      Ekle
+                    </Text>
+                  </View>
+                );
+              }
+
+              const getIcon = (name: string) => {
+                switch (name) {
+                  case "index":
+                    return (
+                      <MaterialIcons name="home" size={24} color={iconColor} />
+                    );
+                  case "progress":
+                    return (
+                      <MaterialIcons
+                        name="analytics"
+                        size={24}
+                        color={iconColor}
+                      />
+                    );
+                  case "favorites":
+                    return (
+                      <MaterialIcons
+                        name="favorite"
+                        size={24}
+                        color={iconColor}
+                      />
+                    );
+                  case "explore":
+                    return (
+                      <MaterialIcons
+                        name="explore"
+                        size={24}
+                        color={iconColor}
+                      />
+                    );
+                  default:
+                    return (
+                      <MaterialIcons
+                        name="help-outline"
+                        size={24}
+                        color={iconColor}
+                      />
+                    );
+                }
+              };
+
+              const getLabel = (name: string) => {
+                switch (name) {
+                  case "index":
+                    return "Ana Sayfa";
+                  case "progress":
+                    return "Progress";
+                  case "favorites":
+                    return "Favorites";
+                  case "explore":
+                    return "Keşfet";
+                  default:
+                    return name;
+                }
+              };
+
+              const iconColor = isFocused ? theme.tint : theme.tabIconDefault;
+              const labelColor = isFocused ? theme.tint : theme.icon;
+
+              const getStepProps = (name: string) => {
+                switch (name) {
+                  case "explore":
+                    return {
+                      order: 3,
+                      name: "kesfet",
+                      text: "Sana özel önerileri ve trend tarifleri buradan keşfet.",
+                    };
+                  case "favorites":
+                    return {
+                      order: 4,
+                      name: "favoriler",
+                      text: "Beğendiğin tariflere buradan kolayca ulaş.",
+                    };
+                  case "recipes":
+                    return {
+                      order: 5,
+                      name: "tariflerim",
+                      text: "AI ile oluşturduğun tüm tariflerini burada saklıyoruz.",
+                    };
+                  default:
+                    return null;
+                }
+              };
+
+              const stepProps = getStepProps(route.name);
+
+              const tabItemContent = (
+                <CopilotView style={styles.tabItem}>
+                  {getIcon(route.name)}
+                  <Text style={[styles.tabLabel, { color: labelColor }]}>
+                    {getLabel(route.name)}
                   </Text>
-                </View>
+                </CopilotView>
               );
-            }
 
-            const getIcon = (name: string) => {
-              switch (name) {
-                case "index":
-                  return (
-                    <MaterialIcons name="home" size={24} color={iconColor} />
-                  );
-                case "daily-log":
-                  return (
-                    <MaterialIcons
-                      name="calendar-today"
-                      size={24}
-                      color={iconColor}
-                    />
-                  );
-                case "favorites":
-                  return (
-                    <MaterialIcons
-                      name="favorite"
-                      size={24}
-                      color={iconColor}
-                    />
-                  );
-                case "explore":
-                  return (
-                    <MaterialIcons name="explore" size={24} color={iconColor} />
-                  );
-                default:
-                  return (
-                    <MaterialIcons
-                      name="help-outline"
-                      size={24}
-                      color={iconColor}
-                    />
-                  );
-              }
-            };
+              return (
+                <TouchableOpacity
+                  key={route.key}
+                  accessibilityRole="button"
+                  accessibilityState={isFocused ? { selected: true } : {}}
+                  accessibilityLabel={options.tabBarAccessibilityLabel}
+                  testID={options.tabBarTestID}
+                  onPress={onPress}
+                  onLongPress={onLongPress}
+                  style={{ flex: 1 }}
+                >
+                  {stepProps ? (
+                    <CopilotStep
+                      key={route.name}
+                      order={stepProps.order}
+                      name={stepProps.name}
+                      text={stepProps.text}
+                    >
+                      {tabItemContent}
+                    </CopilotStep>
+                  ) : (
+                    tabItemContent
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <View style={homeIndicatorStyle} />
+        </BlurView>
+      </View>
+    </>
+  );
+}
 
-            const getLabel = (name: string) => {
-              switch (name) {
-                case "index":
-                  return "Ana Sayfa";
-                case "daily-log":
-                  return "Daily Log";
-                case "favorites":
-                  return "Favorites";
-                case "explore":
-                  return "Keşfet";
-                default:
-                  return name;
-              }
-            };
-
-            const iconColor = isFocused ? theme.tint : theme.tabIconDefault;
-            const labelColor = isFocused ? theme.tint : theme.icon;
-
-            const getStepProps = (name: string) => {
-              switch (name) {
-                case "explore":
-                  return {
-                    order: 3,
-                    name: "kesfet",
-                    text: "Sana özel önerileri ve trend tarifleri buradan keşfet.",
-                  };
-                case "favorites":
-                  return {
-                    order: 4,
-                    name: "favoriler",
-                    text: "Beğendiğin tariflere buradan kolayca ulaş.",
-                  };
-                case "recipes":
-                  return {
-                    order: 5,
-                    name: "tariflerim",
-                    text: "AI ile oluşturduğun tüm tariflerini burada saklıyoruz.",
-                  };
-                default:
-                  return null;
-              }
-            };
-
-            const stepProps = getStepProps(route.name);
-
-            const tabItemContent = (
-              <CopilotView style={styles.tabItem}>
-                {getIcon(route.name)}
-                <Text style={[styles.tabLabel, { color: labelColor }]}>
-                  {getLabel(route.name)}
-                </Text>
-              </CopilotView>
-            );
-
-            return (
-              <TouchableOpacity
-                key={route.key}
-                accessibilityRole="button"
-                accessibilityState={isFocused ? { selected: true } : {}}
-                accessibilityLabel={options.tabBarAccessibilityLabel}
-                testID={options.tabBarTestID}
-                onPress={onPress}
-                onLongPress={onLongPress}
-                style={{ flex: 1 }}
-              >
-                {stepProps ? (
-                  <CopilotStep
-                    key={route.name}
-                    order={stepProps.order}
-                    name={stepProps.name}
-                    text={stepProps.text}
-                  >
-                    {tabItemContent}
-                  </CopilotStep>
-                ) : (
-                  tabItemContent
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        <View style={homeIndicatorStyle} />
-      </BlurView>
-    </View>
+function OpenMealModalProvider({ children }: { children: React.ReactNode }) {
+  const openMealModalRef = useRef<OpenMealModalHandler | null>(null);
+  const requestOpenMealModal = useCallback(() => {
+    openMealModalRef.current?.();
+  }, []);
+  const registerOpenMealModal = useCallback(
+    (handler: OpenMealModalHandler | null) => {
+      openMealModalRef.current = handler;
+    },
+    [],
+  );
+  return (
+    <OpenMealModalContext.Provider
+      value={{ requestOpenMealModal, registerOpenMealModal }}
+    >
+      {children}
+    </OpenMealModalContext.Provider>
   );
 }
 
 export default function TabLayout() {
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Ana Sayfa",
+    <OpenMealModalProvider>
+      <Tabs
+        tabBar={(props) => <CustomTabBar {...props} />}
+        screenOptions={{
+          headerShown: false,
         }}
-      />
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Ana Sayfa",
+          }}
+        />
 
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Keşfet",
-        }}
-      />
+        <Tabs.Screen
+          name="explore"
+          options={{
+            title: "Keşfet",
+          }}
+        />
 
-      <Tabs.Screen
-        name="add"
-        options={{
-          title: "Ekle",
-        }}
-      />
-      <Tabs.Screen
-        name="daily-log"
-        options={{
-          title: "Daily Log",
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: "Favoriler",
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="add"
+          options={{
+            title: "Ekle",
+          }}
+        />
+        <Tabs.Screen
+          name="progress"
+          options={{
+            title: "Progress",
+          }}
+        />
+        <Tabs.Screen
+          name="favorites"
+          options={{
+            title: "Favoriler",
+          }}
+        />
+      </Tabs>
+    </OpenMealModalProvider>
   );
 }
 

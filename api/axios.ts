@@ -19,8 +19,9 @@ export function generateIdempotencyKey(): string {
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = await AsyncStorage.getItem("token");
-    const localeStorageCurrentLanguage =
-      await AsyncStorage.getItem("CURRENT_LANGUAGE");
+    const localeStorageCurrentLanguage = await AsyncStorage.getItem(
+      "CURRENT_LANGUAGE",
+    );
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -29,6 +30,7 @@ api.interceptors.request.use(
     config.headers["Accept-Language"] = localeStorageCurrentLanguage;
     config.headers["idempotency-key"] = idempotencyKey;
     config.headers["Idempotency-Key"] = idempotencyKey;
+    config.headers["X-Timezone"] = "UTC";
     return config;
   },
   (error) => {
