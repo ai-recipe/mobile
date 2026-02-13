@@ -7,7 +7,6 @@ const config = getDefaultConfig(__dirname);
 config.resolver = {
   ...config.resolver,
   sourceExts: [...(config.resolver?.sourceExts || []), "env"],
-  assetExts: [...(config.resolver?.assetExts || []), "tflite"],
 };
 
 module.exports = withNativeWind(config, { input: "./global.css" });

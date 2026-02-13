@@ -57,7 +57,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             const isFocused = state.index === index;
 
             const onPress = () => {
-              if (route.name === "scan") {
+              if (route.name === "add") {
                 router.push("/screens/ai-scan");
                 return;
               }
@@ -79,40 +79,26 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               });
             };
 
-            if (route.name === "scan") {
+            if (route.name === "add") {
               return (
-                <CopilotStep
-                  text="Kamera ile elindeki malzemeleri tarayarak anında tarif bulabilirsin."
-                  order={2}
-                  name="tarat"
-                  key={route.name}
-                >
-                  <CopilotView
-                    key={route.key}
-                    style={styles.scanButtonContainer}
+                <View key={route.key} style={styles.scanButtonContainer}>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={onPress}
+                    onLongPress={onLongPress}
+                    style={scanButtonTouchableStyle}
                   >
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={onPress}
-                      onLongPress={onLongPress}
-                      style={scanButtonTouchableStyle}
+                    <LinearGradient
+                      colors={["#FFB76B", "#F48D4D"]}
+                      style={scanButtonGradientStyle}
                     >
-                      <LinearGradient
-                        colors={["#FFB76B", "#F48D4D"]}
-                        style={scanButtonGradientStyle}
-                      >
-                        <MaterialIcons
-                          name="center-focus-strong"
-                          size={32}
-                          color="white"
-                        />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={[styles.scanLabel, { color: theme.tint }]}>
-                      Tarat
-                    </Text>
-                  </CopilotView>
-                </CopilotStep>
+                      <MaterialIcons name="plus" size={32} color="white" />
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  <Text style={[styles.scanLabel, { color: theme.tint }]}>
+                    Ekle
+                  </Text>
+                </View>
               );
             }
 
@@ -263,9 +249,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="scan"
+        name="add"
         options={{
-          title: "Tarat",
+          title: "Ekle",
         }}
       />
       <Tabs.Screen
