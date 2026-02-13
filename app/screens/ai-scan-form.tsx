@@ -97,6 +97,7 @@ export default function AiScanFormScreen() {
   // Handle restart
   const handleRestart = useCallback(() => {
     dispatch(resetRecipeState());
+    router.replace("/screens/ai-scan");
   }, [dispatch]);
 
   // Create form steps with all necessary callbacks

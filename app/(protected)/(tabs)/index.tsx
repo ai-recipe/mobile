@@ -668,7 +668,10 @@ const HomeScreen = () => {
                           className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30"
                         >
                           <Text className="text-white font-bold text-base">
-                            +250ml
+                            {waterAdding ? (
+                              <ActivityIndicator size="small" color="#fff" />
+                            ) : null}
+                            {waterAdding ? "Adding..." : "+250ml"}
                           </Text>
                           <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
                             One Glass

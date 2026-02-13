@@ -97,7 +97,7 @@ export function AddOptionsModal({
   const handleAIChef = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onClose();
-    router.push("/screens/ai-scan-form");
+    router.push("/screens/ai-scan");
   };
 
   const handleRequestClose = () => {

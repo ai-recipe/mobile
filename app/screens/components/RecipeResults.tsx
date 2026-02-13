@@ -54,7 +54,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
 
   const handleExit = () => {
     dispatch(resetRecipeState());
-    router.back();
+    router.replace("/(protected)/(tabs)/");
   };
 
   return (

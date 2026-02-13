@@ -1,193 +1,161 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useImagePicker } from "@/hooks/use-image-picker";
 import { setImage } from "@/store/slices/recipeSlice";
-import { MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { ImageBackground, Pressable, Text, View } from "react-native";
+import React from "react";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 export default function AIScanScreen() {
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
-  const themeColors = Colors[colorScheme];
+  const backgroundColor = Colors[colorScheme].background;
+  const handlePickImage = async (useCamera: boolean) => {
+    const permissionResult = useCamera
+      ? await ImagePicker.requestCameraPermissionsAsync()
+      : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  const [showPickerMenu, setShowPickerMenu] = useState(false);
+    if (permissionResult.granted === false) {
+      Alert.alert(
+        "İzin Gerekli",
+        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+      );
+      return;
+    }
 
-  const { pickImage, isLoadingCamera, isLoadingGallery } = useImagePicker({});
+    const result = useCamera
+      ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
+      : await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ["images"],
+          quality: 0.8,
+          // Use fullScreen to avoid PHPicker/PageSheet issues on iOS
+          presentationStyle:
+            ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
+        });
+
+    if (!result.canceled) {
+      dispatch(setImage(result.assets[0].uri));
+      router.push("/screens/ai-scan-form");
+    }
+  };
 
   return (
     <ScreenWrapper
-      showBackButton={true}
+      showBackButton
       withTabNavigation={false}
       showTopNavBar={false}
     >
-      <View className="flex-1">
-        {/* Top Section: Recipe Generator */}
-        <View className="flex-1 overflow-hidden">
-          <ImageBackground
-            source={{
-              uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuDFard3CDoLTNGZdbi8HHMwYQIF7YDrLkaHKkRO8p9JSNVNDDlVlbeoEhgf4ZpqoszOKtcz1y81yjyGY_vwnQiu92KEh6zJb2vjGrFOhCuF7lTSJ7U6pn0l5EhNejyi0iOcs3B4bkjgQdEi70Pr1k9tMO3WxAebum3-HC3Ykm8SYHZeZk-lvacqR8aZt_Eubxptw2ExJ9XApoiwVlMcXbKclSF-sI1zUBNpBn0PKx4XiOrN32z3Q_wFrC1FShDW6d0OEnXQH4vD2eYM",
-            }}
-            className="flex-1"
-            resizeMode="cover"
-          >
-            <LinearGradient
-              colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.8)"]}
-              className="absolute inset-0"
-            />
-            <View className="flex-1 justify-center items-center p-8">
-              <BlurView
-                intensity={colorScheme === "dark" ? 40 : 60}
-                tint={colorScheme === "dark" ? "dark" : "light"}
-                className="overflow-hidden rounded-3xl border border-white/10 dark:border-white/5 w-full max-w-sm"
-              >
-                <View className="p-6 items-center">
-                  <View
-                    className="h-14 w-14 rounded-full flex items-center justify-center mb-4"
-                    style={{ backgroundColor: `${themeColors.primary}20` }}
-                  >
-                    <MaterialIcons
-                      name="restaurant-menu"
-                      size={32}
-                      color={themeColors.primary}
-                    />
-                  </View>
-                  <Text className="text-2xl font-bold mb-2 text-white text-center">
-                    Smart Recipe Generator
-                  </Text>
-                  <Text className="text-zinc-300 mb-6 text-sm font-light text-center">
-                    Turn ingredients into meals instantly.
-                  </Text>
-                  <Pressable
-                    onPress={() =>
-                      pickImage(false, {
-                        onSuccess: (uri: string) => {
-                          dispatch(setImage(uri));
-                          router.push("/screens/ai-scan-form");
-                          setShowPickerMenu(false);
-                        },
-                        onError: () => {
-                          setShowPickerMenu(false);
-                        },
-                        onCancel: () => {
-                          setShowPickerMenu(false);
-                        },
-                      })
-                    }
-                    style={{ backgroundColor: themeColors.primary }}
-                    className="w-full py-3.5 rounded-xl flex-row items-center justify-center gap-2"
-                  >
-                    <MaterialIcons
-                      name="photo-camera"
-                      size={20}
-                      color="black"
-                    />
-                    <Text className="text-black font-bold text-base">
-                      Scan Ingredients
-                    </Text>
-                  </Pressable>
-                </View>
-              </BlurView>
-            </View>
-
-            {/* AI Powered Badge */}
-            <View className="absolute top-6 left-6">
-              <BlurView
-                intensity={40}
-                tint="dark"
-                className="px-3 py-1 rounded-full border border-white/20 overflow-hidden"
-              >
-                <Text
-                  className="text-[10px] font-bold uppercase tracking-widest"
-                  style={{ color: themeColors.primary }}
-                >
-                  AI Powered
-                </Text>
-              </BlurView>
-            </View>
-          </ImageBackground>
+      <ScrollView
+        className="flex-1 px-5"
+        style={{ backgroundColor }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header Section */}
+        <View className="pt-8 pb-6">
+          <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+            Ürünleri <Text className="text-[#f39849]">Tara</Text>
+          </Text>
+          <Text className="text-zinc-500 dark:text-zinc-400 text-base mt-2">
+            AI mutfak şefiniz malzemeleri tanımak için hazır.
+          </Text>
         </View>
 
-        {/* Divider Line with Pulse Effect */}
-        <View
-          style={{ height: 2, backgroundColor: themeColors.background }}
-          className="relative items-center justify-center z-10"
-        >
-          <View
-            style={{ backgroundColor: themeColors.primary }}
-            className="h-10 w-10 rounded-full items-center justify-center border-4 border-black/20"
+        {/* Action Options */}
+        <View className="flex-row gap-4 mb-10">
+          {/* Take Photo */}
+          <TouchableOpacity
+            onPress={() => handlePickImage(true)}
+            activeOpacity={0.9}
+            className="flex-1 bg-zinc-900 dark:bg-orange-500 h-48 rounded-[32px] items-center justify-center"
           >
-            <MaterialIcons name="bolt" size={24} color="black" />
+            <View className="size-16 bg-white/10 rounded-full items-center justify-center mb-3">
+              <MaterialIcons name="photo-camera" size={32} color="white" />
+            </View>
+            <Text className="text-white font-bold text-lg">Fotoğraf Çek</Text>
+          </TouchableOpacity>
+
+          {/* Gallery */}
+          <TouchableOpacity
+            onPress={() => handlePickImage(false)}
+            activeOpacity={0.9}
+            className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-48 rounded-[32px] items-center justify-center"
+          >
+            <View className="size-16 bg-orange-100 dark:bg-zinc-700 rounded-full items-center justify-center mb-3">
+              <MaterialIcons name="collections" size={32} color="#f39849" />
+            </View>
+            <Text className="text-zinc-900 dark:text-white font-bold text-lg">
+              Galeriden Seç
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Guidelines Section */}
+        <View className="bg-zinc-50 dark:bg-zinc-800 p-6 rounded-[32px] border border-zinc-100 dark:border-zinc-700">
+          <View className="flex-row items-center gap-2 mb-6">
+            <MaterialCommunityIcons
+              name="lightbulb-outline"
+              size={20}
+              color="#f39849"
+            />
+            <Text className="text-zinc-900 dark:text-white font-extrabold text-lg">
+              En İyi Sonuç İçin İpuçları
+            </Text>
           </View>
-          <View
-            style={{ backgroundColor: themeColors.primary }}
-            className="absolute h-[1px] w-full opacity-30"
-          />
-        </View>
 
-        {/* Bottom Section: Nutrition Tracker */}
-        <View className="flex-1 overflow-hidden">
-          <ImageBackground
-            source={{
-              uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCIVud_T2fqvtdE1wvDCZ6TFhLa8yNTQ1FRvNo-nXUZ8VfHM0VmfP04pUlaknwKWJPnULAm5rAagw192R4LhW2qn2NdkHgVAKxs-mmDAS0t9SxnAJwOBTQgU0o6NV-fVgjqjg7P3GBKzX3iJcm3b1k8nav-HXApyQ9po1xleJ9q8Z2O6KtAy2ZIIbCFvXark0oN1upV6X-EPPvgER_8bMBKVZijINjl1IVBAnew3khofJkOl-YGsESGWH7WKLBGMED5PWYlyd-EB9FL",
-            }}
-            className="flex-1"
-            resizeMode="cover"
-          >
-            <LinearGradient
-              colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.6)"]}
-              className="absolute inset-0"
+          <View className="gap-y-6">
+            <GuidelineItem
+              icon="wb-sunny"
+              title="İyi Aydınlatma"
+              desc="Malzemelerin net görünmesi için aydınlık bir ortam tercih edin."
             />
-            <View className="flex-1 justify-center items-center p-8">
-              <BlurView
-                intensity={colorScheme === "dark" ? 40 : 60}
-                tint={colorScheme === "dark" ? "dark" : "light"}
-                className="overflow-hidden rounded-3xl border border-white/10 dark:border-white/5 w-full max-w-sm"
-              >
-                <View className="p-6 items-center">
-                  <View
-                    className="h-14 w-14 rounded-full flex items-center justify-center mb-4"
-                    style={{ backgroundColor: `${themeColors.primary}20` }}
-                  >
-                    <MaterialIcons
-                      name="leaderboard"
-                      size={32}
-                      color={themeColors.primary}
-                    />
-                  </View>
-                  <Text className="text-2xl font-bold mb-2 text-white text-center">
-                    Nutrition Tracker
-                  </Text>
-                  <Text className="text-zinc-300 mb-6 text-sm font-light text-center">
-                    Analyze macros & calories in seconds.
-                  </Text>
-                  <Pressable
-                    onPress={() => pickImage(false)}
-                    className="w-full py-3.5 rounded-xl border-2 flex-row items-center justify-center gap-2 bg-black"
-                  >
-                    <MaterialIcons
-                      name="qr-code-scanner"
-                      size={20}
-                      color={themeColors.card}
-                    />
-                    <Text
-                      className="font-bold text-base"
-                      style={{ color: themeColors.card }}
-                    >
-                      Scan Meal
-                    </Text>
-                  </Pressable>
-                </View>
-              </BlurView>
-            </View>
-          </ImageBackground>
+            <GuidelineItem
+              icon="center-focus-weak"
+              title="Net Odaklama"
+              desc="Kamerayı titretmemeye çalışın ve ürünlere odaklanın."
+            />
+            <GuidelineItem
+              icon="layers"
+              title="Üst Üste Koymayın"
+              desc="Malzemelerin birbirini kapatmadığından emin olun."
+            />
+            <GuidelineItem
+              icon="barcode-reader"
+              title="Etiketleri Okutun"
+              desc="Mümkünse ürün paketlerinin üzerindeki isimleri gösterin."
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </ScreenWrapper>
+  );
+}
+
+// Sub-component for clean organization
+function GuidelineItem({
+  icon,
+  title,
+  desc,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <View className="flex-row items-start gap-4">
+      <View className="mt-1">
+        <MaterialIcons name={icon} size={22} color="#f39849" />
+      </View>
+      <View className="flex-1">
+        <Text className="text-zinc-900 dark:text-zinc-100 font-bold text-[15px] mb-1">
+          {title}
+        </Text>
+        <Text className="text-zinc-500 dark:text-zinc-400 text-[13px] leading-5">
+          {desc}
+        </Text>
+      </View>
+    </View>
   );
 }
