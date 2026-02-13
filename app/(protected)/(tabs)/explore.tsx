@@ -1,3 +1,4 @@
+import { ExploreSkeleton } from "@/app/(protected)/(tabs)/components/ExploreSkeleton";
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
@@ -10,7 +11,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   ScrollView,
@@ -70,25 +70,11 @@ const ExploreScreen = () => {
     setTimeout(() => setSelectedRecipe(null), 300);
   };
 
-  const renderFooter = () => {
-    if (!isLoadingMore) return null;
-    return (
-      <View className="py-8">
-        <ActivityIndicator size="large" color="#f39849" />
-      </View>
-    );
-  };
-
   if (isLoading && recipes.length === 0) {
     return (
       <TabScreenWrapper>
         <ScreenWrapper>
-          <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
-            <ActivityIndicator size="large" color="#f39849" />
-            <Text className="text-zinc-500 mt-4 font-semibold">
-              Size özel tarifler hazırlanıyor...
-            </Text>
-          </View>
+          <ExploreSkeleton />
         </ScreenWrapper>
       </TabScreenWrapper>
     );
@@ -111,13 +97,16 @@ const ExploreScreen = () => {
           contentContainerStyle={{ paddingBottom: 100 }}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
           ListHeaderComponent={() => (
             <View className="pt-4">
               {/* Header Title */}
               <View className="px-5 mb-6">
                 <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight">
-                  Yeni Tatlar <Text className="text-[#f39849]">Keşfet</Text>
+                  Sana Özel <Text className="text-[#f39849]">Tarifler</Text>
+                </Text>
+                <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
+                  Kişiselleştirilmiş Yapay Zeka tarafından sana özel seçilmiş
+                  tarifler.
                 </Text>
               </View>
 

@@ -1,8 +1,8 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import {
@@ -158,9 +158,7 @@ export function AddOptionsModal({
                 styles.optionCardOuter,
                 {
                   backgroundColor: isDark ? "#27272a" : "#FFFFFF",
-                  borderColor: isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "#F3F4F6",
+                  borderColor: isDark ? "rgba(255,255,255,0.06)" : "#F3F4F6",
                 },
                 pressed && styles.optionPressed,
               ]}
@@ -176,7 +174,11 @@ export function AddOptionsModal({
                     },
                   ]}
                 >
-                  <MaterialIcons name="photo-camera" size={24} color="#EA580C" />
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={24}
+                    color="#EA580C"
+                  />
                 </View>
                 <View style={styles.optionTextContainer}>
                   <Text style={[styles.optionTitle, { color: theme.text }]}>
@@ -201,9 +203,7 @@ export function AddOptionsModal({
                 styles.optionCardOuter,
                 {
                   backgroundColor: isDark ? "#27272a" : "#FFFFFF",
-                  borderColor: isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "#F3F4F6",
+                  borderColor: isDark ? "rgba(255,255,255,0.06)" : "#F3F4F6",
                 },
                 pressed && styles.optionPressed,
               ]}
@@ -247,9 +247,7 @@ export function AddOptionsModal({
             >
               <LinearGradient
                 colors={
-                  isDark
-                    ? ["#431407", "#7C2D12"]
-                    : ["#FFF7ED", "#FFEDD5"]
+                  isDark ? ["#431407", "#7C2D12"] : ["#FFF7ED", "#FFEDD5"]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -275,7 +273,12 @@ export function AddOptionsModal({
                 {/* Text */}
                 <View style={styles.optionTextContainer}>
                   <View style={styles.aiChefTitleRow}>
-                    <Text style={[styles.optionTitle, { fontWeight: "700", color: theme.text }]}>
+                    <Text
+                      style={[
+                        styles.optionTitle,
+                        { fontWeight: "700", color: theme.text },
+                      ]}
+                    >
                       AI Chef
                     </Text>
                     <View style={styles.newBadge}>

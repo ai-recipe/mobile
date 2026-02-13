@@ -1,3 +1,4 @@
+import { FavoritesSkeleton } from "@/app/(protected)/(tabs)/components/FavoritesSkeleton";
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
@@ -119,12 +120,7 @@ const FavoritesScreen = () => {
     return (
       <ScreenWrapper>
         <TabScreenWrapper>
-          <View className="flex-1 bg-white dark:bg-zinc-900 items-center justify-center">
-            <ActivityIndicator size="large" color="#f39849" />
-            <Text className="text-zinc-500 mt-4 font-semibold">
-              Favorileriniz yükleniyor...
-            </Text>
-          </View>
+          <FavoritesSkeleton />
         </TabScreenWrapper>
       </ScreenWrapper>
     );
@@ -137,7 +133,7 @@ const FavoritesScreen = () => {
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
             Favori <Text className="text-[#f39849]">Tariflerim</Text>
           </Text>
-          <Text className="text-zinc-500 dark:text-zinc-400 mb-8">
+          <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
             Favoriye eklediğiniz tarifleri buradan görüntüleyebilirsiniz.
           </Text>
 

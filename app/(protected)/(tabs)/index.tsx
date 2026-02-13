@@ -599,7 +599,8 @@ const HomeScreen = () => {
                         Protein
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalProteinGrams || 0)} g
+                        {Math.round(summary?.totalProteinGrams || 0)} g /{" "}
+                        {Math.round(summary?.totalProteinGrams || 0) / 4} g
                       </Text>
                     </View>
                     <View className="flex-col items-center">
@@ -608,7 +609,8 @@ const HomeScreen = () => {
                         Carb
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalCarbsGrams || 0)} g
+                        {Math.round(summary?.totalCarbsGrams || 0)} g /{" "}
+                        {Math.round(summary?.totalCarbsGrams || 0) / 4} g
                       </Text>
                     </View>
                     <View className="flex-col items-center">
@@ -617,7 +619,8 @@ const HomeScreen = () => {
                         Fat
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalFatGrams || 0)} g
+                        {Math.round(summary?.totalFatGrams || 0)} g /{" "}
+                        {Math.round(summary?.totalFatGrams || 0) / 9} g
                       </Text>
                     </View>
                   </View>
@@ -669,7 +672,7 @@ const HomeScreen = () => {
             ) : (
               /* Water Activity Tab */
               <View className="pb-10">
-                {waterLoading && !waterEntries.length ? (
+                {false ? (
                   <ActivityIndicator
                     size="large"
                     color="#3b82f6"

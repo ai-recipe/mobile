@@ -3,7 +3,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { CalendarModal } from "../../screens/components/CalendarModal";
@@ -75,24 +75,7 @@ export default function ProgressScreen() {
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
           {/* Header */}
-          <View className="px-6 py-4 flex-row justify-between items-center">
-            <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full overflow-hidden bg-orange-100 dark:bg-orange-500/20 border border-orange-200 dark:border-orange-500/30">
-                <Image
-                  source={{ uri: "https://i.pravatar.cc/150?img=12" }}
-                  className="w-full h-full"
-                  resizeMode="cover"
-                />
-              </View>
-              <View>
-                <Text className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
-                  Good Morning
-                </Text>
-                <Text className="text-lg font-bold leading-none text-zinc-900 dark:text-white">
-                  Alex Rivera
-                </Text>
-              </View>
-            </View>
+          <View className="px-6 py-4 flex-row justify-end items-center">
             <Pressable
               onPress={() => setShowCalendar(true)}
               className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center "
