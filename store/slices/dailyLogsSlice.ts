@@ -183,6 +183,18 @@ const dailyLogsSlice = createSlice({
       state.error = action.payload as string;
     });
 
+    // Update Food Log
+    builder.addCase(updateFoodLogAsync.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateFoodLogAsync.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(updateFoodLogAsync.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
+
     // Fetch Recent Meals
     builder.addCase(fetchRecentMealsAsync.pending, (state) => {
       state.isRecentLoading = true;

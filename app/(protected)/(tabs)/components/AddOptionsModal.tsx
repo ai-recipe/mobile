@@ -37,6 +37,7 @@ export function AddOptionsModal({
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const [showModal, setShowModal] = useState(visible);
+  const afterCloseRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -72,6 +73,9 @@ export function AddOptionsModal({
         if (finished) {
           setShowModal(false);
           onClose();
+          const fn = afterCloseRef.current;
+          afterCloseRef.current = null;
+          fn?.();
         }
       });
     }
@@ -85,9 +89,9 @@ export function AddOptionsModal({
 
   const handleManualLog = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onManualLog();
-    // Let the meal modal open before we start closing this one (avoids ref/layout timing)
-    requestAnimationFrame(() => onClose());
+    // Open meal modal only after this modal is fully dismissed (iOS can't present modal on top of modal)
+    afterCloseRef.current = onManualLog;
+    onClose();
   };
 
   const handleAIChef = () => {
@@ -117,7 +121,10 @@ export function AddOptionsModal({
           },
         ]}
       >
-        <Pressable style={StyleSheet.absoluteFill} onPress={handleRequestClose} />
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={handleRequestClose}
+        />
       </Animated.View>
 
       {/* Bottom Sheet */}

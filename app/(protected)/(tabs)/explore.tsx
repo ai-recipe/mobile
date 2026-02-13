@@ -109,22 +109,21 @@ const ExploreScreen = () => {
                   tarifler.
                 </Text>
               </View>
-
-              {/* Search Bar */}
-              <View className="px-5 mb-8">
-                <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3.5">
-                  <MaterialIcons name="search" size={22} color="#a1a1aa" />
-                  <TextInput
-                    placeholder="Tarif, malzeme veya mutfak ara..."
-                    className="ml-3 flex-1 text-zinc-900 dark:text-white text-[15px]"
-                    placeholderTextColor="#a1a1aa"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                  />
+              {false && (
+                <View className="px-5 mb-8">
+                  <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3.5">
+                    <MaterialIcons name="search" size={22} color="#a1a1aa" />
+                    <TextInput
+                      placeholder="Tarif, malzeme veya mutfak ara..."
+                      className="ml-3 flex-1 text-zinc-900 dark:text-white text-[15px]"
+                      placeholderTextColor="#a1a1aa"
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                    />
+                  </View>
                 </View>
-              </View>
-
-              {/* Categories */}
+              )}
+              {/* Categories 
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -153,7 +152,7 @@ const ExploreScreen = () => {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-
+*/}
               {/* Trend Section */}
               {trendingRecipes.length > 0 && (
                 <View className="mb-10">

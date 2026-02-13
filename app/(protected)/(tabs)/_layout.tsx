@@ -254,44 +254,44 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 export default function TabLayout() {
   return (
     <Tabs
-        tabBar={(props) => <CustomTabBar {...props} />}
-        screenOptions={{
-          headerShown: false,
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Ana Sayfa",
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Ana Sayfa",
-          }}
-        />
+      />
 
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: "Keşfet",
-          }}
-        />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Keşfet",
+        }}
+      />
 
-        <Tabs.Screen
-          name="add"
-          options={{
-            title: "Ekle",
-          }}
-        />
-        <Tabs.Screen
-          name="progress"
-          options={{
-            title: "Progress",
-          }}
-        />
-        <Tabs.Screen
-          name="favorites"
-          options={{
-            title: "Favoriler",
-          }}
-        />
-      </Tabs>
+      <Tabs.Screen
+        name="add"
+        options={{
+          title: "Ekle",
+        }}
+      />
+      <Tabs.Screen
+        name="progress"
+        options={{
+          title: "Progress",
+        }}
+      />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: "Favoriler",
+        }}
+      />
+    </Tabs>
   );
 }
 

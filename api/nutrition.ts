@@ -18,6 +18,10 @@ export interface DailySummary {
   totalProteinGrams: number;
   totalCarbsGrams: number;
   totalFatGrams: number;
+  targetCalories: number | null;
+  targetProteinGrams: number | null;
+  targetCarbsGrams: number | null;
+  targetFatGrams: number | null;
 }
 
 export interface FoodLogResponse {

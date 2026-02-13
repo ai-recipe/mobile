@@ -68,7 +68,6 @@ export const deleteWaterIntakeAsync = createAsyncThunk(
   ) => {
     try {
       await deleteWaterIntake(payload.id);
-      await dispatch(fetchWaterIntakeAsync(payload.date));
     } catch (error) {
       return rejectWithValue(
         error instanceof Error
@@ -122,6 +121,12 @@ const waterLogsSlice = createSlice({
         state.isAdding = false;
         state.error = action.payload as string;
       });
+
+    builder.addCase(deleteWaterIntakeAsync.pending, (state, payload) => {
+      state.entries = state.entries.filter(
+        (entry) => entry.id !== payload.meta.arg.id,
+      );
+    });
 
     builder.addCase(deleteWaterIntakeAsync.rejected, (state, action) => {
       state.error = action.payload as string;

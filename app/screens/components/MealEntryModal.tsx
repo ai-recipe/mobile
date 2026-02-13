@@ -1,9 +1,10 @@
 import { FoodLogEntry } from "@/api/nutrition";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { usePrev } from "@/hooks/usePrev";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchRecentMealsAsync } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -166,6 +167,25 @@ export function MealEntryModal({
   const carbsRef = useRef<TextInput>(null);
   const fatRef = useRef<TextInput>(null);
 
+  const macrosRef = useRef({ calories, protein, carbs, fat });
+  macrosRef.current = { calories, protein, carbs, fat };
+
+  const servingsPrev = usePrev(servings);
+  useEffect(() => {
+    const prev = servingsPrev ?? servings;
+    if (typeof prev !== "number" || prev === 0 || servings === prev) return;
+    const ratio = servings / prev;
+    const { calories: c, protein: p, carbs: cr, fat: f } = macrosRef.current;
+    const scale = (v: string) => {
+      const n = Number(v) * ratio;
+      const r = Math.round(n);
+      return Number.isNaN(r) ? "" : String(r);
+    };
+    setCalories(scale(c));
+    setProtein(scale(p));
+    setCarbs(scale(cr));
+    setFat(scale(f));
+  }, [servings, servingsPrev]);
   return (
     <Modal
       visible={visible}

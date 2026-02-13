@@ -25,7 +25,6 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   Dimensions,
   Pressable,
   ScrollView,
@@ -69,8 +68,12 @@ const HomeScreen = () => {
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
-  const fabAnimation = React.useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    if (mealModalOpen) {
+      setActiveTab("meal");
+    }
+  }, [mealModalOpen]);
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
     return Array.from({ length: 30 }).map((_, i) => {
@@ -86,7 +89,7 @@ const HomeScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("fetching food logs and water intake");
+      setActiveTab("meal");
       const dateStr = format(selectedDate, "yyyy-MM-dd");
       dispatch(fetchFoodLogsAsync({ startDate: dateStr, endDate: dateStr }));
       dispatch(fetchWaterIntakeAsync(dateStr));
@@ -265,8 +268,9 @@ const HomeScreen = () => {
         </View>
         <View className="gap-3">
           {items.map((entry) => (
-            <View
+            <Pressable
               key={entry.id}
+              onPress={() => handleEditMeal(entry)}
               className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
             >
               <View className="flex-row items-center gap-3">
@@ -308,7 +312,7 @@ const HomeScreen = () => {
                   </Pressable>
                 </View>
               </View>
-            </View>
+            </Pressable>
           ))}
         </View>
       </View>
@@ -526,7 +530,7 @@ const HomeScreen = () => {
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                         {Math.round(summary?.totalProteinGrams || 0)} g /{" "}
-                        {Math.round(summary?.totalProteinGrams || 0) / 4} g
+                        {Math.round(summary?.targetProteinGrams || 0)} g
                       </Text>
                     </View>
                     <View className="flex-col items-center">
@@ -536,7 +540,7 @@ const HomeScreen = () => {
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                         {Math.round(summary?.totalCarbsGrams || 0)} g /{" "}
-                        {Math.round(summary?.totalCarbsGrams || 0) / 4} g
+                        {Math.round(summary?.targetCarbsGrams || 0)} g
                       </Text>
                     </View>
                     <View className="flex-col items-center">
@@ -546,7 +550,7 @@ const HomeScreen = () => {
                       </Text>
                       <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                         {Math.round(summary?.totalFatGrams || 0)} g /{" "}
-                        {Math.round(summary?.totalFatGrams || 0) / 9} g
+                        {Math.round(summary?.targetFatGrams || 0)} g
                       </Text>
                     </View>
                   </View>
