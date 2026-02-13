@@ -19,7 +19,7 @@ export function TabScreenWrapper({ children }: { children: React.ReactNode }) {
 
   useFocusEffect(
     useCallback(() => {
-      opacity.value = 0.72;
+      opacity.value = 0.52;
       translateY.value = 8;
       opacity.value = withTiming(1, { duration: TAB_ANIMATION_DURATION });
       translateY.value = withTiming(0, { duration: TAB_ANIMATION_DURATION });

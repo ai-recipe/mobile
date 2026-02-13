@@ -3,6 +3,7 @@ import appReducer from "./slices/appSlice";
 import authReducer from "./slices/authSlice";
 import dailyLogsReducer from "./slices/dailyLogsSlice";
 import dashboardReducer from "./slices/dashboardSlice";
+import waterLogsReducer from "./slices/waterLogsSlice";
 import exploreListReducer from "./slices/exploreListSlice";
 import favoritesListReducer from "./slices/favoritesListSlice";
 import multiStepFormReducer from "./slices/multiStepFormSlice";
@@ -23,6 +24,7 @@ export const store = configureStore({
     multiStepForm: multiStepFormReducer,
     dashboard: dashboardReducer,
     dailyLogs: dailyLogsReducer,
+    waterLogs: waterLogsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

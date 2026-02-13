@@ -73,3 +73,41 @@ export const deleteFoodLog = async (id: string) => {
   const response = await api.delete(`/nutrition/food-log/${id}`);
   return response.data;
 };
+
+// --- Water intake ---
+
+export interface WaterIntakeEntry {
+  id: string;
+  amountMl: number;
+  loggedAt: string;
+}
+
+export interface WaterIntakeSummary {
+  date: string;
+  totalIntakeMl: number;
+  dailyGoalMl: number;
+  progressPercentage: number;
+  entries: WaterIntakeEntry[];
+}
+
+export const fetchWaterIntake = async (params?: { date?: string }) => {
+  const response = await api.get<WaterIntakeSummary>(
+    "/nutrition/water-intake",
+    { params: params?.date ? { date: params.date } : undefined },
+  );
+  return response.data;
+};
+
+export const addWaterIntake = async (body: { amountMl: number }) => {
+  const response = await api.post<{
+    id: string;
+    amountMl: number;
+    loggedAt: string;
+  }>("/nutrition/water-intake", body);
+  return response.data;
+};
+
+export const deleteWaterIntake = async (id: string) => {
+  const response = await api.delete(`/nutrition/water-intake/${id}`);
+  return response.data;
+};
