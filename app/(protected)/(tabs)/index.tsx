@@ -1,4 +1,3 @@
-import { useOpenMealModal } from "@/app/(protected)/(tabs)/_layout";
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import {
   MealData,
@@ -13,6 +12,7 @@ import {
   fetchFoodLogsAsync,
   updateFoodLogAsync,
 } from "@/store/slices/dailyLogsSlice";
+import { closeMealModal, openMealModal } from "@/store/slices/modalSlice";
 import {
   addWaterIntakeAsync,
   deleteWaterIntakeAsync,
@@ -20,7 +20,7 @@ import {
 } from "@/store/slices/waterLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, isSameDay, parseISO, subDays } from "date-fns";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -41,16 +41,6 @@ import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 const AnimatedCircle = AnimatedReanimated.createAnimatedComponent(Circle);
-
-const dates = Array.from({ length: 30 }).map((_, i) => {
-  const date = subDays(new Date(), 15 - i);
-  return {
-    date,
-    day: format(date, "d"),
-    month: format(date, "MMM"),
-    isToday: isSameDay(date, new Date()),
-  };
-});
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
@@ -74,63 +64,12 @@ const HomeScreen = () => {
     isAdding: waterAdding,
   } = useAppSelector((state) => state.waterLogs);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const mealModalOpen = useAppSelector((state) => state.modal.mealModalOpen);
   const [activeTab, setActiveTab] = React.useState<"meal" | "water">("meal");
-  const [isFabExpanded, setIsFabExpanded] = React.useState(false);
-  const [isMealModalVisible, setIsMealModalVisible] = React.useState(false);
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
   const fabAnimation = React.useRef(new Animated.Value(0)).current;
-  const initialScrollDone = React.useRef(false);
-
-  // Handle scanned meal from the Live Meal Scanner
-  const { scannedMeal, openMealModal } = useLocalSearchParams<{
-    scannedMeal?: string;
-    openMealModal?: string;
-  }>();
-
-  useEffect(() => {
-    if (scannedMeal && scannedMeal !== "") {
-      if (scannedMeal === "__manual__") {
-        // Manual capture fallback - open empty modal
-        setEditingMeal(null);
-        setIsMealModalVisible(true);
-      } else {
-        // Pre-fill modal with scanned meal name
-        setEditingMeal({
-          name: scannedMeal,
-          servings: 1,
-          calories: 0,
-          protein: 0,
-          carbs: 0,
-          fat: 0,
-          loggedAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
-        });
-        setIsMealModalVisible(true);
-      }
-      // Clear the param so it doesn't re-trigger
-      router.setParams({ scannedMeal: "" });
-    }
-  }, [scannedMeal]);
-
-  // Open meal modal from tab "Ekle" -> Manual Log (when navigating from another tab)
-  useEffect(() => {
-    if (openMealModal === "true") {
-      setEditingMeal(null);
-      setIsMealModalVisible(true);
-      router.setParams({ openMealModal: "" });
-    }
-  }, [openMealModal]);
-
-  // Register handler so tab bar can open modal from any screen (e.g. when already on home)
-  const { registerOpenMealModal } = useOpenMealModal();
-  useEffect(() => {
-    registerOpenMealModal(() => {
-      setEditingMeal(null);
-      setIsMealModalVisible(true);
-    });
-    return () => registerOpenMealModal(null);
-  }, [registerOpenMealModal]);
 
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
@@ -179,13 +118,6 @@ const HomeScreen = () => {
     };
   });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsFabExpanded(false);
-      fabAnimation.setValue(0);
-    }, []),
-  );
-
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
   };
@@ -223,7 +155,7 @@ const HomeScreen = () => {
           }),
         ).unwrap();
       }
-      setIsMealModalVisible(false);
+      dispatch(closeMealModal());
       setEditingMeal(null);
     } catch (error) {
       console.error("Failed to add/update meal:", error);
@@ -255,7 +187,7 @@ const HomeScreen = () => {
       servings: entry.quantity,
       loggedAt: entry.loggedAt,
     });
-    setIsMealModalVisible(true);
+    dispatch(openMealModal());
   };
 
   const handleAddWater = (amountMl: number) => {
@@ -299,6 +231,7 @@ const HomeScreen = () => {
     return groups;
   }, [entries]);
 
+  console.log("mealModalOpen", mealModalOpen);
   const MealSection = ({
     title,
     icon,
@@ -405,12 +338,6 @@ const HomeScreen = () => {
     }, [selectedDate]),
   );
 
-  useEffect(() => {
-    if (activeTab === "water") {
-      setIsFabExpanded(false);
-      fabAnimation.setValue(0);
-    }
-  }, [activeTab]);
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
@@ -672,7 +599,7 @@ const HomeScreen = () => {
             ) : (
               /* Water Activity Tab */
               <View className="pb-10">
-                {false ? (
+                {waterLoading && !waterEntries.length ? (
                   <ActivityIndicator
                     size="large"
                     color="#3b82f6"
@@ -862,10 +789,10 @@ const HomeScreen = () => {
         </View>
 
         <MealEntryModal
-          visible={isMealModalVisible}
+          visible={mealModalOpen}
           initialData={editingMeal || undefined}
           onClose={() => {
-            setIsMealModalVisible(false);
+            dispatch(closeMealModal());
             setEditingMeal(null);
           }}
           onSave={handleAddMeal}

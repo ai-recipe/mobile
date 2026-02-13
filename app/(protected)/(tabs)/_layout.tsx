@@ -1,36 +1,25 @@
 import { AddOptionsModal } from "@/app/(protected)/(tabs)/components/AddOptionsModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch } from "@/store/hooks";
+import { openMealModal } from "@/store/slices/modalSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
-import React, { createContext, useCallback, useRef, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
 import { CopilotStep, walkthroughable } from "react-native-copilot";
 
-/** Called from tab bar to open the meal entry modal (e.g. Manual Log). Home screen registers the handler. */
-type OpenMealModalHandler = () => void;
-const OpenMealModalContext = createContext<{
-  requestOpenMealModal: () => void;
-  registerOpenMealModal: (handler: OpenMealModalHandler | null) => void;
-}>({
-  requestOpenMealModal: () => {},
-  registerOpenMealModal: () => {},
-});
-
-export function useOpenMealModal() {
-  return React.useContext(OpenMealModalContext);
-}
-
 const CopilotView = walkthroughable(View);
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
@@ -57,17 +46,12 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     { borderColor: theme.card },
   ];
 
-  const { requestOpenMealModal } = useOpenMealModal();
   const currentRouteName = state.routes[state.index]?.name;
 
   const handleManualLog = () => {
-    if (currentRouteName === "index") {
-      requestOpenMealModal();
-    } else {
-      router.navigate({
-        pathname: "/(protected)/(tabs)/",
-        params: { openMealModal: "true" },
-      });
+    dispatch(openMealModal());
+    if (currentRouteName !== "index") {
+      router.navigate("/(protected)/(tabs)/");
     }
   };
 
@@ -267,30 +251,9 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   );
 }
 
-function OpenMealModalProvider({ children }: { children: React.ReactNode }) {
-  const openMealModalRef = useRef<OpenMealModalHandler | null>(null);
-  const requestOpenMealModal = useCallback(() => {
-    openMealModalRef.current?.();
-  }, []);
-  const registerOpenMealModal = useCallback(
-    (handler: OpenMealModalHandler | null) => {
-      openMealModalRef.current = handler;
-    },
-    [],
-  );
-  return (
-    <OpenMealModalContext.Provider
-      value={{ requestOpenMealModal, registerOpenMealModal }}
-    >
-      {children}
-    </OpenMealModalContext.Provider>
-  );
-}
-
 export default function TabLayout() {
   return (
-    <OpenMealModalProvider>
-      <Tabs
+    <Tabs
         tabBar={(props) => <CustomTabBar {...props} />}
         screenOptions={{
           headerShown: false,
@@ -329,7 +292,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </OpenMealModalProvider>
   );
 }
 

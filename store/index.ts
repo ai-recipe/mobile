@@ -6,6 +6,7 @@ import dashboardReducer from "./slices/dashboardSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
 import exploreListReducer from "./slices/exploreListSlice";
 import favoritesListReducer from "./slices/favoritesListSlice";
+import modalReducer from "./slices/modalSlice";
 import multiStepFormReducer from "./slices/multiStepFormSlice";
 import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
@@ -19,6 +20,7 @@ export const store = configureStore({
     recipeList: recipeListReducer,
     favoritesList: favoritesListReducer,
     exploreList: exploreListReducer,
+    modal: modalReducer,
     app: appReducer,
     survey: surveyReducer,
     multiStepForm: multiStepFormReducer,

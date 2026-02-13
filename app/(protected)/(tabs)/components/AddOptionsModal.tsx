@@ -85,8 +85,9 @@ export function AddOptionsModal({
 
   const handleManualLog = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onClose();
     onManualLog();
+    // Let the meal modal open before we start closing this one (avoids ref/layout timing)
+    requestAnimationFrame(() => onClose());
   };
 
   const handleAIChef = () => {
