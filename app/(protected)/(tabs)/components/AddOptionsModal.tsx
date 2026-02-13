@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -36,9 +36,13 @@ export function AddOptionsModal({
 
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
+  const [showModal, setShowModal] = useState(visible);
 
   useEffect(() => {
     if (visible) {
+      setShowModal(true);
+      slideAnim.setValue(SCREEN_HEIGHT);
+      backdropAnim.setValue(0);
       Animated.parallel([
         Animated.timing(backdropAnim, {
           toValue: 1,
@@ -64,7 +68,12 @@ export function AddOptionsModal({
           duration: 250,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]).start(({ finished }) => {
+        if (finished) {
+          setShowModal(false);
+          onClose();
+        }
+      });
     }
   }, [visible]);
 
@@ -86,13 +95,17 @@ export function AddOptionsModal({
     router.push("/screens/ai-scan-form");
   };
 
+  const handleRequestClose = () => {
+    if (visible) onClose();
+  };
+
   return (
     <Modal
-      visible={visible}
+      visible={showModal}
       transparent
       animationType="none"
       statusBarTranslucent
-      onRequestClose={onClose}
+      onRequestClose={handleRequestClose}
     >
       {/* Backdrop */}
       <Animated.View
@@ -103,7 +116,7 @@ export function AddOptionsModal({
           },
         ]}
       >
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        <Pressable style={StyleSheet.absoluteFill} onPress={handleRequestClose} />
       </Animated.View>
 
       {/* Bottom Sheet */}
@@ -307,7 +320,7 @@ export function AddOptionsModal({
           {/* Cancel */}
           <View style={styles.cancelContainer}>
             <Pressable
-              onPress={onClose}
+              onPress={handleRequestClose}
               style={({ pressed }) => [
                 styles.cancelBtn,
                 pressed && { opacity: 0.6 },
