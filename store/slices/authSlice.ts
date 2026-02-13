@@ -106,7 +106,6 @@ export const fetchSurveyQuestionsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await SurveyService.getSurveyQuestionsAPI();
-      console.log("response", JSON.stringify(response.data?.data?.questions));
       return response.data?.data?.questions;
     } catch (error: any) {
       return rejectWithValue(
@@ -157,7 +156,6 @@ export const initDeviceAsync = createAsyncThunk(
 
       return data;
     } catch (error: any) {
-      console.log("error", JSON.stringify(error, null, 2));
       return rejectWithValue(
         error.response?.data?.message || "Cihaz başlatma başarısız",
       );

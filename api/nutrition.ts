@@ -91,7 +91,7 @@ export interface WaterIntakeSummary {
 }
 
 export const fetchWaterIntake = async (params?: { date?: string }) => {
-  const response = await api.get<WaterIntakeSummary>(
+  const response = await api.get<{ data: WaterIntakeSummary }>(
     "/nutrition/water-intake",
     { params: params?.date ? { date: params.date } : undefined },
   );
