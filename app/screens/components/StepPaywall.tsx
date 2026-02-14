@@ -44,10 +44,11 @@ const OFFERS = [
 
 const FEATURES = [
   "Sınırsız Yapay Zeka Tarif Oluşturma",
-  "Tüm Mutfaklara Erişim",
+  "Sınırsız Kalori Hesaplama",
   "Besin Değerleri Analizi",
   "Favorilere Ekleme ve Kaydetme",
-  "Reklamsız Deneyim",
+  "Gelişmiş Araçlar",
+  "Detaylı Analizler",
 ];
 
 export function StepPaywall({
@@ -150,29 +151,27 @@ export function StepPaywall({
           edebilirsiniz. 3 günlük ücretsiz deneme süresi sonunda ücretlendirme
           başlayacaktır.
         </Text>
+        <View className="px-5 pb-8 pt-2">
+          <TouchableOpacity
+            onPress={onFinish}
+            activeOpacity={0.9}
+            className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
+          >
+            <Text className="text-white font-extrabold text-lg">
+              {selectedOffer === "yearly"
+                ? "Ücretsiz Denemeyi Başlat"
+                : "Abone Ol"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onFinish}
+            activeOpacity={0.7}
+            className="mt-4 items-center"
+          >
+            <Text className="text-zinc-400 font-xs">Belki Daha Sonra</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-
-      {/* Persistence Button */}
-      <View className="px-5 pb-8 pt-2">
-        <TouchableOpacity
-          onPress={onFinish}
-          activeOpacity={0.9}
-          className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
-        >
-          <Text className="text-white font-extrabold text-lg">
-            {selectedOffer === "yearly"
-              ? "Ücretsiz Denemeyi Başlat"
-              : "Abone Ol"}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onFinish}
-          activeOpacity={0.7}
-          className="mt-4 items-center"
-        >
-          <Text className="text-zinc-400 font-medium">Belki Daha Sonra</Text>
-        </TouchableOpacity>
-      </View>
     </Animated.View>
   );
 }

@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
   ScrollView,
@@ -122,19 +122,6 @@ export function StepSurveyItem({
                       : "bg-white dark:bg-zinc-800 border-zinc-100 dark:border-zinc-700"
                   }`}
                 >
-                  <View
-                    className={`size-12 rounded-2xl items-center justify-center ${
-                      isSelected
-                        ? "bg-[#f39849]"
-                        : "bg-zinc-100 dark:bg-zinc-700"
-                    }`}
-                  >
-                    <MaterialCommunityIcons
-                      name={option.icon as any}
-                      size={24}
-                      color={isSelected ? "white" : "#a1a1aa"}
-                    />
-                  </View>
                   <View className="flex-1 ml-4">
                     <Text
                       className={`text-lg font-bold ${

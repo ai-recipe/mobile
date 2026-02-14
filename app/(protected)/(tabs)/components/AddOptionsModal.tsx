@@ -304,7 +304,7 @@ export function AddOptionsModal({
                       AI Chef
                     </Text>
                     <View style={styles.newBadge}>
-                      <Text style={styles.newBadgeText}>NEW</Text>
+                      <Text style={styles.newBadgeText}>Magic</Text>
                     </View>
                   </View>
                   <Text

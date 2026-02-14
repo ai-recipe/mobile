@@ -56,8 +56,11 @@ const ProfileScreen = () => {
       withTabNavigation={false}
       title="Profil"
     >
-      <ScrollView className="flex-1 bg-white dark:bg-zinc-900 px-5 mt-16">
+      <ScrollView className="flex-1  dark:bg-zinc-900 px-5 mt-16">
         <View className="gap-y-3">
+          <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
+            Hesabım
+          </Text>
           <TouchableOpacity
             onPress={() => router.push("/subscription" as any)}
             className="flex-row items-center p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border border-orange-100 dark:border-orange-500/20"
@@ -104,6 +107,14 @@ const ProfileScreen = () => {
             icon="help-outline"
             label="Yardım ve Destek"
             onPress={() => {}}
+          />
+          <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
+            Goals
+          </Text>
+          <ProfileMenuItem
+            icon="target"
+            label="Edit Goals"
+            onPress={() => router.push("/profile/goals" as any)}
           />
         </View>
       </ScrollView>
