@@ -11,6 +11,9 @@ export interface FoodLogEntry {
   loggedAt: string;
   createdAt: string;
   updatedAt: string;
+  isTemporary?: boolean;
+  imageUri?: string;
+  type?: "scan" | "manual";
 }
 
 export interface DailySummary {
@@ -113,5 +116,10 @@ export const addWaterIntake = async (body: { amountMl: number }) => {
 
 export const deleteWaterIntake = async (id: string) => {
   const response = await api.delete(`/nutrition/water-intake/${id}`);
+  return response.data;
+};
+
+export const scanFood = async (imageUri: string) => {
+  const response = await api.post("/nutrition/scan-food", { imageUri });
   return response.data;
 };

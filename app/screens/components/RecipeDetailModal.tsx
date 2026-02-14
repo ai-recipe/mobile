@@ -18,6 +18,7 @@ const PLACEHOLDER_IMAGE =
 interface RecipeDetailModalProps {
   visible: boolean;
   onClose: () => void;
+  dontShowFavoriteButton?: boolean;
   recipe: {
     id: string;
     title: string;
@@ -55,9 +56,7 @@ export function RecipeDetailModal({
   const [activeTab, setActiveTab] = useState<"ingredients" | "preparation">(
     "ingredients",
   );
-  const [checkedIngredients, setCheckedIngredients] = useState<
-    Record<number, boolean>
-  >({});
+
   const dispatch = useAppDispatch();
   const [isFavorite, setIsFavorite] = useState(recipe.isFavorite);
 

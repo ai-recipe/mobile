@@ -9,7 +9,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -53,31 +52,11 @@ const ProfileScreen = () => {
   return (
     <ScreenWrapper
       showBackButton={true}
-      title="Profil"
       showTopNavBar={false}
       withTabNavigation={false}
+      title="Profil"
     >
-      <ScrollView className="flex-1 bg-white dark:bg-zinc-900 px-5">
-        {/* Header */}
-        <View className="items-center mt-8 mb-8">
-          <View className="relative">
-            <Image
-              source={{
-                uri: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-              }}
-              className="size-24 rounded-full border-4 border-orange-100 dark:border-orange-900/50"
-            />
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-green-500 p-2 rounded-full border-4 border-white dark:border-zinc-900"></TouchableOpacity>
-          </View>
-          <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white mt-4">
-            Şahin Kundakcı
-          </Text>
-          <Text className="text-zinc-500 dark:text-zinc-400 font-medium">
-            Gurme Şef
-          </Text>
-        </View>
-
-        {/* Menu Options */}
+      <ScrollView className="flex-1 bg-white dark:bg-zinc-900 px-5 mt-16">
         <View className="gap-y-3">
           <TouchableOpacity
             onPress={() => router.push("/subscription" as any)}

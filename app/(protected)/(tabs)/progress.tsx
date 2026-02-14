@@ -1,13 +1,13 @@
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
+import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import React, { useMemo } from "react";
+import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import Svg, { Circle, Path } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 const PRIMARY = "#f39849";
-const SECONDARY = "#4d8df3";
 
 type PeriodType = "weekly" | "monthly";
 
@@ -36,7 +36,6 @@ const MILESTONES = [
     title: "Goal Reached",
     subtitle: "2,500 kcal limit",
     icon: "emoji-events" as const,
-    color: SECONDARY,
     bgClass: "bg-blue-100 dark:bg-blue-900/30",
     unlocked: true,
     bordered: true,
@@ -67,12 +66,6 @@ export default function ProgressScreen() {
   const avgWaterLiters = 2.1;
   const weightKg = 72.4;
   const weightChangeKg = -0.8;
-
-  const waterCircumference = 2 * Math.PI * 40;
-  const waterStrokeOffset = useMemo(
-    () => waterCircumference - (waterGoalPercent / 100) * waterCircumference,
-    [waterGoalPercent, waterCircumference],
-  );
 
   const mutedText = isDark ? "#a1a1aa" : "#71717a";
   const trackBg = isDark ? "#3f3f46" : "#f4f4f5";
@@ -161,7 +154,8 @@ export default function ProgressScreen() {
                       },
                     ]}
                   >
-                    {calorieTrend}% vs last week
+                    {calorieTrend}% vs{" "}
+                    {period === "weekly" ? "last week" : "last month"}
                   </Text>
                 </View>
               </View>
@@ -210,31 +204,14 @@ export default function ProgressScreen() {
                   AVG WATER
                 </Text>
                 <View style={styles.waterRingWrap}>
-                  <Svg
-                    width={96}
-                    height={96}
-                    style={{ transform: [{ rotate: "-90deg" }] }}
-                  >
-                    <Circle
-                      cx="48"
-                      cy="48"
-                      r="40"
-                      stroke={trackBg}
-                      strokeWidth="8"
-                      fill="transparent"
-                    />
-                    <Circle
-                      cx="48"
-                      cy="48"
-                      r="40"
-                      stroke={SECONDARY}
-                      strokeWidth="8"
-                      fill="transparent"
-                      strokeDasharray={waterCircumference}
-                      strokeDashoffset={waterStrokeOffset}
-                      strokeLinecap="round"
-                    />
-                  </Svg>
+                  <AnimatedCircleProgress
+                    progress={waterGoalPercent}
+                    trackColor={trackBg}
+                    progressColor={Colors[colorScheme].primary}
+                    size={96}
+                    radius={40}
+                    strokeWidth={8}
+                  />
                   <View style={StyleSheet.absoluteFillObject}>
                     <View style={styles.waterRingCenter}>
                       <Text style={[styles.waterValue, { color: theme.text }]}>
@@ -267,7 +244,7 @@ export default function ProgressScreen() {
                       kg
                     </Text>
                   </Text>
-                  <Text style={[styles.weightChange, { color: SECONDARY }]}>
+                  <Text style={[styles.weightChange]}>
                     {weightChangeKg >= 0 ? "+" : ""}
                     {weightChangeKg} kg this week
                   </Text>
@@ -277,7 +254,7 @@ export default function ProgressScreen() {
                     <Path
                       d="M0,35 Q25,30 50,15 T100,5"
                       fill="none"
-                      stroke={SECONDARY}
+                      stroke={Colors[colorScheme].primary}
                       strokeLinecap="round"
                       strokeWidth="3"
                     />

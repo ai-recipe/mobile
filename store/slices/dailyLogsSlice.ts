@@ -2,12 +2,14 @@ import {
   addFoodLog,
   deleteFoodLog,
   fetchFoodLogs,
+  scanFood,
   updateFoodLog,
   type AddFoodLogParams,
   type DailySummary,
   type FoodLogEntry,
 } from "@/api/nutrition";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
 
 interface DailyLogsState {
   entries: FoodLogEntry[];
@@ -117,6 +119,28 @@ export const deleteFoodLogAsync = createAsyncThunk(
   },
 );
 
+export const scanFoodAsync = createAsyncThunk(
+  "dailyLogs/scanFood",
+  async (image: any, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await scanFood(image);
+      console.log(JSON.stringify(response.data, null, 2));
+      // add temporary food log
+      // not deletable
+      // listen sockets when scanning is done
+      // when scanning is done,update the log
+
+      dispatch(addTemporaryFoodLog({ imageUri: image }));
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error
+          ? (error as any).response?.data?.message
+          : "Failed to scan food",
+      );
+    }
+  },
+);
+
 export const fetchRecentMealsAsync = createAsyncThunk(
   "dailyLogs/fetchRecentMeals",
   async (_, { rejectWithValue }) => {
@@ -157,6 +181,29 @@ const dailyLogsSlice = createSlice({
   name: "dailyLogs",
   initialState,
   reducers: {
+    addTemporaryFoodLog: (
+      state,
+      action: PayloadAction<{
+        imageUri: string;
+      }>,
+    ) => {
+      const temporaryFoodLog: FoodLogEntry = {
+        imageUri: action.payload.imageUri,
+        id: uuidv4(),
+        type: "scan",
+        isTemporary: true,
+        mealName: "",
+        calories: 0,
+        proteinGrams: 0,
+        carbsGrams: 0,
+        fatGrams: 0,
+        quantity: 0,
+        loggedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      state.entries.push(temporaryFoodLog);
+    },
     clearDailyLogsState: (state) => {
       state.entries = [];
       state.summary = {
@@ -227,5 +274,6 @@ const dailyLogsSlice = createSlice({
   },
 });
 
-export const { clearDailyLogsState } = dailyLogsSlice.actions;
+export const { clearDailyLogsState, addTemporaryFoodLog } =
+  dailyLogsSlice.actions;
 export default dailyLogsSlice.reducer;

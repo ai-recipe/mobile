@@ -441,7 +441,7 @@ const HomeScreen = () => {
                         consumedCalories > calorieGoal
                           ? "text-red-500 bg-red-500/10 p-2 rounded-full"
                           : "text-primary bg-orange-500/10 p-2 rounded-full"
-                      } dark:text-teal-400 font-bold text-sm `}
+                      } dark:text-primary font-bold text-sm `}
                     >
                       {Math.round(Math.abs(calorieGoal - consumedCalories))}{" "}
                       kcal{" "}

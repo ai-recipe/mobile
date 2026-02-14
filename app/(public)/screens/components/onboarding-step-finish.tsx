@@ -1,7 +1,6 @@
 import { useAppSelector } from "@/store/hooks";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -30,7 +29,6 @@ export const OnboardingStepFinish = ({
       return;
     }
 
-    AsyncStorage.setItem("isOnboarded", "true");
     router.replace("/screens/survey");
     dispatch(setIsOnboarded(true));
   };

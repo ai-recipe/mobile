@@ -2,7 +2,8 @@ import { fetchProgressData } from "@/api/progress";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  selectedDate: new Date(),
+  startDate: "",
+  endDate: "",
   progressData: [],
   isProgressDataLoading: false,
 };
