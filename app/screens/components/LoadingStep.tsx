@@ -50,7 +50,7 @@ export function LoadingStep({
         </Animated.View>
 
         <Text className="text-zinc-500 dark:text-zinc-400 text-center font-medium leading-6 max-w-[250px]">
-          Buzdolabındaki malzemeler taranıyor ve analiz ediliyor...
+          Fotoğraftaki malzemeler taranıyor ve analiz ediliyor...
         </Text>
       </View>
     </Animated.View>

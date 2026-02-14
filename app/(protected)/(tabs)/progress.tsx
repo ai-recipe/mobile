@@ -1,10 +1,10 @@
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import { MaterialIcons } from "@expo/vector-icons";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 const PRIMARY = "#f39849";
@@ -71,9 +71,8 @@ export default function ProgressScreen() {
 
   const waterCircumference = 2 * Math.PI * 40;
   const waterStrokeOffset = useMemo(
-    () =>
-      waterCircumference - (waterGoalPercent / 100) * waterCircumference,
-    [waterGoalPercent, waterCircumference]
+    () => waterCircumference - (waterGoalPercent / 100) * waterCircumference,
+    [waterGoalPercent, waterCircumference],
   );
 
   const mutedText = isDark ? "#a1a1aa" : "#71717a";
@@ -84,7 +83,7 @@ export default function ProgressScreen() {
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
           {/* Tab Navigation - same design as index (Meal/Water) */}
-          <View className="px-6 mb-4">
+          <View className="px-6 mb-4 mt-4">
             <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
               <Pressable
                 onPress={() => setPeriod("weekly")}
@@ -135,12 +134,7 @@ export default function ProgressScreen() {
             <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
               <View style={styles.calorieHeader}>
                 <View>
-                  <Text
-                    style={[
-                      styles.labelUppercase,
-                      { color: mutedText },
-                    ]}
-                  >
+                  <Text style={[styles.labelUppercase, { color: mutedText }]}>
                     CALORIE INTAKE
                   </Text>
                   <Text style={[styles.calorieValue, { color: theme.text }]}>
@@ -197,9 +191,7 @@ export default function ProgressScreen() {
                         ]}
                       />
                     </View>
-                    <Text
-                      style={[styles.barLabel, { color: mutedText }]}
-                    >
+                    <Text style={[styles.barLabel, { color: mutedText }]}>
                       {item.day}
                     </Text>
                   </View>
@@ -209,9 +201,12 @@ export default function ProgressScreen() {
 
             {/* Avg Water + Weight Trend row */}
             <View className="flex-row gap-4 mb-5">
-              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 shadow-sm items-center">
+              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 items-center">
                 <Text
-                  style={[styles.labelUppercase, { color: mutedText, marginBottom: 16 }]}
+                  style={[
+                    styles.labelUppercase,
+                    { color: mutedText, marginBottom: 16 },
+                  ]}
                 >
                   AVG WATER
                 </Text>
@@ -252,16 +247,17 @@ export default function ProgressScreen() {
                     </View>
                   </View>
                 </View>
-                <Text
-                  style={[styles.waterGoalText, { color: mutedText }]}
-                >
+                <Text style={[styles.waterGoalText, { color: mutedText }]}>
                   {waterGoalPercent}% of daily goal
                 </Text>
               </View>
 
-              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 shadow-sm flex-col">
+              <View className="flex-1 bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 flex-col">
                 <Text
-                  style={[styles.labelUppercase, { color: mutedText, marginBottom: 8 }]}
+                  style={[
+                    styles.labelUppercase,
+                    { color: mutedText, marginBottom: 8 },
+                  ]}
                 >
                   WEIGHT TREND
                 </Text>
@@ -272,9 +268,7 @@ export default function ProgressScreen() {
                       kg
                     </Text>
                   </Text>
-                  <Text
-                    style={[styles.weightChange, { color: SECONDARY }]}
-                  >
+                  <Text style={[styles.weightChange, { color: SECONDARY }]}>
                     {weightChangeKg >= 0 ? "+" : ""}
                     {weightChangeKg} kg this week
                   </Text>
@@ -308,13 +302,19 @@ export default function ProgressScreen() {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ flexDirection: "row", gap: 16, paddingBottom: 8 }}
+                contentContainerStyle={{
+                  flexDirection: "row",
+                  gap: 16,
+                  paddingBottom: 8,
+                }}
               >
                 {MILESTONES.map((m) => (
                   <View
                     key={m.id}
-                    className={`min-w-[140px] bg-white dark:bg-zinc-900 p-4 rounded-3xl shadow-sm flex-col items-center border ${
-                      m.bordered ? "border-[#f39849]/20" : "border-zinc-100 dark:border-zinc-800"
+                    className={`min-w-[140px] bg-white dark:bg-zinc-900 p-4 rounded-3xl flex-col items-center border ${
+                      m.bordered
+                        ? "border-[#f39849]/20"
+                        : "border-zinc-100 dark:border-zinc-800"
                     }`}
                     style={{ opacity: m.unlocked ? 1 : 0.5 }}
                   >
@@ -325,13 +325,13 @@ export default function ProgressScreen() {
                           ? m.id === "streak"
                             ? { backgroundColor: "rgba(249,115,22,0.2)" }
                             : m.id === "goal"
-                              ? { backgroundColor: "rgba(59,130,246,0.2)" }
-                              : { backgroundColor: "#3f3f46" }
+                            ? { backgroundColor: "rgba(59,130,246,0.2)" }
+                            : { backgroundColor: "#3f3f46" }
                           : m.id === "streak"
-                            ? { backgroundColor: "#ffedd5" }
-                            : m.id === "goal"
-                              ? { backgroundColor: "#dbeafe" }
-                              : { backgroundColor: "#f4f4f5" },
+                          ? { backgroundColor: "#ffedd5" }
+                          : m.id === "goal"
+                          ? { backgroundColor: "#dbeafe" }
+                          : { backgroundColor: "#f4f4f5" },
                       ]}
                     >
                       <MaterialIcons

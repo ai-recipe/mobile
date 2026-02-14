@@ -68,6 +68,7 @@ export const deleteWaterIntakeAsync = createAsyncThunk(
   ) => {
     try {
       await deleteWaterIntake(payload.id);
+      await dispatch(fetchWaterIntakeAsync(payload.date));
     } catch (error) {
       return rejectWithValue(
         error instanceof Error
