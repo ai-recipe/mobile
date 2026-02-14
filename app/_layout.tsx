@@ -19,7 +19,6 @@ function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
   useInitApp();
   const { token, isInitDeviceLoading } = useAppSelector((state) => state.auth);
-  console.log(token);
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useDispatch();
   useEffect(() => {

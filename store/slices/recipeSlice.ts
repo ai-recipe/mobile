@@ -75,14 +75,6 @@ export const discoverRecipesAsync = createAsyncThunk(
     { rejectWithValue, dispatch },
   ) => {
     try {
-      console.log(
-        "params",
-        JSON.stringify({
-          ingredients: params.ingredients,
-          maxPrepTime: params.maxPrepTime,
-          dietaryPreferences: params.dietaryPreferences,
-        }),
-      );
       const response = await discoverRecipes({
         ingredients: params.ingredients,
         maxPrepTime: params.maxPrepTime,

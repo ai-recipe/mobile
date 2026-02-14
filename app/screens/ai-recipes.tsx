@@ -77,7 +77,6 @@ const AIRecipesScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      console.log("AIRecipesScreen focused");
       dispatch(fetchRecipes({ limit: 20, page: 1 }));
     }, [dispatch]),
   );

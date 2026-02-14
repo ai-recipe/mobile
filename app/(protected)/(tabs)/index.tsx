@@ -3,6 +3,7 @@ import {
   MealData,
   MealEntryModal,
 } from "@/app/screens/components/MealEntryModal";
+import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -19,7 +20,14 @@ import {
   fetchWaterIntakeAsync,
 } from "@/store/slices/waterLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { format, isSameDay, parseISO, subDays } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isAfter,
+  isSameDay,
+  parseISO,
+  subDays,
+} from "date-fns";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
@@ -31,15 +39,7 @@ import {
   Text,
   View,
 } from "react-native";
-import AnimatedReanimated, {
-  useAnimatedProps,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-import Svg, { Circle } from "react-native-svg";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
-
-const AnimatedCircle = AnimatedReanimated.createAnimatedComponent(Circle);
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
@@ -54,6 +54,7 @@ const HomeScreen = () => {
   const { entries, summary, isLoading } = useAppSelector(
     (state) => state.dailyLogs,
   );
+  console.log(JSON.stringify(summary, null, 2));
   const {
     entries: waterEntries,
     totalIntakeMl: waterIntake,
@@ -76,8 +77,8 @@ const HomeScreen = () => {
   }, [mealModalOpen]);
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
-    return Array.from({ length: 30 }).map((_, i) => {
-      const date = subDays(new Date(), 15 - i);
+    return Array.from({ length: 32 }).map((_, i) => {
+      const date = subDays(new Date(), 30 - i);
       return {
         date,
         day: format(date, "d"),
@@ -101,25 +102,13 @@ const HomeScreen = () => {
     mainScrollRef.current?.scrollTo({ y: 0, animated: true });
   }, [activeTab]);
 
-  // Calculate progress percentage for circular ring
-  const calorieGoal = 2500; // This should ideally come from user profile
+  // Progress for circular rings (goal from user profile in future)
+  const calorieGoal = 2500;
   const consumedCalories = summary?.totalCalories || 0;
-  const progressPercentage =
+  const calorieProgress =
     calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
-  const circumference = 2 * Math.PI * 40;
 
-  const progress = useSharedValue(0);
-
-  useEffect(() => {
-    progress.value = withTiming(progressPercentage, { duration: 1000 });
-  }, [progressPercentage]);
-
-  const animatedCircleProps = useAnimatedProps(() => {
-    return {
-      strokeDashoffset:
-        circumference - (Math.min(progress.value, 100) / 100) * circumference,
-    };
-  });
+  const trackColor = colorScheme === "dark" ? "#27272a" : "#f3f4f6";
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -127,7 +116,6 @@ const HomeScreen = () => {
 
   const handleAddMeal = async (mealData: MealData) => {
     try {
-      const dateStr = format(selectedDate, "yyyy-MM-dd");
       if (mealData.id) {
         // Update existing meal
         await dispatch(
@@ -246,7 +234,6 @@ const HomeScreen = () => {
     color: string;
   }) => {
     if (items.length === 0) return null;
-    const totalCals = items.reduce((sum, i) => sum + i.calories, 0);
 
     return (
       <View className="mb-8">
@@ -353,6 +340,7 @@ const HomeScreen = () => {
               <View className="flex-row gap-3 px-2 py-2">
                 {dates.map((item, index) => {
                   const isActive = isSameDay(item.date, selectedDate);
+                  const isDisabled = isAfter(item.date, endOfDay(new Date()));
                   return (
                     <Pressable
                       key={index}
@@ -361,7 +349,9 @@ const HomeScreen = () => {
                         isActive
                           ? "bg-[#f39849] border-[#f39849]"
                           : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
-                      }`}
+                      }
+                      ${isDisabled ? "opacity-50" : ""}
+                      `}
                       style={isActive ? { transform: [{ scale: 1.05 }] } : {}}
                     >
                       <Text
@@ -450,7 +440,7 @@ const HomeScreen = () => {
                       className={`${
                         consumedCalories > calorieGoal
                           ? "text-red-500 bg-red-500/10 p-2 rounded-full"
-                          : "text-green-500 bg-green-500/10 p-2 rounded-full"
+                          : "text-primary bg-orange-500/10 p-2 rounded-full"
                       } dark:text-teal-400 font-bold text-sm `}
                     >
                       {Math.round(Math.abs(calorieGoal - consumedCalories))}{" "}
@@ -463,39 +453,12 @@ const HomeScreen = () => {
                   <View className="flex-row items-center justify-center w-full mb-8">
                     {/* SVG Circle */}
                     <View className="relative w-24 h-24 mr-6 items-center justify-center">
-                      <Svg
-                        width={96}
-                        height={96}
-                        style={{ transform: [{ rotate: "-90deg" }] }}
-                      >
-                        {/* Background circle */}
-                        <Circle
-                          cx="48"
-                          cy="48"
-                          r="40"
-                          stroke={
-                            colorScheme === "dark" ? "#27272a" : "#f3f4f6"
-                          }
-                          strokeWidth="8"
-                          fill="transparent"
-                        />
-                        {/* Progress circle */}
-                        <AnimatedCircle
-                          cx="48"
-                          cy="48"
-                          r="40"
-                          stroke={
-                            consumedCalories > calorieGoal
-                              ? themeColors.error
-                              : themeColors.primary
-                          }
-                          strokeWidth="8"
-                          fill="transparent"
-                          strokeDasharray={circumference}
-                          animatedProps={animatedCircleProps}
-                          strokeLinecap="round"
-                        />
-                      </Svg>
+                      <AnimatedCircleProgress
+                        progress={calorieProgress}
+                        trackColor={trackColor}
+                        progressColor={themeColors.primary}
+                        exceedColor={themeColors.error}
+                      />
                     </View>
 
                     {/* Calorie Numbers */}
@@ -517,7 +480,6 @@ const HomeScreen = () => {
                   {/* Macros Row */}
                   <View className="flex-row justify-between w-full px-4">
                     <View className="flex-col items-center">
-                      <Text className="text-2xl mb-1">💪</Text>
                       <Text className="text-sm font-bold text-zinc-900 dark:text-white">
                         Protein
                       </Text>
@@ -527,7 +489,6 @@ const HomeScreen = () => {
                       </Text>
                     </View>
                     <View className="flex-col items-center">
-                      <Text className="text-2xl mb-1">🥔</Text>
                       <Text className="text-sm font-bold text-zinc-900 dark:text-white">
                         Carb
                       </Text>
@@ -537,7 +498,6 @@ const HomeScreen = () => {
                       </Text>
                     </View>
                     <View className="flex-col items-center">
-                      <Text className="text-2xl mb-1">🥑</Text>
                       <Text className="text-sm font-bold text-zinc-900 dark:text-white">
                         Fat
                       </Text>
@@ -605,37 +565,16 @@ const HomeScreen = () => {
                   <>
                     <View className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800 mb-6 items-center">
                       <View className="relative w-48 h-48 items-center justify-center mb-6">
-                        <Svg
-                          width={192}
-                          height={192}
-                          style={{ transform: [{ rotate: "-90deg" }] }}
-                        >
-                          <Circle
-                            cx="96"
-                            cy="96"
-                            r="88"
-                            stroke={
-                              colorScheme === "dark" ? "#27272a" : "#f1f5f9"
-                            }
-                            strokeWidth="12"
-                            fill="transparent"
-                          />
-                          <Circle
-                            cx="96"
-                            cy="96"
-                            r="88"
-                            stroke="#3b82f6"
-                            strokeWidth="12"
-                            fill="transparent"
-                            strokeDasharray={2 * Math.PI * 88}
-                            strokeDashoffset={
-                              2 * Math.PI * 88 -
-                              (Math.min(waterProgress, 100) / 100) *
-                                (2 * Math.PI * 88)
-                            }
-                            strokeLinecap="round"
-                          />
-                        </Svg>
+                        <AnimatedCircleProgress
+                          progress={waterProgress}
+                          trackColor="#f1f5f9"
+                          progressColor="#3b82f6"
+                          exceedColor={themeColors.error}
+                          size={192}
+                          radius={88}
+                          strokeWidth={12}
+                        />
+
                         <View className="absolute inset-0 items-center justify-center">
                           <MaterialIcons
                             name="opacity"
@@ -657,7 +596,7 @@ const HomeScreen = () => {
                         </Text>
                       </View>
 
-                      <View className="flex-row gap-4 w-full">
+                      <View className="flex-row gap-4 w-full ">
                         <Pressable
                           onPress={() => handleAddWater(250)}
                           disabled={waterAdding}
@@ -665,13 +604,15 @@ const HomeScreen = () => {
                           style={({ pressed }) => [
                             { opacity: pressed ? 0.85 : 1 },
                           ]}
-                          className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30"
+                          className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30 relative"
                         >
-                          <Text className="text-white font-bold text-base">
+                          <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
                             {waterAdding ? (
                               <ActivityIndicator size="small" color="#fff" />
                             ) : null}
-                            {waterAdding ? "Adding..." : "+250ml"}
+                          </View>
+                          <Text className="text-white font-bold text-base">
+                            +250ml
                           </Text>
                           <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
                             One Glass
@@ -684,8 +625,16 @@ const HomeScreen = () => {
                           style={({ pressed }) => [
                             { opacity: pressed ? 0.85 : 1 },
                           ]}
-                          className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center"
+                          className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center relative"
                         >
+                          <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
+                            {waterAdding ? (
+                              <ActivityIndicator
+                                size="small"
+                                color="#zinc-900"
+                              />
+                            ) : null}
+                          </View>
                           <Text className="text-zinc-900 dark:text-white font-bold text-base">
                             +500ml
                           </Text>

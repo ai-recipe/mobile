@@ -84,7 +84,6 @@ const FavoritesScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      console.log("FavoritesScreen focused");
       dispatch(fetchFavoriteRecipes({ limit: 20, offset: 0 }));
     }, [dispatch]),
   );

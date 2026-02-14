@@ -92,12 +92,9 @@ export const toggleFavorite = createAsyncThunk(
   ) => {
     try {
       if (isFavorite) {
-        console.log("Removing favorite");
         await removeFavorite(recipeId);
       } else {
-        console.log("Adding favorite");
         const response = await addFavorite(recipeId);
-        console.log(response);
       }
       return { recipeId, isFavorite: !isFavorite };
     } catch (error: any) {

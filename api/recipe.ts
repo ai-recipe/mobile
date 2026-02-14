@@ -190,9 +190,7 @@ export async function analyseImage({
 }
 
 export async function addFavorite(recipeId: string): Promise<void> {
-  console.log(recipeId);
   const response = await api.post("/recipes/favorites", { recipeId });
-  console.log(response.data);
   return response.data;
 }
 

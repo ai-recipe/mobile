@@ -57,7 +57,6 @@ export default function SurveyScreen() {
     () => createSurveySteps({ questions: surveyQuestions }),
     [surveyQuestions],
   );
-  console.log("steps", steps.length, surveyQuestions?.length);
 
   if (isSurveyQuestionsLoading && !isInitialized) {
     return (

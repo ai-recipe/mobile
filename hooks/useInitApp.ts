@@ -14,6 +14,7 @@ const useInitApp = () => {
 
   const initOnboardedStatus = useCallback(async () => {
     const onboarded = await AsyncStorage.getItem("isOnboarded");
+    console.log("onboarded", onboarded);
     if (onboarded === "true") {
       dispatch(setIsOnboarded(true));
     }
@@ -21,7 +22,6 @@ const useInitApp = () => {
 
   const initTheme = useCallback(async () => {
     const stored = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-    console.log("stored", stored);
     const valid: ThemePreference[] = ["light", "dark", "system"];
     if (stored && valid.includes(stored as ThemePreference)) {
       dispatch(setTheme(stored as ThemePreference));

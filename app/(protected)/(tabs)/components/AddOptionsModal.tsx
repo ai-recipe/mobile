@@ -206,7 +206,8 @@ export function AddOptionsModal({
                     Scan Meal
                   </Text>
                   <Text style={[styles.optionDesc, { color: theme.icon }]}>
-                    Take a photo of your plate
+                    Take a photo of your plate then we'll add it to your daily
+                    log
                   </Text>
                 </View>
                 <MaterialIcons
@@ -247,7 +248,7 @@ export function AddOptionsModal({
                     Manual Log
                   </Text>
                   <Text style={[styles.optionDesc, { color: theme.icon }]}>
-                    Search database or quick add
+                    Quickly add your meal
                   </Text>
                 </View>
                 <MaterialIcons
@@ -312,7 +313,8 @@ export function AddOptionsModal({
                       { color: isDark ? "#D4D4D8" : "#4B5563" },
                     ]}
                   >
-                    Create a recipe from ingredients
+                    Take photo of your foods, ingredients or products then we'll
+                    generate personalized recipes for you
                   </Text>
                 </View>
 

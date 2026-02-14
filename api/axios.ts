@@ -3,7 +3,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 export const api = axios.create({
   baseURL: "https://api.recipetrack.tech/api/v1/",
-  timeout: 30000, // Increased timeout to 30 seconds for slower connections
+  timeout: 5000, // Increased timeout to 30 seconds for slower connections
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,6 +26,7 @@ api.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     const idempotencyKey = generateIdempotencyKey();
+    console.log("token", token);
 
     config.headers["Accept-Language"] = localeStorageCurrentLanguage;
     config.headers["idempotency-key"] = idempotencyKey;

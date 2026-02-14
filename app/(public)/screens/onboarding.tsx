@@ -65,7 +65,6 @@ export default function OnboardingScreen() {
     await AsyncStorage.setItem("CURRENT_LANGUAGE", lng);
     dispatch(setCurrentLanguage(lng));
   };
-  console.log("XXdX");
   return (
     <SafeAreaView className="flex-1 bg-background dark:bg-darker">
       {/* Header */}

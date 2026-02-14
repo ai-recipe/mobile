@@ -80,7 +80,6 @@ export default function AiScanFormScreen() {
   // Handle fetch recipes action
   const handleDiscoverRecipesAsync = useCallback(
     async (data: ScanFormData) => {
-      console.log("handleDiscoverRecipesAsync", data);
       dispatch(
         discoverRecipesAsync({
           ingredients: data.selectedIngredients as any,

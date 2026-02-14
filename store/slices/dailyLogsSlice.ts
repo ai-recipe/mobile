@@ -12,7 +12,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 interface DailyLogsState {
   entries: FoodLogEntry[];
   recentMeals: FoodLogEntry[];
-  summary: DailySummary | null;
+  summary: DailySummary;
   isLoading: boolean;
   isRecentLoading: boolean;
   error: string | null;
@@ -21,7 +21,16 @@ interface DailyLogsState {
 const initialState: DailyLogsState = {
   entries: [],
   recentMeals: [],
-  summary: null,
+  summary: {
+    totalCalories: 0,
+    totalProteinGrams: 0,
+    totalCarbsGrams: 0,
+    totalFatGrams: 0,
+    targetCalories: 0,
+    targetProteinGrams: 0,
+    targetCarbsGrams: 0,
+    targetFatGrams: 0,
+  },
   isLoading: false,
   isRecentLoading: false,
   error: null,
@@ -50,7 +59,6 @@ export const addFoodLogAsync = createAsyncThunk(
   "dailyLogs/addFoodLog",
   async (data: AddFoodLogParams, { rejectWithValue, dispatch }) => {
     try {
-      console.log("Adding food log:", data);
       const response = await addFoodLog(data);
       const date = data.loggedAt?.split("T")[0];
       dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
@@ -150,7 +158,16 @@ const dailyLogsSlice = createSlice({
   reducers: {
     clearDailyLogsState: (state) => {
       state.entries = [];
-      state.summary = null;
+      state.summary = {
+        totalCalories: 0,
+        totalProteinGrams: 0,
+        totalCarbsGrams: 0,
+        totalFatGrams: 0,
+        targetCalories: 0,
+        targetProteinGrams: 0,
+        targetCarbsGrams: 0,
+        targetFatGrams: 0,
+      };
       state.error = null;
     },
   },
@@ -164,7 +181,7 @@ const dailyLogsSlice = createSlice({
       state.isLoading = false;
       // Map entries from the first day in the days array
       state.entries = action.payload.days[0]?.entries || [];
-      state.summary = action.payload.summary;
+      state.summary = action.payload.days[0]?.summary;
     });
     builder.addCase(fetchFoodLogsAsync.rejected, (state, action) => {
       state.isLoading = false;

@@ -44,7 +44,6 @@ const ExploreScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      console.log("ExploreScreen focused");
       dispatch(fetchExploreRecipes({ limit: 20, offset: 0 }));
     }, [dispatch]),
   );
