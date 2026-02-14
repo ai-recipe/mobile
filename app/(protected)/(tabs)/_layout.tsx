@@ -3,7 +3,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch } from "@/store/hooks";
 import { openMealModal } from "@/store/slices/modalSlice";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
@@ -136,10 +136,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                         color={iconColor}
                       />
                     );
-                  case "favorites":
+                  case "ai-chef":
                     return (
-                      <MaterialIcons
-                        name="favorite"
+                      <MaterialCommunityIcons
+                        name="chef-hat"
                         size={24}
                         color={iconColor}
                       />
@@ -169,8 +169,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                     return "Ana Sayfa";
                   case "progress":
                     return "Progress";
-                  case "favorites":
-                    return "Favorites";
+                  case "ai-chef":
+                    return "AI Chef";
                   case "explore":
                     return "Keşfet";
                   default:
@@ -189,7 +189,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                       name: "kesfet",
                       text: "Sana özel önerileri ve trend tarifleri buradan keşfet.",
                     };
-                  case "favorites":
+                  case "ai-chef":
                     return {
                       order: 4,
                       name: "favoriler",
@@ -285,9 +285,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="favorites"
+        name="ai-chef"
         options={{
-          title: "Favoriler",
+          title: "AI Chef",
         }}
       />
     </Tabs>

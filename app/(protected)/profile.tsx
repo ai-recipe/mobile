@@ -56,7 +56,7 @@ const ProfileScreen = () => {
       withTabNavigation={false}
       title="Profil"
     >
-      <ScrollView className="flex-1  dark:bg-zinc-900 px-5 mt-16">
+      <ScrollView className="flex-1 px-5 mt-16">
         <View className="gap-y-3">
           <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
             Hesabım
@@ -98,11 +98,7 @@ const ProfileScreen = () => {
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
           </TouchableOpacity>
-          <ProfileMenuItem
-            icon="history"
-            label="Geçmiş Tarifler"
-            onPress={() => router.push("/screens/ai-recipes" as any)}
-          />
+
           <ProfileMenuItem
             icon="help-outline"
             label="Yardım ve Destek"
@@ -112,8 +108,8 @@ const ProfileScreen = () => {
             Goals
           </Text>
           <ProfileMenuItem
-            icon="target"
-            label="Edit Goals"
+            icon="balance"
+            label="Edit Nutrition Goals"
             onPress={() => router.push("/profile/goals" as any)}
           />
         </View>
