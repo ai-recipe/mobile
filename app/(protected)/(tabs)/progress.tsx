@@ -1,7 +1,6 @@
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
@@ -287,7 +286,7 @@ export default function ProgressScreen() {
               </View>
             </View>
 
-            {/* Milestones */}
+            {/* Milestones 
             <View className="mb-6">
               <View className="flex-row justify-between items-center mb-4 px-1">
                 <Text className="text-lg font-bold text-zinc-900 dark:text-white">
@@ -356,6 +355,7 @@ export default function ProgressScreen() {
                 ))}
               </ScrollView>
             </View>
+            */}
           </ScrollView>
         </View>
       </TabScreenWrapper>

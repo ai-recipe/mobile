@@ -122,13 +122,14 @@ export const fetchRecentMealsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const now = new Date();
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(now.getDate() - 30);
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(now.getDate() - 3);
 
-      const startDate = thirtyDaysAgo.toISOString().split("T")[0];
+      const startDate = threeDaysAgo.toISOString().split("T")[0];
       const endDate = now.toISOString().split("T")[0];
 
       const response = await fetchFoodLogs({ startDate, endDate });
+      console.log(JSON.stringify(response.data, null, 2));
 
       // Extract all entries from all days and get unique ones by mealName
       const allEntries = response.data.days.flatMap((day) => day.entries);
