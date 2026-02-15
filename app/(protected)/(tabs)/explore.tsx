@@ -15,7 +15,6 @@ import {
   Image,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -23,22 +22,12 @@ import {
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
-const CATEGORIES = [
-  { id: "all", label: "Hepsi", icon: "restaurant" },
-  { id: "breakfast", label: "Kahvaltı", icon: "dark-mode" },
-  { id: "vegan", label: "Vegan", icon: "eco" },
-  { id: "practical", label: "Pratik", icon: "timer" },
-  { id: "dessert", label: "Tatlı", icon: "cake" },
-];
-
 const ExploreScreen = () => {
   const dispatch = useAppDispatch();
   const { recipes, isLoading, isLoadingMore, hasMore, meta } = useAppSelector(
     (state) => state.exploreList,
   );
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -109,51 +98,7 @@ const ExploreScreen = () => {
                   tarifler.
                 </Text>
               </View>
-              {false && (
-                <View className="px-5 mb-8">
-                  <View className="flex-row items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3.5">
-                    <MaterialIcons name="search" size={22} color="#a1a1aa" />
-                    <TextInput
-                      placeholder="Tarif, malzeme veya mutfak ara..."
-                      className="ml-3 flex-1 text-zinc-900 dark:text-white text-[15px]"
-                      placeholderTextColor="#a1a1aa"
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}
-                    />
-                  </View>
-                </View>
-              )}
-              {/* Categories 
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 20 }}
-                className="mb-8"
-              >
-                {CATEGORIES.map((cat) => (
-                  <TouchableOpacity
-                    key={cat.id}
-                    onPress={() => setSelectedCategory(cat.id)}
-                    className={`mr-3 px-6 py-3 rounded-2xl flex-row items-center ${
-                      selectedCategory === cat.id
-                        ? "bg-[#f39849]"
-                        : "bg-zinc-100 dark:bg-zinc-800"
-                    }`}
-                  >
-                    <Text
-                      className={`font-bold text-sm ${
-                        selectedCategory === cat.id
-                          ? "text-white"
-                          : "text-zinc-500 dark:text-zinc-400"
-                      }`}
-                    >
-                      {cat.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-*/}
-              {/* Trend Section */}
+
               {trendingRecipes.length > 0 && (
                 <View className="mb-10">
                   <View className="flex-row items-center justify-between mb-4 px-5">

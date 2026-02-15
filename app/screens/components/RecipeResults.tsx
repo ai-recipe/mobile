@@ -55,7 +55,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
 
   const handleExit = () => {
     dispatch(resetRecipeState());
-    router.replace("/(protected)/(tabs)/");
+    router.replace("/(protected)/(tabs)/ai-chef");
   };
 
   return (

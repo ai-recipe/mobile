@@ -3,18 +3,50 @@ import { fetchPersonalizedRecipes, type RecipeListItem } from "@/api/recipe";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface ExploreListState {
-  recipes: RecipeListItem[];
-  isLoading: boolean;
-  isLoadingMore: boolean;
+  trendingRecipes: RecipeListItem[];
+  isTrendingRecipesLoading: boolean;
+  trendingRecipesMeta: PaginationMeta;
+  hasMoreTrendingRecipes: boolean;
+  errorTrendingRecipes: string | null;
+
+  recommendedRecipes: RecipeListItem[];
+  recommendedRecipesMeta: PaginationMeta;
+  hasMoreRecommendedRecipes: boolean;
+  errorRecommendedRecipes: string | null;
+
+  isRecommendedRecipesLoading: boolean;
   error: string | null;
-  meta: PaginationMeta;
   hasMore: boolean;
+  meta: PaginationMeta;
 }
 
 const initialState: ExploreListState = {
-  recipes: [],
-  isLoading: false,
-  isLoadingMore: false,
+  trendingRecipes: [],
+  isTrendingRecipesLoading: false,
+  trendingRecipesMeta: {
+    page: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+    from: 0,
+    to: 0,
+  },
+  hasMoreTrendingRecipes: false,
+  errorTrendingRecipes: null,
+
+  recommendedRecipes: [],
+  recommendedRecipesMeta: {
+    page: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+    from: 0,
+    to: 0,
+  },
+  hasMoreRecommendedRecipes: false,
+  errorRecommendedRecipes: null,
+
+  isRecommendedRecipesLoading: false,
   error: null,
   hasMore: true,
   meta: {
@@ -28,8 +60,8 @@ const initialState: ExploreListState = {
 };
 
 // Async thunk for fetching explore recipes (initial load)
-export const fetchExploreRecipes = createAsyncThunk(
-  "exploreList/fetchExplore",
+export const fetchTrendingRecipes = createAsyncThunk(
+  "exploreList/fetchTrending",
   async (
     params: {
       page?: number;
@@ -38,7 +70,10 @@ export const fetchExploreRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchPersonalizedRecipes(params);
+      const response = await fetchPersonalizedRecipes({
+        isTrending: true,
+        ...params,
+      });
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -48,9 +83,8 @@ export const fetchExploreRecipes = createAsyncThunk(
   },
 );
 
-// Async thunk for loading more explore recipes (pagination)
-export const loadMoreExploreRecipes = createAsyncThunk(
-  "exploreList/loadMoreExplore",
+export const fetchRecommendedRecipes = createAsyncThunk(
+  "exploreList/fetchRecommended",
   async (
     params: {
       page?: number;
@@ -59,7 +93,33 @@ export const loadMoreExploreRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchPersonalizedRecipes(params);
+      const response = await fetchPersonalizedRecipes({
+        isTrending: false,
+        ...params,
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Keşfet tarifleri yüklenemedi",
+      );
+    }
+  },
+);
+
+export const loadMoreRecommendedRecipes = createAsyncThunk(
+  "exploreList/loadMoreRecommended",
+  async (
+    params: {
+      page?: number;
+      perPage?: number;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await fetchPersonalizedRecipes({
+        isTrending: false,
+        ...params,
+      });
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -74,8 +134,10 @@ export const exploreListSlice = createSlice({
   initialState,
   reducers: {
     clearExplore: (state) => {
-      state.recipes = [];
-      state.error = null;
+      state.trendingRecipes = [];
+      state.recommendedRecipes = [];
+      state.errorTrendingRecipes = null;
+      state.errorRecommendedRecipes = null;
       state.meta = {
         page: 1,
         perPage: 20,
@@ -84,44 +146,61 @@ export const exploreListSlice = createSlice({
         from: 0,
         to: 0,
       };
-      state.hasMore = true;
+      state.hasMore = false;
     },
   },
   extraReducers: (builder) => {
-    // Fetch Explore (initial load)
-    builder.addCase(fetchExploreRecipes.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
+    builder.addCase(fetchTrendingRecipes.pending, (state) => {
+      state.isTrendingRecipesLoading = true;
+      state.errorTrendingRecipes = null;
     });
-    builder.addCase(fetchExploreRecipes.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.recipes = action.payload.data;
-      state.meta = action.payload.meta;
-      state.hasMore =
+    builder.addCase(fetchTrendingRecipes.fulfilled, (state, action) => {
+      state.isTrendingRecipesLoading = false;
+      state.trendingRecipes = action.payload.data;
+      state.trendingRecipesMeta = action.payload.meta;
+      state.hasMoreTrendingRecipes =
         action.payload.meta.from + action.payload.meta.perPage <
         action.payload.meta.total;
     });
-    builder.addCase(fetchExploreRecipes.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload as string;
+    builder.addCase(fetchTrendingRecipes.rejected, (state, action) => {
+      state.isTrendingRecipesLoading = false;
+      state.errorTrendingRecipes = action.payload as string;
     });
 
-    // Load More Explore
-    builder.addCase(loadMoreExploreRecipes.pending, (state) => {
-      state.isLoadingMore = true;
-      state.error = null;
+    builder.addCase(fetchRecommendedRecipes.pending, (state) => {
+      state.isRecommendedRecipesLoading = true;
+      state.errorRecommendedRecipes = null;
     });
-    builder.addCase(loadMoreExploreRecipes.fulfilled, (state, action) => {
-      state.isLoadingMore = false;
-      state.recipes = [...state.recipes, ...action.payload.data];
-      state.meta = action.payload.meta;
-      state.hasMore =
+    builder.addCase(fetchRecommendedRecipes.fulfilled, (state, action) => {
+      state.isRecommendedRecipesLoading = false;
+      state.recommendedRecipes = action.payload.data;
+      state.recommendedRecipesMeta = action.payload.meta;
+      state.hasMoreRecommendedRecipes =
         action.payload.meta.from + action.payload.meta.perPage <
         action.payload.meta.total;
     });
-    builder.addCase(loadMoreExploreRecipes.rejected, (state, action) => {
-      state.isLoadingMore = false;
-      state.error = action.payload as string;
+    builder.addCase(fetchRecommendedRecipes.rejected, (state, action) => {
+      state.isRecommendedRecipesLoading = false;
+      state.errorRecommendedRecipes = action.payload as string;
+    });
+    builder.addCase(loadMoreRecommendedRecipes.pending, (state) => {
+      state.isRecommendedRecipesLoading = true;
+      state.errorRecommendedRecipes = null;
+    });
+    builder.addCase(loadMoreRecommendedRecipes.fulfilled, (state, action) => {
+      state.isRecommendedRecipesLoading = false;
+      state.recommendedRecipes = [
+        ...state.recommendedRecipes,
+        ...action.payload.data,
+      ];
+      state.recommendedRecipesMeta = action.payload.meta;
+      state.hasMoreRecommendedRecipes =
+        action.payload.meta.from + action.payload.meta.perPage <
+        action.payload.meta.total;
+    });
+    builder.addCase(loadMoreRecommendedRecipes.rejected, (state, action) => {
+      state.isRecommendedRecipesLoading = false;
+      state.errorRecommendedRecipes = action.payload as string;
     });
   },
 });

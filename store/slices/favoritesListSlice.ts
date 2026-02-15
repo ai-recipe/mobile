@@ -29,7 +29,7 @@ const initialState: FavoritesListState = {
     from: 0,
     to: 0,
   },
-  hasMore: true,
+  hasMore: false,
 };
 
 // Async thunk for fetching favorites (initial load)

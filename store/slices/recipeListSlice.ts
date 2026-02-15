@@ -28,7 +28,7 @@ const initialState: RecipeListState = {
   isLoadingFavorites: false,
   recipeError: null,
   favoriteError: null,
-  hasMore: true,
+  hasMore: false,
   meta: {
     page: 1,
     perPage: 20,

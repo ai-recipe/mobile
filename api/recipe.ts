@@ -133,6 +133,7 @@ export async function fetchFavorites(params?: {
 export async function fetchPersonalizedRecipes(params?: {
   perPage?: PaginationMeta["perPage"];
   page?: PaginationMeta["page"];
+  isTrending?: boolean;
 }): Promise<PersonalizedRecipesResponse> {
   const response = await api.get<PersonalizedRecipesResponse>(
     "/recipes/personalized",
