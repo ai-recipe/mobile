@@ -1,4 +1,5 @@
 import { api } from "./axios";
+import { PaginationMeta } from "./list";
 
 const ANALYSE_IMAGE_WEBHOOK =
   "https://n8n-production-cf278.up.railway.app/webhook/analyse-image";
@@ -40,12 +41,8 @@ export interface RecipeListItem {
 }
 
 export interface RecipeListResponse {
-  data: {
-    items: RecipeListItem[];
-    total: number;
-    page: number;
-    limit: number;
-  };
+  data: RecipeListItem[];
+  meta: PaginationMeta;
   statusCode: number;
   timestamp: string;
 }
@@ -57,23 +54,15 @@ export interface FavoriteItem {
 }
 
 export interface FavoritesResponse {
-  data: {
-    items: RecipeListItem[];
-    total: number;
-    limit: number;
-    offset: number;
-  };
+  data: RecipeListItem[];
+  meta: PaginationMeta;
   statusCode: number;
   timestamp: string;
 }
 
 export interface PersonalizedRecipesResponse {
-  data: {
-    items: RecipeListItem[];
-    total: number;
-    limit: number;
-    offset: number;
-  };
+  data: RecipeListItem[];
+  meta: PaginationMeta;
   statusCode: number;
   timestamp: string;
 }
@@ -122,8 +111,8 @@ export async function discoverRecipes(
 export async function fetchRecipeList(params: {
   title?: string;
   description?: string;
-  limit?: number;
-  page?: number;
+  perPage?: PaginationMeta["perPage"];
+  page?: PaginationMeta["page"];
 }): Promise<RecipeListResponse> {
   const response = await api.get<RecipeListResponse>("/recipes", {
     params,
@@ -132,8 +121,8 @@ export async function fetchRecipeList(params: {
 }
 
 export async function fetchFavorites(params?: {
-  limit?: number;
-  offset?: number;
+  perPage?: PaginationMeta["perPage"];
+  page?: PaginationMeta["page"];
 }): Promise<FavoritesResponse> {
   const response = await api.get<FavoritesResponse>("/recipes/favorites", {
     params,
@@ -142,8 +131,8 @@ export async function fetchFavorites(params?: {
 }
 
 export async function fetchPersonalizedRecipes(params?: {
-  limit?: number;
-  offset?: number;
+  perPage?: PaginationMeta["perPage"];
+  page?: PaginationMeta["page"];
 }): Promise<PersonalizedRecipesResponse> {
   const response = await api.get<PersonalizedRecipesResponse>(
     "/recipes/personalized",

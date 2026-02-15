@@ -1,3 +1,4 @@
+import { PaginationMeta } from "@/api/list";
 import {
   addFavorite,
   fetchRecipeList,
@@ -15,11 +16,7 @@ interface RecipeListState {
   isLoadingFavorites: boolean;
   recipeError: string | null;
   favoriteError: string | null;
-  totalFavorites: number;
-  // Pagination state
-  currentPage: number;
-  totalRecipes: number;
-  limit: number;
+  meta: PaginationMeta;
   hasMore: boolean;
 }
 
@@ -31,11 +28,15 @@ const initialState: RecipeListState = {
   isLoadingFavorites: false,
   recipeError: null,
   favoriteError: null,
-  totalFavorites: 0,
-  currentPage: 1,
-  totalRecipes: 0,
-  limit: 20,
   hasMore: true,
+  meta: {
+    page: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+    from: 0,
+    to: 0,
+  },
 };
 
 // Async thunk for fetching recipe list (initial load)
@@ -45,14 +46,14 @@ export const fetchRecipes = createAsyncThunk(
     params: {
       title?: string;
       description?: string;
-      limit?: number;
       page?: number;
+      perPage?: number;
     },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchRecipeList(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarifler yüklenemedi",
@@ -68,14 +69,14 @@ export const loadMoreRecipes = createAsyncThunk(
     params: {
       title?: string;
       description?: string;
-      limit?: number;
-      page: number;
+      page?: PaginationMeta["page"];
+      perPage?: PaginationMeta["perPage"];
     },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchRecipeList(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarifler yüklenemedi",
@@ -94,7 +95,7 @@ export const toggleFavorite = createAsyncThunk(
       if (isFavorite) {
         await removeFavorite(recipeId);
       } else {
-        const response = await addFavorite(recipeId);
+        await addFavorite(recipeId);
       }
       return { recipeId, isFavorite: !isFavorite };
     } catch (error: any) {
@@ -113,9 +114,14 @@ export const recipeListSlice = createSlice({
     clearRecipes: (state) => {
       state.recipes = [];
       state.recipeError = null;
-      state.currentPage = 1;
-      state.totalRecipes = 0;
-      state.hasMore = true;
+      state.meta = {
+        page: 1,
+        perPage: 20,
+        total: 0,
+        lastPage: 1,
+        from: 0,
+        to: 0,
+      };
     },
     updateRecipeFavoriteStatus: (
       state,
@@ -136,12 +142,8 @@ export const recipeListSlice = createSlice({
     });
     builder.addCase(fetchRecipes.fulfilled, (state, action) => {
       state.isLoadingRecipes = false;
-      state.recipes = action.payload.items;
-      state.currentPage = action.payload.page;
-      state.totalRecipes = action.payload.total;
-      state.limit = action.payload.limit;
-      state.hasMore =
-        action.payload.page * action.payload.limit < action.payload.total;
+      state.recipes = action.payload.data;
+      state.meta = action.payload.meta;
     });
     builder.addCase(fetchRecipes.rejected, (state, action) => {
       state.isLoadingRecipes = false;
@@ -155,11 +157,8 @@ export const recipeListSlice = createSlice({
     });
     builder.addCase(loadMoreRecipes.fulfilled, (state, action) => {
       state.isLoadingMore = false;
-      state.recipes = [...state.recipes, ...action.payload.items];
-      state.currentPage = action.payload.page;
-      state.totalRecipes = action.payload.total;
-      state.hasMore =
-        action.payload.page * action.payload.limit < action.payload.total;
+      state.recipes = [...state.recipes, ...action.payload.data];
+      state.meta = action.payload.meta;
     });
     builder.addCase(loadMoreRecipes.rejected, (state, action) => {
       state.isLoadingMore = false;

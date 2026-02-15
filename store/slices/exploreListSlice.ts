@@ -1,3 +1,4 @@
+import { PaginationMeta } from "@/api/list";
 import { fetchPersonalizedRecipes, type RecipeListItem } from "@/api/recipe";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -6,9 +7,7 @@ interface ExploreListState {
   isLoading: boolean;
   isLoadingMore: boolean;
   error: string | null;
-  total: number;
-  offset: number;
-  limit: number;
+  meta: PaginationMeta;
   hasMore: boolean;
 }
 
@@ -17,27 +16,30 @@ const initialState: ExploreListState = {
   isLoading: false,
   isLoadingMore: false,
   error: null,
-  total: 0,
-  offset: 0,
-  limit: 20,
   hasMore: true,
+  meta: {
+    page: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+    from: 0,
+    to: 0,
+  },
 };
 
 // Async thunk for fetching explore recipes (initial load)
 export const fetchExploreRecipes = createAsyncThunk(
   "exploreList/fetchExplore",
   async (
-    params:
-      | {
-          limit?: number;
-          offset?: number;
-        }
-      | undefined,
+    params: {
+      page?: number;
+      perPage?: number;
+    },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchPersonalizedRecipes(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Keşfet tarifleri yüklenemedi",
@@ -51,14 +53,14 @@ export const loadMoreExploreRecipes = createAsyncThunk(
   "exploreList/loadMoreExplore",
   async (
     params: {
-      limit?: number;
-      offset: number;
+      page?: number;
+      perPage?: number;
     },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchPersonalizedRecipes(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Keşfet tarifleri yüklenemedi",
@@ -74,8 +76,14 @@ export const exploreListSlice = createSlice({
     clearExplore: (state) => {
       state.recipes = [];
       state.error = null;
-      state.offset = 0;
-      state.total = 0;
+      state.meta = {
+        page: 1,
+        perPage: 20,
+        total: 0,
+        lastPage: 1,
+        from: 0,
+        to: 0,
+      };
       state.hasMore = true;
     },
   },
@@ -87,12 +95,11 @@ export const exploreListSlice = createSlice({
     });
     builder.addCase(fetchExploreRecipes.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.recipes = action.payload.items;
-      state.offset = action.payload.offset;
-      state.total = action.payload.total;
-      state.limit = action.payload.limit;
+      state.recipes = action.payload.data;
+      state.meta = action.payload.meta;
       state.hasMore =
-        action.payload.offset + action.payload.limit < action.payload.total;
+        action.payload.meta.from + action.payload.meta.perPage <
+        action.payload.meta.total;
     });
     builder.addCase(fetchExploreRecipes.rejected, (state, action) => {
       state.isLoading = false;
@@ -106,11 +113,11 @@ export const exploreListSlice = createSlice({
     });
     builder.addCase(loadMoreExploreRecipes.fulfilled, (state, action) => {
       state.isLoadingMore = false;
-      state.recipes = [...state.recipes, ...action.payload.items];
-      state.offset = action.payload.offset;
-      state.total = action.payload.total;
+      state.recipes = [...state.recipes, ...action.payload.data];
+      state.meta = action.payload.meta;
       state.hasMore =
-        action.payload.offset + action.payload.limit < action.payload.total;
+        action.payload.meta.from + action.payload.meta.perPage <
+        action.payload.meta.total;
     });
     builder.addCase(loadMoreExploreRecipes.rejected, (state, action) => {
       state.isLoadingMore = false;

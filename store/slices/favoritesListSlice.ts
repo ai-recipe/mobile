@@ -1,3 +1,4 @@
+import { PaginationMeta } from "@/api/list";
 import {
   fetchFavorites,
   removeFavorite,
@@ -11,9 +12,7 @@ interface FavoritesListState {
   isLoading: boolean;
   isLoadingMore: boolean;
   error: string | null;
-  total: number;
-  offset: number;
-  limit: number;
+  meta: PaginationMeta;
   hasMore: boolean;
 }
 
@@ -22,9 +21,14 @@ const initialState: FavoritesListState = {
   isLoading: false,
   isLoadingMore: false,
   error: null,
-  total: 0,
-  offset: 0,
-  limit: 20,
+  meta: {
+    page: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+    from: 0,
+    to: 0,
+  },
   hasMore: true,
 };
 
@@ -32,17 +36,15 @@ const initialState: FavoritesListState = {
 export const fetchFavoriteRecipes = createAsyncThunk(
   "favoritesList/fetchFavorites",
   async (
-    params:
-      | {
-          limit?: number;
-          offset?: number;
-        }
-      | undefined,
+    params: {
+      perPage?: PaginationMeta["perPage"];
+      page?: PaginationMeta["page"];
+    },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchFavorites(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Favoriler yüklenemedi",
@@ -56,14 +58,14 @@ export const loadMoreFavorites = createAsyncThunk(
   "favoritesList/loadMoreFavorites",
   async (
     params: {
-      limit?: number;
-      offset: number;
+      perPage?: PaginationMeta["perPage"];
+      page?: PaginationMeta["page"];
     },
     { rejectWithValue },
   ) => {
     try {
       const response = await fetchFavorites(params);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Favoriler yüklenemedi",
@@ -93,8 +95,14 @@ export const favoritesListSlice = createSlice({
     clearFavorites: (state) => {
       state.favorites = [];
       state.error = null;
-      state.offset = 0;
-      state.total = 0;
+      state.meta = {
+        currentPage: 1,
+        perPage: 20,
+        total: 0,
+        lastPage: 1,
+        from: 0,
+        to: 0,
+      };
       state.hasMore = true;
     },
   },
@@ -106,12 +114,11 @@ export const favoritesListSlice = createSlice({
     });
     builder.addCase(fetchFavoriteRecipes.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.favorites = action.payload.items;
-      state.offset = action.payload.offset;
-      state.total = action.payload.total;
-      state.limit = action.payload.limit;
+      state.favorites = action.payload.data;
+      state.meta = action.payload.meta;
       state.hasMore =
-        action.payload.offset + action.payload.limit < action.payload.total;
+        action.payload.meta.page * action.payload.meta.perPage <
+        action.payload.meta.total;
     });
     builder.addCase(fetchFavoriteRecipes.rejected, (state, action) => {
       state.isLoading = false;
@@ -125,11 +132,11 @@ export const favoritesListSlice = createSlice({
     });
     builder.addCase(loadMoreFavorites.fulfilled, (state, action) => {
       state.isLoadingMore = false;
-      state.favorites = [...state.favorites, ...action.payload.items];
-      state.offset = action.payload.offset;
-      state.total = action.payload.total;
+      state.favorites = [...state.favorites, ...action.payload.data];
+      state.meta = action.payload.meta;
       state.hasMore =
-        action.payload.offset + action.payload.limit < action.payload.total;
+        action.payload.meta.page * action.payload.meta.perPage <
+        action.payload.meta.total;
     });
     builder.addCase(loadMoreFavorites.rejected, (state, action) => {
       state.isLoadingMore = false;
@@ -140,7 +147,7 @@ export const favoritesListSlice = createSlice({
     builder.addCase(unfavoriteFromList.fulfilled, (state, action) => {
       const recipeId = action.payload;
       state.favorites = state.favorites.filter((r) => r.id !== recipeId);
-      state.total = Math.max(0, state.total - 1);
+      state.meta.total = Math.max(0, state.meta.total - 1);
     });
 
     // Handle toggleFavorite from recipeListSlice
@@ -148,7 +155,7 @@ export const favoritesListSlice = createSlice({
       const { recipeId, isFavorite } = action.payload;
       if (!isFavorite) {
         state.favorites = state.favorites.filter((r) => r.id !== recipeId);
-        state.total = Math.max(0, state.total - 1);
+        state.meta.total = Math.max(0, state.meta.total - 1);
       }
     });
   },

@@ -33,8 +33,9 @@ const CATEGORIES = [
 
 const ExploreScreen = () => {
   const dispatch = useAppDispatch();
-  const { recipes, isLoading, isLoadingMore, hasMore, offset, limit } =
-    useAppSelector((state) => state.exploreList);
+  const { recipes, isLoading, isLoadingMore, hasMore, meta } = useAppSelector(
+    (state) => state.exploreList,
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -44,7 +45,7 @@ const ExploreScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      dispatch(fetchExploreRecipes({ limit: 20, offset: 0 }));
+      dispatch(fetchExploreRecipes({ page: 1, perPage: 20 }));
     }, [dispatch]),
   );
 
@@ -52,8 +53,8 @@ const ExploreScreen = () => {
     if (!isLoadingMore && hasMore) {
       dispatch(
         loadMoreExploreRecipes({
-          limit,
-          offset: offset + limit,
+          page: meta.page + 1,
+          perPage: meta.perPage,
         }),
       );
     }
