@@ -27,6 +27,7 @@ interface MealEntryModalProps {
   onClose: () => void;
   onSave?: (mealData: MealData) => void;
   initialData?: MealData;
+  selectedDate: Date;
 }
 
 export interface MealData {
@@ -45,6 +46,7 @@ export function MealEntryModal({
   onClose,
   onSave,
   initialData,
+  selectedDate,
 }: MealEntryModalProps) {
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
@@ -84,7 +86,7 @@ export function MealEntryModal({
         protein: Number(protein) || 0,
         carbs: Number(carbs) || 0,
         fat: Number(fat) || 0,
-        loggedAt: new Date().toISOString(),
+        loggedAt: selectedDate.toISOString(),
       });
     }
   };

@@ -42,12 +42,12 @@ export const fetchWaterIntakeAsync = createAsyncThunk(
 export const addWaterIntakeAsync = createAsyncThunk(
   "waterLogs/addWaterIntake",
   async (
-    payload: { amountMl: number; date: string },
+    payload: { amountMl: number; loggedAt: string },
     { rejectWithValue, dispatch },
   ) => {
     try {
       const response = await addWaterIntake({ amountMl: payload.amountMl });
-      await dispatch(fetchWaterIntakeAsync(payload.date));
+      await dispatch(fetchWaterIntakeAsync(payload.loggedAt));
       return response;
     } catch (error) {
       return rejectWithValue(

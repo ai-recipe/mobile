@@ -83,7 +83,12 @@ export const updateFoodLogAsync = createAsyncThunk(
   ) => {
     try {
       const response = await updateFoodLog(id, data);
-      dispatch(fetchFoodLogsAsync());
+      dispatch(
+        fetchFoodLogsAsync({
+          startDate: data.loggedAt?.split("T")[0],
+          endDate: data.loggedAt?.split("T")[0],
+        }),
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(

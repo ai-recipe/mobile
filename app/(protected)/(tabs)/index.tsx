@@ -3,7 +3,9 @@ import {
   MealData,
   MealEntryModal,
 } from "@/app/screens/components/MealEntryModal";
-import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
+import { ActivityTabSwitcher } from "@/components/ActivityTabSwitcher";
+import { MealActivityTab } from "@/components/MealActivityTab";
+import { WaterActivityTab } from "@/components/WaterActivityTab";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -19,7 +21,6 @@ import {
   deleteWaterIntakeAsync,
   fetchWaterIntakeAsync,
 } from "@/store/slices/waterLogsSlice";
-import { MaterialIcons } from "@expo/vector-icons";
 import {
   endOfDay,
   format,
@@ -31,7 +32,6 @@ import {
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
-  ActivityIndicator,
   Alert,
   Dimensions,
   Pressable,
@@ -182,7 +182,7 @@ const HomeScreen = () => {
 
   const handleAddWater = (amountMl: number) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
-    dispatch(addWaterIntakeAsync({ amountMl, date: dateStr }));
+    dispatch(addWaterIntakeAsync({ amountMl, loggedAt: dateStr }));
   };
 
   const handleDeleteWater = (id: string) => {
@@ -220,87 +220,6 @@ const HomeScreen = () => {
 
     return groups;
   }, [entries]);
-
-  const MealSection = ({
-    title,
-    icon,
-    items,
-    color,
-  }: {
-    title: string;
-    icon: any;
-    items: any[];
-    color: string;
-  }) => {
-    if (items.length === 0) return null;
-
-    return (
-      <View className="mb-8">
-        <View className="flex-row items-center justify-between mb-4 px-2">
-          <View className="flex-row items-center gap-2">
-            <View
-              className="w-8 h-8 rounded-lg items-center justify-center"
-              style={{ backgroundColor: `${color}20` }}
-            >
-              <MaterialIcons name={icon} size={18} color={color} />
-            </View>
-            <Text className="text-base font-bold text-zinc-900 dark:text-white">
-              {title}
-            </Text>
-          </View>
-        </View>
-        <View className="gap-3">
-          {items.map((entry) => (
-            <Pressable
-              key={entry.id}
-              onPress={() => handleEditMeal(entry)}
-              className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="flex-col">
-                  <Text className="text-zinc-900 dark:text-white font-bold">
-                    {entry.mealName}
-                  </Text>
-                  <Text className="text-zinc-500 text-xs mt-0.5">
-                    {entry.quantity} servings •{" "}
-                    {format(parseISO(entry.loggedAt), "HH:mm")}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="flex-row items-center gap-3">
-                <Text className="text-zinc-900 dark:text-white font-bold">
-                  {entry.calories} kcal
-                </Text>
-                <View className="flex-row gap-1">
-                  <Pressable
-                    onPress={() => handleEditMeal(entry)}
-                    className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                  >
-                    <MaterialIcons
-                      name="edit"
-                      size={18}
-                      color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
-                    />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => handleDeleteMeal(entry.id)}
-                    className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                  >
-                    <MaterialIcons
-                      name="delete-outline"
-                      size={18}
-                      color="#ef4444"
-                    />
-                  </Pressable>
-                </View>
-              </View>
-            </Pressable>
-          ))}
-        </View>
-      </View>
-    );
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -379,48 +298,10 @@ const HomeScreen = () => {
           </View>
 
           {/* Tab Navigation */}
-          <View className="px-6 mb-4">
-            <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
-              <Pressable
-                onPress={() => setActiveTab("meal")}
-                className={`flex-1 py-3 rounded-xl ${
-                  activeTab === "meal"
-                    ? "bg-white dark:bg-zinc-800"
-                    : "bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`text-center text-sm font-bold ${
-                    activeTab === "meal"
-                      ? "text-[#f39849]"
-                      : "text-zinc-500 dark:text-zinc-400"
-                  }`}
-                >
-                  Meal Activity
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  setActiveTab("water");
-                }}
-                className={`flex-1 py-3 rounded-xl ${
-                  activeTab === "water"
-                    ? "bg-white dark:bg-zinc-800"
-                    : "bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`text-center text-sm font-bold ${
-                    activeTab === "water"
-                      ? "text-[#f39849]"
-                      : "text-zinc-500 dark:text-zinc-400"
-                  }`}
-                >
-                  Water Activity
-                </Text>
-              </Pressable>
-            </View>
-          </View>
+          <ActivityTabSwitcher
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
 
           {/* Main Content */}
           <ScrollView
@@ -430,314 +311,32 @@ const HomeScreen = () => {
             contentContainerStyle={{ paddingBottom: 100 }}
           >
             {activeTab === "meal" ? (
-              <>
-                {/* Daily Total Card */}
-                <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
-                  {/* Deficit/Surplus Badge */}
-                  <View className="w-full items-end mb-6">
-                    <Text
-                      className={`${
-                        consumedCalories > calorieGoal
-                          ? "text-red-500 bg-red-500/10 p-2 rounded-full"
-                          : "text-primary bg-orange-500/10 p-2 rounded-full"
-                      } dark:text-primary font-bold text-sm `}
-                    >
-                      {Math.round(Math.abs(calorieGoal - consumedCalories))}{" "}
-                      kcal{" "}
-                      {consumedCalories > calorieGoal ? "surplus" : "deficit"}
-                    </Text>
-                  </View>
-
-                  {/* Circular Progress with Calories */}
-                  <View className="flex-row items-center justify-center w-full mb-8">
-                    {/* SVG Circle */}
-                    <View className="relative w-24 h-24 mr-6 items-center justify-center">
-                      <AnimatedCircleProgress
-                        progress={calorieProgress}
-                        trackColor={trackColor}
-                        progressColor={themeColors.primary}
-                        exceedColor={themeColors.error}
-                      />
-                    </View>
-
-                    {/* Calorie Numbers */}
-                    <View className="flex-col items-start">
-                      <View className="flex-row items-baseline gap-2">
-                        <Text className="text-5xl font-bold text-zinc-900 dark:text-white">
-                          {Math.round(consumedCalories)}
-                        </Text>
-                        <Text className="text-4xl font-light text-zinc-300 dark:text-zinc-600">
-                          /
-                        </Text>
-                      </View>
-                      <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                        {calorieGoal} calories
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* Macros Row */}
-                  <View className="flex-row justify-between w-full px-4">
-                    <View className="flex-col items-center">
-                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                        Protein
-                      </Text>
-                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalProteinGrams || 0)} g /{" "}
-                        {Math.round(summary?.targetProteinGrams || 0)} g
-                      </Text>
-                    </View>
-                    <View className="flex-col items-center">
-                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                        Carb
-                      </Text>
-                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalCarbsGrams || 0)} g /{" "}
-                        {Math.round(summary?.targetCarbsGrams || 0)} g
-                      </Text>
-                    </View>
-                    <View className="flex-col items-center">
-                      <Text className="text-sm font-bold text-zinc-900 dark:text-white">
-                        Fat
-                      </Text>
-                      <Text className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {Math.round(summary?.totalFatGrams || 0)} g /{" "}
-                        {Math.round(summary?.targetFatGrams || 0)} g
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Entries List */}
-                {isLoading ? (
-                  <ActivityIndicator
-                    size="large"
-                    color="#f39849"
-                    className="my-10"
-                  />
-                ) : entries.length > 0 ? (
-                  <View className="pb-10">
-                    <MealSection
-                      title="Breakfast"
-                      icon="wb-sunny"
-                      items={groupedEntries.BREAKFAST}
-                      color={themeColors.primary}
-                    />
-                    <MealSection
-                      title="Lunch"
-                      icon="restaurant"
-                      items={groupedEntries.LUNCH}
-                      color={themeColors.primary}
-                    />
-                    <MealSection
-                      title="Dinner"
-                      icon="nights-stay"
-                      items={groupedEntries.DINNER}
-                      color={themeColors.primary}
-                    />
-                    <MealSection
-                      title="Snacks"
-                      icon="fastfood"
-                      items={groupedEntries.SNACK}
-                      color={themeColors.primary}
-                    />
-                  </View>
-                ) : (
-                  <View className="flex-col items-center justify-center py-12 gap-4">
-                    <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
-                      You haven't consumed anything this day.
-                    </Text>
-                    <Text className="text-4xl">😋</Text>
-                  </View>
-                )}
-              </>
+              <MealActivityTab
+                consumedCalories={consumedCalories}
+                calorieGoal={calorieGoal}
+                calorieProgress={calorieProgress}
+                trackColor={trackColor}
+                themeColors={themeColors}
+                colorScheme={colorScheme}
+                summary={summary}
+                isLoading={isLoading}
+                entries={entries}
+                groupedEntries={groupedEntries}
+                onEditMeal={handleEditMeal}
+                onDeleteMeal={handleDeleteMeal}
+              />
             ) : (
-              /* Water Activity Tab */
-              <View className="pb-10">
-                {waterLoading && !waterEntries.length ? (
-                  <ActivityIndicator
-                    size="large"
-                    color="#3b82f6"
-                    className="my-10"
-                  />
-                ) : (
-                  <>
-                    <View className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800 mb-6 items-center">
-                      <View className="relative w-48 h-48 items-center justify-center mb-6">
-                        <AnimatedCircleProgress
-                          progress={waterProgress}
-                          trackColor="#f1f5f9"
-                          progressColor="#3b82f6"
-                          exceedColor={themeColors.error}
-                          size={192}
-                          radius={88}
-                          strokeWidth={12}
-                        />
-
-                        <View className="absolute inset-0 items-center justify-center">
-                          <MaterialIcons
-                            name="opacity"
-                            size={48}
-                            color="#3b82f6"
-                          />
-                          <Text className="text-3xl font-black text-zinc-900 dark:text-white mt-1">
-                            {waterIntake}
-                          </Text>
-                          <Text className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
-                            / {waterGoal} ml
-                          </Text>
-                        </View>
-                      </View>
-
-                      <View className="flex-row items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full mb-8">
-                        <Text className="text-xs font-bold text-blue-500">
-                          {Math.round(waterProgress)}% of daily goal reached
-                        </Text>
-                      </View>
-
-                      <View className="flex-row gap-4 w-full ">
-                        <Pressable
-                          onPress={() => handleAddWater(250)}
-                          disabled={waterAdding}
-                          style={({ pressed }) => [
-                            { opacity: pressed ? 0.85 : 1 },
-                          ]}
-                          className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30 relative"
-                        >
-                          {waterAdding ? (
-                            <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
-                              <ActivityIndicator size="small" color="#fff" />
-                            </View>
-                          ) : null}
-
-                          <Text className="text-white font-bold text-base">
-                            +250ml
-                          </Text>
-                          <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                            One Glass
-                          </Text>
-                        </Pressable>
-                        <Pressable
-                          onPress={() => handleAddWater(500)}
-                          disabled={waterAdding}
-                          style={({ pressed }) => [
-                            { opacity: pressed ? 0.85 : 1 },
-                          ]}
-                          className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center relative"
-                        >
-                          {waterAdding ? (
-                            <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
-                              <ActivityIndicator
-                                size="small"
-                                color="#zinc-900"
-                              />
-                            </View>
-                          ) : null}
-                          <Text className="text-zinc-900 dark:text-white font-bold text-base">
-                            +500ml
-                          </Text>
-                          <Text className="text-zinc-400 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                            Bottle
-                          </Text>
-                        </Pressable>
-                      </View>
-                    </View>
-
-                    {/* Water entries list (like meal activity) */}
-                    {waterEntries.length > 0 ? (
-                      <View className="mb-8">
-                        <View className="flex-row items-center justify-between mb-4 px-2">
-                          <View className="flex-row items-center gap-2">
-                            <View className="w-8 h-8 rounded-lg items-center justify-center bg-blue-500/20">
-                              <MaterialIcons
-                                name="opacity"
-                                size={18}
-                                color="#3b82f6"
-                              />
-                            </View>
-                            <Text className="text-base font-bold text-zinc-900 dark:text-white">
-                              Water log
-                            </Text>
-                          </View>
-                          <Text className="text-sm font-bold text-[#3b82f6]">
-                            {waterEntries.reduce(
-                              (sum, e) => sum + e.amountMl,
-                              0,
-                            )}{" "}
-                            ml
-                          </Text>
-                        </View>
-                        <View className="gap-3">
-                          {[...waterEntries]
-                            .sort(
-                              (a, b) =>
-                                new Date(b.loggedAt).getTime() -
-                                new Date(a.loggedAt).getTime(),
-                            )
-                            .map((entry) => (
-                              <View
-                                key={entry.id}
-                                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
-                              >
-                                <View className="flex-row items-center gap-3">
-                                  <View className="flex-col">
-                                    <Text className="text-zinc-900 dark:text-white font-bold">
-                                      {entry.amountMl} ml
-                                    </Text>
-                                    <Text className="text-zinc-500 text-xs mt-0.5">
-                                      {format(
-                                        parseISO(entry.loggedAt),
-                                        "HH:mm",
-                                      )}
-                                    </Text>
-                                  </View>
-                                </View>
-                                <Pressable
-                                  onPress={() => handleDeleteWater(entry.id)}
-                                  className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                                >
-                                  <MaterialIcons
-                                    name="delete-outline"
-                                    size={18}
-                                    color="#ef4444"
-                                  />
-                                </Pressable>
-                              </View>
-                            ))}
-                        </View>
-                      </View>
-                    ) : (
-                      <View className="flex-col items-center justify-center py-8 gap-2 mb-6">
-                        <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center">
-                          No water logged for this day.
-                        </Text>
-                        <Text className="text-3xl">💧</Text>
-                      </View>
-                    )}
-
-                    {/* Tips Section for Water */}
-                    <View className="bg-blue-50 dark:bg-blue-500/5 p-6 rounded-3xl border border-blue-100 dark:border-blue-500/10 flex-row gap-4">
-                      <View className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-2xl items-center justify-center">
-                        <MaterialIcons
-                          name="lightbulb-outline"
-                          size={24}
-                          color="#3b82f6"
-                        />
-                      </View>
-                      <View className="flex-1">
-                        <Text className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
-                          Stay Hydrated!
-                        </Text>
-                        <Text className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                          Drinking enough water helps improve your energy
-                          levels, focus, and overall metabolism. Aim for small
-                          sips throughout the day!
-                        </Text>
-                      </View>
-                    </View>
-                  </>
-                )}
-              </View>
+              <WaterActivityTab
+                waterLoading={waterLoading}
+                waterEntries={waterEntries}
+                waterProgress={waterProgress}
+                waterIntake={waterIntake}
+                waterGoal={waterGoal}
+                waterAdding={waterAdding}
+                themeColors={themeColors}
+                onAddWater={handleAddWater}
+                onDeleteWater={handleDeleteWater}
+              />
             )}
           </ScrollView>
         </View>
@@ -745,6 +344,7 @@ const HomeScreen = () => {
         <MealEntryModal
           visible={mealModalOpen}
           initialData={editingMeal || undefined}
+          selectedDate={selectedDate}
           onClose={() => {
             dispatch(closeMealModal());
             setEditingMeal(null);
