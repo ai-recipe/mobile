@@ -24,8 +24,9 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
   const { recipes, isLoadingRecipes, isLoadingMore, meta, hasMore } =
     useAppSelector((state) => state.recipeList);
 
+  console.log("hasmore", hasMore, "meta", meta);
   const handleLoadMore = () => {
-    if (!isLoadingMore && hasMore) {
+    if (!isLoadingMore && !isLoadingRecipes && hasMore) {
       dispatch(
         loadMoreRecipes({
           page: meta.page + 1,
@@ -51,7 +52,7 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
       onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.2}
       ListFooterComponent={renderFooter}
       ListEmptyComponent={
         isLoadingRecipes ? null : (

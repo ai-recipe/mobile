@@ -599,17 +599,17 @@ const HomeScreen = () => {
                         <Pressable
                           onPress={() => handleAddWater(250)}
                           disabled={waterAdding}
-                          android_ripple={{ color: "rgba(255,255,255,0.35)" }}
                           style={({ pressed }) => [
                             { opacity: pressed ? 0.85 : 1 },
                           ]}
                           className="flex-1 bg-blue-500 py-4 rounded-2xl items-center shadow-lg shadow-blue-500/30 relative"
                         >
-                          <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
-                            {waterAdding ? (
+                          {waterAdding ? (
+                            <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
                               <ActivityIndicator size="small" color="#fff" />
-                            ) : null}
-                          </View>
+                            </View>
+                          ) : null}
+
                           <Text className="text-white font-bold text-base">
                             +250ml
                           </Text>
@@ -620,20 +620,19 @@ const HomeScreen = () => {
                         <Pressable
                           onPress={() => handleAddWater(500)}
                           disabled={waterAdding}
-                          android_ripple={{ color: "rgba(0,0,0,0.06)" }}
                           style={({ pressed }) => [
                             { opacity: pressed ? 0.85 : 1 },
                           ]}
                           className="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 py-4 rounded-2xl items-center relative"
                         >
-                          <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
-                            {waterAdding ? (
+                          {waterAdding ? (
+                            <View className="absolute left-1/2 top-1/2 -translate-x-1/2 ">
                               <ActivityIndicator
                                 size="small"
                                 color="#zinc-900"
                               />
-                            ) : null}
-                          </View>
+                            </View>
+                          ) : null}
                           <Text className="text-zinc-900 dark:text-white font-bold text-base">
                             +500ml
                           </Text>

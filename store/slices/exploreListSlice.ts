@@ -3,12 +3,6 @@ import { fetchPersonalizedRecipes, type RecipeListItem } from "@/api/recipe";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface ExploreListState {
-  trendingRecipes: RecipeListItem[];
-  isTrendingRecipesLoading: boolean;
-  trendingRecipesMeta: PaginationMeta;
-  hasMoreTrendingRecipes: boolean;
-  errorTrendingRecipes: string | null;
-
   recommendedRecipes: RecipeListItem[];
   isRecommendedRecipesLoading: boolean;
   isRecommendedRecipesLoadingMore: boolean;
@@ -18,19 +12,6 @@ interface ExploreListState {
 }
 
 const initialState: ExploreListState = {
-  trendingRecipes: [],
-  isTrendingRecipesLoading: false,
-  trendingRecipesMeta: {
-    page: 1,
-    perPage: 20,
-    total: 0,
-    lastPage: 1,
-    from: 0,
-    to: 0,
-  },
-  hasMoreTrendingRecipes: false,
-  errorTrendingRecipes: null,
-
   recommendedRecipes: [],
   isRecommendedRecipesLoading: false,
   isRecommendedRecipesLoadingMore: false,
@@ -45,30 +26,6 @@ const initialState: ExploreListState = {
   hasMoreRecommendedRecipes: false,
   errorRecommendedRecipes: null,
 };
-
-// Async thunk for fetching explore recipes (initial load)
-export const fetchTrendingRecipes = createAsyncThunk(
-  "exploreList/fetchTrending",
-  async (
-    params: {
-      page?: number;
-      perPage?: number;
-    },
-    { rejectWithValue },
-  ) => {
-    try {
-      const response = await fetchPersonalizedRecipes({
-        isTrending: true,
-        ...params,
-      });
-      return response;
-    } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Keşfet tarifleri yüklenemedi",
-      );
-    }
-  },
-);
 
 export const fetchRecommendedRecipes = createAsyncThunk(
   "exploreList/fetchRecommended",
@@ -121,9 +78,7 @@ export const exploreListSlice = createSlice({
   initialState,
   reducers: {
     clearExplore: (state) => {
-      state.trendingRecipes = [];
       state.recommendedRecipes = [];
-      state.errorTrendingRecipes = null;
       state.errorRecommendedRecipes = null;
       state.recommendedRecipesMeta = {
         page: 1,
@@ -134,27 +89,9 @@ export const exploreListSlice = createSlice({
         to: 0,
       };
       state.hasMoreRecommendedRecipes = false;
-      state.hasMoreTrendingRecipes = false;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTrendingRecipes.pending, (state) => {
-      state.isTrendingRecipesLoading = true;
-      state.errorTrendingRecipes = null;
-    });
-    builder.addCase(fetchTrendingRecipes.fulfilled, (state, action) => {
-      state.isTrendingRecipesLoading = false;
-      state.trendingRecipes = action.payload.data;
-      state.trendingRecipesMeta = action.payload.meta;
-      state.hasMoreTrendingRecipes =
-        action.payload.meta.from + action.payload.meta.perPage <
-        action.payload.meta.total;
-    });
-    builder.addCase(fetchTrendingRecipes.rejected, (state, action) => {
-      state.isTrendingRecipesLoading = false;
-      state.errorTrendingRecipes = action.payload as string;
-    });
-
     builder.addCase(fetchRecommendedRecipes.pending, (state) => {
       state.isRecommendedRecipesLoading = true;
       state.errorRecommendedRecipes = null;

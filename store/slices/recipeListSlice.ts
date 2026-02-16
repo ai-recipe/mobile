@@ -153,6 +153,8 @@ export const recipeListSlice = createSlice({
       state.isLoadingRecipes = false;
       state.recipes = action.payload.data;
       state.meta = action.payload.meta;
+      state.hasMore =
+        action.payload.meta.lastPage > action.payload.meta.currentPage;
     });
     builder.addCase(fetchRecipes.rejected, (state, action) => {
       state.isLoadingRecipes = false;

@@ -10,8 +10,6 @@ import { fetchRecipes } from "@/store/slices/recipeListSlice";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
-// PlaceholderComponent is now imported from @/components/ai-chef-tabs/PlaceholderComponent in the tabs themselves
-
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
 
@@ -28,7 +26,6 @@ const AIChefScreen = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Conditional fetching when tab changes
   useEffect(() => {
     if (activeTab === "recents" && recipes.length === 0) {
       dispatch(fetchRecipes({ page: 1, perPage: 20 }));

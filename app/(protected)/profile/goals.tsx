@@ -32,7 +32,10 @@ const NutritionGoalCard = ({
 }) => {
   const inputRef = useRef<TextInput>(null);
   return (
-    <View className="flex-row items-center mb-4">
+    <Pressable
+      className="flex-row items-center mb-4"
+      onPress={() => inputRef.current?.focus()}
+    >
       {/* progress ring mock */}
       <View className="w-16 h-16 items-center justify-center mr-4">
         <View className="absolute inset-0 rounded-full border-[3px] border-zinc-100 dark:border-zinc-800 opacity-50" />
@@ -69,11 +72,11 @@ const NutritionGoalCard = ({
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => inputRef.current?.focus()}>
+        <TouchableOpacity>
           <MaterialIcons name="edit" size={16} color="#d4d4d8" />
         </TouchableOpacity>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -86,7 +89,6 @@ const EditNutritionGoals = () => {
     fat: "47",
     weight: "70",
   });
-  const [showMicro, setShowMicro] = useState(false);
   const colorScheme = useColorScheme();
 
   return (
@@ -105,29 +107,9 @@ const EditNutritionGoals = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 180 }}
           >
-            <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">
-              Weight
-            </Text>
-            {/* Current Weight Card*/}
-            <NutritionGoalCard
-              icon="balance"
-              label="Current Weight"
-              value={goals.weight}
-              unit="kg"
-              color="#18181b"
-              onChange={(val) => setGoals({ ...goals, weight: val })}
-            />
-            <NutritionGoalCard
-              icon="balance"
-              label="Weight Goal"
-              value={goals.weight}
-              unit="kg"
-              color="#18181b"
-              onChange={(val) => setGoals({ ...goals, weight: val })}
-            />
             {/* TODO: Add a section for nutrition goals */}
             <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">
-              Nutrition goals
+              Edit Nutrition Goals
             </Text>
             <NutritionGoalCard
               icon="local-fire-department"
