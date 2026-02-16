@@ -2,10 +2,13 @@ import { ExploreSkeleton } from "@/app/(protected)/(tabs)/components/ExploreSkel
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
+import { TabSwitcher } from "@/components/TabSwitcher";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchRecommendedRecipes,
+  fetchTrendingRecipes,
   loadMoreRecommendedRecipes,
+  loadMoreTrendingRecipes,
 } from "@/store/slices/exploreListSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
@@ -17,12 +20,21 @@ const PLACEHOLDER_IMAGE =
 
 const ExploreScreen = () => {
   const dispatch = useAppDispatch();
+  const [activeTab, setActiveTab] = useState<"personalised" | "trending">(
+    "personalised",
+  );
   const {
     recommendedRecipes,
     isRecommendedRecipesLoading,
     isRecommendedRecipesLoadingMore,
     hasMoreRecommendedRecipes,
     recommendedRecipesMeta,
+
+    trendingRecipes,
+    isTrendingRecipesLoading,
+    isTrendingRecipesLoadingMore,
+    hasMoreTrendingRecipes,
+    trendingRecipesMeta,
   } = useAppSelector((state) => state.exploreList);
 
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
@@ -31,18 +43,48 @@ const ExploreScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      dispatch(fetchRecommendedRecipes({ page: 1, perPage: 20 }));
-    }, [dispatch]),
+      if (activeTab === "personalised") {
+        dispatch(fetchRecommendedRecipes({ page: 1, perPage: 20 }));
+      } else {
+        dispatch(fetchTrendingRecipes({ page: 1, perPage: 20 }));
+      }
+    }, [dispatch, activeTab]),
   );
 
+  const currentRecipes =
+    activeTab === "personalised" ? recommendedRecipes : trendingRecipes;
+  const isLoading =
+    activeTab === "personalised"
+      ? isRecommendedRecipesLoading
+      : isTrendingRecipesLoading;
+  const isLoadingMore =
+    activeTab === "personalised"
+      ? isRecommendedRecipesLoadingMore
+      : isTrendingRecipesLoadingMore;
+  const hasMore =
+    activeTab === "personalised"
+      ? hasMoreRecommendedRecipes
+      : hasMoreTrendingRecipes;
+  const meta =
+    activeTab === "personalised" ? recommendedRecipesMeta : trendingRecipesMeta;
+
   const handleLoadMore = () => {
-    if (!isRecommendedRecipesLoadingMore && hasMoreRecommendedRecipes) {
-      dispatch(
-        loadMoreRecommendedRecipes({
-          page: recommendedRecipesMeta.page + 1,
-          perPage: recommendedRecipesMeta.perPage,
-        }),
-      );
+    if (!isLoadingMore && hasMore) {
+      if (activeTab === "personalised") {
+        dispatch(
+          loadMoreRecommendedRecipes({
+            page: meta.page + 1,
+            perPage: meta.perPage,
+          }),
+        );
+      } else {
+        dispatch(
+          loadMoreTrendingRecipes({
+            page: meta.page + 1,
+            perPage: meta.perPage,
+          }),
+        );
+      }
     }
   };
 
@@ -56,7 +98,7 @@ const ExploreScreen = () => {
     setTimeout(() => setSelectedRecipe(null), 300);
   };
 
-  if (isRecommendedRecipesLoading && recommendedRecipes.length === 0) {
+  if (isLoading && currentRecipes.length === 0) {
     return (
       <TabScreenWrapper>
         <ScreenWrapper>
@@ -70,7 +112,7 @@ const ExploreScreen = () => {
     <ScreenWrapper>
       <TabScreenWrapper>
         <FlatList
-          data={recommendedRecipes}
+          data={currentRecipes}
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}
@@ -83,13 +125,24 @@ const ExploreScreen = () => {
               {/* Header Title */}
               <View className="px-5 mb-6">
                 <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight">
-                  Sana Özel <Text className="text-[#f39849]">Tarifler</Text>
+                  {activeTab === "personalised" ? "Sana Özel" : "Trend olan"}{" "}
+                  <Text className="text-[#f39849]">Tarifler</Text>
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
-                  Kişiselleştirilmiş Yapay Zeka tarafından sana özel seçilmiş
-                  tarifler.
+                  {activeTab === "personalised"
+                    ? "Kişiselleştirilmiş Yapay Zeka tarafından sana özel seçilmiş tarifler."
+                    : "Topluluk tarafından en çok beğenilen ve popüler olan tarifler."}
                 </Text>
               </View>
+
+              <TabSwitcher
+                options={[
+                  { id: "personalised", label: "Personalised" },
+                  { id: "trending", label: "Trending" },
+                ]}
+                activeTab={activeTab}
+                onTabChange={(id) => setActiveTab(id as any)}
+              />
             </View>
           )}
           renderItem={({ item }) => (
