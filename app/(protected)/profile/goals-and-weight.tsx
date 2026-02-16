@@ -57,24 +57,13 @@ const GoalsAndWeight = () => {
   });
 
   const [activeModal, setActiveModal] = useState<
-    | null
-    | "goalWeight"
-    | "currentWeight"
-    | "height"
-    | "stepGoal"
-    | "dob"
-    | "gender"
+    null | "goalWeight" | "currentWeight" | "height" | "dob" | "gender"
   >(null);
 
   const handleSave = (newValue: number) => {
     if (!activeModal) return;
 
-    const unit =
-      activeModal === "height"
-        ? "cm"
-        : activeModal === "stepGoal"
-        ? "steps"
-        : "kg";
+    const unit = activeModal === "height" ? "cm" : "kg";
     setDetails((prev) => ({
       ...prev,
       [activeModal]: `${newValue} ${unit}`,
@@ -106,14 +95,6 @@ const GoalsAndWeight = () => {
       max: 250,
       step: 1,
       initial: parseFloat(details.height),
-    },
-    stepGoal: {
-      title: "Daily step goal",
-      unit: "steps",
-      min: 1000,
-      max: 50000,
-      step: 500,
-      initial: parseFloat(details.stepGoal),
     },
   };
 
@@ -170,12 +151,6 @@ const GoalsAndWeight = () => {
               label="Gender"
               value={details.gender}
               onPress={() => setActiveModal("gender")}
-            />
-            <PersonalDetailItem
-              label="Daily step goal"
-              value={details.stepGoal}
-              isLast
-              onPress={() => setActiveModal("stepGoal")}
             />
           </View>
         </ScrollView>

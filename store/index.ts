@@ -11,7 +11,9 @@ import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
 import surveyReducer from "./slices/surveySlice";
 import uiReducer from "./slices/uiSlice";
+import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
+
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
@@ -27,6 +29,7 @@ export const store = configureStore({
     dailyLogs: dailyLogsReducer,
     waterLogs: waterLogsReducer,
     progress: progressReducer,
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

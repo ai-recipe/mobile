@@ -209,13 +209,8 @@ export function RulerPickerModal({
           <View className="relative h-24 mb-10 justify-center">
             {/* Center Indicator */}
             <View
-              className="absolute left-1/2 -ml-[2px] w-1 h-12 bg-[#13ec5b] rounded-full z-20"
+              className="absolute left-1/2 -ml-[2px] w-1 h-12 bg-primary rounded-full z-20"
               style={{
-                shadowColor: "#13ec5b",
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.8,
-                shadowRadius: 10,
-                elevation: 5,
                 bottom: 0,
               }}
             />
