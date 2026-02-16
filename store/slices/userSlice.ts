@@ -9,7 +9,17 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  personalDetails: null,
+  personalDetails: {
+    goalWeight: 0,
+    currentWeight: 0,
+    height: 0,
+    dateOfBirth: "",
+    gender: "",
+    dailyCalorieGoal: 0,
+    dailyProteinGoal: 0,
+    dailyCarbGoal: 0,
+    dailyFatGoal: 0,
+  },
   isLoading: false,
   isUpdating: false,
   error: null,
@@ -31,7 +41,7 @@ export const getPersonalDetailsAsync = createAsyncThunk(
 
 export const updatePersonalDetailsAsync = createAsyncThunk(
   "user/updatePersonalDetails",
-  async (data: Partial<PersonalDetails>, { rejectWithValue }) => {
+  async (data: any, { rejectWithValue }) => {
     try {
       const response = await UserService.updatePersonalDetailsAPI(data);
       return response.data?.data;
@@ -70,9 +80,14 @@ export const userSlice = createSlice({
         state.error = action.payload as string;
       })
       // Update Personal Details
-      .addCase(updatePersonalDetailsAsync.pending, (state) => {
+      .addCase(updatePersonalDetailsAsync.pending, (state, action) => {
+        const data = action.meta.arg;
         state.isUpdating = true;
         state.error = null;
+        state.personalDetails = {
+          ...state.personalDetails,
+          ...data,
+        };
       })
       .addCase(updatePersonalDetailsAsync.fulfilled, (state, action) => {
         state.isUpdating = false;

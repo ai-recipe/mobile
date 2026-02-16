@@ -1,8 +1,10 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updatePersonalDetailsAsync } from "@/store/slices/userSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { format, parse } from "date-fns";
-import React, { useState } from "react";
+import { parse } from "date-fns";
+import React, { useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { CalendarModal } from "../../screens/components/CalendarModal";
 import { GenderPickerModal } from "../../screens/components/GenderPickerModal";
@@ -15,7 +17,7 @@ const PersonalDetailItem = ({
   isLast = false,
 }: {
   label: string;
-  value: string;
+  value: any;
   onPress?: () => void;
   isLast?: boolean;
 }) => {
@@ -47,56 +49,59 @@ const PersonalDetailItem = ({
 };
 
 const GoalsAndWeight = () => {
-  const [details, setDetails] = useState({
-    goalWeight: "78.5 kg",
-    currentWeight: "75.4 kg",
-    height: "168 cm",
-    dob: "12/01/1990",
-    gender: "Male",
-    stepGoal: "10000 steps",
-  });
-
+  const { personalDetails } = useAppSelector((state) => state.user);
   const [activeModal, setActiveModal] = useState<
     null | "goalWeight" | "currentWeight" | "height" | "dob" | "gender"
   >(null);
+  const dispatch = useAppDispatch();
 
-  const handleSave = (newValue: number) => {
+  const handleSave = (newValue: any) => {
     if (!activeModal) return;
 
     const unit = activeModal === "height" ? "cm" : "kg";
-    setDetails((prev) => ({
-      ...prev,
-      [activeModal]: `${newValue} ${unit}`,
-    }));
+    dispatch(
+      updatePersonalDetailsAsync({
+        goalWeight:
+          activeModal === "goalWeight" ? newValue : personalDetails?.goalWeight,
+        currentWeight:
+          activeModal === "currentWeight"
+            ? newValue
+            : personalDetails?.currentWeight,
+        height: activeModal === "height" ? newValue : personalDetails?.height,
+      }),
+    );
     setActiveModal(null);
   };
 
-  const modalConfig = {
-    goalWeight: {
-      title: "Goal weight",
-      unit: "kg",
-      min: 30,
-      max: 200,
-      step: 0.1,
-      initial: parseFloat(details.goalWeight),
-    },
-    currentWeight: {
-      title: "Current weight",
-      unit: "kg",
-      min: 30,
-      max: 200,
-      step: 0.1,
-      initial: parseFloat(details.currentWeight),
-    },
-    height: {
-      title: "Height",
-      unit: "cm",
-      min: 100,
-      max: 250,
-      step: 1,
-      initial: parseFloat(details.height),
-    },
-  };
+  const modalConfig = useMemo(
+    () => ({
+      goalWeight: {
+        title: "Goal weight",
+        unit: "kg",
+        min: 30,
+        max: 200,
+        step: 0.1,
+        initial: parseFloat(personalDetails?.goalWeight?.toString() || "0"),
+      },
+      currentWeight: {
+        title: "Current weight",
+        unit: "kg",
+        min: 30,
+        max: 200,
+        step: 0.1,
+        initial: parseFloat(personalDetails?.currentWeight?.toString() || "0"),
+      },
+      height: {
+        title: "Height",
+        unit: "cm",
+        min: 100,
+        max: 250,
+        step: 1,
+        initial: parseFloat(personalDetails?.height?.toString() || "0"),
+      },
+    }),
+    [personalDetails],
+  );
 
   return (
     <ScreenWrapper
@@ -117,7 +122,7 @@ const GoalsAndWeight = () => {
                 Goal Weight
               </Text>
               <Text className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                {details.goalWeight}
+                {personalDetails?.goalWeight}
               </Text>
             </View>
 
@@ -134,22 +139,22 @@ const GoalsAndWeight = () => {
           <View className="bg-white dark:bg-zinc-900 rounded-[32px] overflow-hidden  border border-zinc-100 dark:border-zinc-800">
             <PersonalDetailItem
               label="Current weight"
-              value={details.currentWeight}
+              value={personalDetails?.currentWeight}
               onPress={() => setActiveModal("currentWeight")}
             />
             <PersonalDetailItem
               label="Height"
-              value={details.height}
+              value={personalDetails?.height}
               onPress={() => setActiveModal("height")}
             />
             <PersonalDetailItem
               label="Date of birth"
-              value={details.dob}
+              value={personalDetails?.dateOfBirth}
               onPress={() => setActiveModal("dob")}
             />
             <PersonalDetailItem
               label="Gender"
-              value={details.gender}
+              value={personalDetails?.gender}
               onPress={() => setActiveModal("gender")}
             />
           </View>
@@ -174,27 +179,22 @@ const GoalsAndWeight = () => {
       <CalendarModal
         visible={activeModal === "dob"}
         onClose={() => setActiveModal(null)}
-        onConfirm={(date) => {
-          setDetails((prev) => ({
-            ...prev,
-            dob: format(date, "MM/dd/yyyy"),
-          }));
-          setActiveModal(null);
-        }}
-        initialDate={parse(details.dob, "MM/dd/yyyy", new Date())}
+        onConfirm={handleSave}
+        initialDate={parse(
+          personalDetails?.dateOfBirth || "",
+          "MM/dd/yyyy",
+          new Date(),
+        )}
       />
 
       <GenderPickerModal
         visible={activeModal === "gender"}
         onClose={() => setActiveModal(null)}
         onSelect={(gender) => {
-          setDetails((prev) => ({
-            ...prev,
-            gender,
-          }));
+          handleSave(gender);
           setActiveModal(null);
         }}
-        currentValue={details.gender}
+        currentValue={personalDetails?.gender}
       />
     </ScreenWrapper>
   );
