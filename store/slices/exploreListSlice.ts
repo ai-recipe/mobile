@@ -1,5 +1,9 @@
 import { PaginationMeta } from "@/api/list";
-import { fetchPersonalizedRecipes, type RecipeListItem } from "@/api/recipe";
+import {
+  fetchPersonalizedRecipes,
+  fetchRecipeList,
+  type RecipeListItem,
+} from "@/api/recipe";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface ExploreListState {
@@ -59,11 +63,12 @@ export const fetchRecommendedRecipes = createAsyncThunk(
   ) => {
     try {
       const response = await fetchPersonalizedRecipes({
-        isTrending: false,
         ...params,
       });
+      console.log(JSON.stringify(response));
       return response;
     } catch (error) {
+      console.log(error?.response?.data?.message);
       return rejectWithValue(
         error instanceof Error ? error.message : "Keşfet tarifleri yüklenemedi",
       );
@@ -82,7 +87,6 @@ export const loadMoreRecommendedRecipes = createAsyncThunk(
   ) => {
     try {
       const response = await fetchPersonalizedRecipes({
-        isTrending: false,
         ...params,
       });
       return response;
@@ -104,7 +108,7 @@ export const fetchTrendingRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchPersonalizedRecipes({
+      const response = await fetchRecipeList({
         isTrending: true,
         ...params,
       });
@@ -127,7 +131,7 @@ export const loadMoreTrendingRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchPersonalizedRecipes({
+      const response = await fetchRecipeList({
         isTrending: true,
         ...params,
       });
@@ -164,6 +168,7 @@ export const exploreListSlice = createSlice({
       state.errorRecommendedRecipes = null;
     });
     builder.addCase(fetchRecommendedRecipes.fulfilled, (state, action) => {
+      console.log(JSON.stringify(action.payload));
       state.isRecommendedRecipesLoading = false;
       state.recommendedRecipes = action.payload.data;
       state.recommendedRecipesMeta = action.payload.meta;

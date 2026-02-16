@@ -173,6 +173,13 @@ export function MealEntryModal({
   macrosRef.current = { calories, protein, carbs, fat };
 
   const servingsPrev = usePrev(servings);
+
+  // TODO
+  const isRunned = useRef(false);
+  useEffect(() => {
+    if (isRunned.current) return;
+    isRunned.current = true;
+  }, [servings]);
   useEffect(() => {
     const prev = servingsPrev ?? servings;
     if (typeof prev !== "number" || prev === 0 || servings === prev) return;
@@ -193,7 +200,11 @@ export function MealEntryModal({
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
-      onRequestClose={onClose}
+      onRequestClose={() => {
+        onClose();
+        servingsPrev.current = null;
+        isRunned.current = false;
+      }}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

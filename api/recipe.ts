@@ -113,6 +113,8 @@ export async function fetchRecipeList(params: {
   description?: string;
   perPage?: PaginationMeta["perPage"];
   page?: PaginationMeta["page"];
+  isTrending?: boolean;
+  isFavorite?: boolean;
 }): Promise<RecipeListResponse> {
   const response = await api.get<RecipeListResponse>("/recipes", {
     params,

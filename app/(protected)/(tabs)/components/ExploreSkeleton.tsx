@@ -8,15 +8,16 @@ const CARD_META_HEIGHT = 10;
 
 export function ExploreSkeleton() {
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4 pb-6">
-      {/* Recipe grid - 2 columns */}
-      <View className="flex-row flex-wrap justify-between" style={{ gap: 16 }}>
+    <View className="flex-1 bg-white dark:bg-zinc-900 pb-6 pt-6">
+      <View
+        className="flex-row flex-wrap"
+        style={{ paddingHorizontal: 20, gap: 16 }}
+      >
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <View
-            className="flex-1"
             key={i}
             style={{
-              minWidth: "48%",
+              width: "47.5%", // Slightly less than 50% to account for gap wrapping
               marginBottom: 24,
             }}
           >
