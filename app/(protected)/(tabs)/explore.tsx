@@ -1,4 +1,3 @@
-import { ExploreSkeleton } from "@/app/(protected)/(tabs)/components/ExploreSkeleton";
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
@@ -14,6 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { ExploreSkeleton } from "./components/ExploreSkeleton";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -98,16 +98,6 @@ const ExploreScreen = () => {
     setTimeout(() => setSelectedRecipe(null), 300);
   };
 
-  if (isLoading && currentRecipes.length === 0) {
-    return (
-      <TabScreenWrapper>
-        <ScreenWrapper>
-          <ExploreSkeleton />
-        </ScreenWrapper>
-      </TabScreenWrapper>
-    );
-  }
-
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
@@ -143,6 +133,7 @@ const ExploreScreen = () => {
                 activeTab={activeTab}
                 onTabChange={(id) => setActiveTab(id as any)}
               />
+              {isLoading && currentRecipes?.length === 0 && <ExploreSkeleton />}
             </View>
           )}
           renderItem={({ item }) => (
