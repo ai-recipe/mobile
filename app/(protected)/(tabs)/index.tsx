@@ -54,7 +54,6 @@ const HomeScreen = () => {
   const { entries, summary, isLoading } = useAppSelector(
     (state) => state.dailyLogs,
   );
-  console.log(JSON.stringify(summary, null, 2));
   const {
     entries: waterEntries,
     totalIntakeMl: waterIntake,

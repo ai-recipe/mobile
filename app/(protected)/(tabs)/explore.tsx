@@ -4,8 +4,9 @@ import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  fetchExploreRecipes,
-  loadMoreExploreRecipes,
+  fetchRecommendedRecipes,
+  fetchTrendingRecipes,
+  loadMoreRecommendedRecipes,
 } from "@/store/slices/exploreListSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
@@ -24,9 +25,15 @@ const PLACEHOLDER_IMAGE =
 
 const ExploreScreen = () => {
   const dispatch = useAppDispatch();
-  const { recipes, isLoading, isLoadingMore, hasMore, meta } = useAppSelector(
-    (state) => state.exploreList,
-  );
+  const {
+    trendingRecipes,
+    recommendedRecipes,
+    isTrendingRecipesLoading,
+    isRecommendedRecipesLoading,
+    isRecommendedRecipesLoadingMore,
+    hasMoreRecommendedRecipes,
+    recommendedRecipesMeta,
+  } = useAppSelector((state) => state.exploreList);
 
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,16 +41,17 @@ const ExploreScreen = () => {
   // Initial fetch
   useFocusEffect(
     React.useCallback(() => {
-      dispatch(fetchExploreRecipes({ page: 1, perPage: 20 }));
+      dispatch(fetchTrendingRecipes({ page: 1, perPage: 5 }));
+      dispatch(fetchRecommendedRecipes({ page: 1, perPage: 20 }));
     }, [dispatch]),
   );
 
   const handleLoadMore = () => {
-    if (!isLoadingMore && hasMore) {
+    if (!isRecommendedRecipesLoadingMore && hasMoreRecommendedRecipes) {
       dispatch(
-        loadMoreExploreRecipes({
-          page: meta.page + 1,
-          perPage: meta.perPage,
+        loadMoreRecommendedRecipes({
+          page: recommendedRecipesMeta.page + 1,
+          perPage: recommendedRecipesMeta.perPage,
         }),
       );
     }
@@ -59,7 +67,11 @@ const ExploreScreen = () => {
     setTimeout(() => setSelectedRecipe(null), 300);
   };
 
-  if (isLoading && recipes.length === 0) {
+  if (
+    (isTrendingRecipesLoading || isRecommendedRecipesLoading) &&
+    trendingRecipes.length === 0 &&
+    recommendedRecipes.length === 0
+  ) {
     return (
       <TabScreenWrapper>
         <ScreenWrapper>
@@ -69,16 +81,11 @@ const ExploreScreen = () => {
     );
   }
 
-  const trendingRecipes = recipes.filter((r) => r.isTrending);
-  const recommendedRecipes = recipes.filter((r) => !r.isTrending);
-
-  const gridRecipes = recommendedRecipes;
-
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
         <FlatList
-          data={gridRecipes}
+          data={recommendedRecipes}
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}

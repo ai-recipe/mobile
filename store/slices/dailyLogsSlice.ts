@@ -124,7 +124,6 @@ export const scanFoodAsync = createAsyncThunk(
   async (image: any, { rejectWithValue, dispatch }) => {
     try {
       const response = await scanFood(image);
-      console.log(JSON.stringify(response.data, null, 2));
       // add temporary food log
       // not deletable
       // listen sockets when scanning is done
@@ -153,7 +152,6 @@ export const fetchRecentMealsAsync = createAsyncThunk(
       const endDate = now.toISOString().split("T")[0];
 
       const response = await fetchFoodLogs({ startDate, endDate });
-      console.log(JSON.stringify(response.data, null, 2));
 
       // Extract all entries from all days and get unique ones by mealName
       const allEntries = response.data.days.flatMap((day) => day.entries);

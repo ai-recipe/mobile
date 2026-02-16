@@ -10,14 +10,11 @@ interface ExploreListState {
   errorTrendingRecipes: string | null;
 
   recommendedRecipes: RecipeListItem[];
+  isRecommendedRecipesLoading: boolean;
+  isRecommendedRecipesLoadingMore: boolean;
   recommendedRecipesMeta: PaginationMeta;
   hasMoreRecommendedRecipes: boolean;
   errorRecommendedRecipes: string | null;
-
-  isRecommendedRecipesLoading: boolean;
-  error: string | null;
-  hasMore: boolean;
-  meta: PaginationMeta;
 }
 
 const initialState: ExploreListState = {
@@ -35,6 +32,8 @@ const initialState: ExploreListState = {
   errorTrendingRecipes: null,
 
   recommendedRecipes: [],
+  isRecommendedRecipesLoading: false,
+  isRecommendedRecipesLoadingMore: false,
   recommendedRecipesMeta: {
     page: 1,
     perPage: 20,
@@ -45,18 +44,6 @@ const initialState: ExploreListState = {
   },
   hasMoreRecommendedRecipes: false,
   errorRecommendedRecipes: null,
-
-  isRecommendedRecipesLoading: false,
-  error: null,
-  hasMore: true,
-  meta: {
-    page: 1,
-    perPage: 20,
-    total: 0,
-    lastPage: 1,
-    from: 0,
-    to: 0,
-  },
 };
 
 // Async thunk for fetching explore recipes (initial load)
@@ -138,7 +125,7 @@ export const exploreListSlice = createSlice({
       state.recommendedRecipes = [];
       state.errorTrendingRecipes = null;
       state.errorRecommendedRecipes = null;
-      state.meta = {
+      state.recommendedRecipesMeta = {
         page: 1,
         perPage: 20,
         total: 0,
@@ -146,7 +133,8 @@ export const exploreListSlice = createSlice({
         from: 0,
         to: 0,
       };
-      state.hasMore = false;
+      state.hasMoreRecommendedRecipes = false;
+      state.hasMoreTrendingRecipes = false;
     },
   },
   extraReducers: (builder) => {
@@ -184,22 +172,21 @@ export const exploreListSlice = createSlice({
       state.errorRecommendedRecipes = action.payload as string;
     });
     builder.addCase(loadMoreRecommendedRecipes.pending, (state) => {
-      state.isRecommendedRecipesLoading = true;
+      state.isRecommendedRecipesLoadingMore = true;
       state.errorRecommendedRecipes = null;
     });
     builder.addCase(loadMoreRecommendedRecipes.fulfilled, (state, action) => {
-      state.isRecommendedRecipesLoading = false;
+      state.isRecommendedRecipesLoadingMore = false;
       state.recommendedRecipes = [
         ...state.recommendedRecipes,
         ...action.payload.data,
       ];
       state.recommendedRecipesMeta = action.payload.meta;
       state.hasMoreRecommendedRecipes =
-        action.payload.meta.from + action.payload.meta.perPage <
-        action.payload.meta.total;
+        action.payload.meta.page < action.payload.meta.lastPage;
     });
     builder.addCase(loadMoreRecommendedRecipes.rejected, (state, action) => {
-      state.isRecommendedRecipesLoading = false;
+      state.isRecommendedRecipesLoadingMore = false;
       state.errorRecommendedRecipes = action.payload as string;
     });
   },

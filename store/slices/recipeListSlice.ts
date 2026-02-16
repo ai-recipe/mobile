@@ -7,6 +7,7 @@ import {
   type RecipeListItem,
 } from "@/api/recipe";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchFavoriteRecipes } from "./favoritesListSlice";
 
 interface RecipeListState {
   recipes: RecipeListItem[];
@@ -89,16 +90,24 @@ export const toggleFavorite = createAsyncThunk(
   "recipeList/toggleFavorite",
   async (
     { recipeId, isFavorite }: { recipeId: string; isFavorite: boolean },
-    { rejectWithValue },
+    { rejectWithValue, dispatch },
   ) => {
     try {
+      console.log(recipeId);
       if (isFavorite) {
         await removeFavorite(recipeId);
       } else {
         await addFavorite(recipeId);
       }
+      dispatch(
+        fetchFavoriteRecipes({
+          page: 1,
+          perPage: 20,
+        }),
+      );
       return { recipeId, isFavorite: !isFavorite };
     } catch (error: any) {
+      console.log(error);
       console.log(error?.response?.data?.message);
       return rejectWithValue(
         error instanceof Error ? error.message : "İşlem başarısız",
