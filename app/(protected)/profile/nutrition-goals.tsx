@@ -1,6 +1,8 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updatePersonalDetailsAsync } from "@/store/slices/userSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -82,14 +84,22 @@ const NutritionGoalCard = ({
 
 const NutritionGoals = () => {
   const router = useRouter();
-  const [goals, setGoals] = useState({
-    calories: "2500",
-    protein: "120",
-    carbs: "200",
-    fat: "47",
-    weight: "70",
-  });
+  const { personalDetails } = useAppSelector((state) => state.user);
+
+  const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
+
+  const [goals, setGoals] = useState({
+    calories: personalDetails?.dailyCalorieGoal?.toString() || "0",
+    protein: personalDetails?.dailyProteinGoal?.toString() || "0",
+    carbs: personalDetails?.dailyCarbGoal?.toString() || "0",
+    fat: personalDetails?.dailyFatGoal?.toString() || "0",
+  });
+
+  const handleSave = () => {
+    dispatch(updatePersonalDetailsAsync(goals));
+    router.back();
+  };
 
   return (
     <ScreenWrapper
@@ -115,7 +125,7 @@ const NutritionGoals = () => {
               label="Calorie Goal"
               value={goals.calories}
               unit="kcal"
-              color="#18181b"
+              color={Colors[colorScheme].primary}
               onChange={(val) => setGoals({ ...goals, calories: val })}
             />
             <NutritionGoalCard
@@ -123,7 +133,7 @@ const NutritionGoals = () => {
               label="Protein Goal"
               value={goals.protein}
               unit="g"
-              color="#18181b"
+              color={Colors[colorScheme].primary}
               onChange={(val) => setGoals({ ...goals, protein: val })}
             />
             <NutritionGoalCard
@@ -131,7 +141,7 @@ const NutritionGoals = () => {
               label="Carb Goal"
               value={goals.carbs}
               unit="g"
-              color="#18181b"
+              color={Colors[colorScheme].primary}
               onChange={(val) => setGoals({ ...goals, carbs: val })}
             />
             <NutritionGoalCard
@@ -139,7 +149,7 @@ const NutritionGoals = () => {
               label="Fat Goal"
               value={goals.fat}
               unit="g"
-              color="#18181b"
+              color={Colors[colorScheme].primary}
               onChange={(val) => setGoals({ ...goals, fat: val })}
             />
           </ScrollView>
@@ -147,10 +157,7 @@ const NutritionGoals = () => {
           <View className="absolute bottom-10 left-6 right-6">
             <TouchableOpacity
               className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center mb-4"
-              onPress={() => {
-                // Save logic here
-                router.back();
-              }}
+              onPress={handleSave}
               activeOpacity={0.8}
             >
               <Text className="text-white dark:text-zinc-900 font-bold text-lg">
