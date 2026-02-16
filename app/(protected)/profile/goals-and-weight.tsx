@@ -1,8 +1,11 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
+import { format, parse } from "date-fns";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { CalendarModal } from "../../screens/components/CalendarModal";
+import { GenderPickerModal } from "../../screens/components/GenderPickerModal";
 import { RulerPickerModal } from "../../screens/components/RulerPickerModal";
 
 const PersonalDetailItem = ({
@@ -48,13 +51,19 @@ const GoalsAndWeight = () => {
     goalWeight: "78.5 kg",
     currentWeight: "75.4 kg",
     height: "168 cm",
-    dob: "12/1/1990",
+    dob: "12/01/1990",
     gender: "Male",
     stepGoal: "10000 steps",
   });
 
   const [activeModal, setActiveModal] = useState<
-    null | "goalWeight" | "currentWeight" | "height" | "stepGoal"
+    | null
+    | "goalWeight"
+    | "currentWeight"
+    | "height"
+    | "stepGoal"
+    | "dob"
+    | "gender"
   >(null);
 
   const handleSave = (newValue: number) => {
@@ -155,12 +164,12 @@ const GoalsAndWeight = () => {
             <PersonalDetailItem
               label="Date of birth"
               value={details.dob}
-              onPress={() => {}}
+              onPress={() => setActiveModal("dob")}
             />
             <PersonalDetailItem
               label="Gender"
               value={details.gender}
-              onPress={() => {}}
+              onPress={() => setActiveModal("gender")}
             />
             <PersonalDetailItem
               label="Daily step goal"
@@ -172,7 +181,7 @@ const GoalsAndWeight = () => {
         </ScrollView>
       </View>
 
-      {activeModal && (
+      {activeModal && activeModal !== "dob" && activeModal !== "gender" && (
         <RulerPickerModal
           visible={!!activeModal}
           onClose={() => setActiveModal(null)}
@@ -186,6 +195,32 @@ const GoalsAndWeight = () => {
           initialValue={modalConfig[activeModal].initial}
         />
       )}
+
+      <CalendarModal
+        visible={activeModal === "dob"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={(date) => {
+          setDetails((prev) => ({
+            ...prev,
+            dob: format(date, "MM/dd/yyyy"),
+          }));
+          setActiveModal(null);
+        }}
+        initialDate={parse(details.dob, "MM/dd/yyyy", new Date())}
+      />
+
+      <GenderPickerModal
+        visible={activeModal === "gender"}
+        onClose={() => setActiveModal(null)}
+        onSelect={(gender) => {
+          setDetails((prev) => ({
+            ...prev,
+            gender,
+          }));
+          setActiveModal(null);
+        }}
+        currentValue={details.gender}
+      />
     </ScreenWrapper>
   );
 };
