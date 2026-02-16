@@ -80,7 +80,7 @@ const NutritionGoalCard = ({
   );
 };
 
-const EditNutritionGoals = () => {
+const NutritionGoals = () => {
   const router = useRouter();
   const [goals, setGoals] = useState({
     calories: "2500",
@@ -107,7 +107,6 @@ const EditNutritionGoals = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 180 }}
           >
-            {/* TODO: Add a section for nutrition goals */}
             <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">
               Edit Nutrition Goals
             </Text>
@@ -145,7 +144,6 @@ const EditNutritionGoals = () => {
             />
           </ScrollView>
 
-          {/* Bottom Actions - Fixed with Blur/Gradient effect if possible, but keep it simple for now */}
           <View className="absolute bottom-10 left-6 right-6">
             <TouchableOpacity
               className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center mb-4"
@@ -162,9 +160,6 @@ const EditNutritionGoals = () => {
 
             <TouchableOpacity
               className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 py-4 rounded-[22px] items-center justify-center flex-row gap-3"
-              onPress={() => {
-                // Auto generate logic
-              }}
               activeOpacity={0.7}
             >
               <MaterialIcons
@@ -189,4 +184,4 @@ const EditNutritionGoals = () => {
   );
 };
 
-export default EditNutritionGoals;
+export default NutritionGoals;

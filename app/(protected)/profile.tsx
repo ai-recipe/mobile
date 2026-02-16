@@ -110,7 +110,12 @@ const ProfileScreen = () => {
           <ProfileMenuItem
             icon="balance"
             label="Edit Nutrition Goals"
-            onPress={() => router.push("/profile/goals" as any)}
+            onPress={() => router.push("/profile/nutrition-goals" as any)}
+          />
+          <ProfileMenuItem
+            icon="golf-course"
+            label="Goals and Current Weight"
+            onPress={() => router.push("/profile/goals-and-weight" as any)}
           />
         </View>
       </ScrollView>
