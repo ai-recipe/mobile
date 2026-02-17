@@ -144,7 +144,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId,
+        deviceId: "musa1231322",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });

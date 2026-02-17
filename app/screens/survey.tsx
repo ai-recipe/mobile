@@ -44,11 +44,7 @@ export default function SurveyScreen() {
     }));
 
     if (responses.length > 0) {
-      const result = await dispatch(submitSurveyAsync(responses));
-      if (submitSurveyAsync.fulfilled.match(result)) {
-        router.replace("/screens/post-survey-experience");
-      }
-    } else {
+      await dispatch(submitSurveyAsync(responses));
       router.replace("/screens/post-survey-experience");
     }
   };
