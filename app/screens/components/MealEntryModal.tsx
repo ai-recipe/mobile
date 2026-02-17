@@ -57,6 +57,8 @@ export function MealEntryModal({
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
 
+  const skipScaleOnceRef = useRef(false);
+
   const { isLoading, recentMeals } = useAppSelector((state) => state.dailyLogs);
 
   React.useEffect(() => {
@@ -66,12 +68,11 @@ export function MealEntryModal({
   }, [visible, recentMeals.length, dispatch]);
 
   const handleSelectRecent = (meal: FoodLogEntry) => {
+    skipScaleOnceRef.current = true;
     setMealName(meal.mealName);
     setCalories(meal.calories.toString());
     setProtein(meal.proteinGrams.toString());
     setCarbs(meal.carbsGrams.toString());
-    setFat(meal.fatGrams.toString());
-    setServings(meal.quantity || 1);
     setFat(meal.fatGrams.toString());
     setServings(meal.quantity || 1);
   };
@@ -91,9 +92,10 @@ export function MealEntryModal({
     }
   };
 
-  // Reset/Pre-fill form when modal becomes visible
+  // Reset/Pre-fill form when modal becomes visible (modal stays mounted when closed)
   React.useEffect(() => {
     if (visible) {
+      skipScaleOnceRef.current = true;
       if (initialData) {
         setMealName(initialData.name);
         setCalories(initialData.calories.toString());
@@ -172,15 +174,27 @@ export function MealEntryModal({
   const macrosRef = useRef({ calories, protein, carbs, fat });
   macrosRef.current = { calories, protein, carbs, fat };
 
-  const servingsPrev = usePrev(servings);
-
-  // TODO
+  const servingsPrev = usePrev(visible ? servings : undefined);
   const isRunned = useRef(false);
+
+  // When modal closes, reset refs so next open has clean scale behavior
+  useEffect(() => {
+    if (!visible) {
+      skipScaleOnceRef.current = false;
+      isRunned.current = false;
+    }
+  }, [visible]);
+
   useEffect(() => {
     if (isRunned.current) return;
     isRunned.current = true;
   }, [servings]);
+
   useEffect(() => {
+    if (skipScaleOnceRef.current) {
+      skipScaleOnceRef.current = false;
+      return;
+    }
     const prev = servingsPrev ?? servings;
     if (typeof prev !== "number" || prev === 0 || servings === prev) return;
     const ratio = servings / prev;
@@ -200,11 +214,7 @@ export function MealEntryModal({
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
-      onRequestClose={() => {
-        onClose();
-        servingsPrev.current = null;
-        isRunned.current = false;
-      }}
+      onRequestClose={onClose}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
