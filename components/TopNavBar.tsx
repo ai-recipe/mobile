@@ -33,9 +33,7 @@ export const TopNavBar = () => {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, { color: theme.text }]}>
-          {t("app_name")}
-        </Text>
+        <Text style={[styles.title, { color: theme.text }]}>{"Chad AI"}</Text>
       </View>
 
       <TouchableOpacity

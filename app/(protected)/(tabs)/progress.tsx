@@ -3,8 +3,10 @@ import { WeightGoalCard } from "@/components/WeightGoalCard";
 import { LineChart, LineChartDataPoint } from "@/components/charts";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
-import { ScrollView } from "react-native";
+import { Pressable, ScrollView, Text, TouchableOpacity } from "react-native";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { TabScreenWrapper } from "./components/TabScreenWrapper";
 const activityLineData: LineChartDataPoint[] = [
@@ -25,6 +27,27 @@ export default function ProgressScreen() {
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
+        <>
+          <TouchableOpacity
+            className="w-full bg-white dark:bg-zinc-900 py-4  items-center justify-center flex-row gap-3"
+            activeOpacity={0.7}
+          >
+            <MaterialIcons
+              name="auto-awesome"
+              size={18}
+              color={Colors[colorScheme].primary}
+            />
+            <Pressable
+              onPress={() => {
+                router.push("/screens/survey");
+              }}
+            >
+              <Text className="text-primary dark:text-white font-bold text-base">
+                Auto Generate Goals
+              </Text>
+            </Pressable>
+          </TouchableOpacity>
+        </>
         <ScrollView>
           <BMICard bmi={26.5} />
           <WeightGoalCard
