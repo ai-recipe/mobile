@@ -12,4 +12,5 @@ export { VerticalBarChart } from "./VerticalBarChart";
 export type {
   VerticalBarChartDataPoint,
   VerticalBarChartProps,
+  VerticalBarChartSegment,
 } from "./VerticalBarChart";

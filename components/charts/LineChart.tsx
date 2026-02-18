@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { LineChart as GiftedLineChart } from "react-native-gifted-charts";
 
 export type LineChartDataPoint = {
@@ -40,7 +40,7 @@ export type LineChartProps = {
   style?: object;
 };
 
-const defaultFormatTooltip = (value: number) => String(Math.round(value));
+const defaultFormatTooltip = (value: number) => `${value}kg`;
 
 export function LineChart({
   data,
@@ -64,23 +64,18 @@ export function LineChart({
   const lineColor = color ?? theme.primary;
 
   const rulesColor = isDark ? "#333333" : "#F0F0F0";
-  const xAxisColor = isDark ? "#333333" : "#E5E5E5";
   const axisTextColor = isDark ? "#888888" : "#A0A0A0";
-  const tooltipBg = isDark ? "#333333" : "#FFFFFF";
-  const tooltipTextColor = isDark ? "#FFFFFF" : "#1A1A1A";
-  const titleColor = isDark ? "#FFFFFF" : "#1A1A1A";
-  const cardBg = isDark ? "#1C1C1E" : "#FFFFFF";
 
   return (
-    <View style={[styles.chartCard, { backgroundColor: cardBg }, style]}>
+    <View className="flex-1 bg-white dark:bg-zinc-900 p-4 rounded-2xl  mx-4">
       {title != null && (
-        <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+        <Text className="text-md font-semibold mb-4">{title}</Text>
       )}
 
       <GiftedLineChart
         data={data}
         height={height}
-        spacing={Math.max(24, 320 / Math.max(1, data.length - 1))}
+        spacing={40}
         initialSpacing={15}
         endSpacing={15}
         color={lineColor}
@@ -94,11 +89,11 @@ export function LineChart({
         endOpacity={0.02}
         hideDataPoints={!showDataPoints}
         showVerticalLines={showVerticalLines}
-        hideRules={hideRules}
+        hideRules={true}
         rulesColor={rulesColor}
         rulesType="solid"
         yAxisColor="transparent"
-        xAxisColor={xAxisColor}
+        xAxisColor={"transparent"}
         yAxisTextStyle={{
           color: axisTextColor,
           fontSize: 11,
@@ -118,9 +113,9 @@ export function LineChart({
           activatePointersOnLongPress: false,
           autoAdjustPointerLabelPosition: true,
           pointerLabelComponent: (items: { value: number }[]) => (
-            <View style={[styles.tooltip, { backgroundColor: tooltipBg }]}>
-              <Text style={[styles.tooltipText, { color: tooltipTextColor }]}>
-                {formatTooltipValue(items[0]?.value ?? 0)}
+            <View className="bg-zinc-900 dark:bg-white p-2 rounded-lg flex-row items-center justify-center">
+              <Text className="text-white dark:text-zinc-900">
+                {items[0]?.value ?? 0} kg
               </Text>
             </View>
           ),
@@ -129,39 +124,3 @@ export function LineChart({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  chartCard: {
-    margin: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 24,
-    marginLeft: 10,
-  },
-  tooltip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tooltipText: {
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-});
