@@ -119,7 +119,9 @@ export const submitSurveyAsync = createAsyncThunk(
   "auth/submitSurvey",
   async (responses: any, { dispatch, rejectWithValue }) => {
     try {
+      console.log("responses", JSON.stringify(responses, null, 2));
       const response = await SurveyService.submitSurveyAPI({ responses });
+      console.log("response", JSON.stringify(response.data, null, 2));
       await dispatch(fetchUserPreferencesAsync());
       return response.data;
     } catch (error: any) {
@@ -144,7 +146,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId: "musa1231322",
+        deviceId: "allah",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
