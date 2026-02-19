@@ -31,3 +31,15 @@ export const getGoalPlanActiveAPI =
     const response = await api.get("/nutrition/goal-plans/active");
     return response.data;
   };
+
+export const postGoalPlanLog = async (payload: {
+  targetWeightKg?: number;
+  targetCalories?: number;
+  targetProteinG?: number;
+  targetCarbsG?: number;
+  targetFatG?: number;
+  targetWaterMl?: number;
+}) => {
+  const response = await api.post("/nutrition/goal-plans", payload);
+  return response.data;
+};

@@ -1,14 +1,18 @@
-import { RulerPickerModal } from "@/app/screens/components/RulerPickerModal";
+import { NumberInputModal } from "@/app/screens/components/NumberInputModal";
 import { BMICard } from "@/components/BMICard";
 import { WeightGoalCard } from "@/components/WeightGoalCard";
-import { LineChart, LineChartDataPoint } from "@/components/charts";
+import { LineChartDataPoint } from "@/components/charts";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppSelector } from "@/store/hooks";
-import { fetchProgressDataAsync } from "@/store/slices/progressSlice";
+import { postGoalPlanLogAsync } from "@/store/slices/goalPlansSlice";
+import {
+  fetchProgressDataAsync,
+  postWeightLogAsync,
+} from "@/store/slices/progressSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -40,15 +44,27 @@ export default function ProgressScreen() {
     (state) => state.goalPlans,
   );
 
-  console.log("activeGoalPlan", JSON.stringify(activeGoalPlan, null, 2));
+  console.log("startDate", startDate);
+  console.log("endDate", endDate);
   console.log("progressData", JSON.stringify(progressData, null, 2));
-
-  useEffect(() => {
-    dispatch(fetchProgressDataAsync({ startDate, endDate }) as any);
-  }, [startDate, endDate, dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchProgressDataAsync({ startDate, endDate }) as any);
+    }, [startDate, endDate, dispatch]),
+  );
 
   const [isCurrentWeightModalVisible, setIsCurrentWeightModalVisible] =
     useState(false);
+  const [isGoalWeightModalVisible, setIsGoalWeightModalVisible] =
+    useState(false);
+
+  const handleSaveCurrentWeight = (value: number) => {
+    console.log("value", value);
+    dispatch(postWeightLogAsync({ weightKg: value }) as any);
+  };
+  const handleSaveGoalWeight = (value: number) => {
+    dispatch(postGoalPlanLogAsync({ targetWeightKg: value }) as any);
+  };
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
@@ -80,24 +96,37 @@ export default function ProgressScreen() {
             currentWeight={progressData.weightTrend.currentKg}
             goalWeight={progressData.weightTrend.targetKg}
             onUpdateCurrentWeight={() => setIsCurrentWeightModalVisible(true)}
-            onUpdateGoalWeight={() => console.log("Update goal")}
+            onUpdateGoalWeight={() => setIsGoalWeightModalVisible(true)}
           />
-          <LineChart
+          {/**    <LineChart
             data={activityLineData}
             title="Weight Progress"
             height={220}
             color={theme.primary}
             formatTooltipValue={(v) => `${Math.round(v)}%`}
-          />
-          <RulerPickerModal
+          /> */}
+
+          <NumberInputModal
             visible={isCurrentWeightModalVisible}
             onClose={() => setIsCurrentWeightModalVisible(false)}
-            onSave={(value) => console.log("Save current weight", value)}
-            initialValue={progressData.weightTrend.currentKg}
+            onSave={handleSaveCurrentWeight}
+            initialValue={progressData.weightTrend.currentKg || 0}
             min={30}
             max={200}
-            step={0.1}
             unit="kg"
+            title="Current weight"
+            fractionDigits={1}
+          />
+          <NumberInputModal
+            visible={isGoalWeightModalVisible}
+            onClose={() => setIsGoalWeightModalVisible(false)}
+            onSave={handleSaveGoalWeight}
+            initialValue={progressData.weightTrend.targetKg || 0}
+            min={30}
+            max={200}
+            unit="kg"
+            title="Goal weight"
+            fractionDigits={1}
           />
         </ScrollView>
       </TabScreenWrapper>

@@ -38,7 +38,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             className="text-4xl font-extrabold mb-3"
             style={{ color: theme.text }}
           >
-            {currentWeight}{" "}
+            {currentWeight || 0}{" "}
             <Text
               className="text-base font-medium opacity-60"
               style={{ color: theme.text }}
@@ -72,7 +72,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             className="text-4xl font-extrabold mb-3"
             style={{ color: theme.text }}
           >
-            {goalWeight}{" "}
+            {goalWeight || 0}{" "}
             <Text
               className="text-base font-medium opacity-60"
               style={{ color: theme.text }}

@@ -26,8 +26,13 @@
 
  */
 
-import { getGoalPlanActiveAPI, GoalPlan } from "@/api/goalPlan";
+import {
+  getGoalPlanActiveAPI,
+  GoalPlan,
+  postGoalPlanLog,
+} from "@/api/goalPlan";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setTargetWeightKgProgressSlice } from "./progressSlice";
 
 interface GoalPlanState {
   goalPlan: GoalPlan | null;
@@ -50,6 +55,41 @@ export const fetchGoalPlanActiveAsync = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Goal plan yüklenemedi",
+      );
+    }
+  },
+);
+/**
+ *  "targetWeightKg": 70,
+  "targetCalories": 2200,
+  "targetProteinG": 150,
+  "targetCarbsG": 250,
+  "targetFatG": 70,
+  "targetWaterMl": 2500,
+ */
+export const postGoalPlanLogAsync = createAsyncThunk(
+  "goalPlans/postGoalPlanLog",
+  async (
+    payload: {
+      targetWeightKg?: number;
+      targetCalories?: number;
+      targetProteinG?: number;
+      targetCarbsG?: number;
+      targetFatG?: number;
+      targetWaterMl?: number;
+    },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      dispatch(setTargetWeightKgProgressSlice(payload.targetWeightKg));
+
+      const response = await postGoalPlanLog(payload);
+
+      return response.data;
+    } catch (error: any) {
+      console.log("error", JSON.stringify(error?.response?.data, null, 2));
+      return rejectWithValue(
+        error.response?.data?.message || "Goal plan log not saved",
       );
     }
   },

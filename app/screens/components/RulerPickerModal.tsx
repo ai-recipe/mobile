@@ -63,13 +63,10 @@ export function RulerPickerModal({
     if (visible) {
       setValue(initialValue);
       const initialOffset = ((initialValue - min) / step) * TICK_SPACING + 20;
-      // Small delay to ensure ScrollView is mounted
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({
-          x: initialOffset,
-          animated: false,
-        });
-      }, 50);
+      scrollViewRef.current?.scrollTo({
+        x: initialOffset,
+        animated: false,
+      });
     }
   }, [visible, initialValue, min, step]);
 
