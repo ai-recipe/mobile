@@ -12,7 +12,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
-import { CopilotStep, walkthroughable } from "react-native-copilot";
+import { walkthroughable } from "react-native-copilot";
 
 const CopilotView = walkthroughable(View);
 
@@ -34,8 +34,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     },
   ];
   const homeIndicatorStyle = [
-    styles.homeIndicator,
-    { backgroundColor: theme.border },
+    {
+      backgroundColor: theme.border,
+      height: 3,
+      borderRadius: 100,
+      alignSelf: "center",
+      marginTop: 20,
+      marginBottom: 8,
+    },
   ];
   const scanButtonTouchableStyle = [
     styles.scanButtonTouchable,
@@ -181,42 +187,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               const iconColor = isFocused ? theme.tint : theme.tabIconDefault;
               const labelColor = isFocused ? theme.tint : theme.icon;
 
-              const getStepProps = (name: string) => {
-                switch (name) {
-                  case "explore":
-                    return {
-                      order: 3,
-                      name: "kesfet",
-                      text: "Sana özel önerileri ve trend tarifleri buradan keşfet.",
-                    };
-                  case "ai-chef":
-                    return {
-                      order: 4,
-                      name: "favoriler",
-                      text: "Beğendiğin tariflere buradan kolayca ulaş.",
-                    };
-                  case "recipes":
-                    return {
-                      order: 5,
-                      name: "tariflerim",
-                      text: "AI ile oluşturduğun tüm tariflerini burada saklıyoruz.",
-                    };
-                  default:
-                    return null;
-                }
-              };
-
-              const stepProps = getStepProps(route.name);
-
-              const tabItemContent = (
-                <CopilotView style={styles.tabItem}>
-                  {getIcon(route.name)}
-                  <Text style={[styles.tabLabel, { color: labelColor }]}>
-                    {getLabel(route.name)}
-                  </Text>
-                </CopilotView>
-              );
-
               return (
                 <TouchableOpacity
                   key={route.key}
@@ -227,19 +197,12 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   onPress={onPress}
                   onLongPress={onLongPress}
                   style={{ flex: 1 }}
+                  className="items-center"
                 >
-                  {stepProps ? (
-                    <CopilotStep
-                      key={route.name}
-                      order={stepProps.order}
-                      name={stepProps.name}
-                      text={stepProps.text}
-                    >
-                      {tabItemContent}
-                    </CopilotStep>
-                  ) : (
-                    tabItemContent
-                  )}
+                  {getIcon(route.name)}
+                  <Text style={[styles.tabLabel, { color: labelColor }]}>
+                    {getLabel(route.name)}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -355,13 +318,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     marginTop: 4,
-  },
-  homeIndicator: {
-    width: 128,
-    height: 5,
-    borderRadius: 100,
-    alignSelf: "center",
-    marginTop: 20,
-    marginBottom: 8,
   },
 });
