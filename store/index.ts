@@ -4,16 +4,15 @@ import authReducer from "./slices/authSlice";
 import dailyLogsReducer from "./slices/dailyLogsSlice";
 import exploreListReducer from "./slices/exploreListSlice";
 import favoritesListReducer from "./slices/favoritesListSlice";
+import goalPlansReducer from "./slices/goalPlansSlice";
 import modalReducer from "./slices/modalSlice";
 import multiStepFormReducer from "./slices/multiStepFormSlice";
 import progressReducer from "./slices/progressSlice";
 import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
-import surveyReducer from "./slices/surveySlice";
 import uiReducer from "./slices/uiSlice";
 import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
-
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
@@ -24,12 +23,12 @@ export const store = configureStore({
     exploreList: exploreListReducer,
     modal: modalReducer,
     app: appReducer,
-    survey: surveyReducer,
     multiStepForm: multiStepFormReducer,
     dailyLogs: dailyLogsReducer,
     waterLogs: waterLogsReducer,
     progress: progressReducer,
     user: userReducer,
+    goalPlans: goalPlansReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

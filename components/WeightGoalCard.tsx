@@ -27,7 +27,6 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
   return (
     <View className="m-4 p-5 rounded-3xl  bg-white dark:bg-[#1C1C1E]">
       <View className="flex-row items-center">
-        {/* Current Weight Section */}
         <View className="flex-1 items-center">
           <Text
             className="text-sm font-semibold mb-2 uppercase tracking-[0.5px]"
@@ -57,13 +56,11 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Divider */}
         <View
           className="w-[1px] h-full mx-2.5"
           style={{ backgroundColor: isDark ? "#2A2A2A" : "#F0F0F0" }}
         />
 
-        {/* Goal Weight Section */}
         <View className="flex-1 items-center">
           <Text
             className="text-sm font-semibold mb-2 uppercase tracking-[0.5px]"
@@ -94,7 +91,6 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
         </View>
       </View>
 
-      {/* Progress Bar (Visual indicator of how far to goal) */}
       <View className="mt-5 gap-2">
         <View
           className="h-1.5 rounded-full overflow-hidden"
@@ -104,7 +100,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             className="h-full rounded-full"
             style={{
               backgroundColor: theme.primary,
-              width: "65%", // Placeholder progress
+              width: "65%", // TODO
             }}
           />
         </View>
