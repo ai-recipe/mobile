@@ -302,6 +302,7 @@ const HomeScreen = () => {
           <ActivityTabSwitcher
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            colors={[themeColors.primary, "#3b82f6"]}
           />
 
           {/* Main Content */}

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 
@@ -29,6 +29,7 @@ export type AnimatedCircleProgressProps = {
   /** Rotate so progress starts from top; -90deg is common for 0 at top (default: true) */
   rotateFromTop?: boolean;
   style?: StyleProp<ViewStyle>;
+  icon?: React.ReactNode;
 };
 
 export function AnimatedCircleProgress({
@@ -43,6 +44,7 @@ export function AnimatedCircleProgress({
   maxPercentage = 100,
   rotateFromTop = true,
   style,
+  icon,
 }: AnimatedCircleProgressProps) {
   const { animatedCircleProps, circumference } = useCircleProgress(progress, {
     radius,
@@ -52,17 +54,23 @@ export function AnimatedCircleProgress({
 
   const cx = size / 2;
   const cy = size / 2;
-  const stroke = progress > 100 && exceedColor != null ? exceedColor : progressColor;
+  const stroke =
+    progress > 100 && exceedColor != null ? exceedColor : progressColor;
 
   return (
     <Svg
       width={size}
       height={size}
-      style={[
-        rotateFromTop && { transform: [{ rotate: "-90deg" }] },
-        style,
-      ]}
+      style={[rotateFromTop && { transform: [{ rotate: "-90deg" }] }, style]}
     >
+      {icon && (
+        <View
+          className="absolute inset-0 items-center justify-center"
+          style={{ transform: [{ rotate: "90deg" }] }}
+        >
+          {icon}
+        </View>
+      )}
       <Circle
         cx={cx}
         cy={cy}

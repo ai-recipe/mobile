@@ -87,7 +87,10 @@ export function SegmentedBarChart({
           return (
             <View
               key={bar.label + barIndex}
-              style={[styles.barRow, { marginBottom: barIndex < bars.length - 1 ? barGap : 0 }]}
+              style={[
+                styles.barRow,
+                { marginBottom: barIndex < bars.length - 1 ? barGap : 0 },
+              ]}
             >
               <View style={styles.barLabel}>
                 <Text
@@ -97,7 +100,9 @@ export function SegmentedBarChart({
                   {bar.label}
                 </Text>
               </View>
-              <View style={[styles.barTrack, { height: barHeight, borderRadius }]}>
+              <View
+                style={[styles.barTrack, { height: barHeight, borderRadius }]}
+              >
                 {total === 0 ? (
                   <View
                     style={[
@@ -116,7 +121,8 @@ export function SegmentedBarChart({
                   bar.segments
                     .filter((s) => s.value > 0)
                     .map((segment, segIndex) => {
-                      const widthPercent = total > 0 ? segment.value / total : 0;
+                      const widthPercent =
+                        total > 0 ? segment.value / total : 0;
                       const isFirst = segIndex === 0;
                       const isLast =
                         segIndex ===
@@ -213,11 +219,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     paddingHorizontal: 16,
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
   },
   title: {
     fontSize: 18,

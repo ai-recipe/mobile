@@ -23,6 +23,7 @@ interface MealActivityTabProps {
 const MacrosCard = ({
   consumedValue,
   goalValue,
+  title,
   progressColor,
   exceedColor,
   trackColor,
@@ -31,6 +32,7 @@ const MacrosCard = ({
   consumedValue: number;
   goalValue: number;
   unit: string;
+  title: string;
   progressColor: string;
   exceedColor: string;
   trackColor: string;
@@ -39,19 +41,25 @@ const MacrosCard = ({
   return (
     <View className="bg-white dark:bg-zinc-900 rounded-3xl p-2 border border-zinc-100 dark:border-zinc-800 flex-1">
       <View className="flex-row items-center justify-center w-full">
-        <View className="relative mr-6 items-center justify-center">
+        <View className="relative items-center justify-center">
+          <Text className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">
+            {title}
+          </Text>
           <AnimatedCircleProgress
             progress={progress}
             trackColor={trackColor}
             progressColor={progressColor}
             exceedColor={exceedColor}
+            size={50}
+            radius={20}
+            strokeWidth={6}
           />
-          <View className="flex-column items-center gap-2">
-            <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
-              {Math.round(consumedValue)}
+          <View className="flex-column items-center mt-4">
+            <Text className="text-md text-zinc-900 dark:text-white">
+              {Math.round(consumedValue)} {unit}
             </Text>
             <View className="flex-row items-center gap-2">
-              <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
+              <Text className="text-xm font-light text-zinc-300 dark:text-zinc-600">
                 /
               </Text>
               <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
@@ -164,7 +172,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
     <>
       <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
         {/* Circular Progress with Calories */}
-        <View className="flex-row items-center justify-center w-full">
+        <View className="flex-column items-center justify-center w-full">
           {/* SVG Circle */}
           <View className="relative w-24 h-24 mr-6 items-center justify-center">
             <AnimatedCircleProgress
@@ -172,102 +180,66 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
               trackColor={trackColor}
               progressColor={themeColors.primary}
               exceedColor={themeColors.error}
+              strokeWidth={10}
+              icon={
+                <MaterialIcons
+                  name="local-fire-department"
+                  size={24}
+                  color={themeColors.primary}
+                />
+              }
             />
           </View>
 
           {/* Calorie Numbers */}
-          <View className="flex-col items-start">
-            <View className="flex-row items-baseline gap-2">
-              <Text className="text-5xl font-bold text-zinc-900 dark:text-white">
-                {Math.round(consumedCalories)}
-              </Text>
-              <Text className="text-4xl font-light text-zinc-300 dark:text-zinc-600">
-                /
+          <View className="flex-column items-center justify-center gap-2 mt-4">
+            <View className="flex-row items-center justify-center">
+              <View className="flex-row items-baseline">
+                <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
+                  {Math.round(consumedCalories)}
+                </Text>
+                <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
+                  /
+                </Text>
+              </View>
+              <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
+                {calorieGoal}
               </Text>
             </View>
-            <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-              {calorieGoal} calories
+            <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">
+              calories consumed
             </Text>
           </View>
         </View>
       </View>
-      <View className="flex flex-row gap-4">
-        <View className="bg-white dark:bg-zinc-900 rounded-3xl p-2 border border-zinc-100 dark:border-zinc-800 flex-1">
-          <View className="flex-row items-center justify-center w-full">
-            <View className="relative mr-6 items-center justify-center">
-              <AnimatedCircleProgress
-                progress={calorieProgress}
-                trackColor={trackColor}
-                progressColor={themeColors.primary}
-                exceedColor={themeColors.error}
-              />
-              <View className="flex-column items-center gap-2">
-                <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
-                  {Math.round(consumedCalories)}
-                </Text>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
-                    /
-                  </Text>
-                  <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                    {calorieGoal} calories
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View className="bg-white dark:bg-zinc-900 rounded-3xl p-2 border border-zinc-100 dark:border-zinc-800 flex-1">
-          <View className="flex-row items-center justify-center w-full">
-            <View className="relative mr-6 items-center justify-center">
-              <AnimatedCircleProgress
-                progress={calorieProgress}
-                trackColor={trackColor}
-                progressColor={themeColors.primary}
-                exceedColor={themeColors.error}
-              />
-              <View className="flex-column items-center gap-2">
-                <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
-                  {Math.round(consumedCalories)}
-                </Text>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
-                    /
-                  </Text>
-                  <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                    {calorieGoal} calories
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View className="bg-white dark:bg-zinc-900 rounded-3xl p-2 border border-zinc-100 dark:border-zinc-800 flex-1">
-          <View className="flex-row items-center justify-center w-full">
-            <View className="relative mr-6 items-center justify-center">
-              <AnimatedCircleProgress
-                progress={calorieProgress}
-                trackColor={trackColor}
-                progressColor={themeColors.primary}
-                exceedColor={themeColors.error}
-              />
-              <View className="flex-column items-center gap-2">
-                <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
-                  {Math.round(consumedCalories)}
-                </Text>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
-                    /
-                  </Text>
-                  <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                    {calorieGoal} calories
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+      <View className="flex flex-row gap-4 mb-6">
+        <MacrosCard
+          consumedValue={Math.round(summary?.totalProteinGrams || 0)}
+          goalValue={Math.round(summary?.targetProteinGrams || 0)}
+          unit="g"
+          progressColor={themeColors.primary}
+          exceedColor={themeColors.error}
+          trackColor={trackColor}
+          title="Protein"
+        />
+        <MacrosCard
+          consumedValue={Math.round(summary?.totalCarbsGrams || 0)}
+          goalValue={Math.round(summary?.targetCarbsGrams || 0)}
+          unit="g"
+          progressColor={themeColors.primary}
+          exceedColor={themeColors.error}
+          trackColor={trackColor}
+          title="Carbs"
+        />
+        <MacrosCard
+          consumedValue={Math.round(summary?.totalFatGrams || 0)}
+          goalValue={Math.round(summary?.targetFatGrams || 0)}
+          unit="g"
+          progressColor={themeColors.primary}
+          exceedColor={themeColors.error}
+          trackColor={trackColor}
+          title="Fat"
+        />
       </View>
       {/* Entries List */}
       {isLoading ? (

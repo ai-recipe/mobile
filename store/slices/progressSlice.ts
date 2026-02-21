@@ -10,7 +10,10 @@ interface ProgressDataState {
   isPostingWeightLog: boolean;
 }
 const initialState: ProgressDataState = {
-  startDate: new Date().toISOString().split("T")[0],
+  //weekly start date is 7 days ago
+  startDate: new Date(new Date().setDate(new Date().getDate() - 7))
+    .toISOString()
+    .split("T")[0],
   endDate: new Date().toISOString().split("T")[0],
   progressData: {
     startDate: "",

@@ -4,11 +4,13 @@ import { Pressable, Text, View } from "react-native";
 interface ActivityTabSwitcherProps {
   activeTab: "meal" | "water";
   onTabChange: (tab: "meal" | "water") => void;
+  colors: string[];
 }
 
 export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
   activeTab,
   onTabChange,
+  colors = ["#f39849", "#f39849"],
 }) => {
   return (
     <View className="px-6 mb-4">
@@ -24,7 +26,7 @@ export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
           <Text
             className={`text-center text-sm font-bold ${
               activeTab === "meal"
-                ? "text-[#f39849]"
+                ? `text-[${colors[0]}]`
                 : "text-zinc-500 dark:text-zinc-400"
             }`}
           >
@@ -42,7 +44,7 @@ export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
           <Text
             className={`text-center text-sm font-bold ${
               activeTab === "water"
-                ? "text-[#f39849]"
+                ? `text-[${colors[1]}]`
                 : "text-zinc-500 dark:text-zinc-400"
             }`}
           >
