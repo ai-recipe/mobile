@@ -62,10 +62,12 @@ export const fetchProgressData = async (payload: {
 export const postWeightLog = async (payload: {
   weightKg: number;
   note?: string;
+  loggedAt: string;
 }) => {
   const response = await api.post("/nutrition/weight-log", {
     weightKg: payload.weightKg,
     note: "Weight Log",
+    loggedAt: payload.loggedAt,
   });
   return response.data;
 };

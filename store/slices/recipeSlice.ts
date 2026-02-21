@@ -80,7 +80,6 @@ export const discoverRecipesAsync = createAsyncThunk(
         maxPrepTime: params.maxPrepTime,
         dietaryPreferences: params.dietaryPreferences,
       });
-      console.log("response", JSON.stringify(response, null, 2));
       dispatch(setAppStep(AppStep.Results));
       return response?.data;
     } catch (error: any) {

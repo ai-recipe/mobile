@@ -21,6 +21,7 @@ import {
   deleteWaterIntakeAsync,
   fetchWaterIntakeAsync,
 } from "@/store/slices/waterLogsSlice";
+import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import {
   endOfDay,
   format,
@@ -248,7 +249,7 @@ const HomeScreen = () => {
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
           {/* Date Selector */}
-          <View className="px-4 pb-6 pt-2">
+          <View className="px-4 pb-4 pt-2">
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -263,13 +264,14 @@ const HomeScreen = () => {
                     <Pressable
                       key={index}
                       onPress={() => handleDateSelect(item.date)}
-                      className={`flex items-center justify-center w-16 h-20 rounded-2xl border ${
+                      className={`flex items-center justify-center w-16 h-16 rounded-full border ${
                         isActive
                           ? "bg-[#f39849] border-[#f39849]"
                           : "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
                       }
                       ${isDisabled ? "opacity-50" : ""}
                       `}
+                      disabled={isDisabled}
                       style={isActive ? { transform: [{ scale: 1.05 }] } : {}}
                     >
                       <Text
@@ -310,6 +312,15 @@ const HomeScreen = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 100 }}
           >
+            <View className="flex flex-row justify-end px-4 mb-4">
+              <Pressable className=" px-4 py-2 rounded-full active:bg-gray-100 flex-row items-center gap-2">
+                <MaterialIcons name="edit" size={18} color="#f39849" />
+
+                <Text className="text-primary font-bold text-md">
+                  Edit Goals
+                </Text>
+              </Pressable>
+            </View>
             {activeTab === "meal" ? (
               <MealActivityTab
                 consumedCalories={consumedCalories}

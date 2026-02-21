@@ -93,7 +93,6 @@ export const toggleFavorite = createAsyncThunk(
     { rejectWithValue, dispatch },
   ) => {
     try {
-      console.log(recipeId);
       if (isFavorite) {
         await removeFavorite(recipeId);
       } else {

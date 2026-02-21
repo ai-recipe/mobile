@@ -70,6 +70,7 @@ export const postWeightLogAsync = createAsyncThunk(
     try {
       const response = await postWeightLog({
         weightKg: payload.weightKg,
+        loggedAt: new Date().toISOString(),
       });
       const state = getState() as RootState;
       const { startDate, endDate } = state.progress;

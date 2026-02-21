@@ -263,6 +263,13 @@ const dailyLogsSlice = createSlice({
       state.error = action.payload as string;
     });
 
+    // Delete Food Log
+    builder.addCase(deleteFoodLogAsync.pending, (state, payload) => {
+      state.entries = state.entries.filter(
+        (entry) => entry.id !== payload.meta.arg.id,
+      );
+    });
+
     // Fetch Recent Meals
     builder.addCase(fetchRecentMealsAsync.pending, (state) => {
       state.isRecentLoading = true;

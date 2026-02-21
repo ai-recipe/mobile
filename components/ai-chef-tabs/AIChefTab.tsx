@@ -24,7 +24,6 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
   const { recipes, isLoadingRecipes, isLoadingMore, meta, hasMore } =
     useAppSelector((state) => state.recipeList);
 
-  console.log("hasmore", hasMore, "meta", meta);
   const handleLoadMore = () => {
     if (!isLoadingMore && !isLoadingRecipes && hasMore) {
       dispatch(

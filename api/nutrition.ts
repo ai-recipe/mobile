@@ -105,7 +105,10 @@ export const fetchWaterIntake = async (params?: { date?: string }) => {
   return response.data;
 };
 
-export const addWaterIntake = async (body: { amountMl: number }) => {
+export const addWaterIntake = async (body: {
+  amountMl: number;
+  loggedAt: string;
+}) => {
   const response = await api.post<{
     id: string;
     amountMl: number;

@@ -1,7 +1,32 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Text, View } from "react-native";
+
+// Custom hook to handle smooth number counting and sliding animations
+const useAnimatedNumber = (targetValue: number, duration: number = 400) => {
+  const [value, setValue] = useState(targetValue || 0);
+  const anim = useRef(new Animated.Value(targetValue || 0)).current;
+
+  useEffect(() => {
+    anim.removeAllListeners();
+    const listenerId = anim.addListener((state) => {
+      setValue(state.value);
+    });
+
+    Animated.timing(anim, {
+      toValue: targetValue || 0,
+      duration,
+      useNativeDriver: false, // Required because we are updating state for text/layout
+    }).start();
+
+    return () => {
+      anim.removeListener(listenerId);
+    };
+  }, [targetValue, duration]);
+
+  return value;
+};
 
 interface BMICardProps {
   bmi: number;
@@ -12,6 +37,9 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
   const theme = Colors[colorScheme ?? "light"];
   const isDark = colorScheme === "dark";
 
+  // Feed the prop into our custom animation hook
+  const animatedBMI = useAnimatedNumber(bmi);
+
   const getBMIStatus = (val: number) => {
     if (val < 18.5) return { label: "Underweight", color: "#5C8CE4" };
     if (val < 25) return { label: "Healthy", color: "#27AE60" };
@@ -19,16 +47,16 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
     return { label: "Obese", color: "#D15F5F" };
   };
 
-  const status = getBMIStatus(bmi);
+  // Derive status from the animated value so color/label change dynamically
+  const status = getBMIStatus(animatedBMI);
 
-  // Calculate position percentage for the indicator
-  // Bar represents range 0 to 50
+  // Calculate position percentage for the indicator using animated value
   const maxBMI = 50;
-  const clampedBMI = Math.min(Math.max(bmi, 0), maxBMI);
+  const clampedBMI = Math.min(Math.max(animatedBMI, 0), maxBMI);
   const positionPercent = (clampedBMI / maxBMI) * 100;
 
   return (
-    <View className="m-4 p-6 rounded-[20px]  bg-white dark:bg-[#1C1C1E]">
+    <View className="m-4 p-6 rounded-[20px] bg-white dark:bg-[#1C1C1E]">
       <View className="flex-row justify-between items-center mb-5">
         <Text className="text-lg font-semibold" style={{ color: theme.text }}>
           Your BMI
@@ -40,7 +68,7 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
           className="text-[48px] font-extrabold leading-[56px]"
           style={{ color: theme.text }}
         >
-          {bmi.toFixed(1)}
+          {animatedBMI.toFixed(1)}
         </Text>
         <View className="flex-row items-center shrink">
           <Text
@@ -89,6 +117,9 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
               }}
             />
           </View>
+          {/* Because positionPercent changes every frame from the useAnimatedNumber state, 
+            this vertical line will smoothly slide across the bar. 
+          */}
           <View
             className="absolute top-[-4px] bottom-[-4px] w-[2.5px] z-10 rounded-sm"
             style={{

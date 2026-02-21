@@ -44,9 +44,6 @@ export default function ProgressScreen() {
     (state) => state.goalPlans,
   );
 
-  console.log("startDate", startDate);
-  console.log("endDate", endDate);
-  console.log("progressData", JSON.stringify(progressData, null, 2));
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchProgressDataAsync({ startDate, endDate }) as any);
