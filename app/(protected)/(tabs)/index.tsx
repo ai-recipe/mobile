@@ -21,7 +21,6 @@ import {
   deleteWaterIntakeAsync,
   fetchWaterIntakeAsync,
 } from "@/store/slices/waterLogsSlice";
-import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import {
   endOfDay,
   format,
@@ -312,15 +311,6 @@ const HomeScreen = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 100 }}
           >
-            <View className="flex flex-row justify-end px-4 mb-4">
-              <Pressable className=" px-4 py-2 rounded-full active:bg-gray-100 flex-row items-center gap-2">
-                <MaterialIcons name="edit" size={18} color="#f39849" />
-
-                <Text className="text-primary font-bold text-md">
-                  Edit Goals
-                </Text>
-              </Pressable>
-            </View>
             {activeTab === "meal" ? (
               <MealActivityTab
                 consumedCalories={consumedCalories}

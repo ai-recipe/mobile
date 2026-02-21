@@ -12,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TopNavBar } from "./TopNavBar";
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -76,7 +75,6 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
           </Text>
         )}
       </View>
-      {showTopNavBar && <TopNavBar />}
       {children}
     </View>
   );
