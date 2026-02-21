@@ -90,8 +90,9 @@ export const postGoalPlanLogAsync = createAsyncThunk(
         dispatch(setGoalPlan(rest));
         dispatch(fetchRecentMealsAsync() as any);
       }
-
+      console.log("rest", JSON.stringify(rest, null, 2));
       const response = await postGoalPlanLog(rest);
+      console.log("response", JSON.stringify(response.data, null, 2));
 
       return response.data;
     } catch (error: any) {

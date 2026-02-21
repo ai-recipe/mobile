@@ -129,34 +129,42 @@ const NutritionGoals = () => {
             <NutritionGoalCard
               icon="local-fire-department"
               label="Calorie Goal"
-              value={goals.calories}
+              value={goals.targetCalories?.toString()}
               unit="kcal"
               color={Colors[colorScheme].primary}
-              onChange={(val) => setGoals({ ...goals, calories: val })}
+              onChange={(val) =>
+                setGoals({ ...goals, targetCalories: parseInt(val) })
+              }
             />
             <NutritionGoalCard
               icon="fitness-center"
               label="Protein Goal"
-              value={goals.protein}
+              value={goals.targetProteinG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) => setGoals({ ...goals, protein: val })}
+              onChange={(val) =>
+                setGoals({ ...goals, targetProteinG: parseInt(val) })
+              }
             />
             <NutritionGoalCard
               icon="grass"
               label="Carb Goal"
-              value={goals.carbs}
+              value={goals.targetCarbsG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) => setGoals({ ...goals, carbs: val })}
+              onChange={(val) =>
+                setGoals({ ...goals, targetCarbsG: parseInt(val) })
+              }
             />
             <NutritionGoalCard
               icon="local-fire-department"
               label="Fat Goal"
-              value={goals.fat}
+              value={goals.targetFatG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) => setGoals({ ...goals, fat: val })}
+              onChange={(val) =>
+                setGoals({ ...goals, targetFatG: parseInt(val) })
+              }
             />
           </ScrollView>
 
