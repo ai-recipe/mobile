@@ -32,6 +32,7 @@ import {
   postGoalPlanLog,
 } from "@/api/goalPlan";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchRecentMealsAsync } from "./dailyLogsSlice";
 import { setTargetWeightKgProgressSlice } from "./progressSlice";
 
 interface GoalPlanState {
@@ -71,6 +72,7 @@ export const postGoalPlanLogAsync = createAsyncThunk(
   "goalPlans/postGoalPlanLog",
   async (
     payload: {
+      from: "progress" | "profile";
       targetWeightKg?: number;
       targetCalories?: number;
       targetProteinG?: number;
@@ -81,9 +83,15 @@ export const postGoalPlanLogAsync = createAsyncThunk(
     { rejectWithValue, dispatch },
   ) => {
     try {
-      dispatch(setTargetWeightKgProgressSlice(payload.targetWeightKg));
+      const { from, ...rest } = payload;
+      if (from === "progress") {
+        dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
+      } else if (from === "profile") {
+        dispatch(setGoalPlan(rest));
+        dispatch(fetchRecentMealsAsync() as any);
+      }
 
-      const response = await postGoalPlanLog(payload);
+      const response = await postGoalPlanLog(rest);
 
       return response.data;
     } catch (error: any) {
@@ -98,7 +106,11 @@ export const postGoalPlanLogAsync = createAsyncThunk(
 const goalPlansSlice = createSlice({
   name: "goalPlans",
   initialState,
-  reducers: {},
+  reducers: {
+    setGoalPlan: (state, action) => {
+      state.goalPlan = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchGoalPlanActiveAsync.fulfilled, (state, action) => {
       state.goalPlan = action.payload;
@@ -107,3 +119,4 @@ const goalPlansSlice = createSlice({
 });
 
 export default goalPlansSlice.reducer;
+export const { setGoalPlan } = goalPlansSlice.actions;

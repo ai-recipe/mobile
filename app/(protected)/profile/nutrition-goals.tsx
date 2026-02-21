@@ -2,7 +2,7 @@ import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updatePersonalDetailsAsync } from "@/store/slices/userSlice";
+import { postGoalPlanLogAsync } from "@/store/slices/goalPlansSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -81,23 +81,29 @@ const NutritionGoalCard = ({
     </Pressable>
   );
 };
-
+/**
+ * 
+ * @returns }
+ LOG  {"createdAt": "2026-02-21T14:04:53.402+00:00", "effectiveFrom": "2026-02-21T14:04:53.401+00:00", "effectiveTo": null, "id": "d667dec5-6590-41ff-885e-abf5c7e862ac", "metadata": null, "targetCalories": null, "targetCarbsG": null, "targetFatG": null, "targetProteinG": null, "targetWaterMl": null, "targetWeightKg": 45, "userId": "e7fd42d2-bee4-4455-ac35-64a6cf753e37"}
+ */
 const NutritionGoals = () => {
   const router = useRouter();
-  const { personalDetails } = useAppSelector((state) => state.user);
-
+  const { goalPlan } = useAppSelector((state) => state.goalPlans);
+  console.log(goalPlan);
   const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
 
   const [goals, setGoals] = useState({
-    calories: personalDetails?.dailyCalorieGoal?.toString() || "0",
-    protein: personalDetails?.dailyProteinGoal?.toString() || "0",
-    carbs: personalDetails?.dailyCarbGoal?.toString() || "0",
-    fat: personalDetails?.dailyFatGoal?.toString() || "0",
+    targetWeightKg: goalPlan?.targetWeightKg || 0,
+    targetWaterMl: goalPlan?.targetWaterMl || 0,
+    targetCalories: goalPlan?.targetCalories || 0,
+    targetProteinG: goalPlan?.targetProteinG || 0,
+    targetCarbsG: goalPlan?.targetCarbsG || 0,
+    targetFatG: goalPlan?.targetFatG || 0,
   });
 
   const handleSave = () => {
-    dispatch(updatePersonalDetailsAsync(goals));
+    dispatch(postGoalPlanLogAsync({ from: "profile", ...goals }));
     router.back();
   };
 
@@ -163,26 +169,6 @@ const NutritionGoals = () => {
               <Text className="text-white dark:text-zinc-900 font-bold text-lg">
                 Save Changes
               </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 py-4 rounded-[22px] items-center justify-center flex-row gap-3"
-              activeOpacity={0.7}
-            >
-              <MaterialIcons
-                name="auto-awesome"
-                size={18}
-                color={Colors[colorScheme].primary}
-              />
-              <Pressable
-                onPress={() => {
-                  router.push("/screens/survey");
-                }}
-              >
-                <Text className="text-primary dark:text-white font-bold text-base">
-                  Auto Generate Goals
-                </Text>
-              </Pressable>
             </TouchableOpacity>
           </View>
         </View>

@@ -67,7 +67,7 @@ export function LineChart({
   const axisTextColor = isDark ? "#888888" : "#A0A0A0";
 
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900 p-4 rounded-2xl  mx-4">
+    <View className="flex-1 bg-white dark:bg-zinc-900 p-4 rounded-2xl">
       {title != null && (
         <Text className="text-md font-semibold mb-4">{title}</Text>
       )}

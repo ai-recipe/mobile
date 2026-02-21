@@ -57,7 +57,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
   const animatedRemaining = Math.abs(animatedCurrent - animatedGoal);
 
   return (
-    <View className="m-4 p-5 rounded-3xl bg-white dark:bg-[#1C1C1E]">
+    <View className="p-6 rounded-3xl bg-white dark:bg-[#1C1C1E]">
       <View className="flex-row items-center">
         <View className="flex-1 items-center">
           <Text

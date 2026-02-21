@@ -1,9 +1,17 @@
 import { DailySummary, FoodLogEntry } from "@/api/nutrition";
 import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
+import { Colors } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
+import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface MealActivityTabProps {
   consumedCalories: number;
@@ -55,7 +63,7 @@ const MacrosCard = ({
             strokeWidth={6}
           />
           <View className="flex-column items-center mt-4">
-            <Text className="text-md text-zinc-900 dark:text-white">
+            <Text className="text-lg font-semibold text-zinc-900 dark:text-white">
               {Math.round(consumedValue)} {unit}
             </Text>
             <View className="flex-row items-center gap-2">
@@ -170,6 +178,27 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
 
   return (
     <>
+      <View className="mb-4">
+        <TouchableOpacity
+          className="flex-row items-center gap-2 ml-auto"
+          activeOpacity={0.7}
+        >
+          <MaterialIcons
+            name="edit"
+            size={18}
+            color={Colors[colorScheme].primary}
+          />
+          <Pressable
+            onPress={() => {
+              router.push("/profile/nutrition-goals");
+            }}
+          >
+            <Text className="text-primary dark:text-white font-bold text-base">
+              Edit Nutrition Goals
+            </Text>
+          </Pressable>
+        </TouchableOpacity>
+      </View>
       <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
         {/* Circular Progress with Calories */}
         <View className="flex-column items-center justify-center w-full">
@@ -194,7 +223,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           {/* Calorie Numbers */}
           <View className="flex-column items-center justify-center gap-2 mt-4">
             <View className="flex-row items-center justify-center">
-              <View className="flex-row items-baseline">
+              <View className="flex-row items-baseline gap-1">
                 <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
                   {Math.round(consumedCalories)}
                 </Text>

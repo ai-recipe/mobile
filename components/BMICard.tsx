@@ -56,7 +56,7 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
   const positionPercent = (clampedBMI / maxBMI) * 100;
 
   return (
-    <View className="m-4 p-6 rounded-[20px] bg-white dark:bg-[#1C1C1E]">
+    <View className="p-6 rounded-[20px] bg-white dark:bg-[#1C1C1E]">
       <View className="flex-row justify-between items-center mb-5">
         <Text className="text-lg font-semibold" style={{ color: theme.text }}>
           Your BMI

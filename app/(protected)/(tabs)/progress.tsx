@@ -1,6 +1,6 @@
 import { NumberInputModal } from "@/app/screens/components/NumberInputModal";
 import { BMICard } from "@/components/BMICard";
-import { LineChart, SegmentedBarChart } from "@/components/charts";
+import { LineChart } from "@/components/charts";
 import { WeightGoalCard } from "@/components/WeightGoalCard";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { TabScreenWrapper } from "./components/TabScreenWrapper";
@@ -51,7 +52,18 @@ export default function ProgressScreen() {
     dispatch(postWeightLogAsync({ weightKg: value }) as any);
   };
   const handleSaveGoalWeight = (value: number) => {
-    dispatch(postGoalPlanLogAsync({ targetWeightKg: value }) as any);
+    dispatch(
+      postGoalPlanLogAsync({
+        from: "progress",
+
+        targetWeightKg: value,
+        targetCalories: activeGoalPlan?.targetCalories,
+        targetProteinG: activeGoalPlan?.targetProteinG,
+        targetCarbsG: activeGoalPlan?.targetCarbsG,
+        targetFatG: activeGoalPlan?.targetFatG,
+        targetWaterMl: activeGoalPlan?.targetWaterMl,
+      }) as any,
+    );
   };
 
   const chartData = useMemo(() => {
@@ -108,59 +120,93 @@ export default function ProgressScreen() {
     });
   }, [progressData.weightTrend.dailyBreakdown]);
 
-  const chartBars = useMemo(() => {
+  const stackData = useMemo(() => {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {
-      // Format date to "Wed", "Thu", etc.
-      const label = new Date(day.date).toLocaleDateString("en-US", {
-        weekday: "short",
-      });
+      const date = new Date(day.date);
+      // day and month name
+      const label = `${date.getDay()} ${date.toLocaleDateString("en-US", {
+        month: "short",
+      })}`;
+
+      // Calorie calculation
+      const proteinCals = day.totalProteinGrams * 4;
+      const carbCals = day.totalCarbsGrams * 4;
+      const fatCals = day.totalFatGrams * 9;
 
       return {
         label: label,
-        segments: [
+        stacks: [
           {
-            label: "Protein",
-            value: day.totalProteinGrams,
-            color: "#5C8CE4", // Blue
+            value: proteinCals,
+            color: "#5C8CE4", // Protein
           },
           {
-            label: "Carbs",
-            value: day.totalCarbsGrams,
-            color: "#27AE60", // Green
+            value: carbCals,
+            color: "#27AE60", // Carbs
           },
           {
-            label: "Fat",
-            value: day.totalFatGrams,
-            color: "#E2B15B", // Yellow/Orange
+            value: fatCals,
+            color: "#E2B15B", // Fat
           },
         ],
       };
     });
   }, [progressData.calorieIntake.dailyBreakdown]);
+  console.log(progressData.calorieIntake.dailyBreakdown);
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
-        <></>
         <ScrollView>
-          <WeightGoalCard
-            currentWeight={progressData.weightTrend.currentKg}
-            goalWeight={progressData.weightTrend.targetKg}
-            onUpdateCurrentWeight={() => setIsCurrentWeightModalVisible(true)}
-            onUpdateGoalWeight={() => setIsGoalWeightModalVisible(true)}
-          />
-          <SegmentedBarChart
-            title="Calorie Intake Weekly"
-            bars={chartBars}
-            showLegend={false}
-          />
+          <View className="mx-4 flex-col gap-4">
+            <WeightGoalCard
+              currentWeight={progressData.weightTrend.currentKg}
+              goalWeight={progressData.weightTrend.targetKg}
+              onUpdateCurrentWeight={() => setIsCurrentWeightModalVisible(true)}
+              onUpdateGoalWeight={() => setIsGoalWeightModalVisible(true)}
+            />
+            <BMICard bmi={progressData.weightTrend.bmi} />
 
-          <LineChart
-            title="Weight Progress Weekly"
-            data={chartData}
-            showDataPoints={false}
-          />
-
-          <BMICard bmi={progressData.weightTrend.bmi} />
+            <View className="bg-white dark:bg-zinc-900 p-4 rounded-3xl overflow-hidden flex-1 relative mb-4">
+              <Text className="text-lg font-bold mb-6">Calorie Intake</Text>
+              <View className="absolute top-6 right-4 flex-row gap-2">
+                <View className="h-4 w-4  rounded-full bg-[#5C8CE4]" />
+                <Text className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Protein
+                </Text>
+                <View className="h-4 w-4  rounded-full bg-[#47AE60]"></View>
+                <Text className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Carbs
+                </Text>
+                <View className="h-4 w-4  rounded-full bg-[#E2B15B]"></View>
+                <Text className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Fat
+                </Text>
+              </View>
+              <BarChart
+                width={300}
+                barWidth={20}
+                spacing={35}
+                noOfSections={5}
+                stackData={stackData}
+                // Y-Axis formatting
+                yAxisThickness={0}
+                yAxisColor="#ccc"
+                xAxisThickness={0}
+                yAxisTextStyle={{ color: "#94A3B8", fontSize: 11 }}
+                xAxisLabelTextStyle={{ color: "#94A3B8", fontSize: 11 }}
+                // Styling
+                showVerticalLines={false}
+                yAxisLabelSuffix=" kcal"
+              />
+            </View>
+            {false && (
+              <LineChart
+                title="Weight Progress Weekly"
+                data={chartData}
+                showDataPoints={false}
+              />
+            )}
+          </View>
 
           <NumberInputModal
             visible={isCurrentWeightModalVisible}
@@ -184,7 +230,7 @@ export default function ProgressScreen() {
             title="Goal weight"
             fractionDigits={1}
           />
-          <View className="p-4 flex flex-row gap-3">
+          <View className="p-4 flex flex-row gap-3 mb-8">
             <TouchableOpacity
               className="flex-1 bg-primary py-4 rounded-full items-center justify-center flex-row gap-3 "
               activeOpacity={0.7}
@@ -197,25 +243,6 @@ export default function ProgressScreen() {
               >
                 <Text className="text-white font-bold text-base">
                   Auto Generate Goals
-                </Text>
-              </Pressable>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex-1 bg-white dark:bg-zinc-900 py-4 rounded-full items-center justify-center flex-row gap-3 "
-              activeOpacity={0.7}
-            >
-              <MaterialIcons
-                name="edit"
-                size={18}
-                color={Colors[colorScheme].primary}
-              />
-              <Pressable
-                onPress={() => {
-                  router.push("/screens/survey");
-                }}
-              >
-                <Text className="text-primary dark:text-white font-bold text-base">
-                  Edit Nutrition Goals
                 </Text>
               </Pressable>
             </TouchableOpacity>
