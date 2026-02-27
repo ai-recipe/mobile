@@ -190,7 +190,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           />
           <Pressable
             onPress={() => {
-              router.push("/profile/nutrition-goals");
+              router.push("/profile/nutrition-goals?from=progress");
             }}
           >
             <Text className="text-primary dark:text-white font-bold text-base">

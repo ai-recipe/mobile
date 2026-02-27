@@ -89,7 +89,6 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
-      console.log("response", response.data?.data);
       dispatch(fetchSurveyQuestionsAsync());
 
       if (!response.data?.data) {
@@ -112,7 +111,6 @@ export const fetchSurveyQuestionsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await SurveyService.getSurveyQuestionsAPI();
-      console.log("response", response.data);
       return response.data?.data?.questions;
     } catch (error: any) {
       console.log("error", error);

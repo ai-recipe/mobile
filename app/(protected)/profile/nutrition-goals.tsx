@@ -4,7 +4,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { postGoalPlanLogAsync } from "@/store/slices/goalPlansSlice";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -89,7 +89,6 @@ const NutritionGoalCard = ({
 const NutritionGoals = () => {
   const router = useRouter();
   const { goalPlan } = useAppSelector((state) => state.goalPlans);
-  console.log(goalPlan);
   const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
 
@@ -102,8 +101,10 @@ const NutritionGoals = () => {
     targetFatG: goalPlan?.targetFatG || 0,
   });
 
+  const from = useLocalSearchParams().from;
   const handleSave = () => {
-    dispatch(postGoalPlanLogAsync({ from: "profile", ...goals }));
+    dispatch(postGoalPlanLogAsync({ from: from as any, ...goals }));
+
     router.back();
   };
 

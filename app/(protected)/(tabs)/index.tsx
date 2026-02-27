@@ -13,6 +13,8 @@ import {
   addFoodLogAsync,
   deleteFoodLogAsync,
   fetchFoodLogsAsync,
+  setEndDate,
+  setStartDate,
   updateFoodLogAsync,
 } from "@/store/slices/dailyLogsSlice";
 import { closeMealModal, openMealModal } from "@/store/slices/modalSlice";
@@ -91,7 +93,9 @@ const HomeScreen = () => {
     useCallback(() => {
       setActiveTab("meal");
       const dateStr = format(selectedDate, "yyyy-MM-dd");
-      dispatch(fetchFoodLogsAsync({ startDate: dateStr, endDate: dateStr }));
+      dispatch(setStartDate(dateStr));
+      dispatch(setEndDate(dateStr));
+      dispatch(fetchFoodLogsAsync());
       dispatch(fetchWaterIntakeAsync(dateStr));
     }, [selectedDate, dispatch]),
   );

@@ -10,6 +10,7 @@ import {
 } from "@/api/nutrition";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
+import { RootState } from "..";
 
 interface DailyLogsState {
   entries: FoodLogEntry[];
@@ -18,6 +19,8 @@ interface DailyLogsState {
   isLoading: boolean;
   isRecentLoading: boolean;
   error: string | null;
+  startDate: string;
+  endDate: string;
 }
 
 const initialState: DailyLogsState = {
@@ -36,16 +39,19 @@ const initialState: DailyLogsState = {
   isLoading: false,
   isRecentLoading: false,
   error: null,
+  startDate: "",
+  endDate: "",
 };
 
 export const fetchFoodLogsAsync = createAsyncThunk(
   "dailyLogs/fetchFoodLogs",
-  async (
-    params: { startDate?: string; endDate?: string } | undefined,
-    { rejectWithValue },
-  ) => {
+  async (_, { rejectWithValue, getState }) => {
+    const state = getState() as RootState;
     try {
-      const response = await fetchFoodLogs(params);
+      const response = await fetchFoodLogs({
+        startDate: state.dailyLogs.startDate,
+        endDate: state.dailyLogs.endDate,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -62,8 +68,7 @@ export const addFoodLogAsync = createAsyncThunk(
   async (data: AddFoodLogParams, { rejectWithValue, dispatch }) => {
     try {
       const response = await addFoodLog(data);
-      const date = data.loggedAt?.split("T")[0];
-      dispatch(fetchFoodLogsAsync({ startDate: date, endDate: date }));
+      dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -83,12 +88,7 @@ export const updateFoodLogAsync = createAsyncThunk(
   ) => {
     try {
       const response = await updateFoodLog(id, data);
-      dispatch(
-        fetchFoodLogsAsync({
-          startDate: data.loggedAt?.split("T")[0],
-          endDate: data.loggedAt?.split("T")[0],
-        }),
-      );
+      dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -102,17 +102,10 @@ export const updateFoodLogAsync = createAsyncThunk(
 
 export const deleteFoodLogAsync = createAsyncThunk(
   "dailyLogs/deleteFoodLog",
-  async (
-    { id, date }: { id: string; date?: string },
-    { rejectWithValue, dispatch },
-  ) => {
+  async ({ id }: { id: string }, { rejectWithValue, dispatch }) => {
     try {
       const response = await deleteFoodLog(id);
-      dispatch(
-        fetchFoodLogsAsync(
-          date ? { startDate: date, endDate: date } : undefined,
-        ),
-      );
+      dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -184,6 +177,12 @@ const dailyLogsSlice = createSlice({
   name: "dailyLogs",
   initialState,
   reducers: {
+    setStartDate: (state, action: PayloadAction<string>) => {
+      state.startDate = action.payload;
+    },
+    setEndDate: (state, action: PayloadAction<string>) => {
+      state.endDate = action.payload;
+    },
     addTemporaryFoodLog: (
       state,
       action: PayloadAction<{
@@ -219,6 +218,8 @@ const dailyLogsSlice = createSlice({
         targetCarbsGrams: 0,
         targetFatGrams: 0,
       };
+      state.startDate = "";
+      state.endDate = "";
       state.error = null;
     },
   },
@@ -284,6 +285,10 @@ const dailyLogsSlice = createSlice({
   },
 });
 
-export const { clearDailyLogsState, addTemporaryFoodLog } =
-  dailyLogsSlice.actions;
+export const {
+  clearDailyLogsState,
+  addTemporaryFoodLog,
+  setStartDate,
+  setEndDate,
+} = dailyLogsSlice.actions;
 export default dailyLogsSlice.reducer;

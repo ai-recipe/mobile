@@ -48,7 +48,6 @@ export default function ProgressScreen() {
     useState(false);
 
   const handleSaveCurrentWeight = (value: number) => {
-    console.log("value", value);
     dispatch(postWeightLogAsync({ weightKg: value }) as any);
   };
   const handleSaveGoalWeight = (value: number) => {

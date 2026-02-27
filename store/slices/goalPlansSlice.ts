@@ -32,7 +32,7 @@ import {
   postGoalPlanLog,
 } from "@/api/goalPlan";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchRecentMealsAsync } from "./dailyLogsSlice";
+import { fetchFoodLogsAsync, fetchRecentMealsAsync } from "./dailyLogsSlice";
 import { setTargetWeightKgProgressSlice } from "./progressSlice";
 
 interface GoalPlanState {
@@ -85,14 +85,14 @@ export const postGoalPlanLogAsync = createAsyncThunk(
     try {
       const { from, ...rest } = payload;
       if (from === "progress") {
+        console.log("XXX Progress");
         dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
+        dispatch(fetchFoodLogsAsync());
       } else if (from === "profile") {
         dispatch(setGoalPlan(rest));
         dispatch(fetchRecentMealsAsync() as any);
       }
-      console.log("rest", JSON.stringify(rest, null, 2));
       const response = await postGoalPlanLog(rest);
-      console.log("response", JSON.stringify(response.data, null, 2));
 
       return response.data;
     } catch (error: any) {

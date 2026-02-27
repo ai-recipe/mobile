@@ -65,7 +65,6 @@ export const fetchRecommendedRecipes = createAsyncThunk(
       const response = await fetchPersonalizedRecipes({
         ...params,
       });
-      console.log(JSON.stringify(response));
       return response;
     } catch (error) {
       console.log(error?.response?.data?.message);
@@ -168,7 +167,6 @@ export const exploreListSlice = createSlice({
       state.errorRecommendedRecipes = null;
     });
     builder.addCase(fetchRecommendedRecipes.fulfilled, (state, action) => {
-      console.log(JSON.stringify(action.payload));
       state.isRecommendedRecipesLoading = false;
       state.recommendedRecipes = action.payload.data;
       state.recommendedRecipesMeta = action.payload.meta;

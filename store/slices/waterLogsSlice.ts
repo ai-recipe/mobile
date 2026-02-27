@@ -28,7 +28,6 @@ export const fetchWaterIntakeAsync = createAsyncThunk(
   async (date: string, { rejectWithValue }) => {
     try {
       const data = await fetchWaterIntake({ date });
-      console.log("data", JSON.stringify(data, null, 2));
       return data?.data;
     } catch (error) {
       return rejectWithValue(
