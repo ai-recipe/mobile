@@ -19,7 +19,7 @@ interface ScreenWrapperProps {
   backgroundColor?: string;
   showBackButton?: boolean;
   withTabNavigation?: boolean;
-  title?: string;
+  title?: React.ReactNode;
   showTopNavBar?: boolean;
 }
 

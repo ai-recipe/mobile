@@ -3,6 +3,7 @@ import SurveyService from "@/api/survey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as Application from "expo-application";
+import { router } from "expo-router";
 import { Platform } from "react-native";
 
 interface User {
@@ -88,7 +89,15 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
+      console.log("response", response.data?.data);
       dispatch(fetchSurveyQuestionsAsync());
+
+      if (!response.data?.data) {
+        router.replace("/screens/survey");
+        return null;
+      } else {
+        router.replace("(protected)/(tabs)");
+      }
       return response.data?.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -103,8 +112,10 @@ export const fetchSurveyQuestionsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await SurveyService.getSurveyQuestionsAPI();
+      console.log("response", response.data);
       return response.data?.data?.questions;
     } catch (error: any) {
+      console.log("error", error);
       return rejectWithValue(
         error.response?.data?.message || "Anket soruları yüklenemedi",
       );
@@ -141,7 +152,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId: "allah",
+        deviceId: "test1234",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });

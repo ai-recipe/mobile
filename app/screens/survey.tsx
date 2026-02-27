@@ -15,7 +15,7 @@ export default function SurveyScreen() {
     useAppSelector((state) => state.auth);
 
   const [isInitialized, setIsInitialized] = useState(false);
-
+  console.log("surveyQuestions", surveyQuestions);
   const defaultValues = useMemo(() => {
     const values: any = {};
     surveyQuestions?.forEach((q) => {

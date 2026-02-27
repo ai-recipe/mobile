@@ -142,10 +142,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                         color={iconColor}
                       />
                     );
-                  case "ai-chef":
+                  case "profile":
                     return (
                       <MaterialCommunityIcons
-                        name="chef-hat"
+                        name="account"
                         size={24}
                         color={iconColor}
                       />
@@ -175,8 +175,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                     return "Ana Sayfa";
                   case "progress":
                     return "Progress";
-                  case "ai-chef":
-                    return "AI Chef";
+                  case "profile":
+                    return "Profil";
                   case "explore":
                     return "Keşfet";
                   default:
@@ -248,9 +248,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ai-chef"
+        name="profile"
         options={{
-          title: "AI Chef",
+          title: "Profil",
         }}
       />
     </Tabs>

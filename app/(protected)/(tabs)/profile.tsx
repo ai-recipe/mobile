@@ -5,7 +5,7 @@ import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -50,12 +50,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <ScreenWrapper
-      showBackButton={true}
-      showTopNavBar={false}
-      withTabNavigation={false}
-      title="Profil"
-    >
+    <ScreenWrapper showTopNavBar={false} withTabNavigation={true}>
       <ScrollView className="flex-1 px-5 mt-16">
         <View className="gap-y-3">
           <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
@@ -104,13 +99,11 @@ const ProfileScreen = () => {
             label="Yardım ve Destek"
             onPress={() => {}}
           />
-          <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
-            Goals
-          </Text>
           <ProfileMenuItem
-            icon="balance"
-            label="Edit Nutrition Goals"
-            onPress={() => router.push("/profile/nutrition-goals" as any)}
+            isMaterialCommunityIcon={true}
+            icon="chef-hat"
+            label="AI Chef"
+            onPress={() => router.push("/screens/ai-chef" as any)}
           />
         </View>
       </ScrollView>
@@ -197,16 +190,22 @@ const ProfileMenuItem = ({
   icon,
   label,
   onPress,
+  isMaterialCommunityIcon = false,
 }: {
   icon: string;
   label: string;
   onPress: () => void;
+  isMaterialCommunityIcon?: boolean;
 }) => (
   <TouchableOpacity
     onPress={onPress}
     className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
   >
-    <MaterialIcons name={icon as any} size={24} color="#f39849" />
+    {isMaterialCommunityIcon ? (
+      <MaterialCommunityIcons name={icon as any} size={24} color="#f39849" />
+    ) : (
+      <MaterialIcons name={icon as any} size={24} color="#f39849" />
+    )}
     <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
       {label}
     </Text>

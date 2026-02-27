@@ -49,7 +49,7 @@ const AIChefScreen = () => {
     (activeTab === "recents" && isLoadingRecipes && recipes.length === 0)
   ) {
     return (
-      <ScreenWrapper>
+      <ScreenWrapper withTabNavigation={false}>
         <TabScreenWrapper>
           <FavoritesSkeleton />
         </TabScreenWrapper>
@@ -58,15 +58,18 @@ const AIChefScreen = () => {
   }
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper
+      withTabNavigation={false}
+      showTopNavBar={false}
+      showBackButton={true}
+      title={
+        <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
+          AI Chef <Text className="text-[#f39849]">Tarifleri</Text>
+        </Text>
+      }
+    >
       <TabScreenWrapper>
         <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
-          <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-            AI Chef <Text className="text-[#f39849]">Tarifleri</Text>
-          </Text>
-          <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
-            AI Chef&apos;le ürettiğiniz tarifleri buradan görüntüleyebilirsiniz.
-          </Text>
           <View className=" mb-4 mt-4">
             <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
               <Pressable
