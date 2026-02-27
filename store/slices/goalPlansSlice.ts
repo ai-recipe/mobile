@@ -87,12 +87,15 @@ export const postGoalPlanLogAsync = createAsyncThunk(
       if (from === "progress") {
         console.log("XXX Progress");
         dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
-        dispatch(fetchFoodLogsAsync());
       } else if (from === "profile") {
         dispatch(setGoalPlan(rest));
         dispatch(fetchRecentMealsAsync() as any);
       }
       const response = await postGoalPlanLog(rest);
+
+      if (from === "progress") {
+        dispatch(fetchFoodLogsAsync());
+      }
 
       return response.data;
     } catch (error: any) {
