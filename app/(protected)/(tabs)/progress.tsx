@@ -11,6 +11,7 @@ import {
   postWeightLogAsync,
 } from "@/store/slices/progressSlice";
 import { MaterialIcons } from "@expo/vector-icons";
+import { format } from "date-fns";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -66,43 +67,7 @@ export default function ProgressScreen() {
   };
 
   const chartData = useMemo(() => {
-    return [
-      {
-        date: "2026-02-15",
-        weightKg: 101.2,
-        targetWeightKg: 105.2,
-      },
-      {
-        date: "2026-02-16",
-        weightKg: 100.8,
-        targetWeightKg: 105.2,
-      },
-      {
-        date: "2026-02-17",
-        weightKg: 99.5,
-        targetWeightKg: 105.2,
-      },
-      {
-        date: "2026-02-18",
-        weightKg: 99.1,
-        targetWeightKg: 105.2,
-      },
-      {
-        date: "2026-02-19",
-        weightKg: 98.5,
-        targetWeightKg: 105.2,
-      },
-      {
-        date: "2026-02-20",
-        weightKg: 85.0,
-        targetWeightKg: 102.5,
-      },
-      {
-        date: "2026-02-21",
-        weightKg: 72.0,
-        targetWeightKg: 100.0,
-      },
-    ].map((item) => {
+    return progressData.weightTrend.dailyBreakdown.map((item) => {
       // Parse the date to make it more readable (e.g., "Feb 19")
       const dateObj = new Date(item.date);
       const formattedDate = dateObj.toLocaleDateString("en-US", {
@@ -121,11 +86,11 @@ export default function ProgressScreen() {
 
   const stackData = useMemo(() => {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {
-      const date = new Date(day.date);
+      // year-month-day = day.date
+      const date = format(new Date(day.date), "yyyy-MM-dd");
+      console.log(date);
       // day and month name
-      const label = `${date.getDay()} ${date.toLocaleDateString("en-US", {
-        month: "short",
-      })}`;
+      const label = `${format(new Date(day.date), "dd MMM")}`;
 
       // Calorie calculation
       const proteinCals = day.totalProteinGrams * 4;
@@ -181,24 +146,26 @@ export default function ProgressScreen() {
                   Fat
                 </Text>
               </View>
-              <BarChart
-                width={300}
-                barWidth={20}
-                spacing={35}
-                noOfSections={5}
-                stackData={stackData}
-                // Y-Axis formatting
-                yAxisThickness={0}
-                yAxisColor="#ccc"
-                xAxisThickness={0}
-                yAxisTextStyle={{ color: "#94A3B8", fontSize: 11 }}
-                xAxisLabelTextStyle={{ color: "#94A3B8", fontSize: 11 }}
-                // Styling
-                showVerticalLines={false}
-                yAxisLabelSuffix=" kcal"
-              />
+              {stackData.length > 2 && (
+                <BarChart
+                  width={300}
+                  barWidth={20}
+                  spacing={35}
+                  noOfSections={5}
+                  stackData={stackData}
+                  // Y-Axis formatting
+                  yAxisThickness={0}
+                  yAxisColor="#ccc"
+                  xAxisThickness={0}
+                  yAxisTextStyle={{ color: "#94A3B8", fontSize: 11 }}
+                  xAxisLabelTextStyle={{ color: "#94A3B8", fontSize: 11 }}
+                  // Styling
+                  showVerticalLines={false}
+                  yAxisLabelSuffix=" kcal"
+                />
+              )}
             </View>
-            {false && (
+            {chartData.length > 5 && (
               <LineChart
                 title="Weight Progress Weekly"
                 data={chartData}
