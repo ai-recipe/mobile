@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "@/store/hooks";
 import { closeSoftPaywall } from "@/store/slices/modalSlice";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function SoftPaywallModal({ visible }: Props) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleClose = () => dispatch(closeSoftPaywall());
@@ -47,13 +49,10 @@ export function SoftPaywallModal({ visible }: Props) {
             </View>
 
             <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-              AI Taramalar Tükendi!
+              {t("paywall.softTitle")}
             </Text>
             <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center leading-relaxed mb-8">
-              24 saat bekleyerek 1 ücretsiz tarama hakkı kazanabilir ya da
-              Pro'ya geçerek{" "}
-              <Text className="text-[#f39849] font-bold">sınırsız tarama</Text>{" "}
-              yapabilirsin.
+              {t("paywall.softDesc")}
             </Text>
 
             <TouchableOpacity
@@ -62,7 +61,7 @@ export function SoftPaywallModal({ visible }: Props) {
               className="bg-[#f39849] h-[58px] rounded-2xl items-center justify-center mb-3 shadow-lg shadow-orange-500/30"
             >
               <Text className="text-white font-extrabold text-base">
-                Pro'ya Geç — Sınırsız Tarama
+                {t("paywall.upgradeButton")}
               </Text>
             </TouchableOpacity>
 
@@ -72,7 +71,7 @@ export function SoftPaywallModal({ visible }: Props) {
               className="h-[48px] rounded-2xl items-center justify-center"
             >
               <Text className="text-zinc-500 dark:text-zinc-400 font-medium">
-                24 Saat Bekleyeceğim
+                {t("paywall.wait24h")}
               </Text>
             </TouchableOpacity>
           </Animated.View>

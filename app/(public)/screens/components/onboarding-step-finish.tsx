@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 interface OnboardingStepFinishProps {
@@ -17,6 +18,7 @@ export const OnboardingStepFinish = ({
   title,
   description,
 }: OnboardingStepFinishProps) => {
+  const { t } = useTranslation();
   const { isInitDeviceLoading } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
@@ -47,15 +49,15 @@ export const OnboardingStepFinish = ({
             />
             <View className="absolute top-4 right-4 bg-white/95 px-4 py-1.5 rounded-full shadow-md">
               <Text className="text-text font-black text-[10px]">
-                ORTA SEVİYE
+                {t("onboarding.demoLevel")}
               </Text>
             </View>
             <View className="p-8">
               <Text className="text-primary text-xs font-black tracking-widest uppercase mb-2">
-                SANA ÖZEL TARİF
+                {t("onboarding.demoTag")}
               </Text>
               <Text className="text-2xl font-black text-text dark:text-white mb-3">
-                Fırında Baharatlı Somon
+                {t("onboarding.demoRecipe")}
               </Text>
               <View className="flex-row items-center">
                 <MaterialCommunityIcons
@@ -64,7 +66,7 @@ export const OnboardingStepFinish = ({
                   color="#f39849"
                 />
                 <Text className="text-secondary text-sm font-bold ml-1.5">
-                  25 dk Hazırlık
+                  {t("onboarding.demoPrepTime")}
                 </Text>
               </View>
             </View>
@@ -91,8 +93,8 @@ export const OnboardingStepFinish = ({
         >
           <Text className="text-white text-lg font-bold">
             {isSubmitClicked && isInitDeviceLoading && !token
-              ? "Yükleniyor..."
-              : "Hadi Başlayalım"}
+              ? t("common.loading")
+              : t("onboarding.getStarted")}
           </Text>
           <MaterialCommunityIcons
             name="chevron-right"

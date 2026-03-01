@@ -9,53 +9,55 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface StepPaywallProps {
   onFinish: () => void;
   direction?: "forward" | "backward";
 }
 
-const OFFERS = [
+const OFFER_CONFIGS = [
   {
     id: "monthly",
-    title: "Aylık",
     price: "$4.99",
-    period: "aylık",
-    description: "Tüm özelliklere sınırsız erişim",
+    titleKey: "paywall.monthly",
+    periodKey: "paywall.perMonth",
+    descriptionKey: "paywall.monthlyDesc",
     featured: false,
   },
   {
     id: "yearly",
-    title: "Yıllık",
     price: "$20",
-    period: "yıllık",
-    description: "Sadece $1.66/ay - 3 Gün Ücretsiz Deneme!",
+    titleKey: "paywall.yearly",
+    periodKey: "paywall.perYear",
+    descriptionKey: "paywall.yearlyDesc",
     featured: true,
-    badge: "EN POPÜLER",
+    badgeKey: "paywall.mostPopular",
   },
   {
     id: "lifetime",
-    title: "Ömür Boyu",
     price: "$49.99",
-    period: "tek seferlik",
-    description: "Sonsuza dek sizin olsun",
+    titleKey: "paywall.lifetime",
+    periodKey: "paywall.oneTime",
+    descriptionKey: "paywall.lifetimeDesc",
     featured: false,
   },
 ];
 
-const FEATURES = [
-  "Sınırsız Yapay Zeka Tarif Oluşturma",
-  "Sınırsız Kalori Hesaplama",
-  "Besin Değerleri Analizi",
-  "Favorilere Ekleme ve Kaydetme",
-  "Gelişmiş Araçlar",
-  "Detaylı Analizler",
+const FEATURE_KEYS = [
+  "paywall.featureRecipes",
+  "paywall.featureCalories",
+  "paywall.featureNutrition",
+  "paywall.featureFavorites",
+  "paywall.featureTools",
+  "paywall.featureAnalytics",
 ];
 
 export function StepPaywall({
   onFinish,
   direction = "forward",
 }: StepPaywallProps) {
+  const { t } = useTranslation();
   const [selectedOffer, setSelectedOffer] = useState("yearly");
   const [skipVisible, setSkipVisible] = useState(false);
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
@@ -88,22 +90,22 @@ export function StepPaywall({
         {/* Header Section */}
         <View className="items-center mb-8">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-            Chef AI <Text className="text-[#f39849]">Premium</Text>
+            {t("paywall.title")} <Text className="text-[#f39849]">{t("paywall.titleHighlight")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center">
-            Mutfaktaki sınırları kaldırın ve tam potansiyelinizi keşfedin.
+            {t("paywall.subtitle")}
           </Text>
         </View>
 
         {/* Feature List */}
         <View className="gap-3 mb-10 bg-zinc-50 dark:bg-zinc-800/50 p-6 rounded-[32px]">
-          {FEATURES.map((feature, index) => (
+          {FEATURE_KEYS.map((key, index) => (
             <View key={index} className="flex-row items-center gap-3">
               <View className="bg-[#f39849]/10 rounded-full p-1">
                 <MaterialIcons name="check" size={16} color="#f39849" />
               </View>
               <Text className="text-zinc-700 dark:text-zinc-300 font-medium">
-                {feature}
+                {t(key)}
               </Text>
             </View>
           ))}
@@ -111,7 +113,7 @@ export function StepPaywall({
 
         {/* Offers */}
         <View className="gap-4 mb-8">
-          {OFFERS.map((offer) => {
+          {OFFER_CONFIGS.map((offer) => {
             const isSelected = selectedOffer === offer.id;
             return (
               <TouchableOpacity
@@ -124,10 +126,10 @@ export function StepPaywall({
                     : "bg-white dark:bg-zinc-800 border-zinc-100 dark:border-zinc-700"
                 }`}
               >
-                {offer.badge && (
+                {offer.badgeKey && (
                   <View className="absolute -top-3 right-6 bg-[#f39849] px-3 py-1 rounded-full">
                     <Text className="text-white text-[10px] font-black">
-                      {offer.badge}
+                      {t(offer.badgeKey)}
                     </Text>
                   </View>
                 )}
@@ -135,10 +137,10 @@ export function StepPaywall({
                 <View className="flex-row justify-between items-center">
                   <View>
                     <Text className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
-                      {offer.title}
+                      {t(offer.titleKey)}
                     </Text>
                     <Text className="text-zinc-500 dark:text-zinc-400 text-xs mt-1">
-                      {offer.description}
+                      {t(offer.descriptionKey)}
                     </Text>
                   </View>
                   <View className="items-end">
@@ -146,7 +148,7 @@ export function StepPaywall({
                       {offer.price}
                     </Text>
                     <Text className="text-zinc-400 text-[10px] uppercase font-bold">
-                      {offer.period}
+                      {t(offer.periodKey)}
                     </Text>
                   </View>
                 </View>
@@ -156,9 +158,7 @@ export function StepPaywall({
         </View>
 
         <Text className="text-center text-[10px] text-zinc-400 px-6 leading-4 mb-10">
-          Aboneliğinizi dilediğiniz zaman hesap ayarlarınızdan iptal
-          edebilirsiniz. 3 günlük ücretsiz deneme süresi sonunda ücretlendirme
-          başlayacaktır.
+          {t("paywall.cancelAnytime")}
         </Text>
         <View className="px-5 pb-8 pt-2">
           <TouchableOpacity
@@ -168,8 +168,8 @@ export function StepPaywall({
           >
             <Text className="text-white font-extrabold text-lg">
               {selectedOffer === "yearly"
-                ? "Ücretsiz Denemeyi Başlat"
-                : "Abone Ol"}
+                ? t("paywall.startTrial")
+                : t("paywall.subscribe")}
             </Text>
           </TouchableOpacity>
           {skipVisible ? (
@@ -179,7 +179,7 @@ export function StepPaywall({
                 activeOpacity={0.7}
                 className="mt-4 items-center py-2"
               >
-                <Text className="text-zinc-400 text-sm">Belki Daha Sonra</Text>
+                <Text className="text-zinc-400 text-sm">{t("paywall.maybeLater")}</Text>
               </TouchableOpacity>
             </Animated.View>
           ) : (

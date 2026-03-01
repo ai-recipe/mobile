@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -49,12 +50,14 @@ export default function MealScannerScreen() {
     softPaywallOpen: state.modal.softPaywallOpen,
   }));
 
+  const { t } = useTranslation();
+
   // Rotating campaign messages shown during the scan loading phase
-  const CAMPAIGN_MESSAGES = [
-    "Pro kullanıcılar 3x daha hızlı AI analizi alır.",
-    "Sınırsız tarama için Pro'ya geç.",
-    "Pro ile tüm besin değerlerini otomatik kaydet.",
-    "Yapay zeka şefin her öğünde yanında.",
+  const CAMPAIGN_KEYS = [
+    "scanner.proNudge1",
+    "scanner.proNudge2",
+    "scanner.proNudge3",
+    "scanner.proNudge4",
   ];
   const [campaignIdx, setCampaignIdx] = useState(0);
 
@@ -65,11 +68,11 @@ export default function MealScannerScreen() {
 
   useEffect(() => {
     if (!scanning) return;
-    const t = setInterval(
-      () => setCampaignIdx((i) => (i + 1) % CAMPAIGN_MESSAGES.length),
+    const timer = setInterval(
+      () => setCampaignIdx((i) => (i + 1) % CAMPAIGN_KEYS.length),
       2500,
     );
-    return () => clearInterval(t);
+    return () => clearInterval(timer);
   }, [scanning]);
 
   // Camera permission
@@ -90,11 +93,11 @@ export default function MealScannerScreen() {
       requestPermission().then((granted) => {
         if (!granted) {
           Alert.alert(
-            "Camera Permission Required",
-            "Please enable camera access in Settings to use the meal scanner.",
+            t("scanner.noPermissionTitle"),
+            t("scanner.noPermissionDesc"),
             [
-              { text: "Cancel", style: "cancel", onPress: () => router.back() },
-              { text: "Open Settings", onPress: () => Linking.openSettings() },
+              { text: t("common.cancel"), style: "cancel", onPress: () => router.back() },
+              { text: t("common.openSettings"), onPress: () => Linking.openSettings() },
             ],
           );
         }
@@ -155,20 +158,19 @@ export default function MealScannerScreen() {
         <StatusBar barStyle="light-content" />
         <MaterialIcons name="no-photography" size={64} color="#52525b" />
         <Text className="text-white text-xl font-bold mt-4 text-center">
-          Camera Access Required
+          {t("scanner.noPermissionTitle")}
         </Text>
         <Text className="text-zinc-400 text-sm mt-2 text-center leading-relaxed">
-          We need camera permission to scan your meals. Please enable it in your
-          device settings.
+          {t("scanner.noPermissionDesc")}
         </Text>
         <Pressable
           onPress={() => Linking.openSettings()}
           className="mt-6 bg-[#f39849] px-8 py-3 rounded-2xl"
         >
-          <Text className="text-black font-bold">Open Settings</Text>
+          <Text className="text-black font-bold">{t("common.openSettings")}</Text>
         </Pressable>
         <Pressable onPress={handleClose} className="mt-3 px-8 py-3">
-          <Text className="text-zinc-400 font-semibold">Go Back</Text>
+          <Text className="text-zinc-400 font-semibold">{t("common.goBack")}</Text>
         </Pressable>
       </View>
     );
@@ -181,10 +183,10 @@ export default function MealScannerScreen() {
         <StatusBar barStyle="light-content" />
         <MaterialIcons name="videocam-off" size={64} color="#52525b" />
         <Text className="text-white text-lg font-bold mt-4">
-          No Camera Found
+          {t("scanner.noCameraFound")}
         </Text>
         <Pressable onPress={handleClose} className="mt-4 px-8 py-3">
-          <Text className="text-zinc-400 font-semibold">Go Back</Text>
+          <Text className="text-zinc-400 font-semibold">{t("common.goBack")}</Text>
         </Pressable>
       </View>
     );
@@ -247,7 +249,7 @@ export default function MealScannerScreen() {
               className="overflow-hidden rounded-full border border-white/10"
             >
               <Text className="text-white/70 text-xs font-semibold px-3 py-1">
-                Take Photo
+                {t("scanner.takePhoto")}
               </Text>
             </BlurView>
           </View>
@@ -280,10 +282,10 @@ export default function MealScannerScreen() {
               )}
               <View className="flex-1">
                 <Text className="text-white font-bold text-base">
-                  Analyzing Meal
+                  {t("scanner.analyzing")}
                 </Text>
                 <Text className="text-zinc-400 text-xs mt-0.5" numberOfLines={1}>
-                  {progressMessage || "Please wait..."}
+                  {progressMessage || t("scanner.pleaseWait")}
                 </Text>
               </View>
               <ActivityIndicator size="small" color="#f39849" />
@@ -306,7 +308,7 @@ export default function MealScannerScreen() {
                 PRO
               </Text>
               <Text className="text-zinc-400 text-xs flex-1">
-                {CAMPAIGN_MESSAGES[campaignIdx]}
+                {t(CAMPAIGN_KEYS[campaignIdx])}
               </Text>
             </View>
           </BlurView>
@@ -335,13 +337,13 @@ export default function MealScannerScreen() {
               )}
               <View className="flex-1">
                 <Text className="text-[#f39849] text-xs font-semibold uppercase tracking-wider">
-                  Scan Complete
+                  {t("scanner.scanComplete")}
                 </Text>
                 <Text
                   className="text-white font-bold text-lg leading-tight"
                   numberOfLines={2}
                 >
-                  {result.foodName ?? "Meal Detected"}
+                  {result.foodName ?? t("scanner.mealDetected")}
                 </Text>
               </View>
               <MaterialIcons name="check-circle" size={28} color="#4ade80" />
@@ -353,10 +355,10 @@ export default function MealScannerScreen() {
               result.carbsGrams != null ||
               result.fatGrams != null) && (
               <View className="flex-row justify-between bg-white/5 rounded-2xl px-4 py-3 mb-4">
-                <NutrientBadge label="Cal" value={result.calories} unit="kcal" />
-                <NutrientBadge label="Protein" value={result.proteinGrams} unit="g" />
-                <NutrientBadge label="Carbs" value={result.carbsGrams} unit="g" />
-                <NutrientBadge label="Fat" value={result.fatGrams} unit="g" />
+                <NutrientBadge label={t("mealEntry.calories")} value={result.calories} unit="kcal" />
+                <NutrientBadge label={t("mealEntry.protein")} value={result.proteinGrams} unit="g" />
+                <NutrientBadge label={t("mealEntry.carbs")} value={result.carbsGrams} unit="g" />
+                <NutrientBadge label={t("mealEntry.fat")} value={result.fatGrams} unit="g" />
               </View>
             )}
 
@@ -367,7 +369,7 @@ export default function MealScannerScreen() {
                 className="flex-1 py-3 rounded-2xl border border-white/20 items-center active:opacity-70"
               >
                 <Text className="text-white font-semibold text-sm">
-                  Scan Again
+                  {t("scanner.scanAgain")}
                 </Text>
               </Pressable>
               <Pressable
@@ -375,7 +377,7 @@ export default function MealScannerScreen() {
                 className="flex-1 py-3 rounded-2xl bg-[#f39849] items-center active:opacity-80"
               >
                 <Text className="text-black font-bold text-sm">
-                  Complete Scan
+                  {t("scanner.completeScan")}
                 </Text>
               </Pressable>
             </View>
@@ -403,13 +405,13 @@ export default function MealScannerScreen() {
               </View>
               <View className="flex-1">
                 <Text className="text-white font-bold text-base">
-                  Scan Failed
+                  {t("scanner.scanFailed")}
                 </Text>
                 <Text
                   className="text-zinc-400 text-xs mt-0.5"
                   numberOfLines={2}
                 >
-                  {error ?? "Something went wrong. Please try again."}
+                  {error ?? t("common.error")}
                 </Text>
               </View>
             </View>
@@ -418,7 +420,7 @@ export default function MealScannerScreen() {
               onPress={handleScanAgain}
               className="py-3 rounded-2xl bg-[#f39849] items-center active:opacity-80"
             >
-              <Text className="text-black font-bold text-sm">Try Again</Text>
+              <Text className="text-black font-bold text-sm">{t("common.tryAgain")}</Text>
             </Pressable>
           </BlurView>
         </View>

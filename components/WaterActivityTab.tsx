@@ -2,6 +2,7 @@ import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 interface WaterActivityTabProps {
@@ -27,6 +28,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
   onAddWater,
   onDeleteWater,
 }) => {
+  const { t } = useTranslation();
   return (
     <View className="pb-10">
       {waterLoading && !waterEntries.length ? (
@@ -58,7 +60,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
 
             <View className="flex-row items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-full mb-8">
               <Text className="text-xs font-bold text-blue-500">
-                {Math.round(waterProgress)}% of daily goal reached
+                {Math.round(waterProgress)}% {t("water.dailyGoalReached")}
               </Text>
             </View>
 
@@ -77,7 +79,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
 
                 <Text className="text-white font-bold text-base">+250ml</Text>
                 <Text className="text-white/70 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                  One Glass
+                  {t("water.oneGlass")}
                 </Text>
               </Pressable>
               <Pressable
@@ -95,7 +97,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
                   +500ml
                 </Text>
                 <Text className="text-zinc-400 text-[10px] uppercase font-bold tracking-tighter mt-0.5">
-                  Bottle
+                  {t("water.bottle")}
                 </Text>
               </Pressable>
             </View>
@@ -110,7 +112,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
                     <MaterialIcons name="opacity" size={18} color="#3b82f6" />
                   </View>
                   <Text className="text-base font-bold text-zinc-900 dark:text-white">
-                    Water log
+                    {t("water.waterLog")}
                   </Text>
                 </View>
                 <Text className="text-sm font-bold text-[#3b82f6]">
@@ -156,7 +158,7 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
           ) : (
             <View className="flex-col items-center justify-center py-8 gap-2 mb-6">
               <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center">
-                No water logged for this day.
+                {t("water.noWaterLogged")}
               </Text>
               <Text className="text-3xl">💧</Text>
             </View>
@@ -173,11 +175,10 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
             </View>
             <View className="flex-1">
               <Text className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
-                Stay Hydrated!
+                {t("water.stayHydrated")}
               </Text>
               <Text className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Drinking enough water helps improve your energy levels, focus,
-                and overall metabolism. Aim for small sips throughout the day!
+                {t("water.hydrationTip")}
               </Text>
             </View>
           </View>

@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -19,6 +20,7 @@ export const OnboardingStepWelcome = ({
   description,
   welcomeText,
 }: OnboardingStepWelcomeProps) => {
+  const { t } = useTranslation();
   return (
     <View className="flex-1 px-6">
       <View className="flex-1 justify-center items-center">
@@ -68,7 +70,7 @@ export const OnboardingStepWelcome = ({
           onPress={onNext}
           className="w-full bg-primary py-5 rounded-full shadow-xl shadow-primary/30 flex-row items-center justify-center gap-2 active:opacity-90"
         >
-          <Text className="text-white text-lg font-bold">Sonraki</Text>
+          <Text className="text-white text-lg font-bold">{t("common.next")}</Text>
           <MaterialCommunityIcons
             name="chevron-right"
             size={24}

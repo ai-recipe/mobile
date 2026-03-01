@@ -5,6 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Pressable,
@@ -95,6 +96,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
   onEditMeal,
   onDeleteMeal,
 }) => {
+  const { t } = useTranslation();
   const MealSection = ({
     title,
     icon,
@@ -136,7 +138,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                     {entry.mealName}
                   </Text>
                   <Text className="text-zinc-500 text-xs mt-0.5">
-                    {entry.quantity} servings •{" "}
+                    {entry.quantity} {t("common.servings")} •{" "}
                     {format(parseISO(entry.loggedAt), "HH:mm")}
                   </Text>
                 </View>
@@ -194,7 +196,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
             }}
           >
             <Text className="text-primary dark:text-white font-bold text-base">
-              Edit Nutrition Goals
+              {t("home.editNutritionGoals")}
             </Text>
           </Pressable>
         </TouchableOpacity>
@@ -236,7 +238,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
               </Text>
             </View>
             <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">
-              calories consumed
+              {t("home.caloriesConsumed")}
             </Text>
           </View>
         </View>
@@ -249,7 +251,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           progressColor={themeColors.primary}
           exceedColor={themeColors.error}
           trackColor={trackColor}
-          title="Protein"
+          title={t("mealEntry.protein")}
         />
         <MacrosCard
           consumedValue={Math.round(summary?.totalCarbsGrams || 0)}
@@ -258,7 +260,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           progressColor={themeColors.primary}
           exceedColor={themeColors.error}
           trackColor={trackColor}
-          title="Carbs"
+          title={t("mealEntry.carbs")}
         />
         <MacrosCard
           consumedValue={Math.round(summary?.totalFatGrams || 0)}
@@ -267,7 +269,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           progressColor={themeColors.primary}
           exceedColor={themeColors.error}
           trackColor={trackColor}
-          title="Fat"
+          title={t("mealEntry.fat")}
         />
       </View>
       {/* Entries List */}
@@ -276,25 +278,25 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
       ) : entries.length > 0 ? (
         <View className="pb-10">
           <MealSection
-            title="Breakfast"
+            title={t("home.breakfast")}
             icon="wb-sunny"
             items={groupedEntries.BREAKFAST}
             color={themeColors.primary}
           />
           <MealSection
-            title="Lunch"
+            title={t("home.lunch")}
             icon="restaurant"
             items={groupedEntries.LUNCH}
             color={themeColors.primary}
           />
           <MealSection
-            title="Dinner"
+            title={t("home.dinner")}
             icon="nights-stay"
             items={groupedEntries.DINNER}
             color={themeColors.primary}
           />
           <MealSection
-            title="Snacks"
+            title={t("home.snacks")}
             icon="fastfood"
             items={groupedEntries.SNACK}
             color={themeColors.primary}
@@ -303,7 +305,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
       ) : (
         <View className="flex-col items-center justify-center py-12 gap-4">
           <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
-            You haven't consumed anything this day.
+            {t("home.noMealsLogged")}
           </Text>
           <Text className="text-4xl">😋</Text>
         </View>

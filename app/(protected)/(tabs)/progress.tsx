@@ -5,6 +5,7 @@ import { WeightGoalCard } from "@/components/WeightGoalCard";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppSelector } from "@/store/hooks";
+import { useTranslation } from "react-i18next";
 import { postGoalPlanLogAsync } from "@/store/slices/goalPlansSlice";
 import {
   fetchProgressDataAsync,
@@ -28,6 +29,7 @@ import { TabScreenWrapper } from "./components/TabScreenWrapper";
 
 const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function ProgressScreen() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const dispatch = useDispatch();
@@ -131,19 +133,19 @@ export default function ProgressScreen() {
             <BMICard bmi={progressData.weightTrend.bmi} />
 
             <View className="bg-white dark:bg-zinc-900 p-4 rounded-3xl overflow-hidden flex-1 relative mb-4">
-              <Text className="text-lg font-bold mb-6">Calorie Intake</Text>
+              <Text className="text-lg font-bold mb-6">{t("progress.calorieIntake")}</Text>
               <View className="absolute top-6 right-4 flex-row gap-2">
                 <View className="h-4 w-4  rounded-full bg-[#5C8CE4]" />
                 <Text className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Protein
+                  {t("progress.protein")}
                 </Text>
                 <View className="h-4 w-4  rounded-full bg-[#47AE60]"></View>
                 <Text className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Carbs
+                  {t("progress.carbs")}
                 </Text>
                 <View className="h-4 w-4  rounded-full bg-[#E2B15B]"></View>
                 <Text className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Fat
+                  {t("progress.fat")}
                 </Text>
               </View>
               {stackData.length > 2 ? (
@@ -171,24 +173,24 @@ export default function ProgressScreen() {
                     color={theme.muted}
                   />
                   <Text className="text-zinc-500 dark:text-zinc-400 text-center mt-3 text-sm">
-                    Soon you&apos;ll see more detailed charts here.
+                    {t("progress.needMoreData")}
                   </Text>
                   <Text className="text-zinc-400 dark:text-zinc-500 text-center mt-1 text-xs">
-                    We need more data to show your calorie intake chart.
+                    {t("progress.needMoreDataCalorie")}
                   </Text>
                 </View>
               )}
             </View>
             {chartData.length > 5 ? (
               <LineChart
-                title="Weight Progress Weekly"
+                title={t("progress.weightProgress")}
                 data={chartData}
                 showDataPoints={false}
               />
             ) : (
               <View className="bg-white dark:bg-zinc-900 p-4 rounded-3xl overflow-hidden flex-1 relative mb-4">
                 <Text className="text-lg font-bold mb-4">
-                  Weight Progress Weekly
+                  {t("progress.weightProgress")}
                 </Text>
                 <View className="py-8 px-4 items-center justify-center min-h-[160px]">
                   <MaterialIcons
@@ -197,10 +199,10 @@ export default function ProgressScreen() {
                     color={theme.muted}
                   />
                   <Text className="text-zinc-500 dark:text-zinc-400 text-center mt-3 text-sm">
-                    Soon you&apos;ll see more detailed charts here.
+                    {t("progress.needMoreData")}
                   </Text>
                   <Text className="text-zinc-400 dark:text-zinc-500 text-center mt-1 text-xs">
-                    We need more data to show your weight progress chart.
+                    {t("progress.needMoreDataWeight")}
                   </Text>
                 </View>
               </View>
@@ -215,7 +217,7 @@ export default function ProgressScreen() {
             min={30}
             max={200}
             unit="kg"
-            title="Current weight"
+            title={t("progress.currentWeight")}
             fractionDigits={1}
           />
           <NumberInputModal
@@ -226,7 +228,7 @@ export default function ProgressScreen() {
             min={30}
             max={200}
             unit="kg"
-            title="Goal weight"
+            title={t("progress.goalWeight")}
             fractionDigits={1}
           />
           <View className="p-4 flex flex-row gap-3 mb-8">
@@ -241,7 +243,7 @@ export default function ProgressScreen() {
                 }}
               >
                 <Text className="text-white font-bold text-base">
-                  Auto Generate Goals
+                  {t("progress.autoGenerateGoals")}
                 </Text>
               </Pressable>
             </TouchableOpacity>

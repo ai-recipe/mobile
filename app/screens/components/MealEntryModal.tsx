@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchRecentMealsAsync } from "@/store/slices/dailyLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -48,6 +49,7 @@ export function MealEntryModal({
   initialData,
   selectedDate,
 }: MealEntryModalProps) {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
   const [mealName, setMealName] = useState("");
@@ -81,7 +83,7 @@ export function MealEntryModal({
     if (onSave) {
       onSave({
         id: initialData?.id,
-        name: mealName || "Unnamed Meal",
+        name: mealName || t("mealEntry.unnamedMeal"),
         servings,
         calories: Number(calories) || 0,
         protein: Number(protein) || 0,
@@ -257,7 +259,7 @@ export function MealEntryModal({
             {recentMeals.length > 0 && (
               <View className="mb-6">
                 <Text className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3 ml-1">
-                  Quick Select
+                  {t("mealEntry.quickSelect")}
                 </Text>
                 <ScrollView
                   horizontal
@@ -294,7 +296,7 @@ export function MealEntryModal({
                   value={mealName}
                   onChangeText={setMealName}
                   className="text-2xl font-bold leading-tight text-zinc-900 dark:text-white w-full"
-                  placeholder="Meal name (e.g. Boiled Egg)"
+                  placeholder={t("mealEntry.mealNamePlaceholder")}
                   placeholderTextColor={
                     colorScheme === "dark" ? "#71717a" : "#a1a1aa"
                   }
@@ -344,7 +346,7 @@ export function MealEntryModal({
                 </View>
                 <View>
                   <Text className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mb-0.5">
-                    Calories
+                    {t("mealEntry.calories")}
                   </Text>
                   <TextInput
                     ref={caloriesRef}
@@ -373,7 +375,7 @@ export function MealEntryModal({
                     />
                   </View>
                   <Text className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                    Protein
+                    {t("mealEntry.protein")}
                   </Text>
                 </View>
                 <View className="flex-row items-baseline px-2 w-full">
@@ -398,7 +400,7 @@ export function MealEntryModal({
                     <MaterialIcons name="grass" size={14} color="#22c55e" />
                   </View>
                   <Text className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                    Carbs
+                    {t("mealEntry.carbs")}
                   </Text>
                 </View>
                 <View className="flex-row items-baseline px-2 w-full">
@@ -427,7 +429,7 @@ export function MealEntryModal({
                     />
                   </View>
                   <Text className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                    Fat
+                    {t("mealEntry.fat")}
                   </Text>
                 </View>
                 <View className="flex-row items-baseline px-2 w-full">
@@ -446,7 +448,7 @@ export function MealEntryModal({
             {/* Macro Balance */}
             <View className="mb-8">
               <Text className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">
-                Macro Balance
+                {t("mealEntry.macroBalance")}
               </Text>
               <View className="h-3 w-full rounded-full flex-row overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
                 <Animated.View
@@ -467,7 +469,7 @@ export function MealEntryModal({
                   <View className="flex-row items-center gap-1.5 mb-1">
                     <View className="w-2.5 h-2.5 rounded-full bg-blue-400 dark:bg-blue-500" />
                     <Text className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Protein
+                      {t("mealEntry.protein")}
                     </Text>
                   </View>
                   <Text className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -478,7 +480,7 @@ export function MealEntryModal({
                   <View className="flex-row items-center gap-1.5 mb-1">
                     <View className="w-2.5 h-2.5 rounded-full bg-green-400 dark:bg-green-500" />
                     <Text className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Carbs
+                      {t("mealEntry.carbs")}
                     </Text>
                   </View>
                   <Text className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -489,7 +491,7 @@ export function MealEntryModal({
                   <View className="flex-row items-center gap-1.5 mb-1">
                     <View className="w-2.5 h-2.5 rounded-full bg-orange-300 dark:bg-orange-400" />
                     <Text className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Fat
+                      {t("mealEntry.fat")}
                     </Text>
                   </View>
                   <Text className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -513,7 +515,7 @@ export function MealEntryModal({
                 <ActivityIndicator color="white" size="small" />
               ) : (
                 <Text className="text-white font-bold text-lg text-center">
-                  {initialData ? "Update Entry" : "Add to Diary"}
+                  {initialData ? t("mealEntry.updateEntry") : t("mealEntry.addToDiary")}
                 </Text>
               )}
             </Pressable>

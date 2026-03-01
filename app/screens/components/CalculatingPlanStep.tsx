@@ -1,13 +1,14 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
-const MESSAGES = [
-  "Hedefleriniz analiz ediliyor...",
-  "Makro hedefleriniz hesaplanıyor...",
-  "Kişisel beslenme planınız oluşturuluyor...",
-  "AI modeliniz kalibre ediliyor...",
-  "Son rötuşlar yapılıyor...",
+const MESSAGE_KEYS = [
+  "calculating.msg1",
+  "calculating.msg2",
+  "calculating.msg3",
+  "calculating.msg4",
+  "calculating.msg5",
 ];
 
 const AUTO_ADVANCE_MS = 3000;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function CalculatingPlanStep({ onNext }: Props) {
+  const { t } = useTranslation();
   const [msgIndex, setMsgIndex] = useState(0);
   const progress = useRef(new Animated.Value(0)).current;
   const iconScale = useRef(new Animated.Value(1)).current;
@@ -49,7 +51,7 @@ export function CalculatingPlanStep({ onNext }: Props) {
     ).start();
 
     // Cycle messages with fade
-    const cycleDuration = AUTO_ADVANCE_MS / MESSAGES.length;
+    const cycleDuration = AUTO_ADVANCE_MS / MESSAGE_KEYS.length;
     const msgTimer = setInterval(() => {
       Animated.sequence([
         Animated.timing(msgOpacity, {
@@ -63,7 +65,7 @@ export function CalculatingPlanStep({ onNext }: Props) {
           useNativeDriver: true,
         }),
       ]).start();
-      setMsgIndex((i) => (i + 1) % MESSAGES.length);
+      setMsgIndex((i) => (i + 1) % MESSAGE_KEYS.length);
     }, cycleDuration);
 
     return () => {
@@ -88,7 +90,7 @@ export function CalculatingPlanStep({ onNext }: Props) {
       </Animated.View>
 
       <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white text-center leading-tight mb-3">
-        Kişisel Planınız{"\n"}Hazırlanıyor
+        {t("calculating.title")}
       </Text>
 
       <Animated.Text
@@ -96,7 +98,7 @@ export function CalculatingPlanStep({ onNext }: Props) {
         className="text-zinc-500 dark:text-zinc-400 text-base text-center mb-10"
         numberOfLines={1}
       >
-        {MESSAGES[msgIndex]}
+        {t(MESSAGE_KEYS[msgIndex])}
       </Animated.Text>
 
       {/* Progress bar */}
@@ -108,7 +110,7 @@ export function CalculatingPlanStep({ onNext }: Props) {
       </View>
 
       <Text className="text-zinc-400 text-xs mt-4 text-center">
-        Yapay zeka modeliniz özelleştiriliyor...
+        {t("calculating.footer")}
       </Text>
     </View>
   );

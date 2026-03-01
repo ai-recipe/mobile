@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   visible: boolean;
@@ -18,6 +19,7 @@ interface Props {
 const CONFETTI = ["🎉", "🎊", "✨", "🌟", "🏆", "🎯", "💪", "🔥"];
 
 export function GoalCelebrationModal({ visible, onClose }: Props) {
+  const { t } = useTranslation();
   const scale = useRef(new Animated.Value(0)).current;
   const confettiAnims = useRef(
     Array.from({ length: 8 }, (_, i) => ({
@@ -115,15 +117,13 @@ export function GoalCelebrationModal({ visible, onClose }: Props) {
               </View>
 
               <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white text-center">
-                Günlük Hedefe Ulaştın!
+                {t("celebration.title")}
               </Text>
               <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center mt-2 leading-relaxed px-2">
-                Harika iş! Momentumunu Pro üyelikle sürdür ve daha fazlasına
-                ulaş.{"\n"}
+                {t("celebration.subtitle")}{"\n"}
                 <Text className="text-[#f39849] font-bold">
-                  İlk ay %30 indirim
-                </Text>{" "}
-                ile şimdi başla!
+                  {t("celebration.discountOffer")}
+                </Text>
               </Text>
             </View>
 
@@ -133,7 +133,7 @@ export function GoalCelebrationModal({ visible, onClose }: Props) {
               className="bg-[#f39849] h-[56px] rounded-2xl items-center justify-center mt-4 mb-3 shadow-lg shadow-orange-500/30"
             >
               <Text className="text-white font-extrabold text-base">
-                %30 İndirimle Pro'ya Geç
+                {t("celebration.upgradeButton")}
               </Text>
             </TouchableOpacity>
 
@@ -143,7 +143,7 @@ export function GoalCelebrationModal({ visible, onClose }: Props) {
               className="h-[44px] rounded-2xl items-center justify-center"
             >
               <Text className="text-zinc-400 font-medium text-sm">
-                Belki Daha Sonra
+                {t("celebration.maybeLater")}
               </Text>
             </TouchableOpacity>
           </Animated.View>

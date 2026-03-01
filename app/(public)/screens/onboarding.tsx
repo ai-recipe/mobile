@@ -16,24 +16,9 @@ import { OnboardingProgressBar } from "./components/onboarding-progress-bar";
 import { OnboardingStepFinish } from "./components/onboarding-step-finish";
 import { OnboardingStepWelcome } from "./components/onboarding-step-welcome";
 
-const STEPS = [
-  {
-    id: 1,
-    title: "Yapay Zeka ile Tara",
-    description:
-      "Dolabındakilerin fotoğrafını çek, gelişmiş yapay zekamız malzemeleri anında tanısın ve size en uygun seçenekleri sunsun.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCfIOgyd-AArVUDn1vb4CK8i67wcKT_M3vbkOOK8sLATy9sWjjGWTkVsKUniY-YMzQ5EsUUlioSsVy-A0JpUhqZeDnS-kr6MsPQePrWnEMQaXgpGxQg58LSGOfiWXblMOYUwtYVyaG10MQjHhJLQ4xVfaVh8OP9UPXUo8X6OVBLDa7lbl80-3kOMowAFVzdXK3B-ePh2lHjjPa8YQzOY45LNBsDal19fkfDFvMWo7X_KBWWPJWA49zi7IKR-2vs0iRk7NW7TIcFHs4r",
-  },
-
-  {
-    id: 2,
-    title: "AI Şefiniz Hazır",
-    description:
-      "Algoritmalarımız milyonlarca tarif arasından dolabındaki malzemelere en uygun olanı senin için hazırladı.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXBmjOmiiS239943G5GLit-7rAuZrgKXGh9Bc8NmzdnEat5Tca7seP4lbVgd_YpABEBnj5MB8o-2df00VKO7Ly9lVm0OK3W2Uv6-29sO32LJyRVXt4hXcxBkdCcVnG9m21yAOcW38J27m3HAPW6w_9t2LcT00CzhDkXSqSgrcJh3ZRqxdV8MdyYSTmlgYpnWVtEMU5M-4h4S7_uOgymVtNpm0gsPEFvSsbkE_N7ueLIC5e9jLOp0X3O3jyL5MUPcVJFtbfW_RjJ4bX-p",
-  },
+const STEP_IMAGES = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCfIOgyd-AArVUDn1vb4CK8i67wcKT_M3vbkOOK8sLATy9sWjjGWTkVsKUniY-YMzQ5EsUUlioSsVy-A0JpUhqZeDnS-kr6MsPQePrWnEMQaXgpGxQg58LSGOfiWXblMOYUwtYVyaG10MQjHhJLQ4xVfaVh8OP9UPXUo8X6OVBLDa7lbl80-3kOMowAFVzdXK3B-ePh2lHjjPa8YQzOY45LNBsDal19fkfDFvMWo7X_KBWWPJWA49zi7IKR-2vs0iRk7NW7TIcFHs4r",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXBmjOmiiS239943G5GLit-7rAuZrgKXGh9Bc8NmzdnEat5Tca7seP4lbVgd_YpABEBnj5MB8o-2df00VKO7Ly9lVm0OK3W2Uv6-29sO32LJyRVXt4hXcxBkdCcVnG9m21yAOcW38J27m3HAPW6w_9t2LcT00CzhDkXSqSgrcJh3ZRqxdV8MdyYSTmlgYpnWVtEMU5M-4h4S7_uOgymVtNpm0gsPEFvSsbkE_N7ueLIC5e9jLOp0X3O3jyL5MUPcVJFtbfW_RjJ4bX-p",
 ];
 
 export default function OnboardingScreen() {
@@ -55,7 +40,7 @@ export default function OnboardingScreen() {
   }));
 
   const nextStep = () => {
-    if (currentStep < STEPS.length - 1) {
+    if (currentStep < STEP_IMAGES.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -71,11 +56,7 @@ export default function OnboardingScreen() {
       <View className="flex-row items-center justify-between px-4 py-2">
         <View className="w-12" />
         <Text className="text-xl font-black text-text dark:text-white">
-          {currentStep === 0
-            ? ""
-            : currentStep === 1
-            ? "Tercihlerini Belirle"
-            : ""}
+          {currentStep === 1 ? t("onboarding.preferences") : ""}
         </Text>
         <View className="w-12" />
       </View>
@@ -87,24 +68,24 @@ export default function OnboardingScreen() {
 
       <OnboardingProgressBar
         currentStep={currentStep}
-        totalSteps={STEPS.length}
+        totalSteps={STEP_IMAGES.length}
       />
 
       {currentStep === 0 && (
         <OnboardingStepWelcome
           onNext={nextStep}
           animatedScanStyle={animatedScanStyle}
-          image={STEPS[0].image!}
-          description={STEPS[0].description}
+          image={STEP_IMAGES[0]}
+          description={t("onboarding.step1Description")}
           welcomeText={t("welcome")}
         />
       )}
 
       {currentStep === 1 && (
         <OnboardingStepFinish
-          image={STEPS[1].image!}
-          title={STEPS[1].title}
-          description={STEPS[1].description}
+          image={STEP_IMAGES[1]}
+          title={t("onboarding.step2Title")}
+          description={t("onboarding.step2Description")}
         />
       )}
     </SafeAreaView>

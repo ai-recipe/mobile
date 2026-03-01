@@ -1,6 +1,7 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
+import { useTranslation } from "react-i18next";
 import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
@@ -18,10 +19,10 @@ import {
 } from "react-native";
 import { useDispatch } from "react-redux";
 
-const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-  { value: "system", label: "System (device)" },
+const THEME_OPTIONS: { value: ThemePreference; labelKey: string }[] = [
+  { value: "light", labelKey: "profile.themeLight" },
+  { value: "dark", labelKey: "profile.themeDark" },
+  { value: "system", labelKey: "profile.themeSystem" },
 ];
 
 const LANGUAGE_OPTIONS = [
@@ -30,6 +31,7 @@ const LANGUAGE_OPTIONS = [
 ];
 
 const ProfileScreen = () => {
+  const { t } = useTranslation();
   const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const currentTheme = useAppSelector((state) => state.ui.theme);
@@ -54,7 +56,7 @@ const ProfileScreen = () => {
       <ScrollView className="flex-1 px-5 mt-16">
         <View className="gap-y-3">
           <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
-            Hesabım
+            {t("profile.title")}
           </Text>
           <TouchableOpacity
             onPress={() => router.push("/subscription" as any)}
@@ -62,7 +64,7 @@ const ProfileScreen = () => {
           >
             <MaterialIcons name="auto-awesome" size={24} color="#f48c25" />
             <Text className="ml-4 flex-1 font-bold text-[#f48c25]">
-              {"Pro'ya Yükselt"}
+              {t("profile.upgradeToPro")}
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#f48c25" />
           </TouchableOpacity>
@@ -72,7 +74,7 @@ const ProfileScreen = () => {
           >
             <MaterialIcons name="palette" size={24} color="#f39849" />
             <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
-              Görünüm (Tema)
+              {t("profile.appearance")}
             </Text>
             <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 capitalize">
               {currentTheme}
@@ -86,7 +88,7 @@ const ProfileScreen = () => {
           >
             <MaterialIcons name="language" size={24} color="#f39849" />
             <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
-              Uygulama Dili
+              {t("profile.language")}
             </Text>
             <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 uppercase">
               {currentLanguage}
@@ -96,13 +98,13 @@ const ProfileScreen = () => {
 
           <ProfileMenuItem
             icon="help-outline"
-            label="Yardım ve Destek"
+            label={t("profile.help")}
             onPress={() => {}}
           />
           <ProfileMenuItem
             isMaterialCommunityIcon={true}
             icon="chef-hat"
-            label="AI Chef"
+            label={t("profile.aiChef")}
             onPress={() => router.push("/screens/ai-chef" as any)}
           />
         </View>
@@ -124,17 +126,17 @@ const ProfileScreen = () => {
           >
             <View className="p-4 border-b border-zinc-100 dark:border-zinc-700">
               <Text className="text-lg font-bold text-zinc-900 dark:text-white">
-                Görünüm (Tema)
+                {t("profile.themeTitle")}
               </Text>
             </View>
-            {THEME_OPTIONS.map(({ value, label }) => (
+            {THEME_OPTIONS.map(({ value, labelKey }) => (
               <TouchableOpacity
                 key={value}
                 onPress={() => handleSelectTheme(value)}
                 className="flex-row items-center justify-between px-4 py-4 border-b border-zinc-100 dark:border-zinc-700 last:border-b-0"
               >
                 <Text className="text-base text-zinc-900 dark:text-white">
-                  {label}
+                  {t(labelKey)}
                 </Text>
                 {currentTheme === value && (
                   <MaterialIcons name="check" size={24} color="#f39849" />
@@ -162,7 +164,7 @@ const ProfileScreen = () => {
           >
             <View className="p-4 border-b border-zinc-100 dark:border-zinc-700">
               <Text className="text-lg font-bold text-zinc-900 dark:text-white">
-                Dil Seçimi
+                {t("profile.languageTitle")}
               </Text>
             </View>
             {LANGUAGE_OPTIONS.map(({ value, label }) => (

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 interface ActivityTabSwitcherProps {
@@ -12,6 +13,7 @@ export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
   onTabChange,
   colors = ["#f39849", "#f39849"],
 }) => {
+  const { t } = useTranslation();
   return (
     <View className="px-6 mb-4">
       <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
@@ -30,7 +32,7 @@ export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
                 : "text-zinc-500 dark:text-zinc-400"
             }`}
           >
-            Meal Activity
+            {t("home.mealActivity")}
           </Text>
         </Pressable>
         <Pressable
@@ -48,7 +50,7 @@ export const ActivityTabSwitcher: React.FC<ActivityTabSwitcherProps> = ({
                 : "text-zinc-500 dark:text-zinc-400"
             }`}
           >
-            Water Activity
+            {t("home.waterActivity")}
           </Text>
         </Pressable>
       </View>
