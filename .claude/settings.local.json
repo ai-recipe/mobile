@@ -3,7 +3,36 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx expo:*)",
+      "Bash(npx expo start:*)",
+      "Bash(npx expo build:*)",
+      "Bash(npx expo run:*)",
+      "Bash(npx expo run:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(git:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset:*)",
+      "Bash(git stash:*)",
+      "Bash(git tag:*)",
+      "Bash(git push --tags:*)",
+      "Bash(git push --set-upstream origin:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force-with-lease:*)"
     ]
   }
 }

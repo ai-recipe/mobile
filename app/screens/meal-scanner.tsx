@@ -28,6 +28,9 @@ import {
   startScanAsync,
 } from "@/store/slices/scanMealSlice";
 import { fetchFoodLogsAsync } from "@/store/slices/dailyLogsSlice";
+import { decrementCredit } from "@/store/slices/authSlice";
+import { openSoftPaywall } from "@/store/slices/modalSlice";
+import { SoftPaywallModal } from "./components/SoftPaywallModal";
 
 /**
  * Meal Scanner screen.
@@ -41,6 +44,33 @@ export default function MealScannerScreen() {
   const dispatch = useAppDispatch();
   const { status, progress, progressMessage, result, error, capturedPhotoUri } =
     useAppSelector((state) => state.scanMeal);
+  const { creditRemaining, softPaywallOpen } = useAppSelector((state) => ({
+    creditRemaining: state.auth.creditRemaining,
+    softPaywallOpen: state.modal.softPaywallOpen,
+  }));
+
+  // Rotating campaign messages shown during the scan loading phase
+  const CAMPAIGN_MESSAGES = [
+    "Pro kullanıcılar 3x daha hızlı AI analizi alır.",
+    "Sınırsız tarama için Pro'ya geç.",
+    "Pro ile tüm besin değerlerini otomatik kaydet.",
+    "Yapay zeka şefin her öğünde yanında.",
+  ];
+  const [campaignIdx, setCampaignIdx] = useState(0);
+
+  const scanning =
+    status === "connecting" ||
+    status === "uploading" ||
+    status === "scanning";
+
+  useEffect(() => {
+    if (!scanning) return;
+    const t = setInterval(
+      () => setCampaignIdx((i) => (i + 1) % CAMPAIGN_MESSAGES.length),
+      2500,
+    );
+    return () => clearInterval(t);
+  }, [scanning]);
 
   // Camera permission
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -75,6 +105,12 @@ export default function MealScannerScreen() {
   const handleTakePhoto = useCallback(async () => {
     if (!cameraRef.current || isTakingPhoto) return;
 
+    // Guard: no credits left
+    if (creditRemaining !== null && creditRemaining <= 0) {
+      dispatch(openSoftPaywall());
+      return;
+    }
+
     try {
       setIsTakingPhoto(true);
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -84,6 +120,7 @@ export default function MealScannerScreen() {
       });
 
       const uri = photo.path;
+      dispatch(decrementCredit());
       dispatch(setCapturedPhotoUri(uri));
       dispatch(startScanAsync(uri));
     } catch (e) {
@@ -91,7 +128,7 @@ export default function MealScannerScreen() {
     } finally {
       setIsTakingPhoto(false);
     }
-  }, [isTakingPhoto, dispatch]);
+  }, [isTakingPhoto, dispatch, creditRemaining]);
 
   const handleClose = useCallback(() => {
     disconnectScan();
@@ -109,10 +146,7 @@ export default function MealScannerScreen() {
     router.navigate("/(protected)/(tabs)/");
   }, [dispatch]);
 
-  const isScanning =
-    status === "connecting" ||
-    status === "uploading" ||
-    status === "scanning";
+  const isScanning = scanning;
 
   // ── Permission denied ───────────────────────────────────────────
   if (!hasPermission) {
@@ -265,6 +299,16 @@ export default function MealScannerScreen() {
             <Text className="text-zinc-500 text-xs mt-1.5 text-right">
               {progress}%
             </Text>
+
+            {/* Rotating campaign nudge */}
+            <View className="flex-row items-center gap-1.5 mt-3 pt-3 border-t border-white/10">
+              <Text className="text-[#f39849] text-[10px] font-black uppercase tracking-wider">
+                PRO
+              </Text>
+              <Text className="text-zinc-400 text-xs flex-1">
+                {CAMPAIGN_MESSAGES[campaignIdx]}
+              </Text>
+            </View>
           </BlurView>
         </View>
       )}
@@ -338,6 +382,9 @@ export default function MealScannerScreen() {
           </BlurView>
         </View>
       )}
+
+      {/* ── SOFT PAYWALL ─────────────────────────────────────── */}
+      <SoftPaywallModal visible={softPaywallOpen} />
 
       {/* ── ERROR: error card ─────────────────────────────────── */}
       {status === "error" && (

@@ -3,6 +3,8 @@ import {
   MealData,
   MealEntryModal,
 } from "@/app/screens/components/MealEntryModal";
+import { GoalCelebrationModal } from "@/app/screens/components/GoalCelebrationModal";
+import { SoftPaywallModal } from "@/app/screens/components/SoftPaywallModal";
 import { ActivityTabSwitcher } from "@/components/ActivityTabSwitcher";
 import { MealActivityTab } from "@/components/MealActivityTab";
 import { WaterActivityTab } from "@/components/WaterActivityTab";
@@ -17,12 +19,19 @@ import {
   setStartDate,
   updateFoodLogAsync,
 } from "@/store/slices/dailyLogsSlice";
-import { closeMealModal, openMealModal } from "@/store/slices/modalSlice";
+import {
+  closeMealModal,
+  closeSoftPaywall,
+  openMealModal,
+  openSoftPaywall,
+} from "@/store/slices/modalSlice";
+import { router } from "expo-router";
 import {
   addWaterIntakeAsync,
   deleteWaterIntakeAsync,
   fetchWaterIntakeAsync,
 } from "@/store/slices/waterLogsSlice";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   endOfDay,
   format,
@@ -64,18 +73,47 @@ const HomeScreen = () => {
     isLoading: waterLoading,
     isAdding: waterAdding,
   } = useAppSelector((state) => state.waterLogs);
+  const { creditRemaining, creditGrantType } = useAppSelector(
+    (state) => state.auth,
+  );
+  const { mealModalOpen, softPaywallOpen } = useAppSelector(
+    (state) => state.modal,
+  );
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const mealModalOpen = useAppSelector((state) => state.modal.mealModalOpen);
   const [activeTab, setActiveTab] = React.useState<"meal" | "water">("meal");
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
+  const [celebrationVisible, setCelebrationVisible] = React.useState(false);
+  const [bannerDismissed, setBannerDismissed] = React.useState(false);
+  const goalHitRef = React.useRef(false);
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
+
+  // Free-tier users have a creditGrantType (anonymous device credits)
+  const isFreeUser = creditGrantType !== null && creditRemaining !== null;
+  const creditsLow = creditRemaining !== null && creditRemaining <= 1;
+  const creditsEmpty = creditRemaining !== null && creditRemaining <= 0;
 
   useEffect(() => {
     if (mealModalOpen) {
       setActiveTab("meal");
     }
   }, [mealModalOpen]);
+
+  // Trigger goal celebration when daily calorie goal is first hit
+  useEffect(() => {
+    const target = summary?.targetCalories;
+    const consumed = summary?.totalCalories;
+    if (target && target > 0 && consumed && consumed >= target) {
+      if (!goalHitRef.current) {
+        goalHitRef.current = true;
+        setCelebrationVisible(true);
+      }
+    } else {
+      // Reset when logging a new day
+      goalHitRef.current = false;
+    }
+  }, [summary?.totalCalories, summary?.targetCalories]);
+
   // Generate a week of dates around the current date
   const dates = useMemo(() => {
     return Array.from({ length: 32 }).map((_, i) => {
@@ -105,8 +143,7 @@ const HomeScreen = () => {
     mainScrollRef.current?.scrollTo({ y: 0, animated: true });
   }, [activeTab]);
 
-  // Progress for circular rings (goal from user profile in future)
-  const calorieGoal = 2500;
+  const calorieGoal = summary?.targetCalories || 2500;
   const consumedCalories = summary?.totalCalories || 0;
   const calorieProgress =
     calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
@@ -251,6 +288,65 @@ const HomeScreen = () => {
     <ScreenWrapper>
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
+          {/* ── Credits Header ───────────────────────────────────── */}
+          {isFreeUser && (
+            <View className="flex-row items-center justify-between px-5 pt-1 pb-2">
+              <Text
+                className="text-zinc-900 dark:text-white text-xl font-extrabold"
+                style={{ letterSpacing: -0.5 }}
+              >
+                Ana Sayfa
+              </Text>
+              <Pressable
+                onPress={() => {
+                  if (creditsEmpty) dispatch(openSoftPaywall());
+                }}
+                className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
+                style={{
+                  backgroundColor: creditsLow
+                    ? "rgba(239,68,68,0.1)"
+                    : "rgba(243,152,73,0.1)",
+                }}
+              >
+                <MaterialIcons
+                  name="bolt"
+                  size={16}
+                  color={creditsLow ? "#ef4444" : "#f39849"}
+                />
+                <Text
+                  className="text-xs font-black"
+                  style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
+                >
+                  {creditRemaining} Tarama
+                </Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* ── Pro Banner (dismissible) ─────────────────────────── */}
+          {isFreeUser && !bannerDismissed && (
+            <Pressable
+              onPress={() => router.push("/screens/paywall")}
+              className="mx-4 mb-3 rounded-2xl overflow-hidden flex-row items-center px-4 py-3"
+              style={{ backgroundColor: "rgba(243,152,73,0.08)" }}
+            >
+              <MaterialIcons name="workspace-premium" size={18} color="#f39849" />
+              <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex-1 ml-2">
+                RecipeTrack Pro'yu dene —{" "}
+                <Text className="text-[#f39849]">Planları Görüntüle</Text>
+              </Text>
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setBannerDismissed(true);
+                }}
+                hitSlop={8}
+              >
+                <MaterialIcons name="close" size={16} color="#a1a1aa" />
+              </Pressable>
+            </Pressable>
+          )}
+
           {/* Date Selector */}
           <View className="px-4 pb-4 pt-2">
             <ScrollView
@@ -357,6 +453,13 @@ const HomeScreen = () => {
           }}
           onSave={handleAddMeal}
         />
+
+        <GoalCelebrationModal
+          visible={celebrationVisible}
+          onClose={() => setCelebrationVisible(false)}
+        />
+
+        <SoftPaywallModal visible={softPaywallOpen} />
       </TabScreenWrapper>
     </ScreenWrapper>
   );

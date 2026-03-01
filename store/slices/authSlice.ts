@@ -212,6 +212,11 @@ export const authSlice = createSlice({
     setAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
+    decrementCredit: (state) => {
+      if (state.creditRemaining !== null && state.creditRemaining > 0) {
+        state.creditRemaining -= 1;
+      }
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.token = null;
@@ -275,6 +280,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout, setIsOnboarded, setAuthenticated } = authSlice.actions;
+export const { logout, setIsOnboarded, setAuthenticated, decrementCredit } = authSlice.actions;
 
 export default authSlice.reducer;

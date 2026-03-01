@@ -1,8 +1,9 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
+  FadeIn,
   SlideInLeft,
   SlideInRight,
   SlideOutLeft,
@@ -56,10 +57,18 @@ export function StepPaywall({
   direction = "forward",
 }: StepPaywallProps) {
   const [selectedOffer, setSelectedOffer] = useState("yearly");
+  const [skipVisible, setSkipVisible] = useState(false);
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
   const scrollRef = useRef<ScrollView>(null);
+
+  // Delay the skip button to let the user read the paywall
+  useEffect(() => {
+    const t = setTimeout(() => setSkipVisible(true), 3500);
+    return () => clearTimeout(t);
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       scrollRef.current?.scrollTo({ y: 0, animated: true });
@@ -163,13 +172,19 @@ export function StepPaywall({
                 : "Abone Ol"}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onFinish}
-            activeOpacity={0.7}
-            className="mt-4 items-center"
-          >
-            <Text className="text-zinc-400 font-xs">Belki Daha Sonra</Text>
-          </TouchableOpacity>
+          {skipVisible ? (
+            <Animated.View entering={FadeIn.duration(400)}>
+              <TouchableOpacity
+                onPress={onFinish}
+                activeOpacity={0.7}
+                className="mt-4 items-center py-2"
+              >
+                <Text className="text-zinc-400 text-sm">Belki Daha Sonra</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ) : (
+            <View className="mt-4 h-10" />
+          )}
         </View>
       </ScrollView>
     </Animated.View>
