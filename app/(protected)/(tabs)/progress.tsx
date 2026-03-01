@@ -146,7 +146,7 @@ export default function ProgressScreen() {
                   Fat
                 </Text>
               </View>
-              {stackData.length > 2 && (
+              {stackData.length > 2 ? (
                 <BarChart
                   width={300}
                   barWidth={20}
@@ -163,14 +163,47 @@ export default function ProgressScreen() {
                   showVerticalLines={false}
                   yAxisLabelSuffix=" kcal"
                 />
+              ) : (
+                <View className="py-8 px-4 items-center justify-center min-h-[160px]">
+                  <MaterialIcons
+                    name="bar-chart"
+                    size={40}
+                    color={theme.muted}
+                  />
+                  <Text className="text-zinc-500 dark:text-zinc-400 text-center mt-3 text-sm">
+                    Soon you&apos;ll see more detailed charts here.
+                  </Text>
+                  <Text className="text-zinc-400 dark:text-zinc-500 text-center mt-1 text-xs">
+                    We need more data to show your calorie intake chart.
+                  </Text>
+                </View>
               )}
             </View>
-            {chartData.length > 5 && (
+            {chartData.length > 5 ? (
               <LineChart
                 title="Weight Progress Weekly"
                 data={chartData}
                 showDataPoints={false}
               />
+            ) : (
+              <View className="bg-white dark:bg-zinc-900 p-4 rounded-3xl overflow-hidden flex-1 relative mb-4">
+                <Text className="text-lg font-bold mb-4">
+                  Weight Progress Weekly
+                </Text>
+                <View className="py-8 px-4 items-center justify-center min-h-[160px]">
+                  <MaterialIcons
+                    name="show-chart"
+                    size={40}
+                    color={theme.muted}
+                  />
+                  <Text className="text-zinc-500 dark:text-zinc-400 text-center mt-3 text-sm">
+                    Soon you&apos;ll see more detailed charts here.
+                  </Text>
+                  <Text className="text-zinc-400 dark:text-zinc-500 text-center mt-1 text-xs">
+                    We need more data to show your weight progress chart.
+                  </Text>
+                </View>
+              </View>
             )}
           </View>
 
