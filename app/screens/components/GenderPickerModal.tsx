@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface GenderPickerModalProps {
   visible: boolean;
@@ -11,20 +12,21 @@ interface GenderPickerModalProps {
   currentValue?: string;
 }
 
-const GENDER_OPTIONS = [
-  { label: "Male", value: "Male", icon: "male" as const },
-  { label: "Female", value: "Female", icon: "female" as const },
-  { label: "Other", value: "Other", icon: "person" as const },
-];
-
 export function GenderPickerModal({
   visible,
   onClose,
   onSelect,
   currentValue,
 }: GenderPickerModalProps) {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const [selectedGender, setSelectedGender] = useState(currentValue);
+
+  const GENDER_OPTIONS = [
+    { label: t("forms.male"), value: "Male", icon: "male" as const },
+    { label: t("forms.female"), value: "Female", icon: "female" as const },
+    { label: t("forms.other"), value: "Other", icon: "person" as const },
+  ];
 
   // Update internal state when currentValue changes or modal opens
   useEffect(() => {
@@ -52,7 +54,7 @@ export function GenderPickerModal({
           {/* Header */}
           <View className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex-row justify-between items-center">
             <Text className="text-lg font-bold text-zinc-900 dark:text-white">
-              Select Gender
+              {t("forms.selectGender")}
             </Text>
             <Pressable
               onPress={onClose}
@@ -115,14 +117,14 @@ export function GenderPickerModal({
               className="flex-1 py-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-800"
             >
               <Text className="text-center font-bold text-zinc-500 dark:text-zinc-400">
-                Cancel
+                {t("common.cancel")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleSave}
               className="flex-1 py-3.5 rounded-xl bg-primary"
             >
-              <Text className="text-center font-bold text-white">Save</Text>
+              <Text className="text-center font-bold text-white">{t("common.save")}</Text>
             </TouchableOpacity>
           </View>
         </View>

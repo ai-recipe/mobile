@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { parse } from "date-fns";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { CalendarModal } from "../../screens/components/CalendarModal";
 import { GenderPickerModal } from "../../screens/components/GenderPickerModal";
 import { RulerPickerModal } from "../../screens/components/RulerPickerModal";
@@ -49,6 +50,7 @@ const PersonalDetailItem = ({
 };
 
 const GoalsAndWeight = () => {
+  const { t } = useTranslation();
   const { personalDetails } = useAppSelector((state) => state.user);
   const [activeModal, setActiveModal] = useState<
     null | "goalWeight" | "currentWeight" | "height" | "dob" | "gender"
@@ -76,7 +78,7 @@ const GoalsAndWeight = () => {
   const modalConfig = useMemo(
     () => ({
       goalWeight: {
-        title: "Goal weight",
+        title: t("forms.goalWeight"),
         unit: "kg",
         min: 30,
         max: 200,
@@ -84,7 +86,7 @@ const GoalsAndWeight = () => {
         initial: parseFloat(personalDetails?.goalWeight?.toString() || "0"),
       },
       currentWeight: {
-        title: "Current weight",
+        title: t("forms.currentWeight"),
         unit: "kg",
         min: 30,
         max: 200,
@@ -92,7 +94,7 @@ const GoalsAndWeight = () => {
         initial: parseFloat(personalDetails?.currentWeight?.toString() || "0"),
       },
       height: {
-        title: "Height",
+        title: t("forms.height"),
         unit: "cm",
         min: 100,
         max: 250,
@@ -100,7 +102,7 @@ const GoalsAndWeight = () => {
         initial: parseFloat(personalDetails?.height?.toString() || "0"),
       },
     }),
-    [personalDetails],
+    [personalDetails, t],
   );
 
   return (
@@ -119,7 +121,7 @@ const GoalsAndWeight = () => {
           <View className="bg-white dark:bg-zinc-900 rounded-[28px] p-6 mb-6  border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between">
             <View>
               <Text className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">
-                Goal Weight
+                {t("forms.goalWeight")}
               </Text>
               <Text className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                 {personalDetails?.goalWeight}
@@ -131,24 +133,24 @@ const GoalsAndWeight = () => {
               onPress={() => setActiveModal("goalWeight")}
               activeOpacity={0.8}
             >
-              <Text className="text-white font-bold text-md">Change Goal</Text>
+              <Text className="text-white font-bold text-md">{t("common.edit")}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Details List */}
           <View className="bg-white dark:bg-zinc-900 rounded-[32px] overflow-hidden  border border-zinc-100 dark:border-zinc-800">
             <PersonalDetailItem
-              label="Current weight"
+              label={t("forms.currentWeight")}
               value={personalDetails?.currentWeight}
               onPress={() => setActiveModal("currentWeight")}
             />
             <PersonalDetailItem
-              label="Height"
+              label={t("forms.height")}
               value={personalDetails?.height}
               onPress={() => setActiveModal("height")}
             />
             <PersonalDetailItem
-              label="Date of birth"
+              label={t("forms.dateOfBirth")}
               value={personalDetails?.dateOfBirth}
               onPress={() => setActiveModal("dob")}
             />

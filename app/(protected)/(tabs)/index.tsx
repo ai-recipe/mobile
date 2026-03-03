@@ -193,10 +193,10 @@ const HomeScreen = () => {
   };
 
   const handleDeleteMeal = (id: string) => {
-    Alert.alert("Delete Entry", "Are you sure you want to delete this entry?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.delete"), "Are you sure you want to delete this entry?", [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => {
           const dateStr = format(selectedDate, "yyyy-MM-dd");
@@ -227,10 +227,10 @@ const HomeScreen = () => {
 
   const handleDeleteWater = (id: string) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
-    Alert.alert("Delete entry", "Remove this water intake entry?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.delete"), "Remove this water intake entry?", [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => dispatch(deleteWaterIntakeAsync({ id, date: dateStr })),
       },

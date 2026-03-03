@@ -15,6 +15,35 @@ import { store } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { Stack } from "expo-router";
+import { useTranslation } from "react-i18next";
+function CopilotLabelsWrapper({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
+
+  return (
+    <CopilotProvider
+      tooltipComponent={TourTooltip}
+      tooltipStyle={{
+        backgroundColor: "transparent",
+        boxShadow: "none",
+        margin: 0,
+        padding: 0,
+        borderRadius: 0,
+      }}
+      stepNumberComponent={() => null}
+      overlay="view"
+      animated={true}
+      labels={{
+        finish: t("copilot.finish"),
+        next: t("copilot.next"),
+        previous: t("copilot.previous"),
+        skip: t("copilot.skip"),
+      }}
+    >
+      {children}
+    </CopilotProvider>
+  );
+}
+
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
   useInitApp();
@@ -61,27 +90,9 @@ export default function RootLayout() {
         className={`bg-background  ${Platform.OS === "ios" ? "pb-0 " : ""}`}
         style={{ flex: 1 }}
       >
-        <CopilotProvider
-          tooltipComponent={TourTooltip}
-          tooltipStyle={{
-            backgroundColor: "transparent",
-            boxShadow: "none",
-            margin: 0,
-            padding: 0,
-            borderRadius: 0,
-          }}
-          stepNumberComponent={() => null}
-          overlay="view"
-          animated={true}
-          labels={{
-            finish: "Tamam",
-            next: "Sıradaki",
-            previous: "Geri",
-            skip: "Atla",
-          }}
-        >
+        <CopilotLabelsWrapper>
           <RootLayoutNavigator />
-        </CopilotProvider>
+        </CopilotLabelsWrapper>
       </GestureHandlerRootView>
     </Provider>
   );

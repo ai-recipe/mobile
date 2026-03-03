@@ -165,5 +165,55 @@
     "msg4": "AI modeliniz kalibre ediliyor...",
     "msg5": "Son rötuşlar yapılıyor...",
     "footer": "Yapay zeka modeliniz özelleştiriliyor..."
+  },
+  "days": {
+    "sun": "Pz",
+    "mon": "Pt",
+    "tue": "Salı",
+    "wed": "Çar",
+    "thu": "Per",
+    "fri": "Cum",
+    "sat": "Cts"
+  },
+  "copilot": {
+    "finish": "Tamam",
+    "next": "Sıradaki",
+    "previous": "Geri",
+    "skip": "Atla"
+  },
+  "forms": {
+    "selectGender": "Cinsiyet Seçin",
+    "currentWeight": "Şu anki kilo",
+    "goalWeight": "Hedef kilo",
+    "height": "Boy",
+    "dateOfBirth": "Doğum tarihi",
+    "gender": "Cinsiyet",
+    "calorieGoal": "Kalori Hedefi",
+    "proteinGoal": "Protein Hedefi",
+    "carbGoal": "Karbonhidrat Hedefi",
+    "fatGoal": "Yağ Hedefi",
+    "male": "Erkek",
+    "female": "Kadın",
+    "other": "Diğer"
+  },
+  "explore": {
+    "personalised": "Sana Özel",
+    "trending": "Trend olan",
+    "personalisedTitle": "Sana Özel",
+    "trendingTitle": "Trend olan",
+    "personalisedDesc": "Kişiselleştirilmiş Yapay Zeka tarafından sana özel seçilmiş tarifler.",
+    "trendingDesc": "Topluluk tarafından en çok beğenilen ve popüler olan tarifler.",
+    "recipes": "Tarifler",
+    "mins": "dk"
+  },
+  "dietPreference": {
+    "title": "Beslenme",
+    "titleHighlight": "Tercihi",
+    "subtitle": "Hangi beslenme tarzına uygun tarifler arıyorsunuz? (Birden fazla seçebilirsiniz)",
+    "findRecipes": "Tarifleri Bul",
+    "vegan": "Vegan",
+    "vegetarian": "Vejeteryan",
+    "highProtein": "Yüksek Protein",
+    "lowCarb": "Düşük Karb"
   }
 }

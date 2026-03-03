@@ -165,5 +165,55 @@
     "msg4": "Calibrating your AI model...",
     "msg5": "Final touches...",
     "footer": "Customizing your AI model..."
+  },
+  "days": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "copilot": {
+    "finish": "Done",
+    "next": "Next",
+    "previous": "Back",
+    "skip": "Skip"
+  },
+  "forms": {
+    "selectGender": "Select Gender",
+    "currentWeight": "Current weight",
+    "goalWeight": "Goal weight",
+    "height": "Height",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender",
+    "calorieGoal": "Calorie Goal",
+    "proteinGoal": "Protein Goal",
+    "carbGoal": "Carb Goal",
+    "fatGoal": "Fat Goal",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other"
+  },
+  "explore": {
+    "personalised": "Personalised",
+    "trending": "Trending",
+    "personalisedTitle": "For You",
+    "trendingTitle": "Trending",
+    "personalisedDesc": "AI-curated recipes personalized just for you.",
+    "trendingDesc": "The most loved and popular recipes from the community.",
+    "recipes": "Recipes",
+    "mins": "min"
+  },
+  "dietPreference": {
+    "title": "Nutrition",
+    "titleHighlight": "Preference",
+    "subtitle": "What type of recipes are you looking for? (You can select multiple)",
+    "findRecipes": "Find Recipes",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "highProtein": "High Protein",
+    "lowCarb": "Low Carb"
   }
 }

@@ -214,32 +214,32 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Ana Sayfa",
+          title: t("tabs.home"),
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
-          title: "Progress",
+          title: t("tabs.progress"),
         }}
       />
 
       <Tabs.Screen
         name="add"
         options={{
-          title: "Ekle",
+          title: t("tabs.add"),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Keşfet",
+          title: t("tabs.explore"),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profil",
+          title: t("tabs.profile"),
         }}
       />
     </Tabs>

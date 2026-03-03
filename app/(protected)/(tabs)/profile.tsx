@@ -26,8 +26,8 @@ const THEME_OPTIONS: { value: ThemePreference; labelKey: string }[] = [
 ];
 
 const LANGUAGE_OPTIONS = [
-  { value: "tr", label: "Türkçe" },
-  { value: "en", label: "English" },
+  { value: "tr", label: "Türkçe", key: "tr" },
+  { value: "en", label: "English", key: "en" },
 ];
 
 const ProfileScreen = () => {

@@ -27,9 +27,17 @@ import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { TabScreenWrapper } from "./components/TabScreenWrapper";
 
-const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function ProgressScreen() {
   const { t } = useTranslation();
+  const dayNames = [
+    t("days.sun"),
+    t("days.mon"),
+    t("days.tue"),
+    t("days.wed"),
+    t("days.thu"),
+    t("days.fri"),
+    t("days.sat"),
+  ];
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const dispatch = useDispatch();
@@ -84,7 +92,7 @@ export default function ProgressScreen() {
         label: formattedDate,
       };
     });
-  }, [progressData.weightTrend.dailyBreakdown]);
+  }, [progressData.weightTrend.dailyBreakdown, dayNames]);
 
   const stackData = useMemo(() => {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {

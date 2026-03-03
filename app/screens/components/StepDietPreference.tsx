@@ -7,13 +7,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-
-const DIET_OPTIONS = [
-  { id: "vegan", label: "Vegan", icon: "leaf" },
-  { id: "vegetarian", label: "Vejeteryan", icon: "carrot" },
-  { id: "protein", label: "Yüksek Protein", icon: "arm-flex" },
-  { id: "low-carb", label: "Düşük Karb", icon: "food-steak" },
-];
+import { useTranslation } from "react-i18next";
 
 interface StepDietPreferenceProps {
   value: string[];
@@ -28,8 +22,16 @@ export function StepDietPreference({
   onSubmit,
   direction = "forward",
 }: StepDietPreferenceProps) {
+  const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
+
+  const DIET_OPTIONS = [
+    { id: "vegan", label: t("dietPreference.vegan"), icon: "leaf" },
+    { id: "vegetarian", label: t("dietPreference.vegetarian"), icon: "carrot" },
+    { id: "protein", label: t("dietPreference.highProtein"), icon: "arm-flex" },
+    { id: "low-carb", label: t("dietPreference.lowCarb"), icon: "food-steak" },
+  ];
 
   const toggleDiet = (dietId: string) => {
     if (value.includes(dietId)) {
@@ -50,11 +52,10 @@ export function StepDietPreference({
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          Beslenme <Text className="text-[#f39849]">Tercihi</Text>
+          {t("dietPreference.title")} <Text className="text-[#f39849]">{t("dietPreference.titleHighlight")}</Text>
         </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
-          Hangi beslenme tarzına uygun tarifler arıyorsunuz? (Birden fazla
-          seçebilirsiniz)
+          {t("dietPreference.subtitle")}
         </Text>
 
         <View className="gap-4">
@@ -114,7 +115,7 @@ export function StepDietPreference({
         >
           <MaterialIcons name="auto-awesome" size={24} color="white" />
           <Text className="text-white font-extrabold text-lg">
-            Tarifleri Bul
+            {t("dietPreference.findRecipes")}
           </Text>
         </TouchableOpacity>
       </View>

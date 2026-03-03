@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const NutritionGoalCard = ({
   icon,
@@ -87,6 +88,7 @@ const NutritionGoalCard = ({
  LOG  {"createdAt": "2026-02-21T14:04:53.402+00:00", "effectiveFrom": "2026-02-21T14:04:53.401+00:00", "effectiveTo": null, "id": "d667dec5-6590-41ff-885e-abf5c7e862ac", "metadata": null, "targetCalories": null, "targetCarbsG": null, "targetFatG": null, "targetProteinG": null, "targetWaterMl": null, "targetWeightKg": 45, "userId": "e7fd42d2-bee4-4455-ac35-64a6cf753e37"}
  */
 const NutritionGoals = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const { goalPlan } = useAppSelector((state) => state.goalPlans);
   const dispatch = useAppDispatch();
@@ -125,11 +127,11 @@ const NutritionGoals = () => {
             contentContainerStyle={{ paddingBottom: 180 }}
           >
             <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">
-              Edit Nutrition Goals
+              {t("home.editNutritionGoals")}
             </Text>
             <NutritionGoalCard
               icon="local-fire-department"
-              label="Calorie Goal"
+              label={t("forms.calorieGoal")}
               value={goals.targetCalories?.toString()}
               unit="kcal"
               color={Colors[colorScheme].primary}
@@ -139,7 +141,7 @@ const NutritionGoals = () => {
             />
             <NutritionGoalCard
               icon="fitness-center"
-              label="Protein Goal"
+              label={t("forms.proteinGoal")}
               value={goals.targetProteinG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
@@ -149,7 +151,7 @@ const NutritionGoals = () => {
             />
             <NutritionGoalCard
               icon="grass"
-              label="Carb Goal"
+              label={t("forms.carbGoal")}
               value={goals.targetCarbsG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
@@ -159,7 +161,7 @@ const NutritionGoals = () => {
             />
             <NutritionGoalCard
               icon="local-fire-department"
-              label="Fat Goal"
+              label={t("forms.fatGoal")}
               value={goals.targetFatG?.toString()}
               unit="g"
               color={Colors[colorScheme].primary}
@@ -176,7 +178,7 @@ const NutritionGoals = () => {
               activeOpacity={0.8}
             >
               <Text className="text-white dark:text-zinc-900 font-bold text-lg">
-                Save Changes
+                {t("common.save")}
               </Text>
             </TouchableOpacity>
           </View>
