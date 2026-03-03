@@ -101,6 +101,8 @@
   },
   "scanner": {
     "takePhoto": "Fotoğraf Çek",
+    "scanning": "Taranıyor...",
+    "scanInProgress": "Tarama devam ediyor",
     "analyzing": "Öğün Analiz Ediliyor",
     "pleaseWait": "Lütfen bekleyin...",
     "uploadingImage": "Görsel yükleniyor...",

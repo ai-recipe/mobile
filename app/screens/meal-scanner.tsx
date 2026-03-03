@@ -35,7 +35,8 @@ import { SoftPaywallModal } from "./components/SoftPaywallModal";
 
 /**
  * Meal Scanner screen.
- * Takes a photo → uploads via WebSocket scan flow → shows result → navigates home.
+ * Takes a photo → uploads → adds pending entry to daily log → navigates to home.
+ * Scan continues in background via socket; home shows "Scanning..." until complete.
  */
 export default function MealScannerScreen() {
   const insets = useSafeAreaInsets();
@@ -73,19 +74,16 @@ export default function MealScannerScreen() {
       2500,
     );
     return () => clearInterval(timer);
-  }, [scanning]);
+  }, [scanning, CAMPAIGN_KEYS.length]);
 
   // Camera permission
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice("back");
 
-  // Reset scan state on mount; disconnect socket on unmount
+  // Reset scan state on mount. Do NOT disconnect socket on unmount so background scan can finish.
   useEffect(() => {
     dispatch(resetScan());
-    return () => {
-      disconnectScan();
-    };
-  }, []);
+  }, [dispatch]);
 
   // Request camera permission on mount
   useEffect(() => {
@@ -103,7 +101,7 @@ export default function MealScannerScreen() {
         }
       });
     }
-  }, [hasPermission, requestPermission]);
+  }, [hasPermission, requestPermission, t]);
 
   const handleTakePhoto = useCallback(async () => {
     if (!cameraRef.current || isTakingPhoto) return;
@@ -125,9 +123,12 @@ export default function MealScannerScreen() {
       const uri = photo.path;
       dispatch(decrementCredit());
       dispatch(setCapturedPhotoUri(uri));
-      dispatch(startScanAsync(uri));
+      await dispatch(startScanAsync(uri)).unwrap();
+      // Upload succeeded; pending entry is in daily log. Navigate to home immediately.
+      router.navigate("/(protected)/(tabs)/");
     } catch (e) {
-      console.error("[MealScanner] Take photo error:", e);
+      console.error("[MealScanner] Take photo / upload error:", e);
+      // Error state is already set in Redux; stay on scanner to show error card
     } finally {
       setIsTakingPhoto(false);
     }

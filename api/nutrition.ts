@@ -14,6 +14,11 @@ export interface FoodLogEntry {
   isTemporary?: boolean;
   imageUri?: string;
   type?: "scan" | "manual";
+  /** When set, entry is a placeholder while scan runs; backend updates it on completion */
+  status?: "pending_scan" | "completed";
+  scanId?: string;
+  /** Path or full URL for scan image (e.g. /api/v1/scan/.../image) */
+  imageUrl?: string;
 }
 
 export interface DailySummary {

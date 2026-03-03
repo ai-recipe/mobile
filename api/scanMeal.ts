@@ -1,8 +1,11 @@
 import { api } from "./axios";
+import type { FoodLogEntry } from "./nutrition";
 
 export interface ScanUploadResponse {
   data: {
     scanId: string;
+    /** When backend creates a pending daily log entry, it is returned here */
+    dailyLogEntry?: FoodLogEntry;
   };
 }
 

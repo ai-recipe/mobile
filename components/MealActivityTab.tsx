@@ -8,11 +8,18 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
+const SCAN_IMAGE_BASE = "https://api.recipetrack.tech";
+
+function isPendingScan(entry: FoodLogEntry): boolean {
+  return entry.status === "pending_scan" || Boolean(entry.scanId);
+}
 
 interface MealActivityTabProps {
   consumedCalories: number;
@@ -126,53 +133,79 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           </View>
         </View>
         <View className="gap-3">
-          {items.map((entry) => (
-            <Pressable
-              key={entry.id}
-              onPress={() => onEditMeal(entry)}
-              className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="flex-col">
-                  <Text className="text-zinc-900 dark:text-white font-bold">
-                    {entry.mealName}
-                  </Text>
-                  <Text className="text-zinc-500 text-xs mt-0.5">
-                    {entry.quantity} {t("common.servings")} •{" "}
-                    {format(parseISO(entry.loggedAt), "HH:mm")}
-                  </Text>
+          {items.map((entry) => {
+            const pending = isPendingScan(entry);
+            const imageUri = entry.imageUrl
+              ? entry.imageUrl.startsWith("http")
+                ? entry.imageUrl
+                : `${SCAN_IMAGE_BASE}${entry.imageUrl}`
+              : null;
+            return (
+              <Pressable
+                key={entry.id}
+                onPress={() => !pending && onEditMeal(entry)}
+                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
+              >
+                <View className="flex-row items-center gap-3">
+                  {imageUri ? (
+                    <Image
+                      source={{ uri: imageUri }}
+                      className="w-12 h-12 rounded-xl"
+                      resizeMode="cover"
+                    />
+                  ) : pending ? (
+                    <View className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center">
+                      <MaterialIcons name="restaurant" size={24} color={themeColors.primary} />
+                    </View>
+                  ) : null}
+                  <View className="flex-col">
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-zinc-900 dark:text-white font-bold">
+                        {entry.mealName || t("scanner.scanning")}
+                      </Text>
+                      {pending && (
+                        <ActivityIndicator size="small" color={themeColors.primary} />
+                      )}
+                    </View>
+                    <Text className="text-zinc-500 text-xs mt-0.5">
+                      {entry.quantity} {t("common.servings")} •{" "}
+                      {format(parseISO(entry.loggedAt), "HH:mm")}
+                    </Text>
+                  </View>
                 </View>
-              </View>
 
-              <View className="flex-row items-center gap-3">
-                <Text className="text-zinc-900 dark:text-white font-bold">
-                  {entry.calories} kcal
-                </Text>
-                <View className="flex-row gap-1">
-                  <Pressable
-                    onPress={() => onEditMeal(entry)}
-                    className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                  >
-                    <MaterialIcons
-                      name="edit"
-                      size={18}
-                      color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
-                    />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => onDeleteMeal(entry.id)}
-                    className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                  >
-                    <MaterialIcons
-                      name="delete-outline"
-                      size={18}
-                      color="#ef4444"
-                    />
-                  </Pressable>
+                <View className="flex-row items-center gap-3">
+                  <Text className="text-zinc-900 dark:text-white font-bold">
+                    {entry.calories} kcal
+                  </Text>
+                  {!pending && (
+                    <View className="flex-row gap-1">
+                      <Pressable
+                        onPress={() => onEditMeal(entry)}
+                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                      >
+                        <MaterialIcons
+                          name="edit"
+                          size={18}
+                          color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
+                        />
+                      </Pressable>
+                      <Pressable
+                        onPress={() => onDeleteMeal(entry.id)}
+                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                      >
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={18}
+                          color="#ef4444"
+                        />
+                      </Pressable>
+                    </View>
+                  )}
                 </View>
-              </View>
-            </Pressable>
-          ))}
+              </Pressable>
+            );
+          })}
         </View>
       </View>
     );

@@ -9,7 +9,6 @@ import {
   type FoodLogEntry,
 } from "@/api/nutrition";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
 import { RootState } from "..";
 
 interface DailyLogsState {
@@ -119,15 +118,10 @@ export const deleteFoodLogAsync = createAsyncThunk(
 
 export const scanFoodAsync = createAsyncThunk(
   "dailyLogs/scanFood",
-  async (image: any, { rejectWithValue, dispatch }) => {
+  async (image: any, { rejectWithValue }) => {
     try {
       const response = await scanFood(image);
-      // add temporary food log
-      // not deletable
-      // listen sockets when scanning is done
-      // when scanning is done,update the log
-
-      dispatch(addTemporaryFoodLog({ imageUri: image }));
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error
@@ -183,28 +177,57 @@ const dailyLogsSlice = createSlice({
     setEndDate: (state, action: PayloadAction<string>) => {
       state.endDate = action.payload;
     },
-    addTemporaryFoodLog: (
+    /** Add the pending scan entry returned by backend after upload */
+    addPendingScanEntry: (state, action: PayloadAction<FoodLogEntry>) => {
+      const entry = action.payload;
+      if (!state.entries.some((e) => e.id === entry.id)) {
+        state.entries.push(entry);
+      }
+    },
+    /** Update a pending scan entry when scan completes (optional; refetch is source of truth) */
+    updateEntryByScanResult: (
       state,
       action: PayloadAction<{
-        imageUri: string;
+        scanId: string;
+        result: {
+          foodName?: string;
+          calories?: number;
+          proteinGrams?: number;
+          carbsGrams?: number;
+          fatGrams?: number;
+          quantity?: number;
+        };
       }>,
     ) => {
-      const temporaryFoodLog: FoodLogEntry = {
-        imageUri: action.payload.imageUri,
-        id: uuidv4(),
-        type: "scan",
-        isTemporary: true,
-        mealName: "",
-        calories: 0,
-        proteinGrams: 0,
-        carbsGrams: 0,
-        fatGrams: 0,
-        quantity: 0,
-        loggedAt: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const { scanId, result } = action.payload;
+      const idx = state.entries.findIndex((e) => e.scanId === scanId);
+      if (idx === -1) return;
+      const entry = state.entries[idx];
+      state.entries[idx] = {
+        ...entry,
+        mealName: result.foodName ?? entry.mealName,
+        calories: result.calories ?? entry.calories,
+        proteinGrams: result.proteinGrams ?? entry.proteinGrams,
+        carbsGrams: result.carbsGrams ?? entry.carbsGrams,
+        fatGrams: result.fatGrams ?? entry.fatGrams,
+        quantity: result.quantity ?? entry.quantity,
+        status: "completed",
+        scanId: undefined,
       };
-      state.entries.push(temporaryFoodLog);
+    },
+    /** Mark a pending scan entry as failed (e.g. after scan:error) */
+    markScanEntryError: (
+      state,
+      action: PayloadAction<{ scanId: string; message: string }>,
+    ) => {
+      const { scanId, message } = action.payload;
+      const idx = state.entries.findIndex((e) => e.scanId === scanId);
+      if (idx === -1) return;
+      state.entries[idx] = {
+        ...state.entries[idx],
+        mealName: message,
+        status: "completed",
+      };
     },
     clearDailyLogsState: (state) => {
       state.entries = [];
@@ -287,7 +310,9 @@ const dailyLogsSlice = createSlice({
 
 export const {
   clearDailyLogsState,
-  addTemporaryFoodLog,
+  addPendingScanEntry,
+  updateEntryByScanResult,
+  markScanEntryError,
   setStartDate,
   setEndDate,
 } = dailyLogsSlice.actions;

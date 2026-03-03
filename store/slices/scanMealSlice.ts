@@ -2,6 +2,14 @@ import { uploadScanImage } from "@/api/scanMeal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
+import {
+  addPendingScanEntry,
+  fetchFoodLogsAsync,
+  markScanEntryError,
+  setEndDate,
+  setStartDate,
+} from "./dailyLogsSlice";
+import type { RootState } from "..";
 
 const SOCKET_SERVER = "https://api.recipetrack.tech";
 
@@ -104,9 +112,13 @@ export const disconnectScan = () => {
 // -------------------------------------------------------------------
 // Thunk — defined after actions are exported to avoid circular refs
 // -------------------------------------------------------------------
-export const startScanAsync = createAsyncThunk<void, string>(
+export const startScanAsync = createAsyncThunk<
+  void,
+  string,
+  { state: RootState }
+>(
   "scanMeal/startScan",
-  async (photoUri, { dispatch }) => {
+  async (photoUri, { dispatch, getState }) => {
     const token = await AsyncStorage.getItem("token");
 
     dispatch(setScanStatus("connecting"));
@@ -128,14 +140,39 @@ export const startScanAsync = createAsyncThunk<void, string>(
 
           const uploadRes = await uploadScanImage(photoUri);
           const scanId = uploadRes.data?.scanId;
+          const dailyLogEntry = uploadRes.data?.dailyLogEntry;
+
+          if (!scanId) {
+            dispatch(setScanError("No scan ID returned"));
+            socket.disconnect();
+            _socket = null;
+            reject(new Error("No scan ID returned"));
+            return;
+          }
 
           dispatch(setScanId(scanId));
+
+          if (dailyLogEntry) {
+            dispatch(addPendingScanEntry(dailyLogEntry));
+          } else {
+            const state = getState();
+            const startDate = state.dailyLogs.startDate || new Date().toISOString().split("T")[0];
+            const endDate = state.dailyLogs.endDate || startDate;
+            if (!state.dailyLogs.startDate) {
+              dispatch(setStartDate(startDate));
+              dispatch(setEndDate(endDate));
+            }
+            await dispatch(fetchFoodLogsAsync()).unwrap();
+          }
+
           dispatch(setScanStatus("scanning"));
           dispatch(
             setScanProgress({ progress: 10, message: "Analyzing meal..." }),
           );
-
           socket.emit("subscribe:scan", { scanId });
+
+          // Resolve immediately so UI can navigate to home; socket stays alive for background updates
+          resolve();
         } catch (err) {
           const message =
             err instanceof Error ? err.message : "Upload failed";
@@ -156,14 +193,16 @@ export const startScanAsync = createAsyncThunk<void, string>(
       );
 
       socket.on("scan:completed", (data: { result: ScanResult }) => {
-        dispatch(setResult(data.result));
+        dispatch(fetchFoodLogsAsync());
         socket.disconnect();
         _socket = null;
-        resolve();
       });
 
       socket.on("scan:error", (data: { code: string; message: string }) => {
-        dispatch(setScanError(data.message));
+        const scanId = getState().scanMeal.scanId;
+        if (scanId) {
+          dispatch(markScanEntryError({ scanId, message: data.message }));
+        }
         socket.disconnect();
         _socket = null;
         reject(new Error(data.message));
