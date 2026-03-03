@@ -18,7 +18,7 @@ import {
 const SCAN_IMAGE_BASE = "https://api.recipetrack.tech";
 
 function isPendingScan(entry: FoodLogEntry): boolean {
-  return entry.status === "pending_scan" || Boolean(entry.scanId);
+  return entry.status === "pending_scan";
 }
 
 interface MealActivityTabProps {
@@ -140,48 +140,75 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                 ? entry.imageUrl
                 : `${SCAN_IMAGE_BASE}${entry.imageUrl}`
               : null;
+            const showImage = !!imageUri || pending;
             return (
               <Pressable
                 key={entry.id}
                 onPress={() => !pending && onEditMeal(entry)}
-                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between"
+                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center"
               >
-                <View className="flex-row items-center gap-3">
-                  {imageUri ? (
-                    <Image
-                      source={{ uri: imageUri }}
-                      className="w-12 h-12 rounded-xl"
-                      resizeMode="cover"
-                    />
-                  ) : pending ? (
-                    <View className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center">
-                      <MaterialIcons name="restaurant" size={24} color={themeColors.primary} />
-                    </View>
-                  ) : null}
-                  <View className="flex-col">
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-zinc-900 dark:text-white font-bold">
-                        {entry.mealName || t("scanner.scanning")}
-                      </Text>
-                      {pending && (
-                        <ActivityIndicator size="small" color={themeColors.primary} />
-                      )}
-                    </View>
-                    <Text className="text-zinc-500 text-xs mt-0.5">
-                      {entry.quantity} {t("common.servings")} •{" "}
-                      {format(parseISO(entry.loggedAt), "HH:mm")}
-                    </Text>
+                {/* Optional image or pending placeholder — fixed size */}
+                {showImage ? (
+                  <View className="mr-3 flex-shrink-0">
+                    {imageUri ? (
+                      <Image
+                        source={{ uri: imageUri }}
+                        className="w-12 h-12 rounded-xl"
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center">
+                        <MaterialIcons
+                          name="restaurant"
+                          size={24}
+                          color={themeColors.primary}
+                        />
+                      </View>
+                    )}
                   </View>
+                ) : null}
+
+                {/* Content — flex-1, min-w-0 so long text can wrap */}
+                <View className="flex-1 min-w-0 mr-3 justify-center">
+                  <View className="flex-row items-center gap-2 flex-wrap">
+                    <Text
+                      className="text-zinc-900 dark:text-white font-bold flex-shrink"
+                      numberOfLines={3}
+                      ellipsizeMode="tail"
+                    >
+                      {entry.mealName || t("scanner.scanning")}
+                    </Text>
+                    {pending && (
+                      <ActivityIndicator
+                        size="small"
+                        color={themeColors.primary}
+                      />
+                    )}
+                  </View>
+                  <Text
+                    className="text-zinc-500 text-xs mt-0.5"
+                    numberOfLines={1}
+                  >
+                    {entry.quantity} {t("common.servings")} •{" "}
+                    {format(parseISO(entry.loggedAt), "HH:mm")}
+                  </Text>
                 </View>
 
-                <View className="flex-row items-center gap-3">
-                  <Text className="text-zinc-900 dark:text-white font-bold">
+                {/* Calories + actions — fixed, no shrink */}
+                <View className="flex-row items-center gap-2 flex-shrink-0">
+                  <Text
+                    className="text-zinc-900 dark:text-white font-bold"
+                    numberOfLines={1}
+                  >
                     {entry.calories} kcal
                   </Text>
                   {!pending && (
                     <View className="flex-row gap-1">
                       <Pressable
-                        onPress={() => onEditMeal(entry)}
+                        onPress={(e) => {
+                          e?.stopPropagation?.();
+                          onEditMeal(entry);
+                        }}
                         className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
                       >
                         <MaterialIcons
@@ -191,7 +218,10 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                         />
                       </Pressable>
                       <Pressable
-                        onPress={() => onDeleteMeal(entry.id)}
+                        onPress={(e) => {
+                          e?.stopPropagation?.();
+                          onDeleteMeal(entry.id);
+                        }}
                         className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
                       >
                         <MaterialIcons
