@@ -204,6 +204,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 export default function TabLayout() {
+  const { t } = useTranslation();
+
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}

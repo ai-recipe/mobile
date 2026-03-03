@@ -83,6 +83,17 @@ function RootLayoutNavigator() {
   );
 }
 
+function RootLayoutWithLanguageSupport() {
+  // Listen to language changes from Redux to trigger re-renders
+  const { currentLanguage } = useAppSelector((state) => state.app);
+
+  return (
+    <CopilotLabelsWrapper key={currentLanguage}>
+      <RootLayoutNavigator />
+    </CopilotLabelsWrapper>
+  );
+}
+
 export default function RootLayout() {
   return (
     <Provider store={store}>
@@ -90,9 +101,7 @@ export default function RootLayout() {
         className={`bg-background  ${Platform.OS === "ios" ? "pb-0 " : ""}`}
         style={{ flex: 1 }}
       >
-        <CopilotLabelsWrapper>
-          <RootLayoutNavigator />
-        </CopilotLabelsWrapper>
+        <RootLayoutWithLanguageSupport />
       </GestureHandlerRootView>
     </Provider>
   );
