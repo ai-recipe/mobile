@@ -15,7 +15,15 @@
     "maybeLater": "Maybe Later",
     "goBack": "Go Back",
     "openSettings": "Open Settings",
-    "servings": "servings"
+    "servings": "servings",
+    "add": "Add"
+  },
+  "tabs": {
+    "home": "Home",
+    "progress": "Progress",
+    "add": "Add",
+    "explore": "Explore",
+    "profile": "Profile"
   },
   "onboarding": {
     "step1Title": "Scan with AI",

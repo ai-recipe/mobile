@@ -1,9 +1,9 @@
 import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
+import { GoalCelebrationModal } from "@/app/screens/components/GoalCelebrationModal";
 import {
   MealData,
   MealEntryModal,
 } from "@/app/screens/components/MealEntryModal";
-import { GoalCelebrationModal } from "@/app/screens/components/GoalCelebrationModal";
 import { SoftPaywallModal } from "@/app/screens/components/SoftPaywallModal";
 import { ActivityTabSwitcher } from "@/components/ActivityTabSwitcher";
 import { MealActivityTab } from "@/components/MealActivityTab";
@@ -21,11 +21,9 @@ import {
 } from "@/store/slices/dailyLogsSlice";
 import {
   closeMealModal,
-  closeSoftPaywall,
   openMealModal,
   openSoftPaywall,
 } from "@/store/slices/modalSlice";
-import { router } from "expo-router";
 import {
   addWaterIntakeAsync,
   deleteWaterIntakeAsync,
@@ -40,8 +38,9 @@ import {
   parseISO,
   subDays,
 } from "date-fns";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Dimensions,
@@ -61,7 +60,7 @@ const HomeScreen = () => {
   const dispatch = useAppDispatch();
   const themeColors = Colors[colorScheme];
   const backgroundColor = themeColors.background;
-
+  const { t } = useTranslation();
   const { entries, summary, isLoading } = useAppSelector(
     (state) => state.dailyLogs,
   );
@@ -248,14 +247,12 @@ const HomeScreen = () => {
 
     entries.forEach((entry) => {
       const hour = parseISO(entry.loggedAt).getHours();
-      if (hour >= 5 && hour < 11) {
+      if (hour < 11) {
         groups.BREAKFAST.push(entry);
       } else if (hour >= 11 && hour < 16) {
         groups.LUNCH.push(entry);
       } else if (hour >= 16 && hour < 23) {
         groups.DINNER.push(entry);
-      } else {
-        groups.SNACK.push(entry);
       }
     });
 
@@ -295,7 +292,7 @@ const HomeScreen = () => {
                 className="text-zinc-900 dark:text-white text-xl font-extrabold"
                 style={{ letterSpacing: -0.5 }}
               >
-                Ana Sayfa
+                {t("home.title")}
               </Text>
               <Pressable
                 onPress={() => {
@@ -317,7 +314,7 @@ const HomeScreen = () => {
                   className="text-xs font-black"
                   style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
                 >
-                  {creditRemaining} Tarama
+                  {t("home.scansRemaining", { count: creditRemaining })}
                 </Text>
               </Pressable>
             </View>
@@ -330,7 +327,11 @@ const HomeScreen = () => {
               className="mx-4 mb-3 rounded-2xl overflow-hidden flex-row items-center px-4 py-3"
               style={{ backgroundColor: "rgba(243,152,73,0.08)" }}
             >
-              <MaterialIcons name="workspace-premium" size={18} color="#f39849" />
+              <MaterialIcons
+                name="workspace-premium"
+                size={18}
+                color="#f39849"
+              />
               <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex-1 ml-2">
                 RecipeTrack Pro'yu dene —{" "}
                 <Text className="text-[#f39849]">Planları Görüntüle</Text>

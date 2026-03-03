@@ -15,7 +15,15 @@
     "maybeLater": "Belki Daha Sonra",
     "goBack": "Geri Dön",
     "openSettings": "Ayarları Aç",
-    "servings": "porsiyon"
+    "servings": "porsiyon",
+    "add": "Ekle"
+  },
+  "tabs": {
+    "home": "Ana Sayfa",
+    "progress": "Progress",
+    "add": "Ekle",
+    "explore": "Keşfet",
+    "profile": "Profil"
   },
   "onboarding": {
     "step1Title": "Yapay Zeka ile Tara",

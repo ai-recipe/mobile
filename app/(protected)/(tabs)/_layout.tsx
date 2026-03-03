@@ -12,9 +12,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BlurView } from "expo-blur";
-import { walkthroughable } from "react-native-copilot";
-
-const CopilotView = walkthroughable(View);
+import { useTranslation } from "react-i18next";
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -24,6 +22,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const { t } = useTranslation();
 
   const tabBarContainerStyle = [
     styles.tabBarContainer,
@@ -33,16 +32,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       shadowColor: isDark ? "#000" : "#000",
     },
   ];
-  const homeIndicatorStyle = [
-    {
-      backgroundColor: theme.border,
-      height: 3,
-      borderRadius: 100,
-      alignSelf: "center",
-      marginTop: 20,
-      marginBottom: 8,
-    },
-  ];
+
   const scanButtonTouchableStyle = [
     styles.scanButtonTouchable,
     { backgroundColor: theme.card, shadowColor: theme.tint },
@@ -122,7 +112,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                       </LinearGradient>
                     </TouchableOpacity>
                     <Text style={[styles.scanLabel, { color: theme.tint }]}>
-                      Ekle
+                      {t("common.add")}
                     </Text>
                   </View>
                 );
@@ -172,15 +162,15 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               const getLabel = (name: string) => {
                 switch (name) {
                   case "index":
-                    return "Ana Sayfa";
+                    return t("tabs.home");
                   case "progress":
-                    return "Progress";
+                    return t("tabs.progress");
                   case "profile":
-                    return "Profil";
+                    return t("tabs.profile");
                   case "explore":
-                    return "Keşfet";
+                    return t("tabs.explore");
                   default:
-                    return name;
+                    return t(`tabs.${name}`);
                 }
               };
 
@@ -207,7 +197,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               );
             })}
           </View>
-          <View style={homeIndicatorStyle} />
         </BlurView>
       </View>
     </>

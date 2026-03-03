@@ -150,7 +150,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId: "test1234",
+        deviceId: "allah12345",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
@@ -280,6 +280,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout, setIsOnboarded, setAuthenticated, decrementCredit } = authSlice.actions;
+export const { logout, setIsOnboarded, setAuthenticated, decrementCredit } =
+  authSlice.actions;
 
 export default authSlice.reducer;

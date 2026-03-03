@@ -5,18 +5,11 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
-import {
-  ImageBackground,
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { ImageBackground, Pressable, Text, View } from "react-native";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
 export default function ScanScreen() {
   const colorScheme = useColorScheme();
-  const { height } = useWindowDimensions();
   const themeColors = Colors[colorScheme];
 
   const handleScanIngredients = () => {

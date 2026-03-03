@@ -40,7 +40,6 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       backgroundColor: themeColors.background,
       ...(withTabNavigation
         ? {
-            marginBottom: 76,
             paddingTop:
               Platform.OS === "android"
                 ? Math.max(insets.top, StatusBar.currentHeight || 0)
