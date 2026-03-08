@@ -1,195 +1,326 @@
-<!doctype html>
-<html class="dark" lang="tr">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Akdeniz Usulü Levrek - Tarif Detayı</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#F28C28", // Deep orange accent
-              "background-light": "#F8F9FA",
-              "background-dark": "#121212",
-              "card-dark": "#1E1E1E",
-            },
-            fontFamily: {
-              display: ["Inter", "sans-serif"],
-            },
-            borderRadius: {
-              DEFAULT: "16px",
-            },
-          },
-        },
-      };
-    </script>
+    <meta charset="UTF-8" />
+    <title>Scan WebSocket Tester</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
       body {
-        font-family: "Inter", sans-serif;
-        -webkit-tap-highlight-color: transparent;
+        font-family: monospace;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+        background: #1a1a1a;
+        color: #e0e0e0;
       }
-      .hide-scrollbar::-webkit-scrollbar {
-        display: none;
+      h2 {
+        color: #64b5f6;
       }
-      .hide-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+      label {
+        display: block;
+        margin-top: 12px;
+        color: #90a4ae;
+        font-size: 13px;
       }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
+      input,
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        color: #e0e0e0;
+        padding: 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 13px;
+      }
+      textarea {
+        height: 60px;
+        resize: vertical;
+      }
+      button {
+        margin-top: 12px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+      }
+      #connectBtn {
+        background: #1565c0;
+        color: #fff;
+      }
+      #connectBtn:disabled {
+        background: #444;
+        cursor: not-allowed;
+      }
+      #uploadBtn {
+        background: #2e7d32;
+        color: #fff;
+      }
+      #uploadBtn:disabled {
+        background: #444;
+        cursor: not-allowed;
+      }
+      #status {
+        margin-top: 20px;
+        padding: 12px;
+        background: #2a2a2a;
+        border-radius: 6px;
+      }
+      .ws-status {
+        font-size: 13px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        display: inline-block;
+      }
+      .ws-connected {
+        background: #1b5e20;
+        color: #a5d6a7;
+      }
+      .ws-disconnected {
+        background: #b71c1c;
+        color: #ef9a9a;
+      }
+      .progress-bar-wrap {
+        background: #333;
+        border-radius: 6px;
+        height: 24px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #1565c0, #42a5f5);
+        border-radius: 6px;
+        transition: width 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #fff;
+        font-weight: bold;
+      }
+      #log {
+        margin-top: 20px;
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 6px;
+        padding: 12px;
+        height: 300px;
+        overflow-y: auto;
+        font-size: 12px;
+      }
+      .log-info {
+        color: #64b5f6;
+      }
+      .log-ok {
+        color: #81c784;
+      }
+      .log-error {
+        color: #ef5350;
+      }
+      .log-event {
+        color: #ffd54f;
+      }
+      .log-time {
+        color: #555;
       }
     </style>
   </head>
-  <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
-  >
-    <div class="relative w-full h-[40vh]">
-      <img
-        alt="Akdeniz Usulü Levrek"
-        class="w-full h-full object-cover"
-        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_y2dc2vS2KdW2PAW8d_3j9IsEGIuKOIsxshOXletERNdk88dYu2Af71WFjgLj25byPfDvEu_pQ-XVhN4-yQI-z4q9Dy0xfbuS7NycDefQLvD5DDOreAeRbZTn_qahv4oL9g4YHU9lv4GOov7f34k0-r743IeuGySHbJm1ZRYOwMaMCwtueHHtV1KRuAGRCuvEdawqPEPiTUhSWX81xuGbECouXZuQ-N3IyGMz3Q1vXABJm9aK798SF15St6RLMseuGAttMCk6DIxO"
-      />
-      <div
-        class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent"
-      >
-        <button
-          class="p-2 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 transition-colors"
-        >
-          <span class="material-icons-round">arrow_back_ios_new</span>
-        </button>
-        <button
-          class="p-2 rounded-full bg-black/30 backdrop-blur-md text-primary hover:bg-black/50 transition-colors"
-        >
-          <span class="material-icons-round">favorite</span>
-        </button>
-      </div>
+  <body>
+    <h2>🍽️ Scan WebSocket Tester</h2>
+    <p style="color: #777; font-size: 13px">
+      1. Bağlan → 2. Resim seç → 3. Upload yap → Progress'i izle
+    </p>
+
+    <label>API Base URL</label>
+    <input id="baseUrl" value="http://localhost:3000/api/v1" />
+
+    <label>JWT Token (Bearer olmadan)</label>
+    <textarea
+      id="token"
+      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ></textarea>
+
+    <button id="connectBtn" onclick="connect()">🔌 WebSocket'e Bağlan</button>
+
+    <div id="status">
+      <span class="ws-status ws-disconnected" id="wsLabel">● Bağlı değil</span>
+    </div>
+
+    <hr style="border-color: #333; margin: 20px 0" />
+
+    <label>Resim Dosyası (JPEG/PNG/WebP, max 10MB)</label>
+    <input
+      type="file"
+      id="imageFile"
+      accept="image/jpeg,image/png,image/webp"
+    />
+
+    <button id="uploadBtn" onclick="upload()" disabled>
+      📤 Upload → Analiz Et
+    </button>
+
+    <div class="progress-bar-wrap" style="margin-top: 16px">
+      <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
     </div>
     <div
-      class="flex-1 bg-background-light dark:bg-background-dark -mt-8 rounded-t-[32px] p-6 relative z-10"
+      id="stateLabel"
+      style="
+        text-align: center;
+        margin-top: 6px;
+        font-size: 13px;
+        color: #90a4ae;
+      "
     >
-      <div class="mb-6">
-        <span class="text-primary font-bold text-sm tracking-wider uppercase"
-          >Deniz Ürünleri</span
-        >
-        <div class="flex justify-between items-start mt-1">
-          <h1 class="text-2xl font-bold leading-tight max-w-[80%]">
-            Akdeniz Usulü Levrek
-          </h1>
-          <div
-            class="flex items-center gap-1 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-lg"
-          >
-            <span class="material-icons-round text-primary text-sm">star</span>
-            <span class="text-sm font-semibold text-primary">4.8</span>
-          </div>
-        </div>
-        <div class="flex gap-4 mt-4">
-          <div
-            class="flex items-center gap-2 text-slate-500 dark:text-slate-400"
-          >
-            <span class="material-icons-round text-lg">schedule</span>
-            <span class="text-sm">35 dk</span>
-          </div>
-          <div
-            class="flex items-center gap-2 text-slate-500 dark:text-slate-400"
-          >
-            <span class="material-icons-round text-lg"
-              >signal_cellular_alt</span
-            >
-            <span class="text-sm">Orta</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6">
-        <button
-          class="flex-1 pb-3 text-sm font-bold border-b-2 border-primary text-primary"
-        >
-          Malzemeler
-        </button>
-        <button
-          class="flex-1 pb-3 text-sm font-bold text-slate-400 dark:text-slate-500 border-b-2 border-transparent"
-        >
-          Hazırlanış
-        </button>
-      </div>
-      <div class="space-y-4 mb-24">
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300"
-            >2 adet orta boy levrek</span
-          >
-        </label>
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300"
-            >3 yemek kaşığı zeytinyağı</span
-          >
-        </label>
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300"
-            >1 adet limon (dilimlenmiş)</span
-          >
-        </label>
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300">2 diş sarımsak</span>
-        </label>
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300"
-            >Taze biberiye ve kekik</span
-          >
-        </label>
-        <label
-          class="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800"
-        >
-          <input
-            class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent"
-            type="checkbox"
-          />
-          <span class="text-slate-700 dark:text-slate-300"
-            >Tuz ve taze çekilmiş karabiber</span
-          >
-        </label>
-      </div>
+      -
     </div>
+
+    <div id="log"></div>
+
+    <script>
+      let socket = null;
+      let currentScanId = null;
+
+      function log(msg, cls = "log-info") {
+        const el = document.getElementById("log");
+        const time = new Date().toLocaleTimeString();
+        el.innerHTML += `<div><span class="log-time">[${time}]</span> <span class="${cls}">${msg}</span></div>`;
+        el.scrollTop = el.scrollHeight;
+      }
+
+      function setProgress(pct, state) {
+        const bar = document.getElementById("progressBar");
+        bar.style.width = pct + "%";
+        bar.textContent = pct + "%";
+        document.getElementById("stateLabel").textContent = state;
+      }
+
+      function connect() {
+        const baseUrl = document
+          .getElementById("baseUrl")
+          .value.replace("/api/v1", "");
+        const token = document.getElementById("token").value.trim();
+
+        if (!token) {
+          alert("JWT token giriniz");
+          return;
+        }
+
+        if (socket) {
+          socket.disconnect();
+        }
+
+        log(`Bağlanıyor: ${baseUrl}/scan ...`, "log-info");
+
+        socket = io(`${baseUrl}/scan`, {
+          transports: ["websocket", "polling"],
+          auth: { token },
+        });
+
+        socket.on("connect", () => {
+          document.getElementById("wsLabel").textContent =
+            "● Bağlı: " + socket.id;
+          document.getElementById("wsLabel").className =
+            "ws-status ws-connected";
+          document.getElementById("connectBtn").disabled = true;
+          document.getElementById("uploadBtn").disabled = false;
+          log(
+            "✅ WebSocket bağlantısı kuruldu — socket.id: " + socket.id,
+            "log-ok",
+          );
+        });
+
+        socket.on("disconnect", (reason) => {
+          document.getElementById("wsLabel").textContent = "● Bağlı değil";
+          document.getElementById("wsLabel").className =
+            "ws-status ws-disconnected";
+          document.getElementById("connectBtn").disabled = false;
+          document.getElementById("uploadBtn").disabled = true;
+          log("❌ Bağlantı kesildi: " + reason, "log-error");
+        });
+
+        socket.on("connect_error", (err) => {
+          log("❌ Bağlantı hatası: " + err.message, "log-error");
+        });
+
+        // Progress event
+        socket.on("scan:progress", (data) => {
+          log(
+            `📊 scan:progress → state=${data.state} progress=${data.progress}% — "${data.message}"`,
+            "log-event",
+          );
+          setProgress(data.progress, `${data.state} — ${data.message}`);
+        });
+
+        // Completed event
+        socket.on("scan:completed", (data) => {
+          log(`🎉 scan:completed → ${JSON.stringify(data.result)}`, "log-ok");
+          setProgress(100, `✅ Tamamlandı — ${data.result?.foodName ?? ""}`);
+        });
+
+        // Error event
+        socket.on("scan:error", (data) => {
+          log(
+            `💥 scan:error → code=${data.code} message="${data.message}"`,
+            "log-error",
+          );
+          setProgress(0, `❌ Hata: ${data.message}`);
+        });
+      }
+
+      async function upload() {
+        const baseUrl = document.getElementById("baseUrl").value;
+        const token = document.getElementById("token").value.trim();
+        const fileInput = document.getElementById("imageFile");
+
+        if (!fileInput.files.length) {
+          alert("Bir resim dosyası seçin");
+          return;
+        }
+        if (!socket || !socket.connected) {
+          alert("Önce WebSocket bağlantısı kurmalısınız");
+          return;
+        }
+
+        setProgress(0, "Yükleniyor...");
+        document.getElementById("uploadBtn").disabled = true;
+
+        const formData = new FormData();
+        formData.append("image", fileInput.files[0]);
+
+        log(`📤 POST ${baseUrl}/scan/upload ...`, "log-info");
+
+        try {
+          const res = await fetch(`${baseUrl}/scan/upload`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          });
+
+          const json = await res.json();
+
+          if (!res.ok) {
+            log(`❌ Upload hatası: ${JSON.stringify(json)}`, "log-error");
+            document.getElementById("uploadBtn").disabled = false;
+            return;
+          }
+
+          const scanId = json.data?.scanId ?? json.scanId;
+          currentScanId = scanId;
+          log(`✅ Upload başarılı → scanId: ${scanId}`, "log-ok");
+          log(`📡 WebSocket event bekleniyor: scan:${scanId}`, "log-info");
+
+          // Subscribe to this specific scan
+          socket.emit("subscribe:scan", { scanId });
+        } catch (err) {
+          log(`❌ Fetch hatası: ${err.message}`, "log-error");
+        } finally {
+          document.getElementById("uploadBtn").disabled = false;
+        }
+      }
+    </script>
   </body>
 </html>

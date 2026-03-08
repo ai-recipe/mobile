@@ -98,7 +98,6 @@ export default function ProgressScreen() {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {
       // year-month-day = day.date
       const date = format(new Date(day.date), "yyyy-MM-dd");
-      console.log(date);
       // day and month name
       const label = `${format(new Date(day.date), "dd MMM")}`;
 
@@ -126,7 +125,6 @@ export default function ProgressScreen() {
       };
     });
   }, [progressData.calorieIntake.dailyBreakdown]);
-  console.log(progressData.calorieIntake.dailyBreakdown);
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
@@ -141,7 +139,9 @@ export default function ProgressScreen() {
             <BMICard bmi={progressData.weightTrend.bmi} />
 
             <View className="bg-white dark:bg-zinc-900 p-4 rounded-3xl overflow-hidden flex-1 relative mb-4">
-              <Text className="text-lg font-bold mb-6">{t("progress.calorieIntake")}</Text>
+              <Text className="text-lg font-bold mb-6">
+                {t("progress.calorieIntake")}
+              </Text>
               <View className="absolute top-6 right-4 flex-row gap-2">
                 <View className="h-4 w-4  rounded-full bg-[#5C8CE4]" />
                 <Text className="text-sm text-zinc-500 dark:text-zinc-400">

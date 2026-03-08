@@ -193,17 +193,21 @@ const HomeScreen = () => {
   };
 
   const handleDeleteMeal = (id: string) => {
-    Alert.alert(t("common.delete"), "Are you sure you want to delete this entry?", [
-      { text: t("common.cancel"), style: "cancel" },
-      {
-        text: t("common.delete"),
-        style: "destructive",
-        onPress: () => {
-          const dateStr = format(selectedDate, "yyyy-MM-dd");
-          dispatch(deleteFoodLogAsync({ id, date: dateStr }));
+    Alert.alert(
+      t("common.delete"),
+      "Are you sure you want to delete this entry?",
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: () => {
+            const dateStr = format(selectedDate, "yyyy-MM-dd");
+            dispatch(deleteFoodLogAsync({ id, date: dateStr }));
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const handleEditMeal = (entry: any) => {
@@ -253,6 +257,8 @@ const HomeScreen = () => {
         groups.LUNCH.push(entry);
       } else if (hour >= 16 && hour < 23) {
         groups.DINNER.push(entry);
+      } else {
+        groups.SNACK.push(entry);
       }
     });
 
@@ -333,7 +339,7 @@ const HomeScreen = () => {
                 color="#f39849"
               />
               <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex-1 ml-2">
-                RecipeTrack Pro'yu dene —{" "}
+                SlayCal Pro'yu dene —{" "}
                 <Text className="text-[#f39849]">Planları Görüntüle</Text>
               </Text>
               <Pressable

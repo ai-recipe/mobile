@@ -40,7 +40,7 @@
   "home": {
     "title": "Home",
     "scansRemaining": "{{count}} Scans",
-    "proTrial": "Try RecipeTrack Pro — View Plans",
+    "proTrial": "Try SlayCal Pro — View Plans",
     "mealActivity": "Meal Activity",
     "waterActivity": "Water Activity",
     "editNutritionGoals": "Edit Nutrition Goals",
@@ -123,7 +123,7 @@
     "proNudge4": "Your AI chef is with you every meal."
   },
   "paywall": {
-    "title": "Chef AI",
+    "title": "SlayCal",
     "titleHighlight": "Premium",
     "subtitle": "Remove kitchen limits and discover your full potential.",
     "monthly": "Monthly",

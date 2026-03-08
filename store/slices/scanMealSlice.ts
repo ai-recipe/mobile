@@ -2,6 +2,7 @@ import { uploadScanImage } from "@/api/scanMeal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
+import type { RootState } from "..";
 import {
   addPendingScanEntry,
   fetchFoodLogsAsync,
@@ -9,7 +10,6 @@ import {
   setEndDate,
   setStartDate,
 } from "./dailyLogsSlice";
-import type { RootState } from "..";
 
 const SOCKET_SERVER = "https://api.recipetrack.tech";
 
@@ -116,106 +116,102 @@ export const startScanAsync = createAsyncThunk<
   void,
   string,
   { state: RootState }
->(
-  "scanMeal/startScan",
-  async (photoUri, { dispatch, getState }) => {
-    const token = await AsyncStorage.getItem("token");
+>("scanMeal/startScan", async (photoUri, { dispatch, getState }) => {
+  const token = await AsyncStorage.getItem("token");
 
-    dispatch(setScanStatus("connecting"));
-    dispatch(setScanProgress({ progress: 0, message: "Connecting..." }));
+  dispatch(setScanStatus("connecting"));
+  dispatch(setScanProgress({ progress: 0, message: "Connecting..." }));
 
-    return new Promise<void>((resolve, reject) => {
-      const socket = io(`${SOCKET_SERVER}/scan`, {
-        transports: ["websocket", "polling"],
-        auth: { token },
-      });
-      _socket = socket;
+  return new Promise<void>((resolve, reject) => {
+    const socket = io(`${SOCKET_SERVER}/scan`, {
+      transports: ["websocket", "polling"],
+      auth: { token },
+    });
+    _socket = socket;
 
-      socket.on("connect", async () => {
-        try {
-          dispatch(setScanStatus("uploading"));
-          dispatch(
-            setScanProgress({ progress: 5, message: "Uploading image..." }),
-          );
+    socket.on("connect", async () => {
+      try {
+        dispatch(setScanStatus("uploading"));
+        dispatch(
+          setScanProgress({ progress: 5, message: "Uploading image..." }),
+        );
 
-          const uploadRes = await uploadScanImage(photoUri);
-          const scanId = uploadRes.data?.scanId;
-          const dailyLogEntry = uploadRes.data?.dailyLogEntry;
-
-          if (!scanId) {
-            dispatch(setScanError("No scan ID returned"));
-            socket.disconnect();
-            _socket = null;
-            reject(new Error("No scan ID returned"));
-            return;
-          }
-
-          dispatch(setScanId(scanId));
-
-          if (dailyLogEntry) {
-            dispatch(addPendingScanEntry(dailyLogEntry));
-          } else {
-            const state = getState();
-            const startDate = state.dailyLogs.startDate || new Date().toISOString().split("T")[0];
-            const endDate = state.dailyLogs.endDate || startDate;
-            if (!state.dailyLogs.startDate) {
-              dispatch(setStartDate(startDate));
-              dispatch(setEndDate(endDate));
-            }
-            await dispatch(fetchFoodLogsAsync()).unwrap();
-          }
-
-          dispatch(setScanStatus("scanning"));
-          dispatch(
-            setScanProgress({ progress: 10, message: "Analyzing meal..." }),
-          );
-          socket.emit("subscribe:scan", { scanId });
-
-          // Resolve immediately so UI can navigate to home; socket stays alive for background updates
-          resolve();
-        } catch (err) {
-          const message =
-            err instanceof Error ? err.message : "Upload failed";
-          dispatch(setScanError(message));
+        const uploadRes = await uploadScanImage(photoUri);
+        const scanId = uploadRes.data?.scanId;
+        const dailyLogEntry = uploadRes.data?.dailyLogEntry;
+        if (!scanId) {
+          dispatch(setScanError("No scan ID returned"));
           socket.disconnect();
           _socket = null;
-          reject(new Error(message));
+          reject(new Error("No scan ID returned"));
+          return;
         }
-      });
 
-      socket.on(
-        "scan:progress",
-        (data: { state: string; progress: number; message: string }) => {
-          dispatch(
-            setScanProgress({ progress: data.progress, message: data.message }),
-          );
-        },
-      );
+        dispatch(setScanId(scanId));
 
-      socket.on("scan:completed", (data: { result: ScanResult }) => {
-        dispatch(fetchFoodLogsAsync());
-        socket.disconnect();
-        _socket = null;
-      });
-
-      socket.on("scan:error", (data: { code: string; message: string }) => {
-        const scanId = getState().scanMeal.scanId;
-        if (scanId) {
-          dispatch(markScanEntryError({ scanId, message: data.message }));
+        if (dailyLogEntry) {
+          dispatch(addPendingScanEntry(dailyLogEntry));
+        } else {
+          const state = getState();
+          const startDate =
+            state.dailyLogs.startDate || new Date().toISOString().split("T")[0];
+          const endDate = state.dailyLogs.endDate || startDate;
+          if (!state.dailyLogs.startDate) {
+            dispatch(setStartDate(startDate));
+            dispatch(setEndDate(endDate));
+          }
+          await dispatch(fetchFoodLogsAsync()).unwrap();
         }
-        socket.disconnect();
-        _socket = null;
-        reject(new Error(data.message));
-      });
 
-      socket.on("connect_error", (err: Error) => {
-        dispatch(setScanError(`Connection failed: ${err.message}`));
+        dispatch(setScanStatus("scanning"));
+        dispatch(
+          setScanProgress({ progress: 10, message: "Analyzing meal..." }),
+        );
+        socket.emit("subscribe:scan", { scanId });
+
+        // Resolve immediately so UI can navigate to home; socket stays alive for background updates
+        resolve();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Upload failed";
+        dispatch(setScanError(message));
         socket.disconnect();
         _socket = null;
-        reject(err);
-      });
+        reject(new Error(message));
+      }
     });
-  },
-);
+
+    socket.on(
+      "scan:progress",
+      (data: { state: string; progress: number; message: string }) => {
+        dispatch(
+          setScanProgress({ progress: data.progress, message: data.message }),
+        );
+      },
+    );
+
+    socket.on("scan:completed", (data: { result: ScanResult }) => {
+      dispatch(fetchFoodLogsAsync());
+      socket.disconnect();
+      _socket = null;
+    });
+
+    socket.on("scan:error", (data: { code: string; message: string }) => {
+      const scanId = getState().scanMeal.scanId;
+      if (scanId) {
+        dispatch(markScanEntryError({ scanId, message: data.message }));
+      }
+      socket.disconnect();
+      _socket = null;
+      reject(new Error(data.message));
+    });
+
+    socket.on("connect_error", (err: Error) => {
+      dispatch(setScanError(`Connection failed: ${err.message}`));
+      socket.disconnect();
+      _socket = null;
+      reject(err);
+    });
+  });
+});
 
 export default scanMealSlice.reducer;

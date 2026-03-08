@@ -85,7 +85,6 @@ export const postGoalPlanLogAsync = createAsyncThunk(
     try {
       const { from, ...rest } = payload;
       if (from === "progress") {
-        console.log("XXX Progress");
         dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
       } else if (from === "profile") {
         dispatch(setGoalPlan(rest));
