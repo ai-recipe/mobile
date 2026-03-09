@@ -4,7 +4,9 @@ import {
   fetchWaterIntake,
   type WaterIntakeSummary,
 } from "@/api/nutrition";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { format } from "date-fns";
+import { RootState } from "..";
 
 interface WaterLogsState extends WaterIntakeSummary {
   isLoading: boolean;
@@ -25,7 +27,9 @@ const initialState: WaterLogsState = {
 
 export const fetchWaterIntakeAsync = createAsyncThunk(
   "waterLogs/fetchWaterIntake",
-  async (date: string, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
+    const state = getState() as RootState;
+    const date = format(state.waterLogs.date, "yyyy-MM-dd");
     try {
       const data = await fetchWaterIntake({ date });
       return data?.data;
@@ -46,11 +50,12 @@ export const addWaterIntakeAsync = createAsyncThunk(
     { rejectWithValue, dispatch },
   ) => {
     try {
+      console.log("payload", payload);
       const response = await addWaterIntake({
         amountMl: payload.amountMl,
         loggedAt: payload.loggedAt,
       });
-      await dispatch(fetchWaterIntakeAsync(payload.loggedAt));
+      await dispatch(fetchWaterIntakeAsync());
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -70,7 +75,7 @@ export const deleteWaterIntakeAsync = createAsyncThunk(
   ) => {
     try {
       await deleteWaterIntake(payload.id);
-      await dispatch(fetchWaterIntakeAsync(payload.date));
+      await dispatch(fetchWaterIntakeAsync());
     } catch (error) {
       return rejectWithValue(
         error instanceof Error
@@ -85,6 +90,9 @@ const waterLogsSlice = createSlice({
   name: "waterLogs",
   initialState,
   reducers: {
+    setDate: (state, action: PayloadAction<string>) => {
+      state.date = action.payload;
+    },
     clearWaterLogsState: (state) => {
       state.entries = [];
       state.totalIntakeMl = 0;
@@ -101,7 +109,6 @@ const waterLogsSlice = createSlice({
       })
       .addCase(fetchWaterIntakeAsync.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.date = action.payload.date;
         state.totalIntakeMl = action.payload.totalIntakeMl;
         state.dailyGoalMl = action.payload.dailyGoalMl;
         state.progressPercentage = action.payload.progressPercentage;
@@ -137,5 +144,5 @@ const waterLogsSlice = createSlice({
   },
 });
 
-export const { clearWaterLogsState } = waterLogsSlice.actions;
+export const { clearWaterLogsState, setDate } = waterLogsSlice.actions;
 export default waterLogsSlice.reducer;

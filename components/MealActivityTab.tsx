@@ -141,34 +141,93 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                 : `${SCAN_IMAGE_BASE}${entry.imageUrl}`
               : null;
             const showImage = !!imageUri || pending;
-            return (
-              <Pressable
-                key={entry.id}
-                onPress={() => !pending && onEditMeal(entry)}
-                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center"
-              >
-                {/* Optional image or pending placeholder — fixed size */}
-                {showImage ? (
-                  <View className="mr-3 flex-shrink-0">
+
+            // Pending scan: reference-style card (white, rounded-3xl, 16x16 thumb, spinner, subtitle)
+            if (pending) {
+              return (
+                <View
+                  key={entry.id}
+                  className="bg-white dark:bg-zinc-900 rounded-3xl border-2 border-zinc-100 dark:border-zinc-800 p-4 flex-row items-center gap-4 "
+                >
+                  <View className="flex-shrink-0">
                     {imageUri ? (
-                      <Image
-                        source={{ uri: imageUri }}
-                        className="w-12 h-12 rounded-xl"
-                        resizeMode="cover"
-                      />
+                      <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                        <Image
+                          source={{ uri: imageUri }}
+                          className="w-full h-full"
+                          resizeMode="cover"
+                          style={{ opacity: 0.7 }}
+                        />
+                        <View
+                          className="absolute inset-0 rounded-2xl"
+                          style={{
+                            backgroundColor: `${themeColors.primary}20`,
+                          }}
+                        />
+                      </View>
                     ) : (
-                      <View className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center">
+                      <View
+                        className="w-16 h-16 rounded-2xl items-center justify-center"
+                        style={{
+                          backgroundColor: `${themeColors.primary}15`,
+                        }}
+                      >
                         <MaterialIcons
                           name="restaurant"
-                          size={24}
+                          size={32}
                           color={themeColors.primary}
                         />
                       </View>
                     )}
                   </View>
+                  <View className="flex-1 min-w-0">
+                    <View className="flex-row items-center gap-2">
+                      <Text
+                        className="text-lg font-bold flex-shrink"
+                        style={{ color: themeColors.primary }}
+                        numberOfLines={1}
+                      >
+                        {t("scanner.analyzingMeal")}
+                      </Text>
+                      <ActivityIndicator
+                        size="small"
+                        color={themeColors.primary}
+                      />
+                    </View>
+                    <Text className="text-sm text-zinc-400 dark:text-zinc-500 mt-0.5">
+                      {t("scanner.calculatingNutrients")}
+                    </Text>
+                  </View>
+                  <View className="flex-shrink-0 items-end">
+                    <Text className="text-zinc-400 dark:text-zinc-500 font-medium">
+                      —
+                    </Text>
+                    <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                      kcal
+                    </Text>
+                  </View>
+                </View>
+              );
+            }
+
+            return (
+              <Pressable
+                key={entry.id}
+                onPress={() => onEditMeal(entry)}
+                className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center"
+              >
+                {/* Image */}
+                {showImage && imageUri ? (
+                  <View className="mr-3 flex-shrink-0">
+                    <Image
+                      source={{ uri: imageUri }}
+                      className="w-12 h-12 rounded-xl"
+                      resizeMode="cover"
+                    />
+                  </View>
                 ) : null}
 
-                {/* Content — flex-1, min-w-0 so long text can wrap */}
+                {/* Content */}
                 <View className="flex-1 min-w-0 mr-3 justify-center">
                   <View className="flex-row items-center gap-2 flex-wrap">
                     <Text
@@ -178,12 +237,6 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                     >
                       {entry.mealName || t("scanner.scanning")}
                     </Text>
-                    {pending && (
-                      <ActivityIndicator
-                        size="small"
-                        color={themeColors.primary}
-                      />
-                    )}
                   </View>
                   <Text
                     className="text-zinc-500 text-xs mt-0.5"
@@ -194,7 +247,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   </Text>
                 </View>
 
-                {/* Calories + actions — fixed, no shrink */}
+                {/* Calories + actions */}
                 <View className="flex-row items-center gap-2 flex-shrink-0">
                   <Text
                     className="text-zinc-900 dark:text-white font-bold"
@@ -202,36 +255,34 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   >
                     {entry.calories} kcal
                   </Text>
-                  {!pending && (
-                    <View className="flex-row gap-1">
-                      <Pressable
-                        onPress={(e) => {
-                          e?.stopPropagation?.();
-                          onEditMeal(entry);
-                        }}
-                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                      >
-                        <MaterialIcons
-                          name="edit"
-                          size={18}
-                          color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
-                        />
-                      </Pressable>
-                      <Pressable
-                        onPress={(e) => {
-                          e?.stopPropagation?.();
-                          onDeleteMeal(entry.id);
-                        }}
-                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
-                      >
-                        <MaterialIcons
-                          name="delete-outline"
-                          size={18}
-                          color="#ef4444"
-                        />
-                      </Pressable>
-                    </View>
-                  )}
+                  <View className="flex-row gap-1">
+                    <Pressable
+                      onPress={(e) => {
+                        e?.stopPropagation?.();
+                        onEditMeal(entry);
+                      }}
+                      className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                    >
+                      <MaterialIcons
+                        name="edit"
+                        size={18}
+                        color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
+                      />
+                    </Pressable>
+                    <Pressable
+                      onPress={(e) => {
+                        e?.stopPropagation?.();
+                        onDeleteMeal(entry.id);
+                      }}
+                      className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                    >
+                      <MaterialIcons
+                        name="delete-outline"
+                        size={18}
+                        color="#ef4444"
+                      />
+                    </Pressable>
+                  </View>
                 </View>
               </Pressable>
             );

@@ -28,6 +28,7 @@ import {
   addWaterIntakeAsync,
   deleteWaterIntakeAsync,
   fetchWaterIntakeAsync,
+  setDate,
 } from "@/store/slices/waterLogsSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -132,8 +133,9 @@ const HomeScreen = () => {
       const dateStr = format(selectedDate, "yyyy-MM-dd");
       dispatch(setStartDate(dateStr));
       dispatch(setEndDate(dateStr));
+      dispatch(setDate(dateStr));
       dispatch(fetchFoodLogsAsync());
-      dispatch(fetchWaterIntakeAsync(dateStr));
+      dispatch(fetchWaterIntakeAsync());
     }, [selectedDate, dispatch]),
   );
 
@@ -202,8 +204,7 @@ const HomeScreen = () => {
           text: t("common.delete"),
           style: "destructive",
           onPress: () => {
-            const dateStr = format(selectedDate, "yyyy-MM-dd");
-            dispatch(deleteFoodLogAsync({ id, date: dateStr }));
+            dispatch(deleteFoodLogAsync({ id }));
           },
         },
       ],
@@ -225,8 +226,9 @@ const HomeScreen = () => {
   };
 
   const handleAddWater = (amountMl: number) => {
-    const dateStr = format(selectedDate, "yyyy-MM-dd");
-    dispatch(addWaterIntakeAsync({ amountMl, loggedAt: dateStr }));
+    dispatch(
+      addWaterIntakeAsync({ amountMl, loggedAt: selectedDate.toISOString() }),
+    );
   };
 
   const handleDeleteWater = (id: string) => {
@@ -462,7 +464,7 @@ const HomeScreen = () => {
         />
 
         <GoalCelebrationModal
-          visible={celebrationVisible}
+          visible={false && celebrationVisible}
           onClose={() => setCelebrationVisible(false)}
         />
 
