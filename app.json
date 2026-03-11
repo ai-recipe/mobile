@@ -6,19 +6,24 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.m.sahinkundakci.myapp",
+      "appleTeamId": "MZC4RF3T88",
+      "bundleIdentifier": "com.slaycal.ai",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Uygulama, yemek tarifleri oluşturmak için seçtiğiniz malzemelerin fotoğraflarına erişir.",
-        "NSCameraUsageDescription": "Uygulama, buzdolabınızdaki malzemeleri taramak için kameranızı kullanır.",
+        "NSCameraUsageDescription": "This app uses your camera to scan and identify meals.",
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true,
           "NSAllowsLocalNetworking": true
-        }
+        },
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -28,7 +33,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "package": "com.m.sahinkundakci.myapp",
+      "package": "com.slaycal.ai",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
@@ -74,7 +79,7 @@
         "projectId": "0af9548a-c546-434a-8e8f-74b6717f880a"
       }
     },
-    "owner": "phonenumber123",
+    "owner": "slaycal",
     "runtimeVersion": {
       "policy": "appVersion"
     },
