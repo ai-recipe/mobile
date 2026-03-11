@@ -115,29 +115,26 @@ export async function pollJobStatus(
  * Main function to scan image and get ingredients
  * Handles the full flow: upload → poll → return ingredients
  */
-export async function scanImage({
-  imageUri,
-}: ScanImageParams): Promise<ScanImageResponse> {
-  try {
-    // Step 1: Upload image and get job ID
-    const { detectedIngredients, requestId } = (await uploadImageForRecognition(
-      imageUri,
-    )) as any;
+ export async function scanImage({ imageUri }: ScanImageParams): Promise<ScanImageResponse> {
+    try {
+      const response = (await uploadImageForRecognition(imageUri)) as any;
 
-    // Step 2: Poll for job completion
-    //const jobStatus = await pollJobStatus(jobId);
+     const payload = response?.data ?? response;
+      const { detectedIngredients, requestId } = payload;
 
-    // Step 3: Extract ingredients from completed job
-    const ingredients = detectedIngredients?.map((ing: any) => ing.name) || [];
+      const ingredients = detectedIngredients?.map((ing: any) => ing.name) ?? [];
 
-    return {
-      ingredients,
-      jobId: requestId,
-    };
-  } catch (error: any) {
-    console.log(JSON.stringify(error, null, 2));
-    throw new Error(
-      `Görüntü tarama başarısız: ${error?.response?.data?.message}`,
-    );
+      return { ingredients, jobId: requestId };
+    } catch (error: any) {
+      // ✅ Backend'in gerçek hata mesajını oku
+      const backendMessage = error?.response?.data?.error?.message;
+      const statusCode = error?.response?.data?.error?.statusCode;
+
+      // Quota hatası özel handling
+      if (statusCode === 400 && error?.response?.data?.error?.errorCode) {
+        throw new Error(backendMessage ?? 'Kota aşıldı veya servis hatası');
+      }
+
+      throw new Error(backendMessage ?? 'Görüntü tarama başarısız, tekrar deneyin');
+    }
   }
-}
