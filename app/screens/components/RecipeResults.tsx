@@ -17,6 +17,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resetRecipeState } from "@/store/slices/recipeSlice";
@@ -30,6 +31,7 @@ interface RecipeResultsProps {
 }
 
 export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
+  const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
@@ -62,11 +64,11 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
     <Animated.View entering={entering} exiting={exiting} className="flex-1">
       <View className="px-5 pt-4 pb-2">
         <Text className="text-zinc-500 font-bold uppercase tracking-wider text-xs mb-1">
-          Sonuçlar Hazır
+          {t("recipeResults.title")}
         </Text>
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-          Sizin İçin{" "}
-          <Text className="text-[#f39849]">{recipes?.length} Tarif</Text> Bulduk
+          {t("recipeResults.forYou")}{" "}
+          <Text className="text-[#f39849]">{recipes?.length} {t("recipeResults.recipe")}</Text> {t("recipeResults.found")}
         </Text>
       </View>
 
@@ -138,7 +140,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                 {item.matchedIngredients?.length > 0 && (
                   <View className="mb-3">
                     <Text className="text-zinc-500 text-xs font-bold mb-1.5">
-                      Eşleşen Malzemeler
+                      {t("recipeResults.matchedIngredients")}
                     </Text>
                     <View className="flex-row flex-wrap gap-2">
                       {item.matchedIngredients.map(
@@ -161,7 +163,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                 {item.missingIngredients?.length > 0 && (
                   <View className="mb-3">
                     <Text className="text-zinc-500 text-xs font-bold mb-1.5">
-                      Eksik Malzemeler
+                      {t("recipeResults.missingIngredients")}
                     </Text>
                     <View className="flex-row flex-wrap gap-2">
                       {item.missingIngredients.map(
@@ -188,7 +190,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                 {item.nutritionSummary && (
                   <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
                     <Text className="text-zinc-500 text-xs font-bold mb-2">
-                      Besin Değerleri
+                      {t("recipeResults.nutritionValues")}
                     </Text>
                     <View className="flex-row justify-between">
                       <View className="items-center flex-1">
@@ -196,7 +198,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           {item.nutritionSummary.calories}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
-                          Kalori
+                          {t("mealEntry.calories")}
                         </Text>
                       </View>
                       <View className="items-center flex-1">
@@ -204,7 +206,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           {item.nutritionSummary.protein}g
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
-                          Protein
+                          {t("mealEntry.protein")}
                         </Text>
                       </View>
                       <View className="items-center flex-1">
@@ -212,7 +214,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           {item.nutritionSummary.carbs}g
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
-                          Karbonhidrat
+                          {t("mealEntry.carbs")}
                         </Text>
                       </View>
                       <View className="items-center flex-1">
@@ -220,7 +222,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                           {item.nutritionSummary.fat}g
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
-                          Yağ
+                          {t("mealEntry.fat")}
                         </Text>
                       </View>
                     </View>
@@ -234,7 +236,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                   onPress={() => handleOpenRecipe(item)}
                 >
                   <Text className="text-white dark:text-black font-bold text-sm">
-                    Tarifi Gör
+                    {t("recipeResults.viewRecipe")}
                   </Text>
                   <MaterialIcons
                     name="arrow-forward"
@@ -261,7 +263,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
             color={colorScheme === "dark" ? "white" : "black"}
           />
           <Text className="text-zinc-900 dark:text-white font-bold text-base">
-            Çıkış
+            {t("recipeResults.exit")}
           </Text>
         </TouchableOpacity>
       </View>

@@ -14,6 +14,7 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { ScanFormData } from "../types/ai-scan-form.types";
 
 interface StepIngredientsSelectionProps {
@@ -31,6 +32,7 @@ export function StepIngredientsSelection({
   direction = "forward",
   data,
 }: StepIngredientsSelectionProps) {
+  const { t } = useTranslation();
   const scrollRef = useRef<ScrollView>(null);
   const { scannedIngredients } = useSelector((state: any) => state.recipe);
 
@@ -58,10 +60,10 @@ export function StepIngredientsSelection({
     >
       <View className="mb-4">
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          Taranan <Text className="text-[#f39849]">Malzemeler</Text>
+          {t("ingredients.title")} <Text className="text-[#f39849]">{t("ingredients.titleHighlight")}</Text>
         </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-2">
-          Taranan malzemeleri kontrol edin ve düzenleyin
+          {t("ingredients.subtitle")}
         </Text>
       </View>
 
@@ -70,7 +72,7 @@ export function StepIngredientsSelection({
         <TextInput
           value={newIngredient}
           onChangeText={setNewIngredient}
-          placeholder="Yeni malzeme ekle..."
+          placeholder={t("ingredients.addIngredientPlaceholder")}
           placeholderTextColor="#71717a"
           className="flex-1 bg-white dark:bg-zinc-800 px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white"
           onSubmitEditing={handleAddIngredient}
@@ -140,7 +142,7 @@ export function StepIngredientsSelection({
           }`}
         >
           <Text className="text-white font-extrabold text-lg">
-            Devam Et ({data.selectedIngredients?.length})
+            {t("ingredients.continue", { count: data.selectedIngredients?.length })}
           </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>

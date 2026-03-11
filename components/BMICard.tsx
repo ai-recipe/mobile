@@ -2,6 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 // Custom hook to handle smooth number counting and sliding animations
 const useAnimatedNumber = (targetValue: number, duration: number = 400) => {
@@ -33,6 +34,7 @@ interface BMICardProps {
 }
 
 export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const isDark = colorScheme === "dark";
@@ -41,10 +43,10 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
   const animatedBMI = useAnimatedNumber(bmi);
 
   const getBMIStatus = (val: number) => {
-    if (val < 18.5) return { label: "Underweight", color: "#5C8CE4" };
-    if (val < 25) return { label: "Healthy", color: "#27AE60" };
-    if (val < 30) return { label: "Overweight", color: "#E2B15B" };
-    return { label: "Obese", color: "#D15F5F" };
+    if (val < 18.5) return { labelKey: "bmi.underweight", color: "#5C8CE4" };
+    if (val < 25) return { labelKey: "bmi.healthy", color: "#27AE60" };
+    if (val < 30) return { labelKey: "bmi.overweight", color: "#E2B15B" };
+    return { labelKey: "bmi.obese", color: "#D15F5F" };
   };
 
   // Derive status from the animated value so color/label change dynamically
@@ -59,7 +61,7 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
     <View className="p-6 rounded-[20px] bg-white dark:bg-[#1C1C1E]">
       <View className="flex-row justify-between items-center mb-5">
         <Text className="text-lg font-semibold" style={{ color: theme.text }}>
-          Your BMI
+          {t("bmi.title")}
         </Text>
       </View>
 
@@ -75,7 +77,7 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
             className="text-base font-medium"
             style={{ color: isDark ? "#A1A1AA" : "#64748B" }}
           >
-            Your weight is{" "}
+            {t("bmi.weightIs")}{" "}
           </Text>
           <View
             className="px-3 py-1.5 rounded-2xl ml-1"
@@ -85,7 +87,7 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
               className="text-sm font-semibold"
               style={{ color: status.color }}
             >
-              {status.label}
+              {t(status.labelKey)}
             </Text>
           </View>
         </View>
@@ -160,27 +162,31 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
       <View className="flex-row flex-wrap justify-between mt-6 gap-y-4">
         <LegendItem
           color="#5C8CE4"
-          label="Underweight"
+          labelKey="bmi.underweight"
           range="<18.5"
           isDark={isDark}
+          t={t}
         />
         <LegendItem
           color="#27AE60"
-          label="Healthy"
+          labelKey="bmi.healthy"
           range="18.5-24.9"
           isDark={isDark}
+          t={t}
         />
         <LegendItem
           color="#E2B15B"
-          label="Overweight"
+          labelKey="bmi.overweight"
           range="25.0-29.9"
           isDark={isDark}
+          t={t}
         />
         <LegendItem
           color="#D15F5F"
-          label="Obese"
+          labelKey="bmi.obese"
           range=">30.0"
           isDark={isDark}
+          t={t}
         />
       </View>
     </View>
@@ -189,14 +195,16 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
 
 const LegendItem = ({
   color,
-  label,
+  labelKey,
   range,
   isDark,
+  t,
 }: {
   color: string;
-  label: string;
+  labelKey: string;
   range: string;
   isDark: boolean;
+  t: any;
 }) => (
   <View className="w-[48%]">
     <View className="flex-row items-center gap-1.5 mb-1">
@@ -208,7 +216,7 @@ const LegendItem = ({
         className="text-xs font-semibold"
         style={{ color: isDark ? "#A1A1AA" : "#64748B" }}
       >
-        {label}
+        {t(labelKey)}
       </Text>
     </View>
     <Text

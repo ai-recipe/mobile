@@ -7,6 +7,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 const TIME_OPTIONS = [15, 30, 60];
 
@@ -23,6 +24,7 @@ export function StepTimePreference({
   onNext,
   direction = "forward",
 }: StepTimePreferenceProps) {
+  const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
@@ -38,10 +40,10 @@ export function StepTimePreference({
       >
         <View className="flex-1 flex ">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-            Hazırlık <Text className="text-[#f39849]">Süresi</Text>
+            {t("timePreference.title")} <Text className="text-[#f39849]">{t("timePreference.titleHighlight")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
-            Yemek hazırlamak için ne kadar vaktiniz var?
+            {t("timePreference.subtitle")}
           </Text>
 
           <View className="flex-row gap-3">
@@ -71,7 +73,7 @@ export function StepTimePreference({
                       : "text-zinc-500 dark:text-zinc-400"
                   }`}
                 >
-                  Dakika
+                  {t("timePreference.minutes")}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -83,12 +85,11 @@ export function StepTimePreference({
                 <MaterialIcons name="lightbulb" size={18} color="#f39849" />
               </View>
               <Text className="text-zinc-900 dark:text-white font-bold">
-                İpucu
+                {t("timePreference.tipLabel")}
               </Text>
             </View>
             <Text className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
-              Seçtiğiniz süreye göre yapay zeka şefimiz en lezzetli ve pratik
-              tarifleri listeleyecektir.
+              {t("timePreference.tipText")}
             </Text>
           </View>
         </View>
@@ -100,7 +101,7 @@ export function StepTimePreference({
           activeOpacity={0.9}
           className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
         >
-          <Text className="text-white font-extrabold text-lg">Devam Et</Text>
+          <Text className="text-white font-extrabold text-lg">{t("timePreference.continue")}</Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>
       </View>

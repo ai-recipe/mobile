@@ -1,14 +1,15 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
-import { useTranslation } from "react-i18next";
 import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   Pressable,
@@ -44,8 +45,9 @@ const ProfileScreen = () => {
     setThemeModalVisible(false);
   };
 
-  const handleSelectLanguage = (lang: string) => {
+  const handleSelectLanguage = async (lang: string) => {
     if (lang === currentLanguage) return;
+    await AsyncStorage.setItem("CURRENT_LANGUAGE", lang);
     i18n.changeLanguage(lang);
     dispatch(setCurrentLanguage(lang));
     setLanguageModalVisible(false);

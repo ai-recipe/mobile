@@ -16,7 +16,9 @@
     "goBack": "Geri Dön",
     "openSettings": "Ayarları Aç",
     "servings": "porsiyon",
-    "add": "Ekle"
+    "add": "Ekle",
+    "confirm": "Onayla",
+    "ok": "Tamam"
   },
   "tabs": {
     "home": "Ana Sayfa",
@@ -49,7 +51,9 @@
     "breakfast": "Kahvaltı",
     "lunch": "Öğle",
     "dinner": "Akşam",
-    "snacks": "Atıştırmalık"
+    "snacks": "Atıştırmalık",
+    "deleteEntryConfirm": "Bu girişi silmek istediğinizden emin misiniz?",
+    "deleteWaterConfirm": "Bu su alımı kaydını kaldırmak istiyor musunuz?"
   },
   "water": {
     "oneGlass": "Bir Bardak",
@@ -66,7 +70,7 @@
     "unnamedMeal": "İsimsiz Öğün",
     "calories": "Kalori",
     "protein": "Protein",
-    "carbs": "Karbonhidrat",
+    "carbs": "Karb.",
     "fat": "Yağ",
     "macroBalance": "Makro Dengesi",
     "addToDiary": "Günlüğe Ekle",
@@ -218,5 +222,162 @@
     "vegetarian": "Vejeteryan",
     "highProtein": "Yüksek Protein",
     "lowCarb": "Düşük Karb"
+  },
+  "auth": {
+    "createAccount": "Hesap Oluştur",
+    "heroSubtitle": "Mutfaktaki malzemeleri gurme tariflere dönüştürmeye başlamak için kaydolun.",
+    "signIn": "Giriş Yap",
+    "signInHeroTitle1": "Mutfakta",
+    "signInHeroTitle2": "Sihir",
+    "signInHeroTitle3": "Yaratın",
+    "loginHeroSubtitle": "Yapay zeka şefiniz ile buzdolabındaki malzemeleri gurme tariflere dönüştürün.",
+    "signUp": "Kayıt Ol",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "noAccount": "Hesabınız yok mu?",
+    "emailPlaceholder": "E-posta",
+    "passwordPlaceholder": "Şifre",
+    "confirmPasswordPlaceholder": "Şifre Tekrar",
+    "loginFailed": "Giriş yapılamadı",
+    "registerFailed": "Kayıt yapılamadı",
+    "error": "Hata",
+    "somethingWentWrong": "Bir sorun oluştu",
+    "emailRequired": "E-posta alanı zorunludur",
+    "validEmail": "Geçerli bir e-posta adresi girin",
+    "passwordRequired": "Şifre alanı zorunludur",
+    "passwordMinLength": "Şifre en az 6 karakter olmalıdır",
+    "confirmPasswordRequired": "Şifre tekrar alanı zorunludur",
+    "passwordsMustMatch": "Şifreler eşleşmiyor"
+  },
+  "aiScan": {
+    "title": "Ürünleri",
+    "titlePrefix": "Tara",
+    "subtitle": "AI mutfak şefiniz malzemeleri tanımak için hazır.",
+    "takePhoto": "Fotoğraf Çek",
+    "chooseFromGallery": "Galeriden Seç",
+    "tipsTitle": "En İyi Sonuç İçin İpuçları",
+    "permissionRequired": "İzin Gerekli",
+    "permissionDesc": "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+    "tip1Title": "İyi Aydınlatma",
+    "tip1Desc": "Malzemelerin net görünmesi için aydınlık bir ortam tercih edin.",
+    "tip2Title": "Net Odaklama",
+    "tip2Desc": "Kamerayı titretmemeye çalışın ve ürünlere odaklanın.",
+    "tip3Title": "Üst Üste Koymayın",
+    "tip3Desc": "Malzemelerin birbirini kapatmadığından emin olun.",
+    "tip4Title": "Etiketleri Okutun",
+    "tip4Desc": "Mümkünse ürün paketlerinin üzerindeki isimleri gösterin."
+  },
+  "aiScanForm": {
+    "loadingImage": "Görüntü Yükleniyor...",
+    "startingAI": "Yapay Zeka İşleme Başlatıyor...",
+    "identifyingIngredients": "Malzemeler Tanımlanıyor...",
+    "preparingResults": "Sonuçlar Hazırlanıyor...",
+    "chefThinking": "Şef Yapay Zeka Düşünüyor...",
+    "generatingRecipes": "Tarifler Oluşturuluyor...",
+    "matchingFlavors": "Lezzetler Eşleştiriliyor...",
+    "preparingBestRecipes": "En İyi Tarifler Hazırlanıyor...",
+    "analyzing": "Görüntü Analiz Ediliyor...",
+    "scanError": "Tarama Hatası",
+    "recipeError": "Tarif Oluşturma Hatası",
+    "ok": "Tamam",
+    "scanAgain": "Tekrar Tara",
+    "aiBeta": "AI Chef Beta",
+    "createRecipe": "Tarif Oluştur"
+  },
+  "addOptions": {
+    "title": "Yemek Kaydet",
+    "subtitle": "Bugün öğününü nasıl eklemek istersin?",
+    "scanMeal": "Öğünü Tara",
+    "scanMealDesc": "Tabanın fotoğrafını çek, biz günlüğe ekleyelim",
+    "manualLog": "Manuel Ekle",
+    "manualLogDesc": "Hızlı bir şekilde öğünü ekle",
+    "aiChef": "AI Şef",
+    "aiChefDesc": "Yemeklerin, malzemelerin veya ürünlerin fotoğrafını çek, biz sana kişiselleştirilmiş tarifler oluşturalım",
+    "magic": "Sihirli"
+  },
+  "rateUs": {
+    "title": "Bizi",
+    "titleHighlight": "Değerlendir",
+    "subtitle": "Uygulamamızı beğendiniz mi? Puan vererek bize destek olabilirsiniz.",
+    "userReviews": "Kullanıcı Yorumları",
+    "rateNow": "Hemen Puanla"
+  },
+  "calendar": {
+    "selectDate": "Tarihi Seç",
+    "confirm": "Onayla"
+  },
+  "timePreference": {
+    "title": "Hazırlık",
+    "titleHighlight": "Süresi",
+    "subtitle": "Yemek hazırlamak için ne kadar vaktiniz var?",
+    "minutes": "Dakika",
+    "tipLabel": "İpucu",
+    "tipText": "Seçtiğiniz süreye göre yapay zeka şefimiz en lezzetli ve pratik tarifleri listeleyecektir.",
+    "continue": "Devam Et"
+  },
+  "ingredients": {
+    "title": "Taranan",
+    "titleHighlight": "Malzemeler",
+    "subtitle": "Taranan malzemeleri kontrol edin ve düzenleyin",
+    "addIngredientPlaceholder": "Yeni malzeme ekle...",
+    "continue": "Devam Et ({{count}})"
+  },
+  "surveyItem": {
+    "multipleChoice": "Birden fazla seçebilirsiniz.",
+    "enterNumber": "Lütfen bir sayı giriniz.",
+    "selectOne": "Lütfen birini seçiniz.",
+    "finish": "Tamamla",
+    "continue": "Devam Et"
+  },
+  "recipeResults": {
+    "title": "Sonuçlar Hazır",
+    "foundPrefix": "Sizin İçin",
+    "forYou": "Tarif",
+    "recipeSuffix": "Bulduk",
+    "matchedIngredients": "Eşleşen Malzemeler",
+    "missingIngredients": "Eksik Malzemeler",
+    "nutritionValues": "Besin Değerleri",
+    "calories": "Kalori",
+    "protein": "Protein",
+    "carbs": "Karbonhidrat",
+    "fat": "Yağ",
+    "viewRecipe": "Tarifi Gör",
+    "exit": "Çıkış"
+  },
+  "aiChef": {
+    "title": "AI Chef",
+    "titleHighlight": "Tarifleri",
+    "tabRecipes": "AI Chef Tarifleri",
+    "tabFavorites": "Favorilerim"
+  },
+  "bmi": {
+    "title": "Vücut Kitle İndeksi",
+    "weightIs": "Kilonuz",
+    "underweight": "Zayıf",
+    "healthy": "Sağlıklı",
+    "overweight": "Fazla Kilolu",
+    "obese": "Obez"
+  },
+  "weightGoal": {
+    "currentWeight": "Şu anki Kilo",
+    "goalWeight": "Hedef Kilo",
+    "update": "Güncelle",
+    "toGo": "{{amount}} {{unit}} kaldı"
+  },
+  "upgradeCard": {
+    "title": "Pro'ya Yükselt",
+    "subtitle": "Günde 3 ekstra kredi ve daha fazlası!",
+    "upgradeNow": "Şimdi Yükselt"
+  },
+  "survey": {
+    "loadingQuestions": "Sorular yükleniyor...",
+    "savingPreferences": "Tercihleriniz kaydediliyor...",
+    "headerTitle": "Seni Tanıyalım"
+  },
+  "onboardingPrefs": {
+    "timePrefTitle": "Hazırlık Süresi",
+    "timePrefSubtitle": "Yemek hazırlamak için ne kadar vaktin var?",
+    "dietPrefTitle": "Beslenme Tercihleri",
+    "dietPrefSubtitle": "Senin için en uygun olanları seç.",
+    "next": "Sonraki"
   }
 }

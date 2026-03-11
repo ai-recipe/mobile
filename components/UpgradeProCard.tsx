@@ -2,8 +2,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export const UpgradeProCard = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   return (
     <View className="px-5 pt-4">
@@ -18,10 +20,10 @@ export const UpgradeProCard = () => {
           </View>
           <View className="flex-1">
             <Text className="text-white font-black text-xl leading-tight">
-              Pro&apos;ya Yükselt
+              {t("upgradeCard.title")}
             </Text>
             <Text className="text-white/80 text-sm font-medium">
-              Günde 3 ekstra kredi ve daha fazlası!
+              {t("upgradeCard.subtitle")}
             </Text>
           </View>
         </View>
@@ -32,7 +34,7 @@ export const UpgradeProCard = () => {
           className="flex-1 flex-row items-center justify-center gap-2 bg-white/20 backdrop-blur-md py-3.5 rounded-2xl border border-white/30"
         >
           <Text className="text-white font-black text-sm uppercase tracking-wider">
-            Şimdi Yükselt
+            {t("upgradeCard.upgradeNow")}
           </Text>
         </TouchableOpacity>
       </View>

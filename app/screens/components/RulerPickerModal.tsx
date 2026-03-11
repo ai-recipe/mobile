@@ -18,6 +18,7 @@ import Animated, {
   withSequence,
   withSpring,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface RulerPickerModalProps {
   visible: boolean;
@@ -44,13 +45,15 @@ export function RulerPickerModal({
   max = 200,
   step = 0.1,
   unit = "kg",
-  title = "Current weight",
+  title,
   fractionDigits = 1,
 }: RulerPickerModalProps) {
+  const { t } = useTranslation();
   const [value, setValue] = useState(initialValue);
   const scrollViewRef = useRef<ScrollView>(null);
   const colorScheme = useColorScheme();
   const scale = useSharedValue(1);
+  const defaultTitle = t("weightGoal.currentWeight");
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -182,7 +185,7 @@ export function RulerPickerModal({
               />
             </Pressable>
             <Text className="text-xl font-bold text-zinc-900 dark:text-white">
-              {title}
+              {title || defaultTitle}
             </Text>
             <View style={{ width: 32 }} />
           </View>
@@ -271,10 +274,7 @@ export function RulerPickerModal({
             className="w-full bg-primary dark:bg-white py-4 rounded-2xl active:scale-[0.98] "
           >
             <Text className="text-white dark:text-black text-center font-bold text-lg">
-              Save{" "}
-              {title.toLowerCase().includes("weight")
-                ? "weight"
-                : title.toLowerCase()}
+              {t("common.save")}
             </Text>
           </Pressable>
         </View>

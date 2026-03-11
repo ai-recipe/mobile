@@ -155,7 +155,7 @@ const GoalsAndWeight = () => {
               onPress={() => setActiveModal("dob")}
             />
             <PersonalDetailItem
-              label="Gender"
+              label={t("forms.gender")}
               value={personalDetails?.gender}
               onPress={() => setActiveModal("gender")}
             />

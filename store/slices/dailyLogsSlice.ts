@@ -215,19 +215,8 @@ const dailyLogsSlice = createSlice({
         scanId: undefined,
       };
     },
-    /** Mark a pending scan entry as failed (e.g. after scan:error) */
-    markScanEntryError: (
-      state,
-      action: PayloadAction<{ scanId: string; message: string }>,
-    ) => {
-      const { scanId, message } = action.payload;
-      const idx = state.entries.findIndex((e) => e.scanId === scanId);
-      if (idx === -1) return;
-      state.entries[idx] = {
-        ...state.entries[idx],
-        mealName: message,
-        status: "completed",
-      };
+    removePendingScanEntry: (state, action: PayloadAction<string>) => {
+      state.entries = state.entries.filter((e) => e.scanId !== action.payload);
     },
     clearDailyLogsState: (state) => {
       state.entries = [];
@@ -312,8 +301,8 @@ export const {
   clearDailyLogsState,
   addPendingScanEntry,
   updateEntryByScanResult,
-  markScanEntryError,
   setStartDate,
   setEndDate,
+  removePendingScanEntry,
 } = dailyLogsSlice.actions;
 export default dailyLogsSlice.reducer;

@@ -197,7 +197,7 @@ const HomeScreen = () => {
   const handleDeleteMeal = (id: string) => {
     Alert.alert(
       t("common.delete"),
-      "Are you sure you want to delete this entry?",
+      t("home.deleteEntryConfirm"),
       [
         { text: t("common.cancel"), style: "cancel" },
         {
@@ -233,7 +233,7 @@ const HomeScreen = () => {
 
   const handleDeleteWater = (id: string) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
-    Alert.alert(t("common.delete"), "Remove this water intake entry?", [
+    Alert.alert(t("common.delete"), t("home.deleteWaterConfirm"), [
       { text: t("common.cancel"), style: "cancel" },
       {
         text: t("common.delete"),

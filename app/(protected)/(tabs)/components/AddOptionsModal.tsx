@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Animated,
   Dimensions,
@@ -30,6 +31,7 @@ export function AddOptionsModal({
   onClose,
   onManualLog,
 }: AddOptionsModalProps) {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
@@ -164,9 +166,9 @@ export function AddOptionsModal({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.text }]}>Log Food</Text>
+            <Text style={[styles.title, { color: theme.text }]}>{t("addOptions.title")}</Text>
             <Text style={[styles.subtitle, { color: theme.icon }]}>
-              Choose how you'd like to add your meal today.
+              {t("addOptions.subtitle")}
             </Text>
           </View>
 
@@ -203,11 +205,10 @@ export function AddOptionsModal({
                 </View>
                 <View style={styles.optionTextContainer}>
                   <Text style={[styles.optionTitle, { color: theme.text }]}>
-                    Scan Meal
+                    {t("addOptions.scanMeal")}
                   </Text>
                   <Text style={[styles.optionDesc, { color: theme.icon }]}>
-                    Take a photo of your plate then we'll add it to your daily
-                    log
+                    {t("addOptions.scanMealDesc")}
                   </Text>
                 </View>
                 <MaterialIcons
@@ -245,10 +246,10 @@ export function AddOptionsModal({
                 </View>
                 <View style={styles.optionTextContainer}>
                   <Text style={[styles.optionTitle, { color: theme.text }]}>
-                    Manual Log
+                    {t("addOptions.manualLog")}
                   </Text>
                   <Text style={[styles.optionDesc, { color: theme.icon }]}>
-                    Quickly add your meal
+                    {t("addOptions.manualLogDesc")}
                   </Text>
                 </View>
                 <MaterialIcons
@@ -301,10 +302,10 @@ export function AddOptionsModal({
                         { fontWeight: "700", color: theme.text },
                       ]}
                     >
-                      AI Chef
+                      {t("addOptions.aiChef")}
                     </Text>
                     <View style={styles.newBadge}>
-                      <Text style={styles.newBadgeText}>Magic</Text>
+                      <Text style={styles.newBadgeText}>{t("addOptions.magic")}</Text>
                     </View>
                   </View>
                   <Text
@@ -313,8 +314,7 @@ export function AddOptionsModal({
                       { color: isDark ? "#D4D4D8" : "#4B5563" },
                     ]}
                   >
-                    Take photo of your foods, ingredients or products then we'll
-                    generate personalized recipes for you
+                    {t("addOptions.aiChefDesc")}
                   </Text>
                 </View>
 

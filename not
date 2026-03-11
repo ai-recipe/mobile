@@ -6,3 +6,11 @@ For Android (physical device):
 npx expo run:android --device
 Or using EAS (cloud build for physical device):
 eas build --profile development-device --platform ios# oreas build --profile development-device --platform android
+
+
+şu dateleri kendi timezonuma göre göndermeeye bak bi
+loading state güzel değil gibi beğenmedim
+Subscription logicleri ayarla
+daily goal e ulaştığında bir sefer popup göster
+Frontend de badge logicleri ayarlacoming soon şeklinde bekletcez
+scan sonrası daily logun başına ekle sonuna ekliyor şuan pendindgekini

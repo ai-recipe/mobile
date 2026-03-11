@@ -6,7 +6,7 @@ import type { RootState } from "..";
 import {
   addPendingScanEntry,
   fetchFoodLogsAsync,
-  markScanEntryError,
+  removePendingScanEntry,
   setEndDate,
   setStartDate,
 } from "./dailyLogsSlice";
@@ -198,7 +198,7 @@ export const startScanAsync = createAsyncThunk<
     socket.on("scan:error", (data: { code: string; message: string }) => {
       const scanId = getState().scanMeal.scanId;
       if (scanId) {
-        dispatch(markScanEntryError({ scanId, message: data.message }));
+        dispatch(removePendingScanEntry(scanId));
       }
       socket.disconnect();
       _socket = null;

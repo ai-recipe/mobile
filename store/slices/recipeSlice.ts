@@ -56,6 +56,7 @@ export const scanImage = createAsyncThunk(
       dispatch(setAppStep(AppStep.IngredientsSelection));
       return response.ingredients;
     } catch (error) {
+      console.log(error?.response?.data?.message);
       return rejectWithValue(
         error instanceof Error ? error.message : "Tarama başarısız",
       );

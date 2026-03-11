@@ -3,8 +3,9 @@ import { setAuthenticated } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -20,24 +21,32 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
-const loginSchema = yup.object({
-  email: yup
-    .string()
-    .required("E-posta alanı zorunludur")
-    .email("Geçerli bir e-posta adresi girin"),
-  password: yup
-    .string()
-    .required("Şifre alanı zorunludur")
-    .min(6, "Şifre en az 6 karakter olmalıdır"),
-});
-
-type LoginFormData = yup.InferType<typeof loginSchema>;
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const { isLoginLoading, error: authError } = useAppSelector(
     (state) => state.auth
+  );
+
+  const loginSchema = useMemo(
+    () =>
+      yup.object({
+        email: yup
+          .string()
+          .required(t("auth.emailRequired"))
+          .email(t("auth.validEmail")),
+        password: yup
+          .string()
+          .required(t("auth.passwordRequired"))
+          .min(6, t("auth.passwordMinLength")),
+      }),
+    [t]
   );
 
   const {
@@ -60,11 +69,11 @@ export default function LoginScreen() {
         router.replace("/(protected)/(tabs)");
       } else {
         const message = resultAction.payload as string;
-        Alert.alert("Hata", message || "Giriş yapılamadı");
+        Alert.alert(t("auth.error"), message || t("auth.loginFailed"));
       }
       */
     } catch (err) {
-      Alert.alert("Hata", "Bir sorun oluştu");
+      Alert.alert(t("auth.error"), t("auth.somethingWentWrong"));
     }
   };
 
@@ -112,11 +121,10 @@ export default function LoginScreen() {
               {/* Welcome Text */}
               <View className="px-10">
                 <Text className="text-3xl font-black text-center text-zinc-900 dark:text-white leading-tight mb-2">
-                  Mutfakta <Text className="text-[#f39849]">Sihir</Text> Yaratın
+                  {t("auth.signInHeroTitle1")} <Text className="text-[#f39849]">{t("auth.signInHeroTitle2")}</Text> {t("auth.signInHeroTitle3")}
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 text-center text-sm font-medium leading-relaxed">
-                  Yapay zeka şefiniz ile buzdolabındaki malzemeleri gurme
-                  tariflere dönüştürün.
+                  {t("auth.loginHeroSubtitle")}
                 </Text>
               </View>
             </Animated.View>
@@ -136,7 +144,7 @@ export default function LoginScreen() {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      placeholder="E-posta"
+                      placeholder={t("auth.emailPlaceholder")}
                       placeholderTextColor="#9ca3af"
                       keyboardType="email-address"
                       autoCapitalize="none"
@@ -166,7 +174,7 @@ export default function LoginScreen() {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      placeholder="Şifre"
+                      placeholder={t("auth.passwordPlaceholder")}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       className={`w-full h-14 bg-white dark:bg-zinc-800 rounded-full px-5 text-zinc-900 dark:text-white text-base border-2 ${
@@ -197,7 +205,7 @@ export default function LoginScreen() {
                   <ActivityIndicator color="white" />
                 ) : (
                   <Text className="text-white font-bold text-[17px]">
-                    Giriş Yap
+                    {t("auth.signIn")}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -205,13 +213,13 @@ export default function LoginScreen() {
               {/* Sign up link */}
               <View className="flex-row justify-center items-center gap-1">
                 <Text className="text-zinc-600 dark:text-zinc-400 text-sm">
-                  Hesabınız yok mu?
+                  {t("auth.noAccount")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/(public)/screens/register")}
                 >
                   <Text className="text-[#f39849] font-bold text-sm">
-                    Kayıt Ol
+                    {t("auth.signUp")}
                   </Text>
                 </TouchableOpacity>
               </View>

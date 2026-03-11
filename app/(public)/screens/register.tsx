@@ -3,8 +3,9 @@ import { registerWithEmailAsync } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -20,28 +21,37 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
-const registerSchema = yup.object({
-  email: yup
-    .string()
-    .required("E-posta alanı zorunludur")
-    .email("Geçerli bir e-posta adresi girin"),
-  password: yup
-    .string()
-    .required("Şifre alanı zorunludur")
-    .min(6, "Şifre en az 6 karakter olmalıdır"),
-  confirmPassword: yup
-    .string()
-    .required("Şifre tekrar alanı zorunludur")
-    .oneOf([yup.ref("password")], "Şifreler eşleşmiyor"),
-});
-
-type RegisterFormData = yup.InferType<typeof registerSchema>;
+type RegisterFormData = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 export default function RegisterScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const { isRegisterLoading, error: authError } = useAppSelector(
     (state) => state.auth
+  );
+
+  const registerSchema = useMemo(
+    () =>
+      yup.object({
+        email: yup
+          .string()
+          .required(t("auth.emailRequired"))
+          .email(t("auth.validEmail")),
+        password: yup
+          .string()
+          .required(t("auth.passwordRequired"))
+          .min(6, t("auth.passwordMinLength")),
+        confirmPassword: yup
+          .string()
+          .required(t("auth.confirmPasswordRequired"))
+          .oneOf([yup.ref("password")], t("auth.passwordsMustMatch")),
+      }),
+    [t]
   );
 
   const {
@@ -60,10 +70,10 @@ export default function RegisterScreen() {
         router.replace("/(protected)/(tabs)");
       } else {
         const message = resultAction.payload as string;
-        Alert.alert("Hata", message || "Kayıt yapılamadı");
+        Alert.alert(t("auth.error"), message || t("auth.registerFailed"));
       }
     } catch (err) {
-      Alert.alert("Hata", "Bir sorun oluştu");
+      Alert.alert(t("auth.error"), t("auth.somethingWentWrong"));
     }
   };
 
@@ -104,10 +114,10 @@ export default function RegisterScreen() {
               {/* Welcome Text */}
               <View className="px-10">
                 <Text className="text-3xl font-black text-center text-zinc-900 dark:text-white leading-tight mb-2">
-                  Hesap <Text className="text-[#f39849]">Oluştur</Text>
+                  {t("auth.signUp")} <Text className="text-[#f39849]">{t("auth.createAccount")}</Text>
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 text-center text-sm font-medium leading-relaxed">
-                  Mutfakta sihir yaratmaya başlamak için kayıt olun.
+                  {t("auth.heroSubtitle")}
                 </Text>
               </View>
             </Animated.View>
@@ -127,7 +137,7 @@ export default function RegisterScreen() {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      placeholder="E-posta"
+                      placeholder={t("auth.emailPlaceholder")}
                       placeholderTextColor="#9ca3af"
                       keyboardType="email-address"
                       autoCapitalize="none"
@@ -157,7 +167,7 @@ export default function RegisterScreen() {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      placeholder="Şifre"
+                      placeholder={t("auth.passwordPlaceholder")}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       className={`w-full h-14 bg-white dark:bg-zinc-800 rounded-full px-5 text-zinc-900 dark:text-white text-base border-2 ${
@@ -185,7 +195,7 @@ export default function RegisterScreen() {
                       value={value}
                       onChangeText={onChange}
                       onBlur={onBlur}
-                      placeholder="Şifre Tekrar"
+                      placeholder={t("auth.confirmPasswordPlaceholder")}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       className={`w-full h-14 bg-white dark:bg-zinc-800 rounded-full px-5 text-zinc-900 dark:text-white text-base border-2 ${
@@ -216,7 +226,7 @@ export default function RegisterScreen() {
                   <ActivityIndicator color="white" />
                 ) : (
                   <Text className="text-white font-bold text-[17px]">
-                    Kayıt Ol
+                    {t("auth.signUp")}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -224,13 +234,13 @@ export default function RegisterScreen() {
               {/* Login link */}
               <View className="flex-row justify-center items-center gap-1">
                 <Text className="text-zinc-600 dark:text-zinc-400 text-sm">
-                  Zaten hesabınız var mı?
+                  {t("auth.alreadyHaveAccount")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/(public)/screens/login")}
                 >
                   <Text className="text-[#f39849] font-bold text-sm">
-                    Giriş Yap
+                    {t("auth.signIn")}
                   </Text>
                 </TouchableOpacity>
               </View>

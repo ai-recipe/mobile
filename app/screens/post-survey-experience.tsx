@@ -6,7 +6,6 @@ import React, { useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { useDispatch } from "react-redux";
-import { CalculatingPlanStep } from "./components/CalculatingPlanStep";
 import { StepPaywall } from "./components/StepPaywall";
 import { StepRateUs } from "./components/StepRateUs";
 
@@ -25,13 +24,6 @@ export default function PostSurveyExperienceScreen() {
 
   const steps: MultiStepFormStep[] = useMemo(
     () => [
-      {
-        id: "calculating",
-        fields: [],
-        shouldHandleNextStep: true,
-        dontShowBackButton: true,
-        render: ({ nextStep }) => <CalculatingPlanStep onNext={nextStep} />,
-      },
       {
         id: "rate_us",
         fields: [],

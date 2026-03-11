@@ -5,6 +5,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Platform, Pressable, Text, View } from "react-native";
 
 interface CalendarModalProps {
@@ -20,6 +21,7 @@ export function CalendarModal({
   onConfirm,
   initialDate = new Date(),
 }: CalendarModalProps) {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const [tempDate, setTempDate] = useState(initialDate);
 
@@ -45,7 +47,7 @@ export function CalendarModal({
           {/* Header */}
           <View className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex-row justify-between items-center">
             <Text className="text-lg font-bold text-zinc-900 dark:text-white">
-              Select Date
+              {t("calendar.selectDate")}
             </Text>
             <Pressable
               onPress={onClose}
@@ -79,14 +81,14 @@ export function CalendarModal({
               className="flex-1 py-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-800"
             >
               <Text className="text-center font-bold text-zinc-500 dark:text-zinc-400">
-                Cancel
+                {t("common.cancel")}
               </Text>
             </Pressable>
             <Pressable
               onPress={handleConfirm}
               className="flex-1 py-3.5 rounded-xl bg-[#f39849]"
             >
-              <Text className="text-center font-bold text-white">Confirm</Text>
+              <Text className="text-center font-bold text-white">{t("calendar.confirm")}</Text>
             </Pressable>
           </View>
         </View>

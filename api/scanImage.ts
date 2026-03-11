@@ -135,6 +135,7 @@ export async function scanImage({
       jobId: requestId,
     };
   } catch (error: any) {
+    console.log(JSON.stringify(error, null, 2));
     throw new Error(
       `Görüntü tarama başarısız: ${error?.response?.data?.message}`,
     );

@@ -2,6 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 // Custom hook to handle smooth number counting animations
 const useAnimatedNumber = (targetValue: number, duration: number = 400) => {
@@ -43,6 +44,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
   onUpdateCurrentWeight,
   onUpdateGoalWeight,
 }) => {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const isDark = colorScheme === "dark";
@@ -64,7 +66,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             className="text-sm font-semibold mb-2 uppercase tracking-[0.5px]"
             style={{ color: secondaryText }}
           >
-            Current Weight
+            {t("weightGoal.currentWeight")}
           </Text>
           <Text
             className="text-4xl font-extrabold mb-3"
@@ -84,7 +86,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             onPress={onUpdateCurrentWeight}
           >
             <Text className="text-primary font-bold text-md text-center">
-              Update
+              {t("weightGoal.update")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -99,7 +101,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             className="text-sm font-semibold mb-2 uppercase tracking-[0.5px]"
             style={{ color: secondaryText }}
           >
-            Goal Weight
+            {t("weightGoal.goalWeight")}
           </Text>
           <Text
             className="text-4xl font-extrabold mb-3"
@@ -118,7 +120,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
             onPress={onUpdateGoalWeight}
           >
             <Text className="text-primary font-bold text-md text-center">
-              Update
+              {t("weightGoal.update")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -141,7 +143,7 @@ export const WeightGoalCard: React.FC<WeightGoalCardProps> = ({
           className="text-xs font-medium text-center"
           style={{ color: secondaryText }}
         >
-          {animatedRemaining.toFixed(1)} {unit} to go
+          {t("weightGoal.toGo", { amount: animatedRemaining.toFixed(1), unit })}
         </Text>
       </View>
     </View>

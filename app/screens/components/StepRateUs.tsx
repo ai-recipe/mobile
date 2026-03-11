@@ -15,6 +15,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface StepRateUsProps {
   onNext: () => void;
@@ -44,6 +45,7 @@ const MOCK_REVIEWS = [
 ];
 
 export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
+  const { t } = useTranslation();
   const [userRating, setUserRating] = useState(0);
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
@@ -80,10 +82,10 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
             />
           </View>
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-            Bizi <Text className="text-[#f39849]">Değerlendir</Text>
+            {t("rateUs.title")} <Text className="text-[#f39849]">{t("rateUs.titleHighlight")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center px-4">
-            Uygulamamızı beğendiniz mi? Puan vererek bize destek olabilirsiniz.
+            {t("rateUs.subtitle")}
           </Text>
         </View>
 
@@ -107,7 +109,7 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
         {/* Mock Reviews */}
         <View className="gap-4">
           <Text className="text-lg font-bold text-zinc-800 dark:text-zinc-200 ml-1">
-            Kullanıcı Yorumları
+            {t("rateUs.userReviews")}
           </Text>
           {MOCK_REVIEWS.map((review, index) => (
             <Animated.View
@@ -145,7 +147,7 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
           className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
         >
           <Text className="text-white font-extrabold text-lg">
-            Hemen Puanla
+            {t("rateUs.rateNow")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -153,7 +155,7 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
           activeOpacity={0.7}
           className="mt-4 items-center"
         >
-          <Text className="text-zinc-400 font-medium">Belki Daha Sonra</Text>
+          <Text className="text-zinc-400 font-medium">{t("common.maybeLater")}</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>

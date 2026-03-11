@@ -13,6 +13,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface SurveyOption {
   icon: string;
@@ -43,6 +44,7 @@ export function StepSurveyItem({
   direction = "forward",
   isLastStep,
 }: StepSurveyItemProps) {
+  const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
@@ -69,11 +71,11 @@ export function StepSurveyItem({
   const getQuestionSubtitle = () => {
     switch (question.type) {
       case "multi_select":
-        return "Birden fazla seçebilirsiniz.";
+        return t("surveyItem.multipleChoice");
       case "number_input":
-        return "Lütfen bir sayı giriniz.";
+        return t("surveyItem.enterNumber");
       default:
-        return "Lütfen birini seçiniz.";
+        return t("surveyItem.selectOne");
     }
   };
 
@@ -162,7 +164,7 @@ export function StepSurveyItem({
             <MaterialIcons name="arrow-forward" size={24} color="white" />
           )}
           <Text className="text-white font-extrabold text-lg">
-            {isLastStep ? "Tamamla" : "Devam Et"}
+            {isLastStep ? t("surveyItem.finish") : t("surveyItem.continue")}
           </Text>
         </TouchableOpacity>
       </View>

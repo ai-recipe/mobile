@@ -150,7 +150,7 @@ export const initDeviceAsync = createAsyncThunk(
       }
 
       const response = await AuthService.initDeviceAPI({
-        deviceId: "allah12345",
+        deviceId: "allah",
         platform: Platform.OS,
         appVersion: "1.0.0",
       });

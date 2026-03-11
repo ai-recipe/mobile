@@ -11,6 +11,7 @@ import progressReducer from "./slices/progressSlice";
 import recipeListReducer from "./slices/recipeListSlice";
 import recipeReducer from "./slices/recipeSlice";
 import scanMealReducer from "./slices/scanMealSlice";
+import subscriptionReducer from "./slices/subscriptionSlice";
 import uiReducer from "./slices/uiSlice";
 import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
@@ -31,6 +32,7 @@ export const store = configureStore({
     user: userReducer,
     goalPlans: goalPlansReducer,
     scanMeal: scanMealReducer,
+    subscription: subscriptionReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -11,6 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -25,23 +26,30 @@ import { RecipeResults } from "./components/RecipeResults";
 import { createFormSteps } from "./helpers/ai-scan-form.helpers";
 import { ScanFormData, scanFormSchema } from "./types/ai-scan-form.types";
 
-const LOADING_MESSAGES_SCAN = [
-  "Görüntü Yükleniyor...",
-  "Yapay Zeka İşleme Başlatıyor...",
-  "Malzemeler Tanımlanıyor...",
-  "Sonuçlar Hazırlanıyor...",
-];
-
-const LOADING_MESSAGES_GENERATE_RECIPE = [
-  "Şef Yapay Zeka Düşünüyor...",
-  "Tarifler Oluşturuluyor...",
-  "Lezzetler Eşleştiriliyor...",
-  "En İyi Tarifler Hazırlanıyor...",
-];
-
 export default function AiScanFormScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
+
+  const LOADING_MESSAGES_SCAN = useMemo(
+    () => [
+      t("aiScanForm.loadingImage"),
+      t("aiScanForm.startingAI"),
+      t("aiScanForm.identifyingIngredients"),
+      t("aiScanForm.preparingResults"),
+    ],
+    [t]
+  );
+
+  const LOADING_MESSAGES_GENERATE_RECIPE = useMemo(
+    () => [
+      t("aiScanForm.chefThinking"),
+      t("aiScanForm.generatingRecipes"),
+      t("aiScanForm.matchingFlavors"),
+      t("aiScanForm.preparingBestRecipes"),
+    ],
+    [t]
+  );
 
   const form = useForm<ScanFormData>({
     resolver: yupResolver(scanFormSchema),
@@ -58,7 +66,7 @@ export default function AiScanFormScreen() {
     useSelector((state: any) => state.recipe);
   const dispatch = useAppDispatch();
 
-  const [loadingText, setLoadingText] = useState("Görüntü Analiz Ediliyor...");
+  const [loadingText, setLoadingText] = useState(t("aiScanForm.analyzing"));
 
   // Determine loading messages based on current step
 
@@ -130,9 +138,9 @@ export default function AiScanFormScreen() {
   // Handle scan error
   useEffect(() => {
     if (scanError) {
-      Alert.alert("Tarama Hatası", scanError, [
+      Alert.alert(t("aiScanForm.scanError"), scanError, [
         {
-          text: "Tamam",
+          text: t("aiScanForm.ok"),
           onPress: () => {
             dispatch(setStep(0));
             dispatch(setAppStep(AppStep.StepScan));
@@ -140,14 +148,14 @@ export default function AiScanFormScreen() {
         },
       ]);
     }
-  }, [scanError, dispatch]);
+  }, [scanError, dispatch, t]);
 
   // Handle recipe generation error
   useEffect(() => {
     if (analyseError) {
-      Alert.alert("Tarif Oluşturma Hatası", analyseError, [
+      Alert.alert(t("aiScanForm.recipeError"), analyseError, [
         {
-          text: "Tamam",
+          text: t("aiScanForm.ok"),
           onPress: () => {
             dispatch(setStep(2));
             dispatch(setAppStep(AppStep.DietPreference));
@@ -155,7 +163,7 @@ export default function AiScanFormScreen() {
         },
       ]);
     }
-  }, [analyseError, dispatch]);
+  }, [analyseError, dispatch, t]);
 
   useEffect(() => {
     return () => {
@@ -197,12 +205,12 @@ export default function AiScanFormScreen() {
               color={colorScheme === "dark" ? "#fff" : "#181411"}
             />
             <Text className="text-xs font-bold ml-1 text-zinc-900 dark:text-white">
-              Tekrar Tara
+              {t("aiScanForm.scanAgain")}
             </Text>
           </TouchableOpacity>
           <View className="bg-orange-100 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
             <Text className="text-[#f39849] text-xs font-bold">
-              AI Chef Beta
+              {t("aiScanForm.aiBeta")}
             </Text>
           </View>
         </View>
@@ -220,7 +228,7 @@ export default function AiScanFormScreen() {
         <MultiStepForm
           steps={steps}
           onFinish={(data) => handleDiscoverRecipesAsync(data as ScanFormData)}
-          headerTitle="Tarif Oluştur"
+          headerTitle={t("aiScanForm.createRecipe")}
           backButtonBehavior="pop"
           validationSchema={scanFormSchema}
           initialData={{

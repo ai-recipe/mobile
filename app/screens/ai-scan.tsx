@@ -5,6 +5,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -13,6 +14,7 @@ export default function AIScanScreen() {
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme].background;
+  const { t } = useTranslation();
   const handlePickImage = async (useCamera: boolean) => {
     const permissionResult = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
@@ -20,8 +22,8 @@ export default function AIScanScreen() {
 
     if (permissionResult.granted === false) {
       Alert.alert(
-        "İzin Gerekli",
-        "Ürünleri taramak için kamera veya galeri izni vermeniz gerekiyor.",
+        t("aiScan.permissionRequired"),
+        t("aiScan.permissionDesc"),
       );
       return;
     }
@@ -56,10 +58,10 @@ export default function AIScanScreen() {
         {/* Header Section */}
         <View className="pt-8 pb-6">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            Ürünleri <Text className="text-[#f39849]">Tara</Text>
+            {t("aiScan.title")} <Text className="text-[#f39849]">{t("aiScan.titlePrefix")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base mt-2">
-            AI mutfak şefiniz malzemeleri tanımak için hazır.
+            {t("aiScan.subtitle")}
           </Text>
         </View>
 
@@ -74,7 +76,7 @@ export default function AIScanScreen() {
             <View className="size-16 bg-white/10 rounded-full items-center justify-center mb-3">
               <MaterialIcons name="photo-camera" size={32} color="white" />
             </View>
-            <Text className="text-white font-bold text-lg">Fotoğraf Çek</Text>
+            <Text className="text-white font-bold text-lg">{t("aiScan.takePhoto")}</Text>
           </TouchableOpacity>
 
           {/* Gallery */}
@@ -87,7 +89,7 @@ export default function AIScanScreen() {
               <MaterialIcons name="collections" size={32} color="#f39849" />
             </View>
             <Text className="text-zinc-900 dark:text-white font-bold text-lg">
-              Galeriden Seç
+              {t("aiScan.chooseFromGallery")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -101,30 +103,30 @@ export default function AIScanScreen() {
               color="#f39849"
             />
             <Text className="text-zinc-900 dark:text-white font-extrabold text-lg">
-              En İyi Sonuç İçin İpuçları
+              {t("aiScan.tipsTitle")}
             </Text>
           </View>
 
           <View className="gap-y-6">
             <GuidelineItem
               icon="wb-sunny"
-              title="İyi Aydınlatma"
-              desc="Malzemelerin net görünmesi için aydınlık bir ortam tercih edin."
+              title={t("aiScan.tip1Title")}
+              desc={t("aiScan.tip1Desc")}
             />
             <GuidelineItem
               icon="center-focus-weak"
-              title="Net Odaklama"
-              desc="Kamerayı titretmemeye çalışın ve ürünlere odaklanın."
+              title={t("aiScan.tip2Title")}
+              desc={t("aiScan.tip2Desc")}
             />
             <GuidelineItem
               icon="layers"
-              title="Üst Üste Koymayın"
-              desc="Malzemelerin birbirini kapatmadığından emin olun."
+              title={t("aiScan.tip3Title")}
+              desc={t("aiScan.tip3Desc")}
             />
             <GuidelineItem
               icon="barcode-reader"
-              title="Etiketleri Okutun"
-              desc="Mümkünse ürün paketlerinin üzerindeki isimleri gösterin."
+              title={t("aiScan.tip4Title")}
+              desc={t("aiScan.tip4Desc")}
             />
           </View>
         </View>
