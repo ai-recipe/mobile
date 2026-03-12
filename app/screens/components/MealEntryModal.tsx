@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -40,6 +41,7 @@ export interface MealData {
   carbs: number;
   fat: number;
   loggedAt: string;
+  imageUrl?: string;
 }
 
 export function MealEntryModal({
@@ -58,6 +60,7 @@ export function MealEntryModal({
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | undefined>();
 
   const skipScaleOnceRef = useRef(false);
 
@@ -105,6 +108,7 @@ export function MealEntryModal({
         setCarbs(initialData.carbs.toString());
         setFat(initialData.fat.toString());
         setServings(initialData.servings);
+        setImageUrl(initialData.imageUrl);
       } else {
         setMealName("");
         setCalories("");
@@ -112,6 +116,7 @@ export function MealEntryModal({
         setCarbs("");
         setFat("");
         setServings(1);
+        setImageUrl(undefined);
       }
     }
   }, [visible, initialData]);
@@ -225,7 +230,7 @@ export function MealEntryModal({
       >
         <View className="flex-1 bg-zinc-50 dark:bg-zinc-950">
           {/* Header Image Area */}
-          <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
+          <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
             {/* Top Bar */}
             <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
               <Pressable
@@ -236,14 +241,22 @@ export function MealEntryModal({
               </Pressable>
             </View>
 
-            {/* Food Icon Placeholder */}
-            <View className="opacity-80">
-              <MaterialIcons
-                name="restaurant"
-                size={120}
-                color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
+            {/* Image or Placeholder */}
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                className="w-full h-full"
+                resizeMode="cover"
               />
-            </View>
+            ) : (
+              <View className="opacity-80">
+                <MaterialIcons
+                  name="restaurant"
+                  size={120}
+                  color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
+                />
+              </View>
+            )}
           </View>
 
           {/* Content Area */}
@@ -515,7 +528,9 @@ export function MealEntryModal({
                 <ActivityIndicator color="white" size="small" />
               ) : (
                 <Text className="text-white font-bold text-lg text-center">
-                  {initialData ? t("mealEntry.updateEntry") : t("mealEntry.addToDiary")}
+                  {initialData
+                    ? t("mealEntry.updateEntry")
+                    : t("mealEntry.addToDiary")}
                 </Text>
               )}
             </Pressable>

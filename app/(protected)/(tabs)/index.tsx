@@ -195,20 +195,16 @@ const HomeScreen = () => {
   };
 
   const handleDeleteMeal = (id: string) => {
-    Alert.alert(
-      t("common.delete"),
-      t("home.deleteEntryConfirm"),
-      [
-        { text: t("common.cancel"), style: "cancel" },
-        {
-          text: t("common.delete"),
-          style: "destructive",
-          onPress: () => {
-            dispatch(deleteFoodLogAsync({ id }));
-          },
+    Alert.alert(t("common.delete"), t("home.deleteEntryConfirm"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: () => {
+          dispatch(deleteFoodLogAsync({ id }));
         },
-      ],
-    );
+      },
+    ]);
   };
 
   const handleEditMeal = (entry: any) => {
@@ -221,6 +217,7 @@ const HomeScreen = () => {
       fat: entry.fatGrams,
       servings: entry.quantity,
       loggedAt: entry.loggedAt,
+      imageUrl: entry.imageUrl,
     });
     dispatch(openMealModal());
   };
@@ -464,7 +461,7 @@ const HomeScreen = () => {
         />
 
         <GoalCelebrationModal
-          visible={false && celebrationVisible}
+          visible={celebrationVisible}
           onClose={() => setCelebrationVisible(false)}
         />
 

@@ -118,6 +118,8 @@
     "scanAgain": "Tekrar Tara",
     "completeScan": "Taramayı Tamamla",
     "scanFailed": "Tarama Başarısız",
+    "scanFailedText": "Bu öğün tanımlanamadı",
+    "scanFailedHint": "Daha net bir fotoğraf deneyin veya manuel kaydedin",
     "noPermissionTitle": "Kamera İzni Gerekli",
     "noPermissionDesc": "Öğünlerinizi taramak için kamera iznine ihtiyacımız var. Lütfen cihaz ayarlarınızdan etkinleştirin.",
     "noCameraFound": "Kamera Bulunamadı",

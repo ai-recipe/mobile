@@ -21,6 +21,10 @@ function isPendingScan(entry: FoodLogEntry): boolean {
   return entry.status === "pending_scan";
 }
 
+function isFailedScan(entry: FoodLogEntry): boolean {
+  return entry.status === "failed_scan";
+}
+
 interface MealActivityTabProps {
   consumedCalories: number;
   calorieGoal: number;
@@ -135,12 +139,9 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
         <View className="gap-3">
           {items.map((entry) => {
             const pending = isPendingScan(entry);
-            const imageUri = entry.imageUrl
-              ? entry.imageUrl.startsWith("http")
-                ? entry.imageUrl
-                : `${SCAN_IMAGE_BASE}${entry.imageUrl}`
-              : null;
-            const showImage = !!imageUri || pending;
+            const failed = isFailedScan(entry);
+            console.log(entry.imageUrl);
+            const showImage = !!entry.imageUrl || pending;
 
             // Pending scan: reference-style card (white, rounded-3xl, 16x16 thumb, spinner, subtitle)
             if (pending) {
@@ -150,10 +151,10 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   className="bg-white dark:bg-zinc-900 rounded-3xl border-2 border-zinc-100 dark:border-zinc-800 p-4 flex-row items-center gap-4 "
                 >
                   <View className="flex-shrink-0">
-                    {imageUri ? (
+                    {entry.imageUrl ? (
                       <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         <Image
-                          source={{ uri: imageUri }}
+                          source={{ uri: entry.imageUrl }}
                           className="w-full h-full"
                           resizeMode="cover"
                           style={{ opacity: 0.7 }}
@@ -210,6 +211,90 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
               );
             }
 
+            // Failed scan: show error state with image and cool placeholder
+            if (failed) {
+              return (
+                <View
+                  key={entry.id}
+                  className="bg-white dark:bg-zinc-900 rounded-3xl border-2 border-red-100 dark:border-red-900 p-4 flex-row items-center gap-4"
+                >
+                  <View className="flex-shrink-0 relative">
+                    {entry.imageUrl ? (
+                      <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                        <Image
+                          source={{ uri: entry.imageUrl }}
+                          className="w-full h-full"
+                          resizeMode="cover"
+                          style={{ opacity: 0.4 }}
+                        />
+                        <View className="absolute inset-0 rounded-2xl items-center justify-center bg-red-100 dark:bg-red-900/30">
+                          <MaterialIcons
+                            name="image-not-supported"
+                            size={28}
+                            color="#ef4444"
+                          />
+                        </View>
+                      </View>
+                    ) : (
+                      <View
+                        className="w-16 h-16 rounded-2xl items-center justify-center"
+                        style={{
+                          backgroundColor: "rgba(239,68,68,0.1)",
+                        }}
+                      >
+                        <MaterialIcons
+                          name="image-not-supported"
+                          size={28}
+                          color="#ef4444"
+                        />
+                      </View>
+                    )}
+                  </View>
+                  <View className="flex-1 min-w-0">
+                    <Text
+                      className="text-lg font-bold flex-shrink text-red-600 dark:text-red-400"
+                      numberOfLines={1}
+                    >
+                      {t("scanner.scanFailedText")}
+                    </Text>
+                    <Text className="text-sm text-zinc-400 dark:text-zinc-500 mt-0.5">
+                      {t("scanner.scanFailedHint")}
+                    </Text>
+                  </View>
+                  <View className="flex-shrink-0 items-end">
+                    <View className="flex-row gap-1">
+                      <Pressable
+                        onPress={(e) => {
+                          e?.stopPropagation?.();
+                          onEditMeal(entry);
+                        }}
+                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                      >
+                        <MaterialIcons
+                          name="edit"
+                          size={18}
+                          color={colorScheme === "dark" ? "#71717a" : "#a1a1aa"}
+                        />
+                      </Pressable>
+                      <Pressable
+                        onPress={(e) => {
+                          e?.stopPropagation?.();
+                          onDeleteMeal(entry.id);
+                        }}
+                        className="p-1.5 rounded-full active:bg-zinc-100 dark:active:bg-zinc-800"
+                      >
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={18}
+                          color="#ef4444"
+                        />
+                      </Pressable>
+                    </View>
+                  </View>
+                </View>
+              );
+            }
+
             return (
               <Pressable
                 key={entry.id}
@@ -217,10 +302,10 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                 className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center"
               >
                 {/* Image */}
-                {showImage && imageUri ? (
+                {showImage && entry.imageUrl ? (
                   <View className="mr-3 flex-shrink-0">
                     <Image
-                      source={{ uri: imageUri }}
+                      source={{ uri: entry.imageUrl }}
                       className="w-12 h-12 rounded-xl"
                       resizeMode="cover"
                     />

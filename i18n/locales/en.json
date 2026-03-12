@@ -118,6 +118,8 @@
     "scanAgain": "Scan Again",
     "completeScan": "Complete Scan",
     "scanFailed": "Scan Failed",
+    "scanFailedText": "Couldn't identify this meal",
+    "scanFailedHint": "Try a clearer photo or log manually",
     "noPermissionTitle": "Camera Access Required",
     "noPermissionDesc": "We need camera permission to scan your meals. Please enable it in your device settings.",
     "noCameraFound": "No Camera Found",
