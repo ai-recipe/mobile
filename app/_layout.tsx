@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
+import { Platform } from "react-native";
 import { CopilotProvider } from "react-native-copilot";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useDispatch } from "react-redux";
 import { TourTooltip } from "../components/TourTooltip";
 import "../global.css";
 
+import { FunnyLoader } from "@/components/FunnyLoader";
 import { ThemeSync } from "@/components/ThemeSync";
-import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import useInitApp from "@/hooks/useInitApp";
@@ -59,18 +59,7 @@ function RootLayoutNavigator() {
   const colorScheme = useColorScheme();
 
   if (isLoading || isInitDeviceLoading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: Colors[colorScheme].background,
-        }}
-      >
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <FunnyLoader />;
   }
   return (
     <ThemeSync>

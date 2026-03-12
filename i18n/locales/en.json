@@ -1,6 +1,19 @@
 {
   "welcome": "Welcome",
   "app_name": "Recipe AI",
+  "loader": {
+    "messages": [
+      "Counting the crumbs...",
+      "Calculating the air in your bagel...",
+      "Chasing away the chocolate cravings...",
+      "Bribing the scale...",
+      "Converting snacks to energy...",
+      "Negotiating with a donut...",
+      "Hiding the leftover pizza...",
+      "Inflating the gym motivation..."
+    ],
+    "subtitle": "Syncing Vital Stats"
+  },
   "common": {
     "next": "Next",
     "back": "Back",

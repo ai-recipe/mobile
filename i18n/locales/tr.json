@@ -1,6 +1,19 @@
 {
   "welcome": "Hoşgeldiniz",
   "app_name": "Tarif AI",
+  "loader": {
+    "messages": [
+      "Kırıntılar sayılıyor...",
+      "Simit içindeki hava hesaplanıyor...",
+      "Çikolata istekleri bertaraf ediliyor...",
+      "Terazi rüşvet veriliyor...",
+      "Atıştırmalıklar enerjiye dönüştürülüyor...",
+      "Simidle pazarlık yapılıyor...",
+      "Kalan pizza saklanıyor...",
+      "Spor motivasyonu şişirtiliyor..."
+    ],
+    "subtitle": "Hayati İstatistikler Senkronize Ediliyor"
+  },
   "common": {
     "next": "Sonraki",
     "back": "Geri",
