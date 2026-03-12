@@ -3,7 +3,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 export const api = axios.create({
   baseURL: "https://api.recipetrack.tech/api/v1/",
-  timeout: 5000, // Increased timeout to 30 seconds for slower connections
+  timeout: 60000, // Increased timeout to 30 seconds for slower connections
   headers: {
     "Content-Type": "application/json",
   },
