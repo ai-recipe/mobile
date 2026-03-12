@@ -61,6 +61,7 @@
     "editNutritionGoals": "Beslenme Hedeflerini Düzenle",
     "caloriesConsumed": "kalori tüketildi",
     "noMealsLogged": "Bu gün henüz bir şey tüketmediniz.",
+    "noMealsHint": "Beslenmenizi takip etmek için bir öğün tarayarak veya manuel olarak ekleyerek başlayın.",
     "breakfast": "Kahvaltı",
     "lunch": "Öğle",
     "dinner": "Akşam",
@@ -74,6 +75,7 @@
     "dailyGoalReached": "günlük hedefe ulaşıldı",
     "waterLog": "Su kaydı",
     "noWaterLogged": "Bu gün su kaydı yok.",
+    "noWaterHint": "Sulanmaya başla! Günlük susuzluk hedeflerini takip etmek için su alımını kaydet.",
     "stayHydrated": "Hidrate Kal!",
     "hydrationTip": "Yeterince su içmek enerji seviyenizi, odaklanmanızı ve genel metabolizmanızı iyileştirmeye yardımcı olur. Gün boyunca küçük yudumlar hedefleyin!"
   },

@@ -1,4 +1,5 @@
 import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
+import { EmptyWaterState } from "@/components/EmptyWaterState";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import React from "react";
@@ -156,12 +157,10 @@ export const WaterActivityTab: React.FC<WaterActivityTabProps> = ({
               </View>
             </View>
           ) : (
-            <View className="flex-col items-center justify-center py-8 gap-2 mb-6">
-              <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center">
-                {t("water.noWaterLogged")}
-              </Text>
-              <Text className="text-3xl">💧</Text>
-            </View>
+            <EmptyWaterState
+              onAddWater={onAddWater}
+              waterAdding={waterAdding}
+            />
           )}
 
           {/* Tips Section for Water */}

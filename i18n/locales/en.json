@@ -61,6 +61,7 @@
     "editNutritionGoals": "Edit Nutrition Goals",
     "caloriesConsumed": "calories consumed",
     "noMealsLogged": "You haven't consumed anything this day.",
+    "noMealsHint": "Start by scanning a meal or adding it manually to track your nutrition.",
     "breakfast": "Breakfast",
     "lunch": "Lunch",
     "dinner": "Dinner",
@@ -74,6 +75,7 @@
     "dailyGoalReached": "of daily goal reached",
     "waterLog": "Water log",
     "noWaterLogged": "No water logged for this day.",
+    "noWaterHint": "Start hydrating! Log your water intake to track your daily hydration goals.",
     "stayHydrated": "Stay Hydrated!",
     "hydrationTip": "Drinking enough water helps improve your energy levels, focus, and overall metabolism. Aim for small sips throughout the day!"
   },

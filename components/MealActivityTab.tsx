@@ -1,5 +1,6 @@
 import { DailySummary, FoodLogEntry } from "@/api/nutrition";
 import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
+import { EmptyMealState } from "@/components/EmptyMealState";
 import { Colors } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
@@ -502,12 +503,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           />
         </View>
       ) : (
-        <View className="flex-col items-center justify-center py-12 gap-4">
-          <Text className="text-zinc-500 dark:text-zinc-400 text-base font-normal max-w-[250px] text-center leading-relaxed">
-            {t("home.noMealsLogged")}
-          </Text>
-          <Text className="text-4xl">😋</Text>
-        </View>
+        <EmptyMealState />
       )}
     </>
   );
