@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Image,
   Linking,
   Pressable,
@@ -38,10 +39,21 @@ import { SoftPaywallModal } from "./components/SoftPaywallModal";
  * Takes a photo → uploads → adds pending entry to daily log → navigates to home.
  * Scan continues in background via socket; home shows "Scanning..." until complete.
  */
+type ScanMode = "meal" | "barcode" | "nutrition";
+
+const VIEWFINDER_SIZES: Record<ScanMode, { width: number; height: number }> = {
+  meal: { width: 272, height: 272 },
+  barcode: { width: 300, height: 110 },
+  nutrition: { width: 200, height: 340 },
+};
+
 export default function MealScannerScreen() {
   const insets = useSafeAreaInsets();
   const cameraRef = useRef<Camera>(null);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
+  const [scanMode, setScanMode] = useState<ScanMode>("meal");
+  const viewfinderWidth = useRef(new Animated.Value(VIEWFINDER_SIZES.meal.width)).current;
+  const viewfinderHeight = useRef(new Animated.Value(VIEWFINDER_SIZES.meal.height)).current;
 
   const dispatch = useAppDispatch();
   const { status, progress, progressMessage, result, error, capturedPhotoUri } =
@@ -150,6 +162,25 @@ export default function MealScannerScreen() {
     router.navigate("/(protected)/(tabs)/");
   }, [dispatch]);
 
+  const handleModeChange = useCallback(
+    (mode: ScanMode) => {
+      setScanMode(mode);
+      Animated.spring(viewfinderWidth, {
+        toValue: VIEWFINDER_SIZES[mode].width,
+        useNativeDriver: false,
+        damping: 18,
+        stiffness: 200,
+      }).start();
+      Animated.spring(viewfinderHeight, {
+        toValue: VIEWFINDER_SIZES[mode].height,
+        useNativeDriver: false,
+        damping: 18,
+        stiffness: 200,
+      }).start();
+    },
+    [viewfinderWidth, viewfinderHeight],
+  );
+
   const isScanning = scanning;
 
   // ── Permission denied ───────────────────────────────────────────
@@ -222,12 +253,104 @@ export default function MealScannerScreen() {
         </Pressable>
       </View>
 
-      {/* ── IDLE: take-photo button ────────────────────────────── */}
+      {/* ── Viewfinder frame (idle only) ───────────────────────── */}
+      {status === "idle" && (
+        <View className="absolute inset-0 items-center justify-center" pointerEvents="none">
+          <Animated.View
+            style={{
+              width: viewfinderWidth,
+              height: viewfinderHeight,
+              position: "relative",
+            }}
+          >
+            {/* Top-left corner */}
+            <View
+              style={[
+                styles.corner,
+                { top: 0, left: 0, borderTopWidth: 3, borderLeftWidth: 3, borderTopLeftRadius: 16 },
+              ]}
+            />
+            {/* Top-right corner */}
+            <View
+              style={[
+                styles.corner,
+                { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3, borderTopRightRadius: 16 },
+              ]}
+            />
+            {/* Bottom-left corner */}
+            <View
+              style={[
+                styles.corner,
+                { bottom: 0, left: 0, borderBottomWidth: 3, borderLeftWidth: 3, borderBottomLeftRadius: 16 },
+              ]}
+            />
+            {/* Bottom-right corner */}
+            <View
+              style={[
+                styles.corner,
+                { bottom: 0, right: 0, borderBottomWidth: 3, borderRightWidth: 3, borderBottomRightRadius: 16 },
+              ]}
+            />
+            {/* Center scan line */}
+            <View
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "50%",
+                height: 1,
+                backgroundColor: "rgba(255,255,255,0.18)",
+              }}
+            />
+          </Animated.View>
+        </View>
+      )}
+
+      {/* ── IDLE: mode selector + shutter ─────────────────────── */}
       {status === "idle" && (
         <View
           className="absolute left-0 right-0 items-center"
-          style={{ bottom: insets.bottom + 24 }}
+          style={{ bottom: insets.bottom + 24, gap: 28 }}
         >
+          {/* Mode selector tabs */}
+          <BlurView
+            intensity={40}
+            tint="dark"
+            className="overflow-hidden rounded-full border border-white/10"
+          >
+            <View className="flex-row items-center p-1">
+              {(["barcode", "nutrition", "meal"] as ScanMode[]).map((mode) => {
+                const active = scanMode === mode;
+                const labels: Record<ScanMode, string> = {
+                  barcode: t("scanner.modeBarcode"),
+                  nutrition: t("scanner.modeNutrition"),
+                  meal: t("scanner.modeMeal"),
+                };
+                return (
+                  <Pressable
+                    key={mode}
+                    onPress={() => handleModeChange(mode)}
+                    style={[
+                      styles.modeTab,
+                      active && styles.modeTabActive,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        color: active ? "white" : "rgba(255,255,255,0.5)",
+                        fontSize: 13,
+                        fontWeight: active ? "700" : "500",
+                      }}
+                    >
+                      {labels[mode]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </BlurView>
+
+          {/* Shutter button */}
           <View className="items-center gap-3">
             <Pressable
               onPress={handleTakePhoto}
@@ -429,6 +552,24 @@ export default function MealScannerScreen() {
     </View>
   );
 }
+
+// ── Styles ─────────────────────────────────────────────────────────
+const styles = StyleSheet.create({
+  corner: {
+    position: "absolute",
+    width: 36,
+    height: 36,
+    borderColor: "rgba(255,255,255,0.9)",
+  },
+  modeTab: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 999,
+  },
+  modeTabActive: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+});
 
 // ── Small helper component ─────────────────────────────────────────
 function NutrientBadge({

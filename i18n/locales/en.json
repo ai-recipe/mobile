@@ -142,7 +142,10 @@
     "proNudge1": "Pro users get 3x faster AI processing.",
     "proNudge2": "Scan unlimited meals with Pro.",
     "proNudge3": "Pro logs all nutrients automatically.",
-    "proNudge4": "Your AI chef is with you every meal."
+    "proNudge4": "Your AI chef is with you every meal.",
+    "modeBarcode": "Barcode",
+    "modeNutrition": "Nutrition",
+    "modeMeal": "Meal"
   },
   "paywall": {
     "title": "SlayCal",
