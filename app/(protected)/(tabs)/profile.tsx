@@ -5,9 +5,10 @@ import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -101,7 +102,7 @@ const ProfileScreen = () => {
           <ProfileMenuItem
             icon="help-outline"
             label={t("profile.help")}
-            onPress={() => {}}
+            onPress={() => WebBrowser.openBrowserAsync("https://slaycal.com/")}
           />
           <ProfileMenuItem
             isMaterialCommunityIcon={true}

@@ -96,6 +96,7 @@ export const toggleFavoriteFromScan = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
+      console.log("recipeId", recipeId);
       if (isFavorite) {
         await removeFavorite(recipeId);
       } else {
@@ -103,6 +104,8 @@ export const toggleFavoriteFromScan = createAsyncThunk(
       }
       return { recipeId, isFavorite: !isFavorite };
     } catch (error) {
+      console.log("error", JSON.stringify(error, null, 2));
+      console.log("error message", error?.response);
       return rejectWithValue(
         error instanceof Error ? error.message : "İşlem başarısız",
       );

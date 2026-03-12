@@ -19,13 +19,8 @@ export const EmptyWaterState: React.FC<EmptyWaterStateProps> = ({
   const { t } = useTranslation();
 
   return (
-    <View className="px-6 mb-6">
-      <View
-        className="rounded-3xl border border-zinc-100 dark:border-zinc-800 px-6 py-12 flex-col items-center justify-center gap-6"
-        style={{
-          backgroundColor: colors.background,
-        }}
-      >
+    <View className="px-1 mb-6">
+      <View className="rounded-3xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 px-6 py-12 flex-col items-center justify-center gap-6">
         {/* Icon Container */}
         <View
           className="w-20 h-20 rounded-full items-center justify-center"

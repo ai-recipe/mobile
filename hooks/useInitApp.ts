@@ -15,7 +15,7 @@ const useInitApp = () => {
   const initOnboardedStatus = useCallback(async () => {
     const onboarded = await AsyncStorage.getItem("isOnboarded");
     if (onboarded === "true") {
-      dispatch(setIsOnboarded(false));
+      dispatch(setIsOnboarded(true));
     }
   }, [dispatch]);
 

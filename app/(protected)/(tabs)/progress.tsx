@@ -5,7 +5,6 @@ import { WeightGoalCard } from "@/components/WeightGoalCard";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppSelector } from "@/store/hooks";
-import { useTranslation } from "react-i18next";
 import { postGoalPlanLogAsync } from "@/store/slices/goalPlansSlice";
 import {
   fetchProgressDataAsync,
@@ -15,6 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Pressable,
   ScrollView,
@@ -29,15 +29,7 @@ import { TabScreenWrapper } from "./components/TabScreenWrapper";
 
 export default function ProgressScreen() {
   const { t } = useTranslation();
-  const dayNames = [
-    t("days.sun"),
-    t("days.mon"),
-    t("days.tue"),
-    t("days.wed"),
-    t("days.thu"),
-    t("days.fri"),
-    t("days.sat"),
-  ];
+
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const dispatch = useDispatch();
@@ -84,20 +76,16 @@ export default function ProgressScreen() {
         month: "short",
         day: "numeric",
       });
-      const day = dateObj.getDay();
-      const dayName = dayNames[day];
 
       return {
         value: item.weightKg,
         label: formattedDate,
       };
     });
-  }, [progressData.weightTrend.dailyBreakdown, dayNames]);
+  }, [progressData.weightTrend.dailyBreakdown]);
 
   const stackData = useMemo(() => {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {
-      // year-month-day = day.date
-      const date = format(new Date(day.date), "yyyy-MM-dd");
       // day and month name
       const label = `${format(new Date(day.date), "dd MMM")}`;
 
@@ -239,7 +227,7 @@ export default function ProgressScreen() {
             title={t("progress.goalWeight")}
             fractionDigits={1}
           />
-          <View className="p-4 flex flex-row gap-3 mb-8">
+          <View className="p-4 flex flex-row gap-3 mb-24">
             <TouchableOpacity
               className="flex-1 bg-primary py-4 rounded-full items-center justify-center flex-row gap-3 "
               activeOpacity={0.7}
