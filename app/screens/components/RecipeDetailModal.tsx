@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -20,27 +21,25 @@ interface RecipeDetailModalProps {
   onClose: () => void;
   dontShowFavoriteButton?: boolean;
   recipe: {
-    id: string;
+    _id: string;
     title: string;
-    description: string;
-    imageUrl: string | null;
-    prepTimeMinutes: number;
-    cookTimeMinutes: number;
-    totalTimeMinutes: number;
-    difficulty: string;
-    servings: number;
-    matchPercentage: number;
-    matchedIngredients?: string[];
-    missingIngredients?: string[];
+    description?: string;
+    imageUrl?: string | null;
+    prepTimeMinutes?: number;
+    cookTimeMinutes?: number;
+    difficulty?: string;
+    servings?: number;
     ingredients?: string[];
-    steps?: string[];
+    instructions?: string[];
     dietaryTags?: string[];
+    allergens?: string[];
     isFavorite?: boolean;
-    nutritionSummary?: {
-      calories: number;
-      protein: number;
-      carbs: number;
-      fat: number;
+    nutrition?: {
+      calories?: number;
+      protein?: number;
+      carbs?: number;
+      fat?: number;
+      fiber?: number;
     };
   };
   baseImageUri?: string;
@@ -57,6 +56,7 @@ export function RecipeDetailModal({
     "ingredients",
   );
 
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [isFavorite, setIsFavorite] = useState(recipe.isFavorite);
 
@@ -64,20 +64,11 @@ export function RecipeDetailModal({
     const newStatus = !isFavorite;
     setIsFavorite(newStatus);
     try {
-      // Dispatch to both slices to ensure consistency
       await Promise.all([
-        dispatch(
-          toggleFavorite({ recipeId: recipe.id, isFavorite: !!isFavorite }),
-        ),
-        dispatch(
-          toggleFavoriteFromScan({
-            recipeId: recipe.id,
-            isFavorite: !!isFavorite,
-          }),
-        ),
+        dispatch(toggleFavorite({ recipeId: recipe._id, isFavorite: !!isFavorite })),
+        dispatch(toggleFavoriteFromScan({ recipeId: recipe._id, isFavorite: !!isFavorite })),
       ]);
     } catch (error) {
-      // Rollback if failed
       setIsFavorite(!newStatus);
       console.error("Favoriting failed:", error);
     }
@@ -124,68 +115,64 @@ export function RecipeDetailModal({
                 </TouchableOpacity>
               )}
             </View>
-            <View className="absolute bottom-12 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-              <MaterialIcons name="schedule" size={16} color="#f39849" />
-              <Text className="text-[#f39849] font-black text-sm ml-1">
-                {recipe.totalTimeMinutes} dk
-              </Text>
-            </View>
+            {(recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) && (
+              <View className="absolute bottom-12 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                <MaterialIcons name="schedule" size={16} color="#f39849" />
+                <Text className="text-[#f39849] font-black text-sm ml-1">
+                  {(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Content Area */}
           <View className="flex-1 bg-white dark:bg-zinc-900 -mt-8 rounded-t-[32px] p-6">
             {/* Title Section */}
             <View className="mb-6">
-              <View className="flex-row justify-between items-start mb-2">
-                <Text className="text-3xl font-bold leading-tight text-zinc-900 dark:text-white max-w-[75%]">
-                  {recipe.title}
+              <Text className="text-3xl font-bold leading-tight text-zinc-900 dark:text-white mb-2">
+                {recipe.title}
+              </Text>
+
+              {recipe.description && (
+                <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-4">
+                  {recipe.description}
                 </Text>
-                {!!recipe.matchPercentage && (
-                  <View className="bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-xl">
-                    <Text className="text-green-700 dark:text-green-400 text-sm font-bold">
-                      %{recipe.matchPercentage.toFixed(0)} Uyum
+              )}
+
+              {/* Quick Info */}
+              <View className="flex-row flex-wrap gap-4 mb-4">
+                {recipe.prepTimeMinutes != null && (
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="schedule" size={20} color="#a1a1aa" />
+                    <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
+                      {t("timePreference.title")}: {recipe.prepTimeMinutes} {t("explore.mins")}
                     </Text>
                   </View>
                 )}
-              </View>
-
-              <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-4">
-                {recipe.description}
-              </Text>
-
-              {/* Quick Info */}
-              <View className="flex-row gap-4 mb-4">
-                <View className="flex-row items-center">
-                  <MaterialIcons name="schedule" size={20} color="#a1a1aa" />
-                  <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                    Hazırlık: {recipe.prepTimeMinutes} dk
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <MaterialIcons name="restaurant" size={20} color="#a1a1aa" />
-                  <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                    Pişirme: {recipe.cookTimeMinutes} dk
-                  </Text>
-                </View>
-              </View>
-
-              <View className="flex-row gap-4">
-                <View className="flex-row items-center">
-                  <MaterialIcons name="bar-chart" size={20} color="#a1a1aa" />
-                  <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                    {recipe.difficulty}
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <MaterialCommunityIcons
-                    name="account-group"
-                    size={20}
-                    color="#a1a1aa"
-                  />
-                  <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                    {recipe.servings} Kişilik
-                  </Text>
-                </View>
+                {recipe.cookTimeMinutes != null && (
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="restaurant" size={20} color="#a1a1aa" />
+                    <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
+                      {t("recipeDetail.cooking")}: {recipe.cookTimeMinutes} {t("explore.mins")}
+                    </Text>
+                  </View>
+                )}
+                {recipe.difficulty && (
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="bar-chart" size={20} color="#a1a1aa" />
+                    <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
+                      {t(`difficulty.${recipe.difficulty}`, { defaultValue: recipe.difficulty })}
+                    </Text>
+                  </View>
+                )}
+                {recipe.servings != null && (
+                  <View className="flex-row items-center">
+                    <MaterialCommunityIcons name="account-group" size={20} color="#a1a1aa" />
+                    <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
+                      {recipe.servings} {t("common.servings")}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
 
@@ -196,9 +183,9 @@ export function RecipeDetailModal({
                   {recipe.dietaryTags?.map((tag, idx) => (
                     <View
                       key={idx}
-                      className="bg-gray-100 dark:bg-gray-900/30 px-3 py-1.5 rounded-lg"
+                      className="bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-lg border border-green-200 dark:border-green-800"
                     >
-                      <Text className="text-gray-700 dark:text-gray-400 text-xs font-semibold">
+                      <Text className="text-green-700 dark:text-green-400 text-xs font-semibold">
                         {tag}
                       </Text>
                     </View>
@@ -207,45 +194,39 @@ export function RecipeDetailModal({
               </View>
             )}
 
-            <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
-              <Text className="text-zinc-500 text-xs font-bold mb-2">
-                Besin Değerleri
-              </Text>
-              <View className="flex-row justify-between">
-                <View className="items-center flex-1">
-                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                    {recipe?.nutritionSummary?.calories}
-                  </Text>
-                  <Text className="text-zinc-500 text-[10px] font-semibold">
-                    Kalori
-                  </Text>
-                </View>
-                <View className="items-center flex-1">
-                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                    {recipe?.nutritionSummary?.protein}g
-                  </Text>
-                  <Text className="text-zinc-500 text-[10px] font-semibold">
-                    Protein
-                  </Text>
-                </View>
-                <View className="items-center flex-1">
-                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                    {recipe?.nutritionSummary?.carbs}g
-                  </Text>
-                  <Text className="text-zinc-500 text-[10px] font-semibold">
-                    Karbonhidrat
-                  </Text>
-                </View>
-                <View className="items-center flex-1">
-                  <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                    {recipe?.nutritionSummary?.fat}g
-                  </Text>
-                  <Text className="text-zinc-500 text-[10px] font-semibold">
-                    Yağ
-                  </Text>
+            {recipe.nutrition && (
+              <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
+                <Text className="text-zinc-500 text-xs font-bold mb-2">
+                  Besin Değerleri
+                </Text>
+                <View className="flex-row justify-between">
+                  <View className="items-center flex-1">
+                    <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                      {recipe.nutrition.calories ?? '—'}
+                    </Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">Kalori</Text>
+                  </View>
+                  <View className="items-center flex-1">
+                    <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                      {recipe.nutrition.protein != null ? `${recipe.nutrition.protein}g` : '—'}
+                    </Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">Protein</Text>
+                  </View>
+                  <View className="items-center flex-1">
+                    <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                      {recipe.nutrition.carbs != null ? `${recipe.nutrition.carbs}g` : '—'}
+                    </Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">Karbonhidrat</Text>
+                  </View>
+                  <View className="items-center flex-1">
+                    <Text className="text-zinc-900 dark:text-white text-lg font-bold">
+                      {recipe.nutrition.fat != null ? `${recipe.nutrition.fat}g` : '—'}
+                    </Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">Yağ</Text>
+                  </View>
                 </View>
               </View>
-            </View>
+            )}
 
             {/* Tabs */}
             <View className="flex-row border-b border-zinc-100 dark:border-zinc-800 mb-6">
@@ -289,80 +270,21 @@ export function RecipeDetailModal({
             {/* Tab Content */}
             <View>
               {activeTab === "ingredients" ? (
-                <View className="space-y-3">
-                  {/* Matched Ingredients */}
-                  {!!recipe.ingredients?.length && (
-                    <View className="mb-4">
-                      <Text className="text-zinc-500 text-xs font-bold mb-2">
-                        Malzemeler
+                <View className="flex flex-row flex-wrap gap-2">
+                  {recipe.ingredients?.map((ingredient, index) => (
+                    <View
+                      key={index}
+                      className="p-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                    >
+                      <Text className="text-zinc-700 dark:text-zinc-300 text-sm">
+                        {ingredient}
                       </Text>
-                      <View className="flex flex-row flex-wrap gap-2">
-                        {recipe.ingredients.map((item, index) => (
-                          <View
-                            key={`matched-${index}`}
-                            className="p-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
-                          >
-                            <Text
-                              className={`text-zinc-700 dark:text-zinc-300 w-full text-sm`}
-                            >
-                              {item}
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
                     </View>
-                  )}
-                  {!!recipe.matchedIngredients?.length && (
-                    <View className="mb-4">
-                      <Text className="text-zinc-500 text-xs font-bold mb-2">
-                        Elinizde Var
-                      </Text>
-                      <View className="flex flex-row flex-wrap gap-2">
-                        {recipe.matchedIngredients.map((item, index) => (
-                          <View
-                            key={`matched-${index}`}
-                            className="p-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 mb-2"
-                          >
-                            <Text
-                              className={`text-zinc-700 dark:text-zinc-300 w-fi text-sm`}
-                            >
-                              {item}
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                    </View>
-                  )}
-
-                  {/* Missing Ingredients */}
-                  {!!recipe.missingIngredients?.length && (
-                    <View>
-                      <Text className="text-zinc-500 text-xs font-bold mb-2">
-                        Almanız Gerekenler
-                      </Text>
-                      <View className="flex flex-row flex-wrap gap-2">
-                        {recipe.missingIngredients?.map((item, index) => {
-                          return (
-                            <TouchableOpacity
-                              key={`missing-${index}`}
-                              activeOpacity={0.7}
-                              className="p-2 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-2"
-                            >
-                              <Text
-                                className={`text-zinc-700 dark:text-zinc-300 text-sm`}
-                              >
-                                {item}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        })}
-                      </View>
-                    </View>
-                  )}
+                  ))}
                 </View>
               ) : (
                 <View className="flex flex-col gap-4">
-                  {recipe?.steps?.map((step, index) => (
+                  {recipe.instructions?.map((step, index) => (
                     <View key={index} className="flex-row gap-4">
                       <View className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-500/10 items-center justify-center">
                         <Text className="text-[#f39849] font-bold text-lg">

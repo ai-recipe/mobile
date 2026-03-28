@@ -77,7 +77,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
 
       <FlatList
         data={recipes}
-        keyExtractor={(item) => item.id ?? item._id}
+        keyExtractor={(item) => item._id}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: 120,
@@ -93,97 +93,65 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
               {/* Image Section */}
               <View className="h-48 relative">
                 <Image
-                  source={{
-                    uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE,
-                  }}
+                  source={{ uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE }}
                   className="w-full h-full object-cover"
                 />
-                <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                  <MaterialIcons name="schedule" size={14} color="#f39849" />
-                  <Text className="text-[#f39849] font-black text-xs ml-1">
-                    {item.totalTimeMinutes} dk
-                  </Text>
-                </View>
+                {(item.prepTimeMinutes != null || item.cookTimeMinutes != null) && (
+                  <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
+                    <MaterialIcons name="schedule" size={14} color="#f39849" />
+                    <Text className="text-[#f39849] font-black text-xs ml-1">
+                      {(item.prepTimeMinutes ?? 0) + (item.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                    </Text>
+                  </View>
+                )}
               </View>
 
               {/* Content Section */}
               <View className="p-5">
-                <View className="flex-row justify-between items-start mb-2">
-                  <Text className="text-xl font-bold text-zinc-900 dark:text-white flex-1 mr-2">
-                    {item.title}
-                  </Text>
-                  {item.matchPercentage != null && (
-                    <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">
-                      <Text className="text-green-700 dark:text-green-400 text-[10px] font-bold">
-                        %{item.matchPercentage.toFixed(0)} Uyum
+                <Text className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+                  {item.title}
+                </Text>
+
+                {/* Time & Difficulty */}
+                <View className="flex-row items-center gap-4 mb-3">
+                  {(item.prepTimeMinutes != null || item.cookTimeMinutes != null) && (
+                    <View className="flex-row items-center">
+                      <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
+                      <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+                        {(item.prepTimeMinutes ?? 0) + (item.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                      </Text>
+                    </View>
+                  )}
+                  {item.difficulty && (
+                    <View className="flex-row items-center">
+                      <MaterialCommunityIcons name="food-apple" size={16} color="#a1a1aa" />
+                      <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+                        {t(`difficulty.${item.difficulty}`, { defaultValue: item.difficulty })}
+                      </Text>
+                    </View>
+                  )}
+                  {item.servings != null && (
+                    <View className="flex-row items-center">
+                      <MaterialIcons name="people" size={16} color="#a1a1aa" />
+                      <Text className="text-zinc-500 text-xs font-bold ml-1.5">
+                        {item.servings} {t("common.servings")}
                       </Text>
                     </View>
                   )}
                 </View>
 
-                {/* Time & Ingredients Header */}
-                <View className="flex-row items-center gap-4 mb-2">
-                  <View className="flex-row items-center">
-                    <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
-                    <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                      {item.totalTimeMinutes} dk
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center">
-                    <MaterialCommunityIcons
-                      name="food-apple"
-                      size={16}
-                      color="#a1a1aa"
-                    />
-                    <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                      {item.difficulty}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Matched Ingredients */}
-                {item.matchedIngredients?.length > 0 && (
-                  <View className="mb-3">
-                    <Text className="text-zinc-500 text-xs font-bold mb-1.5">
-                      {t("recipeResults.matchedIngredients")}
-                    </Text>
-                    <View className="flex-row flex-wrap gap-2">
-                      {item.matchedIngredients.map(
-                        (ingredient: string, idx: number) => (
-                          <View
-                            key={idx}
-                            className="bg-green-100 dark:bg-green-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
-                          >
-                            <Text className="text-green-700 dark:text-green-400 text-xs font-semibold ml-1">
-                              {ingredient}
-                            </Text>
-                          </View>
-                        ),
-                      )}
-                    </View>
-                  </View>
-                )}
-
-                {/* Missing Ingredients */}
-                {item.missingIngredients?.length > 0 && (
-                  <View className="mb-3">
-                    <Text className="text-zinc-500 text-xs font-bold mb-1.5">
-                      {t("recipeResults.missingIngredients")}
-                    </Text>
-                    <View className="flex-row flex-wrap gap-2">
-                      {item.missingIngredients.map(
-                        (ingredient: string, idx: number) => (
-                          <View
-                            key={idx}
-                            className="bg-amber-100 dark:bg-amber-900/30 px-2.5 py-1 rounded-lg flex-row items-center"
-                          >
-                            <Text className="text-amber-700 dark:text-amber-400 text-xs font-semibold ml-1">
-                              {ingredient}
-                            </Text>
-                          </View>
-                        ),
-                      )}
-                    </View>
+                {!!item.dietaryTags?.length && (
+                  <View className="flex-row flex-wrap gap-2 mb-3">
+                    {item.dietaryTags.map((tag: string, idx: number) => (
+                      <View
+                        key={idx}
+                        className="bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-lg border border-green-200 dark:border-green-800"
+                      >
+                        <Text className="text-green-700 dark:text-green-400 text-xs font-semibold">
+                          {tag}
+                        </Text>
+                      </View>
+                    ))}
                   </View>
                 )}
 
@@ -191,8 +159,8 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                   {item.description}
                 </Text>
 
-                {/* Nutrition Summary */}
-                {item.nutritionSummary && (
+                {/* Nutrition */}
+                {item.nutrition && (
                   <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
                     <Text className="text-zinc-500 text-xs font-bold mb-2">
                       {t("recipeResults.nutritionValues")}
@@ -200,7 +168,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                     <View className="flex-row justify-between">
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutritionSummary.calories}
+                          {item.nutrition.calories ?? '—'}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.calories")}
@@ -208,7 +176,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutritionSummary.protein}g
+                          {item.nutrition.protein != null ? `${item.nutrition.protein}g` : '—'}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.protein")}
@@ -216,7 +184,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutritionSummary.carbs}g
+                          {item.nutrition.carbs != null ? `${item.nutrition.carbs}g` : '—'}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.carbs")}
@@ -224,7 +192,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutritionSummary.fat}g
+                          {item.nutrition.fat != null ? `${item.nutrition.fat}g` : '—'}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.fat")}

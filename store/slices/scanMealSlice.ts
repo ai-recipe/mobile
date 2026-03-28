@@ -11,7 +11,7 @@ import {
   setStartDate,
 } from "./dailyLogsSlice";
 
-const SOCKET_SERVER = "https://api.recipetrack.tech";
+const SOCKET_SERVER = "https://localhost:3001/api/v1";
 
 export interface ScanResult {
   foodName?: string;

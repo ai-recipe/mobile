@@ -103,43 +103,44 @@ const ExploreScreen = () => {
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
+        {/* Fixed header — does not scroll */}
+        <View className="pt-4">
+          <View className="px-5 mb-6">
+            <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight">
+              {activeTab === "personalised"
+                ? t("explore.personalisedTitle")
+                : t("explore.trendingTitle")}{" "}
+              <Text className="text-[#f39849]">{t("explore.recipes")}</Text>
+            </Text>
+            <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
+              {activeTab === "personalised"
+                ? t("explore.personalisedDesc")
+                : t("explore.trendingDesc")}
+            </Text>
+          </View>
+
+          <TabSwitcher
+            options={[
+              { id: "personalised", label: t("explore.personalised") },
+              { id: "trending", label: t("explore.trending") },
+            ]}
+            activeTab={activeTab}
+            onTabChange={(id) => setActiveTab(id as any)}
+          />
+        </View>
+
+        {isLoading && currentRecipes?.length === 0 ? (
+          <ExploreSkeleton />
+        ) : (
         <FlatList
           data={currentRecipes}
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          ListHeaderComponent={() => (
-            <View className="pt-4">
-              {/* Header Title */}
-              <View className="px-5 mb-6">
-                <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight">
-                  {activeTab === "personalised"
-                    ? t("explore.personalisedTitle")
-                    : t("explore.trendingTitle")}{" "}
-                  <Text className="text-[#f39849]">{t("explore.recipes")}</Text>
-                </Text>
-                <Text className="text-zinc-500 dark:text-zinc-400 mb-4">
-                  {activeTab === "personalised"
-                    ? t("explore.personalisedDesc")
-                    : t("explore.trendingDesc")}
-                </Text>
-              </View>
-
-              <TabSwitcher
-                options={[
-                  { id: "personalised", label: t("explore.personalised") },
-                  { id: "trending", label: t("explore.trending") },
-                ]}
-                activeTab={activeTab}
-                onTabChange={(id) => setActiveTab(id as any)}
-              />
-              {isLoading && currentRecipes?.length === 0 && <ExploreSkeleton />}
-            </View>
-          )}
           renderItem={({ item }) => (
             <TouchableOpacity
               className="flex-1 mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden border border-zinc-100 dark:border-zinc-700 shadow-sm"
@@ -184,6 +185,7 @@ const ExploreScreen = () => {
             </TouchableOpacity>
           )}
         />
+        )}
 
         {/* Recipe Detail Modal */}
         {selectedRecipe && (

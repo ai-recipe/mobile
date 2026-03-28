@@ -5,27 +5,31 @@ const ANALYSE_IMAGE_WEBHOOK =
   "https://n8n-production-cf278.up.railway.app/webhook/analyse-image";
 
 export interface RecipeFromAPI {
-  id: string;
+  _id: string;
   title: string;
-  description: string;
-  imageUrl: string;
-  prepTimeMinutes: number;
-  cookTimeMinutes: number;
-  totalTimeMinutes: number;
-  difficulty: "EASY" | "MEDIUM" | "HARD";
-  servings: number;
-  matchPercentage: number;
-  matchedIngredients: string[];
-  missingIngredients: string[];
-  dietaryTags: string[];
-  nutritionSummary: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-  isFavorite?: boolean;
+  description?: string;
+  imageUrl?: string;
+  prepTimeMinutes?: number;
+  cookTimeMinutes?: number;
+  servings?: number;
+  ingredients?: string[];
+  instructions?: string[];
+  difficulty?: "easy" | "medium" | "hard";
+  dietaryTags?: string[];
+  allergens?: string[];
+  source?: "manual" | "ai_generated";
+  isPublished?: boolean;
   isTrending?: boolean;
+  isFavorite?: boolean;
+  nutrition?: {
+    calories?: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+    fiber?: number;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface RecipeListItem {

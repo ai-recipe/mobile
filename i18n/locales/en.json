@@ -301,7 +301,7 @@
     "recipeError": "Recipe Generation Error",
     "ok": "OK",
     "scanAgain": "Scan Again",
-    "aiBeta": "AI Chef Beta",
+    "aiBeta": "AI Chef",
     "createRecipe": "Create Recipe"
   },
   "addOptions": {
@@ -354,6 +354,8 @@
     "foundPrefix": "Found",
     "forYou": "For You",
     "recipeSuffix": "Recipes",
+    "recipe": "Recipe",
+    "found": "Found",
     "matchedIngredients": "Matched Ingredients",
     "missingIngredients": "Missing Ingredients",
     "nutritionValues": "Nutrition Values",
@@ -363,6 +365,14 @@
     "fat": "Fat",
     "viewRecipe": "View Recipe",
     "exit": "Exit"
+  },
+  "recipeDetail": {
+    "cooking": "Cooking"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
   },
   "aiChef": {
     "title": "AI Chef",

@@ -147,7 +147,7 @@ export const recipeSlice = createSlice({
       action: PayloadAction<{ recipeId: string; isFavorite: boolean }>,
     ) => {
       const { recipeId, isFavorite } = action.payload;
-      const recipe = state.recipes.find((r) => r.id === recipeId);
+      const recipe = state.recipes.find((r) => r._id === recipeId);
       if (recipe) {
         recipe.isFavorite = isFavorite;
       }
@@ -194,7 +194,7 @@ export const recipeSlice = createSlice({
     // Toggle Favorite
     builder.addCase(toggleFavoriteFromScan.fulfilled, (state, action) => {
       const { recipeId, isFavorite } = action.payload;
-      const recipe = state.recipes.find((r) => r.id === recipeId);
+      const recipe = state.recipes.find((r) => r._id === recipeId);
       if (recipe) {
         recipe.isFavorite = isFavorite;
       }

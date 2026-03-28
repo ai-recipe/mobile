@@ -301,7 +301,7 @@
     "recipeError": "Tarif Oluşturma Hatası",
     "ok": "Tamam",
     "scanAgain": "Tekrar Tara",
-    "aiBeta": "AI Chef Beta",
+    "aiBeta": "AI Chef",
     "createRecipe": "Tarif Oluştur"
   },
   "addOptions": {
@@ -352,8 +352,10 @@
   "recipeResults": {
     "title": "Sonuçlar Hazır",
     "foundPrefix": "Sizin İçin",
-    "forYou": "Tarif",
+    "forYou": "Sizin İçin",
     "recipeSuffix": "Bulduk",
+    "recipe": "Tarif",
+    "found": "Bulundu",
     "matchedIngredients": "Eşleşen Malzemeler",
     "missingIngredients": "Eksik Malzemeler",
     "nutritionValues": "Besin Değerleri",
@@ -363,6 +365,14 @@
     "fat": "Yağ",
     "viewRecipe": "Tarifi Gör",
     "exit": "Çıkış"
+  },
+  "recipeDetail": {
+    "cooking": "Pişirme"
+  },
+  "difficulty": {
+    "easy": "Kolay",
+    "medium": "Orta",
+    "hard": "Zor"
   },
   "aiChef": {
     "title": "AI Chef",
