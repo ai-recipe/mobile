@@ -79,6 +79,13 @@ export default function AiScanFormScreen() {
 
   const prevScannedImage = usePrev(scannedImage);
 
+  // Pre-select all ingredients when scan completes
+  useEffect(() => {
+    if (appStep === AppStep.IngredientsSelection && scannedIngredients.length > 0) {
+      form.setValue("selectedIngredients", scannedIngredients);
+    }
+  }, [appStep, scannedIngredients]);
+
   // Handle scan image action
   const handleScanImage = useCallback(() => {
     form.setValue("selectedIngredients", []);
@@ -115,9 +122,6 @@ export default function AiScanFormScreen() {
         onScanImage: handleScanImage,
       }),
     [router, handleScanImage],
-  );
-  const currentStep = useAppSelector(
-    (state) => state.multiStepForm.currentStep,
   );
 
   // Rotate loading messages

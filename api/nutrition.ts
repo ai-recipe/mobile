@@ -95,17 +95,21 @@ export interface WaterIntakeEntry {
 }
 
 export interface WaterIntakeSummary {
-  date: string;
+  startDate: string;
+  endDate: string;
   totalIntakeMl: number;
   dailyGoalMl: number;
   progressPercentage: number;
   entries: WaterIntakeEntry[];
 }
 
-export const fetchWaterIntake = async (params?: { date?: string }) => {
+export const fetchWaterIntake = async (params?: {
+  startDate?: string;
+  endDate?: string;
+}) => {
   const response = await api.get<{ data: WaterIntakeSummary }>(
     "/nutrition/water-intake",
-    { params: params?.date ? { date: params.date } : undefined },
+    { params },
   );
   return response.data;
 };

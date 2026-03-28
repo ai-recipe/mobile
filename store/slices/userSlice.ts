@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
   personalDetails: PersonalDetails | null;
+  _previousPersonalDetails: PersonalDetails | null;
   isLoading: boolean;
   isUpdating: boolean;
   error: string | null;
@@ -20,6 +21,7 @@ const initialState: UserState = {
     dailyCarbGoal: 0,
     dailyFatGoal: 0,
   },
+  _previousPersonalDetails: null,
   isLoading: false,
   isUpdating: false,
   error: null,
@@ -84,6 +86,7 @@ export const userSlice = createSlice({
         const data = action.meta.arg;
         state.isUpdating = true;
         state.error = null;
+        state._previousPersonalDetails = state.personalDetails;
         state.personalDetails = {
           ...state.personalDetails,
           ...data,
@@ -91,10 +94,13 @@ export const userSlice = createSlice({
       })
       .addCase(updatePersonalDetailsAsync.fulfilled, (state, action) => {
         state.isUpdating = false;
+        state._previousPersonalDetails = null;
         state.personalDetails = action.payload;
       })
       .addCase(updatePersonalDetailsAsync.rejected, (state, action) => {
         state.isUpdating = false;
+        state.personalDetails = state._previousPersonalDetails ?? state.personalDetails;
+        state._previousPersonalDetails = null;
         state.error = action.payload as string;
       });
   },

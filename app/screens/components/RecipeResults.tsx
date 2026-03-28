@@ -77,7 +77,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
 
       <FlatList
         data={recipes}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id ?? item._id}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: 120,
@@ -112,11 +112,13 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                   <Text className="text-xl font-bold text-zinc-900 dark:text-white flex-1 mr-2">
                     {item.title}
                   </Text>
-                  <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">
-                    <Text className="text-green-700 dark:text-green-400 text-[10px] font-bold">
-                      %{item.matchPercentage.toFixed(0)} Uyum
-                    </Text>
-                  </View>
+                  {item.matchPercentage != null && (
+                    <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">
+                      <Text className="text-green-700 dark:text-green-400 text-[10px] font-bold">
+                        %{item.matchPercentage.toFixed(0)} Uyum
+                      </Text>
+                    </View>
+                  )}
                 </View>
 
                 {/* Time & Ingredients Header */}

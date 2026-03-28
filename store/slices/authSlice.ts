@@ -155,7 +155,9 @@ export const initDeviceAsync = createAsyncThunk(
         appVersion: "1.0.0",
       });
       const data = response.data?.data;
-      await AsyncStorage.setItem("token", data?.anonymousToken);
+      if (data?.anonymousToken) {
+        await AsyncStorage.setItem("token", data.anonymousToken);
+      }
 
       // Dispatch preferences after init completes
       await dispatch(fetchUserPreferencesAsync());
@@ -222,7 +224,6 @@ export const authSlice = createSlice({
       state.token = null;
       state.user = null;
       state.preferences = null;
-      AsyncStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {

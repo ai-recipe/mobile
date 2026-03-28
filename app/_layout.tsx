@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { CopilotProvider } from "react-native-copilot";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import { TourTooltip } from "../components/TourTooltip";
 import "../global.css";
 
@@ -12,7 +12,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { Stack } from "expo-router";
 import { useTranslation } from "@/node_modules/react-i18next";
@@ -49,10 +49,10 @@ function RootLayoutNavigator() {
   useInitApp();
   const { token, isInitDeviceLoading } = useAppSelector((state) => state.auth);
   const { currentLanguage } = useAppSelector((state) => state.app);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (currentLanguage) {
-      dispatch(initDeviceAsync() as any);
+      dispatch(initDeviceAsync());
     }
   }, [dispatch, currentLanguage]);
   const colors = useThemeColor();

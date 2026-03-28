@@ -172,8 +172,10 @@ export default function SurveyScreen() {
     }));
 
     if (responses.length > 0) {
-      await dispatch(submitSurveyAsync(responses));
-      router.replace("/screens/post-survey-experience");
+      const result = await dispatch(submitSurveyAsync(responses));
+      if (submitSurveyAsync.fulfilled.match(result)) {
+        router.replace("/screens/post-survey-experience");
+      }
     }
   };
 

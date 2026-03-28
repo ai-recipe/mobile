@@ -5,13 +5,13 @@ import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@/store/hooks";
 import { StepPaywall } from "./components/StepPaywall";
 import { StepRateUs } from "./components/StepRateUs";
 
 export default function PostSurveyExperienceScreen() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const form = useForm({
     mode: "onChange",
   });

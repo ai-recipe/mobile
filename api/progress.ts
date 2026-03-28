@@ -66,7 +66,7 @@ export const postWeightLog = async (payload: {
 }) => {
   const response = await api.post("/nutrition/weight-log", {
     weightKg: payload.weightKg,
-    note: "Weight Log",
+    note: payload.note ?? "Weight Log",
     loggedAt: payload.loggedAt,
   });
   return response.data;

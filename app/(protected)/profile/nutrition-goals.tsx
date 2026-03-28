@@ -95,18 +95,30 @@ const NutritionGoals = () => {
   const colorScheme = useColorScheme();
 
   const [goals, setGoals] = useState({
-    targetWeightKg: goalPlan?.targetWeightKg || 0,
-    targetWaterMl: goalPlan?.targetWaterMl || 0,
-    targetCalories: goalPlan?.targetCalories || 0,
-    targetProteinG: goalPlan?.targetProteinG || 0,
-    targetCarbsG: goalPlan?.targetCarbsG || 0,
-    targetFatG: goalPlan?.targetFatG || 0,
+    targetWeightKg: goalPlan?.targetWeightKg?.toString() ?? '',
+    targetWaterMl: goalPlan?.targetWaterMl?.toString() ?? '',
+    targetCalories: goalPlan?.targetCalories?.toString() ?? '',
+    targetProteinG: goalPlan?.targetProteinG?.toString() ?? '',
+    targetCarbsG: goalPlan?.targetCarbsG?.toString() ?? '',
+    targetFatG: goalPlan?.targetFatG?.toString() ?? '',
   });
+
+  const toNum = (val: string) => {
+    const n = parseInt(val, 10);
+    return isNaN(n) ? undefined : n;
+  };
 
   const from = useLocalSearchParams().from;
   const handleSave = () => {
-    dispatch(postGoalPlanLogAsync({ from: from as any, ...goals }));
-
+    dispatch(postGoalPlanLogAsync({
+      from: from as any,
+      targetWeightKg: toNum(goals.targetWeightKg),
+      targetWaterMl: toNum(goals.targetWaterMl),
+      targetCalories: toNum(goals.targetCalories),
+      targetProteinG: toNum(goals.targetProteinG),
+      targetCarbsG: toNum(goals.targetCarbsG),
+      targetFatG: toNum(goals.targetFatG),
+    }));
     router.back();
   };
 
@@ -132,42 +144,42 @@ const NutritionGoals = () => {
             <NutritionGoalCard
               icon="local-fire-department"
               label={t("forms.calorieGoal")}
-              value={goals.targetCalories?.toString()}
+              value={goals.targetCalories}
               unit="kcal"
               color={Colors[colorScheme].primary}
-              onChange={(val) =>
-                setGoals({ ...goals, targetCalories: parseInt(val) })
-              }
+              onChange={(val) => setGoals({ ...goals, targetCalories: val })}
             />
             <NutritionGoalCard
               icon="fitness-center"
               label={t("forms.proteinGoal")}
-              value={goals.targetProteinG?.toString()}
+              value={goals.targetProteinG}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) =>
-                setGoals({ ...goals, targetProteinG: parseInt(val) })
-              }
+              onChange={(val) => setGoals({ ...goals, targetProteinG: val })}
             />
             <NutritionGoalCard
               icon="grass"
               label={t("forms.carbGoal")}
-              value={goals.targetCarbsG?.toString()}
+              value={goals.targetCarbsG}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) =>
-                setGoals({ ...goals, targetCarbsG: parseInt(val) })
-              }
+              onChange={(val) => setGoals({ ...goals, targetCarbsG: val })}
             />
             <NutritionGoalCard
               icon="local-fire-department"
               label={t("forms.fatGoal")}
-              value={goals.targetFatG?.toString()}
+              value={goals.targetFatG}
               unit="g"
               color={Colors[colorScheme].primary}
-              onChange={(val) =>
-                setGoals({ ...goals, targetFatG: parseInt(val) })
-              }
+              onChange={(val) => setGoals({ ...goals, targetFatG: val })}
+            />
+            <NutritionGoalCard
+              icon="water-drop"
+              label={t("forms.waterGoal")}
+              value={goals.targetWaterMl}
+              unit="ml"
+              color="#3B82F6"
+              onChange={(val) => setGoals({ ...goals, targetWaterMl: val })}
             />
           </ScrollView>
 

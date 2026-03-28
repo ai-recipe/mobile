@@ -219,6 +219,7 @@
     "proteinGoal": "Protein Hedefi",
     "carbGoal": "Karbonhidrat Hedefi",
     "fatGoal": "Yağ Hedefi",
+    "waterGoal": "Su Hedefi",
     "male": "Erkek",
     "female": "Kadın",
     "other": "Diğer"

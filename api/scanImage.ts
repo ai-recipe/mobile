@@ -2,9 +2,8 @@ import { api } from "./axios";
 
 // API Response Types
 export interface DetectedIngredient {
-  name: string;
+  ingredientName: string;
   confidence: number;
-  matchedIngredientId: string;
 }
 
 export interface UploadImageResponse {
@@ -16,12 +15,17 @@ export interface UploadImageResponse {
 export interface JobStatus {
   jobId: string;
   status: "pending" | "processing" | "completed" | "failed";
-  imageUrl?: string;
-  fileName?: string;
-  errorMessage?: string;
-  detectedIngredients?: DetectedIngredient[];
+  detectionResults?: DetectedIngredient[];
   createdAt: string;
   completedAt?: string;
+}
+
+export interface AxiosResponse<T> {
+  data: T;
+}
+
+export interface RecognitionUploadResponse {
+  jobId: string;
 }
 
 export interface ScanImageParams {
@@ -33,10 +37,6 @@ export interface ScanImageResponse {
   jobId: string;
 }
 
-/**
- * Upload an image for ingredient recognition
- * Returns a job ID that can be used to poll for results
- */
 export async function uploadImageForRecognition(
   imageUri: string,
 ): Promise<{ jobId: string }> {
@@ -51,7 +51,7 @@ export async function uploadImageForRecognition(
   } as any);
 
   try {
-    const response = await api.post<UploadImageResponse>(
+    const response = await api.post<AxiosResponse<RecognitionUploadResponse>>(
       "/recognition/upload",
       formData,
       {
@@ -61,27 +61,18 @@ export async function uploadImageForRecognition(
       },
     );
     return {
-      jobId: (response.data as any)?.data?.requestId ?? (response.data as any)?.requestId,
+      jobId: response.data.data.jobId,
     };
   } catch (error: any) {
     throw error?.response?.data?.message ?? error;
   }
 }
 
-/**
- * Get the status of an image recognition job
- */
 export async function getJobStatus(jobId: string): Promise<JobStatus> {
   const response = await api.get(`/recognition/jobs/${jobId}`);
-  return (response.data?.data ?? response.data) as JobStatus;
+  return response.data?.data as JobStatus;
 }
 
-/**
- * Poll job status until completion or failure
- * @param jobId - The job ID to poll
- * @param maxAttempts - Maximum number of polling attempts (default: 60)
- * @param intervalMs - Polling interval in milliseconds (default: 2000)
- */
 export async function pollJobStatus(
   jobId: string,
   maxAttempts: number = 60,
@@ -90,14 +81,14 @@ export async function pollJobStatus(
   let attempts = 0;
 
   while (attempts < maxAttempts) {
-    const status = await getJobStatus(jobId);
+    const response = await getJobStatus(jobId);
 
-    if (status.status === "completed") {
-      return status;
+    if (response.status === "completed") {
+      return response;
     }
 
-    if (status.status === "failed") {
-      throw new Error(status.errorMessage || "Job failed");
+    if (response.status === "failed") {
+      throw new Error("Job failed");
     }
 
     // Wait before next poll
@@ -112,23 +103,32 @@ export async function pollJobStatus(
  * Main function to scan image and get ingredients
  * Handles the full flow: upload → poll for job completion → return ingredients
  */
-export async function scanImage({ imageUri }: ScanImageParams): Promise<ScanImageResponse> {
+export async function scanImage({
+  imageUri,
+}: ScanImageParams): Promise<ScanImageResponse> {
   try {
     const { jobId } = await uploadImageForRecognition(imageUri);
+    console.log("jobId", jobId);
 
     const completedJob = await pollJobStatus(jobId);
 
-    const ingredients = completedJob.detectedIngredients?.map((ing) => ing.name) ?? [];
+    const ingredients =
+      completedJob?.detectionResults?.map((ing) => ing.ingredientName) ?? [];
 
     return { ingredients, jobId };
   } catch (error: any) {
+    console.log("error", JSON.stringify(error, null, 2));
     const backendMessage = error?.response?.data?.error?.message;
     const statusCode = error?.response?.data?.error?.statusCode;
 
     if (statusCode === 400 && error?.response?.data?.error?.errorCode) {
-      throw new Error(backendMessage ?? 'Kota aşıldı veya servis hatası');
+      throw new Error(backendMessage ?? "Kota aşıldı veya servis hatası");
     }
 
-    throw new Error(error?.message ?? backendMessage ?? 'Görüntü tarama başarısız, tekrar deneyin');
+    throw new Error(
+      error?.message ??
+        backendMessage ??
+        "Görüntü tarama başarısız, tekrar deneyin",
+    );
   }
 }

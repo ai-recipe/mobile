@@ -147,7 +147,7 @@ export const fetchRecentMealsAsync = createAsyncThunk(
       const response = await fetchFoodLogs({ startDate, endDate });
 
       // Extract all entries from all days and get unique ones by mealName
-      const allEntries = response.data.days.flatMap((day) => day.entries);
+      const allEntries = (response.data?.days ?? []).flatMap((day) => day.entries);
       const uniqueMealsMap = new Map<string, FoodLogEntry>();
 
       allEntries.forEach((entry) => {
@@ -244,9 +244,8 @@ const dailyLogsSlice = createSlice({
     });
     builder.addCase(fetchFoodLogsAsync.fulfilled, (state, action) => {
       state.isLoading = false;
-      // Map entries from the first day in the days array
-      state.entries = action.payload.days[0]?.entries || [];
-      state.summary = action.payload.days[0]?.summary;
+      state.entries = action.payload?.days?.[0]?.entries ?? [];
+      state.summary = action.payload?.days?.[0]?.summary ?? initialState.summary;
     });
     builder.addCase(fetchFoodLogsAsync.rejected, (state, action) => {
       state.isLoading = false;

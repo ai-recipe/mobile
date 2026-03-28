@@ -8,7 +8,13 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { format } from "date-fns";
 import { RootState } from "..";
 
-interface WaterLogsState extends WaterIntakeSummary {
+interface WaterLogsState {
+  /** The currently selected date (local UI state, not from API) */
+  date: string;
+  totalIntakeMl: number;
+  dailyGoalMl: number;
+  progressPercentage: number;
+  entries: WaterIntakeSummary["entries"];
   isLoading: boolean;
   isAdding: boolean;
   error: string | null;
@@ -29,9 +35,9 @@ export const fetchWaterIntakeAsync = createAsyncThunk(
   "waterLogs/fetchWaterIntake",
   async (_, { rejectWithValue, getState }) => {
     const state = getState() as RootState;
-    const date = format(state.waterLogs.date, "yyyy-MM-dd");
+    const dateStr = format(state.waterLogs.date, "yyyy-MM-dd");
     try {
-      const data = await fetchWaterIntake({ date });
+      const data = await fetchWaterIntake({ startDate: dateStr, endDate: dateStr });
       return data?.data;
     } catch (error) {
       return rejectWithValue(

@@ -219,6 +219,7 @@
     "proteinGoal": "Protein Goal",
     "carbGoal": "Carb Goal",
     "fatGoal": "Fat Goal",
+    "waterGoal": "Water Goal",
     "male": "Male",
     "female": "Female",
     "other": "Other"
