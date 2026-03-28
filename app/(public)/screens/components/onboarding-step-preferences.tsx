@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface PrepTime {
   id: string;
@@ -30,7 +30,10 @@ export const OnboardingStepPreferences = ({
     <View className="flex-1">
       <ScrollView className="flex-1 px-6">
         <Text className="text-2xl font-black text-text dark:text-white mt-4 mb-2">
-          {t("timePreference.title")} <Text className="text-[#f39849]">{t("timePreference.titleHighlight")}</Text>
+          {t("timePreference.title")}{" "}
+          <Text className="text-[#f39849]">
+            {t("timePreference.titleHighlight")}
+          </Text>
         </Text>
         <Text className="text-sm text-secondary mb-6 font-medium">
           {t("timePreference.subtitle")}
@@ -79,7 +82,10 @@ export const OnboardingStepPreferences = ({
         </View>
 
         <Text className="text-2xl font-black text-text dark:text-white mt-4 mb-2">
-          {t("dietPreference.title")} <Text className="text-[#f39849]">{t("dietPreference.titleHighlight")}</Text>
+          {t("dietPreference.title")}{" "}
+          <Text className="text-[#f39849]">
+            {t("dietPreference.titleHighlight")}
+          </Text>
         </Text>
         <Text className="text-sm text-secondary mb-6 font-medium">
           {t("dietPreference.subtitle")}
@@ -125,7 +131,9 @@ export const OnboardingStepPreferences = ({
           onPress={onNext}
           className="w-full bg-primary py-5 rounded-full shadow-xl shadow-primary/30 flex-row items-center justify-center gap-2 active:opacity-90"
         >
-          <Text className="text-white text-lg font-bold">{t("common.next")}</Text>
+          <Text className="text-white text-lg font-bold">
+            {t("common.next")}
+          </Text>
           <MaterialCommunityIcons
             name="chevron-right"
             size={24}

@@ -39,13 +39,11 @@ export interface ScanImageResponse {
  */
 export async function uploadImageForRecognition(
   imageUri: string,
-): Promise<{ jobId: string; detectedIngredients: { name: string }[] }> {
+): Promise<{ jobId: string }> {
   const formData = new FormData();
 
-  // Extract filename from URI or generate one
   const filename = imageUri.split("/").pop() || `image-${Date.now()}.jpg`;
 
-  // Create file object for upload
   formData.append("image", {
     uri: imageUri,
     type: "image/jpeg",
@@ -53,7 +51,7 @@ export async function uploadImageForRecognition(
   } as any);
 
   try {
-    const response = (await api.post<UploadImageResponse>(
+    const response = await api.post<UploadImageResponse>(
       "/recognition/upload",
       formData,
       {
@@ -61,13 +59,12 @@ export async function uploadImageForRecognition(
           "Content-Type": "multipart/form-data",
         },
       },
-    )) as any;
+    );
     return {
-      jobId: response.data?.data?.requestId,
-      detectedIngredients: response.data?.data?.detectedIngredients,
+      jobId: (response.data as any)?.data?.requestId ?? (response.data as any)?.requestId,
     };
   } catch (error: any) {
-    throw error?.response?.data?.message;
+    throw error?.response?.data?.message ?? error;
   }
 }
 
@@ -75,8 +72,8 @@ export async function uploadImageForRecognition(
  * Get the status of an image recognition job
  */
 export async function getJobStatus(jobId: string): Promise<JobStatus> {
-  const response = await api.get<JobStatus>(`/recognition/jobs/${jobId}`);
-  return response.data;
+  const response = await api.get(`/recognition/jobs/${jobId}`);
+  return (response.data?.data ?? response.data) as JobStatus;
 }
 
 /**
@@ -113,28 +110,25 @@ export async function pollJobStatus(
 
 /**
  * Main function to scan image and get ingredients
- * Handles the full flow: upload → poll → return ingredients
+ * Handles the full flow: upload → poll for job completion → return ingredients
  */
- export async function scanImage({ imageUri }: ScanImageParams): Promise<ScanImageResponse> {
-    try {
-      const response = (await uploadImageForRecognition(imageUri)) as any;
+export async function scanImage({ imageUri }: ScanImageParams): Promise<ScanImageResponse> {
+  try {
+    const { jobId } = await uploadImageForRecognition(imageUri);
 
-     const payload = response?.data ?? response;
-      const { detectedIngredients, requestId } = payload;
+    const completedJob = await pollJobStatus(jobId);
 
-      const ingredients = detectedIngredients?.map((ing: any) => ing.name) ?? [];
+    const ingredients = completedJob.detectedIngredients?.map((ing) => ing.name) ?? [];
 
-      return { ingredients, jobId: requestId };
-    } catch (error: any) {
-      // ✅ Backend'in gerçek hata mesajını oku
-      const backendMessage = error?.response?.data?.error?.message;
-      const statusCode = error?.response?.data?.error?.statusCode;
+    return { ingredients, jobId };
+  } catch (error: any) {
+    const backendMessage = error?.response?.data?.error?.message;
+    const statusCode = error?.response?.data?.error?.statusCode;
 
-      // Quota hatası özel handling
-      if (statusCode === 400 && error?.response?.data?.error?.errorCode) {
-        throw new Error(backendMessage ?? 'Kota aşıldı veya servis hatası');
-      }
-
-      throw new Error(backendMessage ?? 'Görüntü tarama başarısız, tekrar deneyin');
+    if (statusCode === 400 && error?.response?.data?.error?.errorCode) {
+      throw new Error(backendMessage ?? 'Kota aşıldı veya servis hatası');
     }
+
+    throw new Error(error?.message ?? backendMessage ?? 'Görüntü tarama başarısız, tekrar deneyin');
   }
+}

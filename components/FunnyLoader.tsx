@@ -2,13 +2,8 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  Easing,
-  Text,
-  View,
-} from "react-native";
+import { useTranslation } from "@/node_modules/react-i18next";
+import { Animated, Easing, Text, View } from "react-native";
 
 export const FunnyLoader = () => {
   const colorScheme = useColorScheme();
@@ -23,7 +18,7 @@ export const FunnyLoader = () => {
   const scaleValue = useRef(new Animated.Value(1)).current;
 
   const [currentMessage, setCurrentMessage] = useState(
-    messages[0] || "Loading..."
+    messages[0] || "Loading...",
   );
 
   // Spinning animation for the ring
@@ -34,7 +29,7 @@ export const FunnyLoader = () => {
         duration: 4000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, [spinValue]);
 
@@ -54,7 +49,7 @@ export const FunnyLoader = () => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [floatValue]);
 
@@ -74,7 +69,7 @@ export const FunnyLoader = () => {
         }),
       ]).start(() => {
         setCurrentMessage(
-          messages[Math.floor(Math.random() * messages.length)]
+          messages[Math.floor(Math.random() * messages.length)],
         );
         Animated.parallel([
           Animated.timing(fadeValue, {

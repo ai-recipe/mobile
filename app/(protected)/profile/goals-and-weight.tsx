@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { parse } from "date-fns";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import { CalendarModal } from "../../screens/components/CalendarModal";
 import { GenderPickerModal } from "../../screens/components/GenderPickerModal";
 import { RulerPickerModal } from "../../screens/components/RulerPickerModal";
@@ -133,7 +133,9 @@ const GoalsAndWeight = () => {
               onPress={() => setActiveModal("goalWeight")}
               activeOpacity={0.8}
             >
-              <Text className="text-white font-bold text-md">{t("common.edit")}</Text>
+              <Text className="text-white font-bold text-md">
+                {t("common.edit")}
+              </Text>
             </TouchableOpacity>
           </View>
 

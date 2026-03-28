@@ -1,4 +1,5 @@
 import i18n from "@/i18n";
+import { fetchTranslationsAPI } from "@/api/translations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as Localization from "expo-localization";
@@ -9,6 +10,17 @@ export const initI18n = createAsyncThunk("app/initI18n", async () => {
   const finalLanguage = storedLanguage || deviceLanguage;
 
   await i18n.changeLanguage(finalLanguage);
+
+  // Fetch remote translations and merge — silently ignored on failure
+  try {
+    const remote = await fetchTranslationsAPI();
+    if (Object.keys(remote).length > 0) {
+      i18n.addResourceBundle(finalLanguage, "translation", remote, true, true);
+    }
+  } catch {
+    // fall back to static translations
+  }
+
   return finalLanguage;
 });
 

@@ -14,7 +14,7 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import { ScanFormData } from "../types/ai-scan-form.types";
 
 interface StepIngredientsSelectionProps {
@@ -60,7 +60,10 @@ export function StepIngredientsSelection({
     >
       <View className="mb-4">
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          {t("ingredients.title")} <Text className="text-[#f39849]">{t("ingredients.titleHighlight")}</Text>
+          {t("ingredients.title")}{" "}
+          <Text className="text-[#f39849]">
+            {t("ingredients.titleHighlight")}
+          </Text>
         </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-2">
           {t("ingredients.subtitle")}
@@ -142,7 +145,9 @@ export function StepIngredientsSelection({
           }`}
         >
           <Text className="text-white font-extrabold text-lg">
-            {t("ingredients.continue", { count: data.selectedIngredients?.length })}
+            {t("ingredients.continue", {
+              count: data.selectedIngredients?.length,
+            })}
           </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>

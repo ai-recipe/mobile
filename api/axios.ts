@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 export const api = axios.create({
-  baseURL: "https://api.recipetrack.tech/api/v1/",
+  baseURL: "http://localhost:3001/api/v1/",
   timeout: 60000, // Increased timeout to 30 seconds for slower connections
   headers: {
     "Content-Type": "application/json",

@@ -3,7 +3,7 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -52,8 +52,12 @@ export default function MealScannerScreen() {
   const cameraRef = useRef<Camera>(null);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [scanMode, setScanMode] = useState<ScanMode>("meal");
-  const viewfinderWidth = useRef(new Animated.Value(VIEWFINDER_SIZES.meal.width)).current;
-  const viewfinderHeight = useRef(new Animated.Value(VIEWFINDER_SIZES.meal.height)).current;
+  const viewfinderWidth = useRef(
+    new Animated.Value(VIEWFINDER_SIZES.meal.width),
+  ).current;
+  const viewfinderHeight = useRef(
+    new Animated.Value(VIEWFINDER_SIZES.meal.height),
+  ).current;
 
   const dispatch = useAppDispatch();
   const { status, progress, progressMessage, result, error, capturedPhotoUri } =
@@ -75,9 +79,7 @@ export default function MealScannerScreen() {
   const [campaignIdx, setCampaignIdx] = useState(0);
 
   const scanning =
-    status === "connecting" ||
-    status === "uploading" ||
-    status === "scanning";
+    status === "connecting" || status === "uploading" || status === "scanning";
 
   useEffect(() => {
     if (!scanning) return;
@@ -106,8 +108,15 @@ export default function MealScannerScreen() {
             t("scanner.noPermissionTitle"),
             t("scanner.noPermissionDesc"),
             [
-              { text: t("common.cancel"), style: "cancel", onPress: () => router.back() },
-              { text: t("common.openSettings"), onPress: () => Linking.openSettings() },
+              {
+                text: t("common.cancel"),
+                style: "cancel",
+                onPress: () => router.back(),
+              },
+              {
+                text: t("common.openSettings"),
+                onPress: () => Linking.openSettings(),
+              },
             ],
           );
         }
@@ -199,10 +208,14 @@ export default function MealScannerScreen() {
           onPress={() => Linking.openSettings()}
           className="mt-6 bg-[#f39849] px-8 py-3 rounded-2xl"
         >
-          <Text className="text-black font-bold">{t("common.openSettings")}</Text>
+          <Text className="text-black font-bold">
+            {t("common.openSettings")}
+          </Text>
         </Pressable>
         <Pressable onPress={handleClose} className="mt-3 px-8 py-3">
-          <Text className="text-zinc-400 font-semibold">{t("common.goBack")}</Text>
+          <Text className="text-zinc-400 font-semibold">
+            {t("common.goBack")}
+          </Text>
         </Pressable>
       </View>
     );
@@ -218,7 +231,9 @@ export default function MealScannerScreen() {
           {t("scanner.noCameraFound")}
         </Text>
         <Pressable onPress={handleClose} className="mt-4 px-8 py-3">
-          <Text className="text-zinc-400 font-semibold">{t("common.goBack")}</Text>
+          <Text className="text-zinc-400 font-semibold">
+            {t("common.goBack")}
+          </Text>
         </Pressable>
       </View>
     );
@@ -255,7 +270,10 @@ export default function MealScannerScreen() {
 
       {/* ── Viewfinder frame (idle only) ───────────────────────── */}
       {status === "idle" && (
-        <View className="absolute inset-0 items-center justify-center" pointerEvents="none">
+        <View
+          className="absolute inset-0 items-center justify-center"
+          pointerEvents="none"
+        >
           <Animated.View
             style={{
               width: viewfinderWidth,
@@ -267,28 +285,52 @@ export default function MealScannerScreen() {
             <View
               style={[
                 styles.corner,
-                { top: 0, left: 0, borderTopWidth: 3, borderLeftWidth: 3, borderTopLeftRadius: 16 },
+                {
+                  top: 0,
+                  left: 0,
+                  borderTopWidth: 3,
+                  borderLeftWidth: 3,
+                  borderTopLeftRadius: 16,
+                },
               ]}
             />
             {/* Top-right corner */}
             <View
               style={[
                 styles.corner,
-                { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3, borderTopRightRadius: 16 },
+                {
+                  top: 0,
+                  right: 0,
+                  borderTopWidth: 3,
+                  borderRightWidth: 3,
+                  borderTopRightRadius: 16,
+                },
               ]}
             />
             {/* Bottom-left corner */}
             <View
               style={[
                 styles.corner,
-                { bottom: 0, left: 0, borderBottomWidth: 3, borderLeftWidth: 3, borderBottomLeftRadius: 16 },
+                {
+                  bottom: 0,
+                  left: 0,
+                  borderBottomWidth: 3,
+                  borderLeftWidth: 3,
+                  borderBottomLeftRadius: 16,
+                },
               ]}
             />
             {/* Bottom-right corner */}
             <View
               style={[
                 styles.corner,
-                { bottom: 0, right: 0, borderBottomWidth: 3, borderRightWidth: 3, borderBottomRightRadius: 16 },
+                {
+                  bottom: 0,
+                  right: 0,
+                  borderBottomWidth: 3,
+                  borderRightWidth: 3,
+                  borderBottomRightRadius: 16,
+                },
               ]}
             />
             {/* Center scan line */}
@@ -330,10 +372,7 @@ export default function MealScannerScreen() {
                   <Pressable
                     key={mode}
                     onPress={() => handleModeChange(mode)}
-                    style={[
-                      styles.modeTab,
-                      active && styles.modeTabActive,
-                    ]}
+                    style={[styles.modeTab, active && styles.modeTabActive]}
                   >
                     <Text
                       style={{
@@ -408,7 +447,10 @@ export default function MealScannerScreen() {
                 <Text className="text-white font-bold text-base">
                   {t("scanner.analyzing")}
                 </Text>
-                <Text className="text-zinc-400 text-xs mt-0.5" numberOfLines={1}>
+                <Text
+                  className="text-zinc-400 text-xs mt-0.5"
+                  numberOfLines={1}
+                >
                   {progressMessage || t("scanner.pleaseWait")}
                 </Text>
               </View>
@@ -479,10 +521,26 @@ export default function MealScannerScreen() {
               result.carbsGrams != null ||
               result.fatGrams != null) && (
               <View className="flex-row justify-between bg-white/5 rounded-2xl px-4 py-3 mb-4">
-                <NutrientBadge label={t("mealEntry.calories")} value={result.calories} unit="kcal" />
-                <NutrientBadge label={t("mealEntry.protein")} value={result.proteinGrams} unit="g" />
-                <NutrientBadge label={t("mealEntry.carbs")} value={result.carbsGrams} unit="g" />
-                <NutrientBadge label={t("mealEntry.fat")} value={result.fatGrams} unit="g" />
+                <NutrientBadge
+                  label={t("mealEntry.calories")}
+                  value={result.calories}
+                  unit="kcal"
+                />
+                <NutrientBadge
+                  label={t("mealEntry.protein")}
+                  value={result.proteinGrams}
+                  unit="g"
+                />
+                <NutrientBadge
+                  label={t("mealEntry.carbs")}
+                  value={result.carbsGrams}
+                  unit="g"
+                />
+                <NutrientBadge
+                  label={t("mealEntry.fat")}
+                  value={result.fatGrams}
+                  unit="g"
+                />
               </View>
             )}
 
@@ -544,7 +602,9 @@ export default function MealScannerScreen() {
               onPress={handleScanAgain}
               className="py-3 rounded-2xl bg-[#f39849] items-center active:opacity-80"
             >
-              <Text className="text-black font-bold text-sm">{t("common.tryAgain")}</Text>
+              <Text className="text-black font-bold text-sm">
+                {t("common.tryAgain")}
+              </Text>
             </Pressable>
           </BlurView>
         </View>

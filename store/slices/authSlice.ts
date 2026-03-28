@@ -37,7 +37,7 @@ interface SurveyOption {
 interface SurveyQuestion {
   key: string;
   title: string;
-  type: "single_select" | "multi_select" | "number_input";
+  type: "single" | "multiple" | "number";
   options: SurveyOption[];
   isRequired: boolean;
 }
@@ -111,7 +111,7 @@ export const fetchSurveyQuestionsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await SurveyService.getSurveyQuestionsAPI();
-      return response.data?.data?.questions;
+      return response.data?.data || [];
     } catch (error: any) {
       console.log("error", error);
       return rejectWithValue(

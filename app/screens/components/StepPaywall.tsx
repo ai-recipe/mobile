@@ -9,7 +9,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface StepPaywallProps {
   onFinish: () => void;
@@ -90,7 +90,10 @@ export function StepPaywall({
         {/* Header Section */}
         <View className="items-center mb-8">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-            {t("paywall.title")} <Text className="text-[#f39849]">{t("paywall.titleHighlight")}</Text>
+            {t("paywall.title")}{" "}
+            <Text className="text-[#f39849]">
+              {t("paywall.titleHighlight")}
+            </Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center">
             {t("paywall.subtitle")}
@@ -179,7 +182,9 @@ export function StepPaywall({
                 activeOpacity={0.7}
                 className="mt-4 items-center py-2"
               >
-                <Text className="text-zinc-400 text-sm">{t("paywall.maybeLater")}</Text>
+                <Text className="text-zinc-400 text-sm">
+                  {t("paywall.maybeLater")}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           ) : (

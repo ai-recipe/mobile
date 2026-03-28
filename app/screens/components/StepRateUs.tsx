@@ -15,7 +15,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface StepRateUsProps {
   onNext: () => void;
@@ -82,7 +82,8 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
             />
           </View>
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-            {t("rateUs.title")} <Text className="text-[#f39849]">{t("rateUs.titleHighlight")}</Text>
+            {t("rateUs.title")}{" "}
+            <Text className="text-[#f39849]">{t("rateUs.titleHighlight")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center px-4">
             {t("rateUs.subtitle")}
@@ -155,7 +156,9 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
           activeOpacity={0.7}
           className="mt-4 items-center"
         >
-          <Text className="text-zinc-400 font-medium">{t("common.maybeLater")}</Text>
+          <Text className="text-zinc-400 font-medium">
+            {t("common.maybeLater")}
+          </Text>
         </TouchableOpacity>
       </View>
     </Animated.View>

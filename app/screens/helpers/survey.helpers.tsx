@@ -11,7 +11,7 @@ interface SurveyOption {
 interface SurveyQuestion {
   key: string;
   title: string;
-  type: "single_select" | "multi_select" | "number_input";
+  type: "single" | "multiple" | "number";
   options: SurveyOption[];
   isRequired: boolean;
 }

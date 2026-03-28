@@ -13,7 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import { ExploreSkeleton } from "./components/ExploreSkeleton";
 
 const PLACEHOLDER_IMAGE =
@@ -117,7 +117,9 @@ const ExploreScreen = () => {
               {/* Header Title */}
               <View className="px-5 mb-6">
                 <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-tight">
-                  {activeTab === "personalised" ? t("explore.personalisedTitle") : t("explore.trendingTitle")}{" "}
+                  {activeTab === "personalised"
+                    ? t("explore.personalisedTitle")
+                    : t("explore.trendingTitle")}{" "}
                   <Text className="text-[#f39849]">{t("explore.recipes")}</Text>
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 mb-4">

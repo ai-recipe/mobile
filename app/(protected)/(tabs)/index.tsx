@@ -41,7 +41,7 @@ import {
 } from "date-fns";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import {
   Alert,
   Dimensions,

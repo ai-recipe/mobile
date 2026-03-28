@@ -7,7 +7,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface StepDietPreferenceProps {
   value: string[];
@@ -52,7 +52,10 @@ export function StepDietPreference({
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          {t("dietPreference.title")} <Text className="text-[#f39849]">{t("dietPreference.titleHighlight")}</Text>
+          {t("dietPreference.title")}{" "}
+          <Text className="text-[#f39849]">
+            {t("dietPreference.titleHighlight")}
+          </Text>
         </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
           {t("dietPreference.subtitle")}

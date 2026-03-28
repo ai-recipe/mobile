@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import {
   Animated,
   Dimensions,
@@ -166,7 +166,9 @@ export function AddOptionsModal({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.text }]}>{t("addOptions.title")}</Text>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {t("addOptions.title")}
+            </Text>
             <Text style={[styles.subtitle, { color: theme.icon }]}>
               {t("addOptions.subtitle")}
             </Text>
@@ -305,7 +307,9 @@ export function AddOptionsModal({
                       {t("addOptions.aiChef")}
                     </Text>
                     <View style={styles.newBadge}>
-                      <Text style={styles.newBadgeText}>{t("addOptions.magic")}</Text>
+                      <Text style={styles.newBadgeText}>
+                        {t("addOptions.magic")}
+                      </Text>
                     </View>
                   </View>
                   <Text

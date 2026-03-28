@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface Props {
   visible: boolean;
@@ -120,7 +120,8 @@ export function GoalCelebrationModal({ visible, onClose }: Props) {
                 {t("celebration.title")}
               </Text>
               <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center mt-2 leading-relaxed px-2">
-                {t("celebration.subtitle")}{"\n"}
+                {t("celebration.subtitle")}
+                {"\n"}
                 <Text className="text-[#f39849] font-bold">
                   {t("celebration.discountOffer")}
                 </Text>

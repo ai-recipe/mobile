@@ -3,7 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface GenderPickerModalProps {
   visible: boolean;
@@ -124,7 +124,9 @@ export function GenderPickerModal({
               onPress={handleSave}
               className="flex-1 py-3.5 rounded-xl bg-primary"
             >
-              <Text className="text-center font-bold text-white">{t("common.save")}</Text>
+              <Text className="text-center font-bold text-white">
+                {t("common.save")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

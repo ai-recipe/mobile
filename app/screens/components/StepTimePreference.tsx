@@ -7,7 +7,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 const TIME_OPTIONS = [15, 30, 60];
 
@@ -40,7 +40,10 @@ export function StepTimePreference({
       >
         <View className="flex-1 flex ">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-            {t("timePreference.title")} <Text className="text-[#f39849]">{t("timePreference.titleHighlight")}</Text>
+            {t("timePreference.title")}{" "}
+            <Text className="text-[#f39849]">
+              {t("timePreference.titleHighlight")}
+            </Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
             {t("timePreference.subtitle")}
@@ -101,7 +104,9 @@ export function StepTimePreference({
           activeOpacity={0.9}
           className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
         >
-          <Text className="text-white font-extrabold text-lg">{t("timePreference.continue")}</Text>
+          <Text className="text-white font-extrabold text-lg">
+            {t("timePreference.continue")}
+          </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>
       </View>

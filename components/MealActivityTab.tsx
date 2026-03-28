@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import {
   ActivityIndicator,
   Image,

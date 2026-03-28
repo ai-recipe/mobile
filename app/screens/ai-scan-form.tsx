@@ -11,7 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -38,7 +38,7 @@ export default function AiScanFormScreen() {
       t("aiScanForm.identifyingIngredients"),
       t("aiScanForm.preparingResults"),
     ],
-    [t]
+    [t],
   );
 
   const LOADING_MESSAGES_GENERATE_RECIPE = useMemo(
@@ -48,7 +48,7 @@ export default function AiScanFormScreen() {
       t("aiScanForm.matchingFlavors"),
       t("aiScanForm.preparingBestRecipes"),
     ],
-    [t]
+    [t],
   );
 
   const form = useForm<ScanFormData>({

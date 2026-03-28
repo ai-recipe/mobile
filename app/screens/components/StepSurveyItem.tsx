@@ -13,7 +13,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 interface SurveyOption {
   icon: string;
@@ -25,7 +25,7 @@ interface StepSurveyItemProps {
   question: {
     key: string;
     title: string;
-    type: "single_select" | "multi_select" | "number_input";
+    type: "single" | "multiple" | "number";
     options: SurveyOption[];
     isRequired: boolean;
   };
@@ -49,7 +49,7 @@ export function StepSurveyItem({
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
   const toggleOption = (optionValue: string) => {
-    if (question.type === "single_select") {
+    if (question.type === "single") {
       onChange([optionValue]);
       // For single select, we could auto-advance if it's not the last step
       // But let's stick to explicit next for consistency
@@ -64,15 +64,15 @@ export function StepSurveyItem({
 
   const isNextDisabled =
     question.isRequired &&
-    (question.type === "number_input"
+    (question.type === "number"
       ? !value[0] || value[0].trim() === ""
       : value.length === 0);
 
   const getQuestionSubtitle = () => {
     switch (question.type) {
-      case "multi_select":
+      case "multiple":
         return t("surveyItem.multipleChoice");
-      case "number_input":
+      case "number":
         return t("surveyItem.enterNumber");
       default:
         return t("surveyItem.selectOne");
@@ -97,7 +97,7 @@ export function StepSurveyItem({
           {getQuestionSubtitle()}
         </Text>
 
-        {question.type === "number_input" ? (
+        {question.type === "number" ? (
           <View className="bg-white dark:bg-zinc-800 p-6 rounded-[24px] border-2 border-zinc-100 dark:border-zinc-700">
             <TextInput
               className="text-4xl font-black text-center text-zinc-900 dark:text-white"

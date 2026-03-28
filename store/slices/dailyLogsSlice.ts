@@ -70,6 +70,7 @@ export const addFoodLogAsync = createAsyncThunk(
       dispatch(fetchFoodLogsAsync());
       return response.data;
     } catch (error) {
+      console.log("error", JSON.stringify(error, null, 2));
       return rejectWithValue(
         error instanceof Error
           ? (error as any).response?.data?.message

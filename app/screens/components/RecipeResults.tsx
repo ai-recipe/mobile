@@ -17,7 +17,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resetRecipeState } from "@/store/slices/recipeSlice";
@@ -68,7 +68,10 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
         </Text>
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
           {t("recipeResults.forYou")}{" "}
-          <Text className="text-[#f39849]">{recipes?.length} {t("recipeResults.recipe")}</Text> {t("recipeResults.found")}
+          <Text className="text-[#f39849]">
+            {recipes?.length} {t("recipeResults.recipe")}
+          </Text>{" "}
+          {t("recipeResults.found")}
         </Text>
       </View>
 

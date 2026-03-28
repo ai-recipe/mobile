@@ -9,7 +9,7 @@ import { fetchFavoriteRecipes } from "@/store/slices/favoritesListSlice";
 import { fetchRecipes } from "@/store/slices/recipeListSlice";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -66,7 +66,8 @@ const AIChefScreen = () => {
       showBackButton={true}
       title={
         <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">
-          {t("aiChef.title")} <Text className="text-[#f39849]">{t("aiChef.titleHighlight")}</Text>
+          {t("aiChef.title")}{" "}
+          <Text className="text-[#f39849]">{t("aiChef.titleHighlight")}</Text>
         </Text>
       }
     >

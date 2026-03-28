@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -32,7 +32,7 @@ export default function RegisterScreen() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const { isRegisterLoading, error: authError } = useAppSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const registerSchema = useMemo(
@@ -51,7 +51,7 @@ export default function RegisterScreen() {
           .required(t("auth.confirmPasswordRequired"))
           .oneOf([yup.ref("password")], t("auth.passwordsMustMatch")),
       }),
-    [t]
+    [t],
   );
 
   const {
@@ -114,7 +114,10 @@ export default function RegisterScreen() {
               {/* Welcome Text */}
               <View className="px-10">
                 <Text className="text-3xl font-black text-center text-zinc-900 dark:text-white leading-tight mb-2">
-                  {t("auth.signUp")} <Text className="text-[#f39849]">{t("auth.createAccount")}</Text>
+                  {t("auth.signUp")}{" "}
+                  <Text className="text-[#f39849]">
+                    {t("auth.createAccount")}
+                  </Text>
                 </Text>
                 <Text className="text-zinc-500 dark:text-zinc-400 text-center text-sm font-medium leading-relaxed">
                   {t("auth.heroSubtitle")}

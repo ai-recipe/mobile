@@ -5,7 +5,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/node_modules/react-i18next";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -21,10 +21,7 @@ export default function AIScanScreen() {
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      Alert.alert(
-        t("aiScan.permissionRequired"),
-        t("aiScan.permissionDesc"),
-      );
+      Alert.alert(t("aiScan.permissionRequired"), t("aiScan.permissionDesc"));
       return;
     }
 
@@ -58,7 +55,8 @@ export default function AIScanScreen() {
         {/* Header Section */}
         <View className="pt-8 pb-6">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {t("aiScan.title")} <Text className="text-[#f39849]">{t("aiScan.titlePrefix")}</Text>
+            {t("aiScan.title")}{" "}
+            <Text className="text-[#f39849]">{t("aiScan.titlePrefix")}</Text>
           </Text>
           <Text className="text-zinc-500 dark:text-zinc-400 text-base mt-2">
             {t("aiScan.subtitle")}
@@ -76,7 +74,9 @@ export default function AIScanScreen() {
             <View className="size-16 bg-white/10 rounded-full items-center justify-center mb-3">
               <MaterialIcons name="photo-camera" size={32} color="white" />
             </View>
-            <Text className="text-white font-bold text-lg">{t("aiScan.takePhoto")}</Text>
+            <Text className="text-white font-bold text-lg">
+              {t("aiScan.takePhoto")}
+            </Text>
           </TouchableOpacity>
 
           {/* Gallery */}
