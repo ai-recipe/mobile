@@ -130,10 +130,13 @@ const HomeScreen = () => {
   useFocusEffect(
     useCallback(() => {
       setActiveTab("meal");
-      const dateStr = format(selectedDate, "yyyy-MM-dd");
-      dispatch(setStartDate(dateStr));
-      dispatch(setEndDate(dateStr));
-      dispatch(setDate(dateStr));
+      const startOfDay = new Date(selectedDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(selectedDate);
+      endOfDay.setHours(23, 59, 59, 999);
+      dispatch(setStartDate(startOfDay.toISOString()));
+      dispatch(setEndDate(endOfDay.toISOString()));
+      dispatch(setDate(format(selectedDate, "yyyy-MM-dd")));
       dispatch(fetchFoodLogsAsync());
       dispatch(fetchWaterIntakeAsync());
     }, [selectedDate, dispatch]),
@@ -169,7 +172,7 @@ const HomeScreen = () => {
               carbsGrams: mealData.carbs,
               fatGrams: mealData.fat,
               quantity: mealData.servings,
-              loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+              loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
             },
           }),
         ).unwrap();
@@ -183,7 +186,7 @@ const HomeScreen = () => {
             carbsGrams: mealData.carbs,
             fatGrams: mealData.fat,
             quantity: mealData.servings,
-            loggedAt: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+            loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
           }),
         ).unwrap();
       }
@@ -224,7 +227,7 @@ const HomeScreen = () => {
 
   const handleAddWater = (amountMl: number) => {
     dispatch(
-      addWaterIntakeAsync({ amountMl, loggedAt: selectedDate.toISOString() }),
+      addWaterIntakeAsync({ amountMl, loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }),
     );
   };
 

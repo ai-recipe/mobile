@@ -364,6 +364,9 @@
     "carbs": "Karbonhidrat",
     "fat": "Yağ",
     "viewRecipe": "Tarifi Gör",
+    "eatIt": "Ye Bunu",
+    "addedTitle": "Eklendi!",
+    "addedToLog": "Tarif besin günlüğüne eklendi.",
     "exit": "Çıkış"
   },
   "recipeDetail": {

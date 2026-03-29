@@ -33,7 +33,9 @@
       "Bash(git push --force-with-lease:*)",
       "Bash(git push --force-with-lease:*)",
       "Bash(git push --force-with-lease:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(grep -r admin /Users/sahin/Desktop/slaycallapp/new/my-app --include=*.ts --include=*.tsx --include=*.js --exclude-dir=node_modules --exclude-dir=.expo -i)",
+      "Bash(grep -r \"dashboard\\\\|panel\\\\|manage\\\\|settings\\\\|user\" /Users/sahin/Desktop/slaycallapp/new/my-app --include=*.ts --include=*.tsx --exclude-dir=node_modules --exclude-dir=.expo -l)"
     ]
   }
 }

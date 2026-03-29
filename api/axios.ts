@@ -1,5 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import type { AppDispatch } from "@/store";
+import { initDeviceAsync } from "@/store/slices/authSlice";
+
+let _dispatch: AppDispatch | undefined;
+
+export function injectDispatch(dispatch: AppDispatch) {
+  _dispatch = dispatch;
+}
 
 export const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3001/api/v1/",
@@ -48,6 +56,10 @@ api.interceptors.response.use(
     };
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
+      if (_dispatch) {
+        _dispatch(initDeviceAsync());
+      }
 
       return Promise.reject(error);
     }

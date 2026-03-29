@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/node_modules/react-i18next";
 import { Animated, Easing, Text, View } from "react-native";
+import { Image } from "expo-image";
 
 export const FunnyLoader = () => {
   const colorScheme = useColorScheme();
@@ -185,10 +186,9 @@ export const FunnyLoader = () => {
               elevation: 12,
             }}
           >
-            <MaterialIcons
-              name="local-fire-department"
-              size={64}
-              color="white"
+            <Image
+              source={require("@/assets/images/logo.svg")}
+              className="w-32 h-32"
             />
           </View>
         </Animated.View>

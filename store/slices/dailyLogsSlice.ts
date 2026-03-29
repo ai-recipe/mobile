@@ -51,6 +51,7 @@ export const fetchFoodLogsAsync = createAsyncThunk(
         startDate: state.dailyLogs.startDate,
         endDate: state.dailyLogs.endDate,
       });
+      console.log("response", JSON.stringify(response.data, null, 2));
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -141,13 +142,17 @@ export const fetchRecentMealsAsync = createAsyncThunk(
       const threeDaysAgo = new Date();
       threeDaysAgo.setDate(now.getDate() - 3);
 
-      const startDate = threeDaysAgo.toISOString().split("T")[0];
-      const endDate = now.toISOString().split("T")[0];
+      threeDaysAgo.setHours(0, 0, 0, 0);
+      now.setHours(23, 59, 59, 999);
+      const startDate = threeDaysAgo.toISOString();
+      const endDate = now.toISOString();
 
       const response = await fetchFoodLogs({ startDate, endDate });
 
       // Extract all entries from all days and get unique ones by mealName
-      const allEntries = (response.data?.days ?? []).flatMap((day) => day.entries);
+      const allEntries = (response.data?.days ?? []).flatMap(
+        (day) => day.entries,
+      );
       const uniqueMealsMap = new Map<string, FoodLogEntry>();
 
       allEntries.forEach((entry) => {
@@ -245,7 +250,10 @@ const dailyLogsSlice = createSlice({
     builder.addCase(fetchFoodLogsAsync.fulfilled, (state, action) => {
       state.isLoading = false;
       state.entries = action.payload?.days?.[0]?.entries ?? [];
-      state.summary = action.payload?.days?.[0]?.summary ?? initialState.summary;
+      state.summary =
+        action.payload?.days?.[0]?.summary ??
+        action.payload?.summary ??
+        initialState.summary;
     });
     builder.addCase(fetchFoodLogsAsync.rejected, (state, action) => {
       state.isLoading = false;

@@ -15,6 +15,8 @@ import subscriptionReducer from "./slices/subscriptionSlice";
 import uiReducer from "./slices/uiSlice";
 import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
+
+import { injectDispatch } from "@/api/axios";
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
@@ -42,3 +44,4 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+injectDispatch(store.dispatch);

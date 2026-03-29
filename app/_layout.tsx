@@ -1,3 +1,4 @@
+//import messaging from "@react-native-firebase/messaging";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { CopilotProvider } from "react-native-copilot";
@@ -5,6 +6,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { TourTooltip } from "../components/TourTooltip";
 import "../global.css";
+
+// Must be registered outside the React tree (module scope)
+/*messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  console.log("Background notification:", remoteMessage.notification);
+});*/
 
 import { FunnyLoader } from "@/components/FunnyLoader";
 import { ThemeSync } from "@/components/ThemeSync";
@@ -47,7 +53,7 @@ function CopilotLabelsWrapper({ children }: { children: React.ReactNode }) {
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
   useInitApp();
-  const { token, isInitDeviceLoading } = useAppSelector((state) => state.auth);
+  const { isInitDeviceLoading } = useAppSelector((state) => state.auth);
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -55,8 +61,6 @@ function RootLayoutNavigator() {
       dispatch(initDeviceAsync());
     }
   }, [dispatch, currentLanguage]);
-  const colors = useThemeColor();
-  const colorScheme = useColorScheme();
 
   if (isLoading || isInitDeviceLoading) {
     return <FunnyLoader />;

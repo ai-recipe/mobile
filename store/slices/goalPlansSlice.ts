@@ -87,7 +87,7 @@ export const postGoalPlanLogAsync = createAsyncThunk(
       if (from === "progress") {
         dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
       } else if (from === "profile") {
-        dispatch(setGoalPlan(rest));
+        dispatch(mergeGoalPlan(rest));
         dispatch(fetchRecentMealsAsync() as any);
       }
       const response = await postGoalPlanLog(rest);
@@ -113,13 +113,23 @@ const goalPlansSlice = createSlice({
     setGoalPlan: (state, action) => {
       state.goalPlan = action.payload;
     },
+    mergeGoalPlan: (state, action) => {
+      if (state.goalPlan) {
+        state.goalPlan = { ...state.goalPlan, ...action.payload };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchGoalPlanActiveAsync.fulfilled, (state, action) => {
       state.goalPlan = action.payload;
     });
+    builder.addCase(postGoalPlanLogAsync.fulfilled, (state, action) => {
+      if (action.payload?.goalPlan) {
+        state.goalPlan = action.payload.goalPlan;
+      }
+    });
   },
 });
 
 export default goalPlansSlice.reducer;
-export const { setGoalPlan } = goalPlansSlice.actions;
+export const { setGoalPlan, mergeGoalPlan } = goalPlansSlice.actions;

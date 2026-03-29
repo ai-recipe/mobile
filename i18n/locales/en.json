@@ -364,6 +364,9 @@
     "carbs": "Carbs",
     "fat": "Fat",
     "viewRecipe": "View Recipe",
+    "eatIt": "Eat It",
+    "addedTitle": "Added!",
+    "addedToLog": "Recipe added to your food log.",
     "exit": "Exit"
   },
   "recipeDetail": {

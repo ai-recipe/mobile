@@ -1,7 +1,10 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { format } from "date-fns";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   Pressable,
@@ -20,6 +23,7 @@ import Animated, {
 import { useTranslation } from "@/node_modules/react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addFoodLogAsync } from "@/store/slices/dailyLogsSlice";
 import { resetRecipeState } from "@/store/slices/recipeSlice";
 import { RecipeDetailModal } from "./RecipeDetailModal";
 
@@ -44,6 +48,29 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
   const colorScheme = useColorScheme();
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handleEatIt = async (item: any) => {
+    setLoadingId(item._id);
+    try {
+      await dispatch(
+        addFoodLogAsync({
+          mealName: item.title,
+          calories: item.nutrition?.calories ?? 0,
+          proteinGrams: item.nutrition?.protein ?? 0,
+          carbsGrams: item.nutrition?.carbs ?? 0,
+          fatGrams: item.nutrition?.fat ?? 0,
+          quantity: 1,
+          loggedAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+        }),
+      ).unwrap();
+      Alert.alert(t("recipeResults.addedTitle"), t("recipeResults.addedToLog"));
+    } catch {
+      Alert.alert(t("common.error"), t("common.somethingWentWrong"));
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   const handleOpenRecipe = (recipe: any) => {
     setSelectedRecipe(recipe);
@@ -202,21 +229,42 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                   </View>
                 )}
 
-                {/* Action Button */}
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  className="w-full h-12 bg-zinc-900 dark:bg-white rounded-xl items-center justify-center flex-row gap-2"
-                  onPress={() => handleOpenRecipe(item)}
-                >
-                  <Text className="text-white dark:text-black font-bold text-sm">
-                    {t("recipeResults.viewRecipe")}
-                  </Text>
-                  <MaterialIcons
-                    name="arrow-forward"
-                    size={16}
-                    color={colorScheme === "dark" ? "black" : "white"}
-                  />
-                </TouchableOpacity>
+                {/* Action Buttons */}
+                <View className="flex-row gap-2">
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    className="flex-1 h-12 bg-zinc-900 dark:bg-white rounded-xl items-center justify-center flex-row gap-1.5"
+                    onPress={() => handleOpenRecipe(item)}
+                  >
+                    <Text className="text-white dark:text-black font-bold text-sm">
+                      {t("recipeResults.viewRecipe")}
+                    </Text>
+                    <MaterialIcons
+                      name="arrow-forward"
+                      size={16}
+                      color={colorScheme === "dark" ? "black" : "white"}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-1.5"
+                    style={{ backgroundColor: "#f39849" }}
+                    onPress={() => handleEatIt(item)}
+                    disabled={loadingId === item._id}
+                  >
+                    {loadingId === item._id ? (
+                      <ActivityIndicator size="small" color="white" />
+                    ) : (
+                      <>
+                        <MaterialCommunityIcons name="silverware-fork-knife" size={16} color="white" />
+                        <Text className="text-white font-bold text-sm">
+                          {t("recipeResults.eatIt")}
+                        </Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
             </Pressable>
           </Animated.View>
