@@ -7,9 +7,10 @@ import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchFavoriteRecipes } from "@/store/slices/favoritesListSlice";
 import { fetchRecipes } from "@/store/slices/recipeListSlice";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "expo-router";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -28,13 +29,15 @@ const AIChefScreen = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (activeTab === "recents" && recipes.length === 0) {
-      dispatch(fetchRecipes({ page: 1, perPage: 20 }));
-    } else if (activeTab === "favorites" && favorites.length === 0) {
-      dispatch(fetchFavoriteRecipes({ page: 1, perPage: 20 }));
-    }
-  }, [activeTab, dispatch, recipes.length, favorites.length]);
+  useFocusEffect(
+    useCallback(() => {
+      if (activeTab === "recents" && recipes.length === 0) {
+        dispatch(fetchRecipes({ page: 1, perPage: 10 }));
+      } else if (activeTab === "favorites" && favorites.length === 0) {
+        dispatch(fetchFavoriteRecipes({ page: 1, perPage: 10 }));
+      }
+    }, [activeTab, dispatch, recipes.length, favorites.length]),
+  );
 
   const handleOpenRecipe = (recipe: any) => {
     setSelectedRecipe(recipe);

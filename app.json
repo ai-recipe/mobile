@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "SlayCal",
-    "slug": "slaycal",
+    "name": "myapp",
+    "slug": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "slaycal",
+    "scheme": "myapp",
     "platforms": ["ios", "android"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "appleTeamId": "MZC4RF3T88",
-      "bundleIdentifier": "com.slaycal",
+      "bundleIdentifier": "com.myapp",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Uygulama, yemek tarifleri oluşturmak için seçtiğiniz malzemelerin fotoğraflarına erişir.",
         "NSCameraUsageDescription": "This app uses your camera to scan and identify meals.",
@@ -30,13 +30,14 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "package": "com.slaycal",
+      "package": "com.myapp",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
+      "expo-localization",
       "./plugins/withAllowHttp",
       [
         "expo-build-properties",
@@ -76,7 +77,7 @@
         "projectId": "0af9548a-c546-434a-8e8f-74b6717f880a"
       }
     },
-    "owner": "slaycal",
+    "owner": "myapp",
     "runtimeVersion": {
       "policy": "appVersion"
     },

@@ -108,7 +108,6 @@ export async function scanImage({
 }: ScanImageParams): Promise<ScanImageResponse> {
   try {
     const { jobId } = await uploadImageForRecognition(imageUri);
-    console.log("jobId", jobId);
 
     const completedJob = await pollJobStatus(jobId);
 

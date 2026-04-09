@@ -1,6 +1,7 @@
 import { MultiStepFormStep } from "@/components/MultiStepForm";
 import React from "react";
 import { StepSurveyItem } from "../components/StepSurveyItem";
+import { TFunction } from "i18next";
 
 interface SurveyOption {
   icon: string;
@@ -17,8 +18,10 @@ interface SurveyQuestion {
 }
 
 export const createSurveySteps = ({
+  t,
   questions,
 }: {
+  t: TFunction;
   questions: SurveyQuestion[];
 }): MultiStepFormStep[] => {
   const steps: MultiStepFormStep[] = [];
@@ -27,7 +30,7 @@ export const createSurveySteps = ({
     // Add the question step
     steps.push({
       id: question.key,
-      title: question.title,
+      title: t(question.title),
       fields: [question.key],
       shouldHandleNextStep: true,
       render: ({ data, setValue, nextStep }) => (

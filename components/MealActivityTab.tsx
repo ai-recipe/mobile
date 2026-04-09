@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import React from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Image,
@@ -141,7 +141,6 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           {items.map((entry) => {
             const pending = isPendingScan(entry);
             const failed = isFailedScan(entry);
-            console.log(entry.imageUrl);
             const showImage = !!entry.imageUrl || pending;
 
             // Pending scan: reference-style card (white, rounded-3xl, 16x16 thumb, spinner, subtitle)

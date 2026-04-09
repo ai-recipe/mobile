@@ -41,7 +41,7 @@ import {
 } from "date-fns";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Dimensions,
@@ -172,7 +172,10 @@ const HomeScreen = () => {
               carbsGrams: mealData.carbs,
               fatGrams: mealData.fat,
               quantity: mealData.servings,
-              loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+              loggedAt: format(
+                isSameDay(selectedDate, new Date()) ? new Date() : selectedDate,
+                "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+              ),
             },
           }),
         ).unwrap();
@@ -186,7 +189,10 @@ const HomeScreen = () => {
             carbsGrams: mealData.carbs,
             fatGrams: mealData.fat,
             quantity: mealData.servings,
-            loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+            loggedAt: format(
+              isSameDay(selectedDate, new Date()) ? new Date() : selectedDate,
+              "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+            ),
           }),
         ).unwrap();
       }
@@ -227,7 +233,13 @@ const HomeScreen = () => {
 
   const handleAddWater = (amountMl: number) => {
     dispatch(
-      addWaterIntakeAsync({ amountMl, loggedAt: format(isSameDay(selectedDate, new Date()) ? new Date() : selectedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") }),
+      addWaterIntakeAsync({
+        amountMl,
+        loggedAt: format(
+          isSameDay(selectedDate, new Date()) ? new Date() : selectedDate,
+          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+        ),
+      }),
     );
   };
 

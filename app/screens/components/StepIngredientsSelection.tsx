@@ -14,7 +14,7 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { ScanFormData } from "../types/ai-scan-form.types";
 
 interface StepIngredientsSelectionProps {

@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ScrollView,
   Text,
@@ -13,7 +14,6 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "@/node_modules/react-i18next";
 
 interface SurveyOption {
   icon: string;
@@ -91,7 +91,7 @@ export function StepSurveyItem({
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <Text className="text-[32px] font-bold leading-tight pt-2 pb-1 text-zinc-900 dark:text-white">
-          {question.title}
+          {t(question.title)}
         </Text>
         <Text className="text-zinc-500 dark:text-zinc-400 text-base mb-8">
           {getQuestionSubtitle()}
@@ -132,7 +132,7 @@ export function StepSurveyItem({
                           : "text-zinc-600 dark:text-zinc-400"
                       }`}
                     >
-                      {option.label}
+                      {t(option.label)}
                     </Text>
                   </View>
                   {isSelected && (

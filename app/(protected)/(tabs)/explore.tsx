@@ -13,7 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { ExploreSkeleton } from "./components/ExploreSkeleton";
 
 const PLACEHOLDER_IMAGE =
@@ -132,59 +132,59 @@ const ExploreScreen = () => {
         {isLoading && currentRecipes?.length === 0 ? (
           <ExploreSkeleton />
         ) : (
-        <FlatList
-          data={currentRecipes}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="flex-1 mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden border border-zinc-100 dark:border-zinc-700 shadow-sm"
-              onPress={() => handleOpenRecipe(item)}
-              activeOpacity={0.7}
-            >
-              <View className="h-40 relative">
-                <Image
-                  source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
-                  className="w-full h-full object-cover"
-                />
-                <View className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 rounded-full flex-row items-center">
-                  <MaterialIcons name="timer" size={10} color="#f39849" />
-                  <Text className="text-[#f39849] font-black text-[10px] ml-1">
-                    {item.totalTimeMinutes} {t("explore.mins")}
-                  </Text>
-                </View>
-              </View>
-              <View className="p-3">
-                <Text
-                  className="font-bold text-sm text-zinc-900 dark:text-white mb-2"
-                  numberOfLines={1}
-                >
-                  {item.title}
-                </Text>
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center">
-                    <MaterialIcons
-                      name="restaurant"
-                      size={12}
-                      color="#f39849"
-                    />
-                    <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold ml-1">
-                      {item.difficulty}
+          <FlatList
+            data={currentRecipes}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="flex-1 mb-6 bg-white dark:bg-zinc-800 rounded-[24px] overflow-hidden border border-zinc-100 dark:border-zinc-700 shadow-sm"
+                onPress={() => handleOpenRecipe(item)}
+                activeOpacity={0.7}
+              >
+                <View className="h-40 relative">
+                  <Image
+                    source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
+                    className="w-full h-full object-cover"
+                  />
+                  <View className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 rounded-full flex-row items-center">
+                    <MaterialIcons name="timer" size={10} color="#f39849" />
+                    <Text className="text-[#f39849] font-black text-[10px] ml-1">
+                      {item.totalTimeMinutes} {t("explore.mins")}
                     </Text>
                   </View>
-                  <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold">
-                    320 kcal
-                  </Text>
                 </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+                <View className="p-3">
+                  <Text
+                    className="font-bold text-sm text-zinc-900 dark:text-white mb-2"
+                    numberOfLines={1}
+                  >
+                    {item.title}
+                  </Text>
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center">
+                      <MaterialIcons
+                        name="restaurant"
+                        size={12}
+                        color="#f39849"
+                      />
+                      <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold ml-1">
+                        {item.difficulty}
+                      </Text>
+                    </View>
+                    <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold">
+                      320 kcal
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
         )}
 
         {/* Recipe Detail Modal */}

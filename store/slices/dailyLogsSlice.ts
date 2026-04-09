@@ -51,7 +51,6 @@ export const fetchFoodLogsAsync = createAsyncThunk(
         startDate: state.dailyLogs.startDate,
         endDate: state.dailyLogs.endDate,
       });
-      console.log("response", JSON.stringify(response.data, null, 2));
       return response.data;
     } catch (error) {
       return rejectWithValue(

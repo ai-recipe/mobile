@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,

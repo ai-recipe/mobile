@@ -3,7 +3,7 @@ import { EmptyWaterState } from "@/components/EmptyWaterState";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import React from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 interface WaterActivityTabProps {

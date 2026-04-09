@@ -11,7 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -81,7 +81,10 @@ export default function AiScanFormScreen() {
 
   // Pre-select all ingredients when scan completes
   useEffect(() => {
-    if (appStep === AppStep.IngredientsSelection && scannedIngredients.length > 0) {
+    if (
+      appStep === AppStep.IngredientsSelection &&
+      scannedIngredients.length > 0
+    ) {
       form.setValue("selectedIngredients", scannedIngredients);
     }
   }, [appStep, scannedIngredients]);

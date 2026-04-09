@@ -75,6 +75,7 @@ export const loadMoreRecipes = createAsyncThunk(
     },
     { rejectWithValue },
   ) => {
+    console.log("loadMoreRecipes", params);
     try {
       const response = await fetchRecipeList(params);
       return response;
@@ -152,8 +153,7 @@ export const recipeListSlice = createSlice({
       state.isLoadingRecipes = false;
       state.recipes = action.payload.data;
       state.meta = action.payload.meta;
-      state.hasMore =
-        action.payload.meta.lastPage > action.payload.meta.currentPage;
+      state.hasMore = action.payload.meta.lastPage > action.payload.meta.page;
     });
     builder.addCase(fetchRecipes.rejected, (state, action) => {
       state.isLoadingRecipes = false;
@@ -169,6 +169,7 @@ export const recipeListSlice = createSlice({
       state.isLoadingMore = false;
       state.recipes = [...state.recipes, ...action.payload.data];
       state.meta = action.payload.meta;
+      state.hasMore = action.payload.meta.lastPage > action.payload.meta.page;
     });
     builder.addCase(loadMoreRecipes.rejected, (state, action) => {
       state.isLoadingMore = false;

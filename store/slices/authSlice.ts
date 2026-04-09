@@ -148,7 +148,7 @@ export const initDeviceAsync = createAsyncThunk(
       } else {
         deviceId = "unknown";
       }
-
+      console.log("deviceId", deviceId);
       const response = await AuthService.initDeviceAPI({
         deviceId,
         platform: Platform.OS,

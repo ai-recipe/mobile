@@ -96,7 +96,6 @@ export const toggleFavoriteFromScan = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log("recipeId", recipeId);
       if (isFavorite) {
         await removeFavorite(recipeId);
       } else {

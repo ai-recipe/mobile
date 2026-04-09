@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadMoreRecipes } from "@/store/slices/recipeListSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
@@ -20,15 +21,17 @@ interface AIChefTabProps {
 }
 
 const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { recipes, isLoadingRecipes, isLoadingMore, meta, hasMore } =
     useAppSelector((state) => state.recipeList);
 
   const handleLoadMore = () => {
+    console.log("handleLoadMore", isLoadingMore, isLoadingRecipes, hasMore);
     if (!isLoadingMore && !isLoadingRecipes && hasMore) {
       dispatch(
         loadMoreRecipes({
-          page: meta.page + 1,
+          page: Number(meta.page) + 1,
           perPage: meta.perPage,
         }),
       );
@@ -47,7 +50,7 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
   return (
     <FlatList
       data={recipes}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item._id}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
       onEndReached={handleLoadMore}
@@ -87,7 +90,7 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
               <View className="flex-row items-center">
                 <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
                 <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                  {item.totalTimeMinutes} dk
+                  {item.prepTimeMinutes} {t("minutes")}
                 </Text>
               </View>
               <View className="flex-row items-center">

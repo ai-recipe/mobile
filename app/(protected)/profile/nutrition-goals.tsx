@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 const NutritionGoalCard = ({
   icon,
@@ -95,12 +95,12 @@ const NutritionGoals = () => {
   const colorScheme = useColorScheme();
 
   const [goals, setGoals] = useState({
-    targetWeightKg: goalPlan?.targetWeightKg?.toString() ?? '',
-    targetWaterMl: goalPlan?.targetWaterMl?.toString() ?? '',
-    targetCalories: goalPlan?.targetCalories?.toString() ?? '',
-    targetProteinG: goalPlan?.targetProteinG?.toString() ?? '',
-    targetCarbsG: goalPlan?.targetCarbsG?.toString() ?? '',
-    targetFatG: goalPlan?.targetFatG?.toString() ?? '',
+    targetWeightKg: goalPlan?.targetWeightKg?.toString() ?? "",
+    targetWaterMl: goalPlan?.targetWaterMl?.toString() ?? "",
+    targetCalories: goalPlan?.targetCalories?.toString() ?? "",
+    targetProteinG: goalPlan?.targetProteinG?.toString() ?? "",
+    targetCarbsG: goalPlan?.targetCarbsG?.toString() ?? "",
+    targetFatG: goalPlan?.targetFatG?.toString() ?? "",
   });
 
   const toNum = (val: string) => {
@@ -110,15 +110,17 @@ const NutritionGoals = () => {
 
   const from = useLocalSearchParams().from;
   const handleSave = () => {
-    dispatch(postGoalPlanLogAsync({
-      from: from as any,
-      targetWeightKg: toNum(goals.targetWeightKg),
-      targetWaterMl: toNum(goals.targetWaterMl),
-      targetCalories: toNum(goals.targetCalories),
-      targetProteinG: toNum(goals.targetProteinG),
-      targetCarbsG: toNum(goals.targetCarbsG),
-      targetFatG: toNum(goals.targetFatG),
-    }));
+    dispatch(
+      postGoalPlanLogAsync({
+        from: from as any,
+        targetWeightKg: toNum(goals.targetWeightKg),
+        targetWaterMl: toNum(goals.targetWaterMl),
+        targetCalories: toNum(goals.targetCalories),
+        targetProteinG: toNum(goals.targetProteinG),
+        targetCarbsG: toNum(goals.targetCarbsG),
+        targetFatG: toNum(goals.targetFatG),
+      }),
+    );
     router.back();
   };
 

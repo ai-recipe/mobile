@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Linking,
   Platform,
@@ -15,7 +16,6 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "@/node_modules/react-i18next";
 
 interface StepRateUsProps {
   onNext: () => void;

@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Text, View } from "react-native";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 const MESSAGE_KEYS = [
   "calculating.msg1",

@@ -6,7 +6,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useTranslation } from "@/node_modules/react-i18next";
 import { ActivityIndicator, Text, View } from "react-native";
 import Animated, {
   Easing,
@@ -19,6 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { createSurveySteps } from "./helpers/survey.helpers";
+import { useTranslation } from "react-i18next";
 
 // Animated Loading Indicator Component
 function AnimatedLoadingIndicator() {
@@ -137,7 +137,8 @@ function AnimatedDots() {
 }
 
 export default function SurveyScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { surveyQuestions, isSurveyQuestionsLoading, isSurveySubmitting } =
@@ -180,8 +181,8 @@ export default function SurveyScreen() {
   };
 
   const steps = useMemo(
-    () => createSurveySteps({ questions: surveyQuestions }),
-    [surveyQuestions],
+    () => createSurveySteps({ questions: surveyQuestions, t }),
+    [surveyQuestions, t],
   );
 
   if (isSurveyQuestionsLoading && !isInitialized) {

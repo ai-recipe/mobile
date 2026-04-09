@@ -21,7 +21,7 @@ import { store } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { Stack } from "expo-router";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 function CopilotLabelsWrapper({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
 

@@ -3,7 +3,7 @@ import { closeSoftPaywall } from "@/store/slices/modalSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useCallback, useEffect } from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   Modal,

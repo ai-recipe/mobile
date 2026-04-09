@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
@@ -65,8 +65,15 @@ export function RecipeDetailModal({
     setIsFavorite(newStatus);
     try {
       await Promise.all([
-        dispatch(toggleFavorite({ recipeId: recipe._id, isFavorite: !!isFavorite })),
-        dispatch(toggleFavoriteFromScan({ recipeId: recipe._id, isFavorite: !!isFavorite })),
+        dispatch(
+          toggleFavorite({ recipeId: recipe._id, isFavorite: !!isFavorite }),
+        ),
+        dispatch(
+          toggleFavoriteFromScan({
+            recipeId: recipe._id,
+            isFavorite: !!isFavorite,
+          }),
+        ),
       ]);
     } catch (error) {
       setIsFavorite(!newStatus);
@@ -115,11 +122,14 @@ export function RecipeDetailModal({
                 </TouchableOpacity>
               )}
             </View>
-            {(recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) && (
+            {(recipe.prepTimeMinutes != null ||
+              recipe.cookTimeMinutes != null) && (
               <View className="absolute bottom-12 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
                 <MaterialIcons name="schedule" size={16} color="#f39849" />
                 <Text className="text-[#f39849] font-black text-sm ml-1">
-                  {(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                  {(recipe.prepTimeMinutes ?? 0) +
+                    (recipe.cookTimeMinutes ?? 0)}{" "}
+                  {t("explore.mins")}
                 </Text>
               </View>
             )}
@@ -145,15 +155,21 @@ export function RecipeDetailModal({
                   <View className="flex-row items-center">
                     <MaterialIcons name="schedule" size={20} color="#a1a1aa" />
                     <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                      {t("timePreference.title")}: {recipe.prepTimeMinutes} {t("explore.mins")}
+                      {t("timePreference.title")}: {recipe.prepTimeMinutes}{" "}
+                      {t("explore.mins")}
                     </Text>
                   </View>
                 )}
                 {recipe.cookTimeMinutes != null && (
                   <View className="flex-row items-center">
-                    <MaterialIcons name="restaurant" size={20} color="#a1a1aa" />
+                    <MaterialIcons
+                      name="restaurant"
+                      size={20}
+                      color="#a1a1aa"
+                    />
                     <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                      {t("recipeDetail.cooking")}: {recipe.cookTimeMinutes} {t("explore.mins")}
+                      {t("recipeDetail.cooking")}: {recipe.cookTimeMinutes}{" "}
+                      {t("explore.mins")}
                     </Text>
                   </View>
                 )}
@@ -161,13 +177,19 @@ export function RecipeDetailModal({
                   <View className="flex-row items-center">
                     <MaterialIcons name="bar-chart" size={20} color="#a1a1aa" />
                     <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
-                      {t(`difficulty.${recipe.difficulty}`, { defaultValue: recipe.difficulty })}
+                      {t(`difficulty.${recipe.difficulty}`, {
+                        defaultValue: recipe.difficulty,
+                      })}
                     </Text>
                   </View>
                 )}
                 {recipe.servings != null && (
                   <View className="flex-row items-center">
-                    <MaterialCommunityIcons name="account-group" size={20} color="#a1a1aa" />
+                    <MaterialCommunityIcons
+                      name="account-group"
+                      size={20}
+                      color="#a1a1aa"
+                    />
                     <Text className="text-sm text-zinc-500 dark:text-zinc-400 ml-1.5 font-medium">
                       {recipe.servings} {t("common.servings")}
                     </Text>
@@ -202,27 +224,41 @@ export function RecipeDetailModal({
                 <View className="flex-row justify-between">
                   <View className="items-center flex-1">
                     <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                      {recipe.nutrition.calories ?? '—'}
+                      {recipe.nutrition.calories ?? "—"}
                     </Text>
-                    <Text className="text-zinc-500 text-[10px] font-semibold">Kalori</Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">
+                      Kalori
+                    </Text>
                   </View>
                   <View className="items-center flex-1">
                     <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                      {recipe.nutrition.protein != null ? `${recipe.nutrition.protein}g` : '—'}
+                      {recipe.nutrition.protein != null
+                        ? `${recipe.nutrition.protein}g`
+                        : "—"}
                     </Text>
-                    <Text className="text-zinc-500 text-[10px] font-semibold">Protein</Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">
+                      Protein
+                    </Text>
                   </View>
                   <View className="items-center flex-1">
                     <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                      {recipe.nutrition.carbs != null ? `${recipe.nutrition.carbs}g` : '—'}
+                      {recipe.nutrition.carbs != null
+                        ? `${recipe.nutrition.carbs}g`
+                        : "—"}
                     </Text>
-                    <Text className="text-zinc-500 text-[10px] font-semibold">Karbonhidrat</Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">
+                      Karbonhidrat
+                    </Text>
                   </View>
                   <View className="items-center flex-1">
                     <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                      {recipe.nutrition.fat != null ? `${recipe.nutrition.fat}g` : '—'}
+                      {recipe.nutrition.fat != null
+                        ? `${recipe.nutrition.fat}g`
+                        : "—"}
                     </Text>
-                    <Text className="text-zinc-500 text-[10px] font-semibold">Yağ</Text>
+                    <Text className="text-zinc-500 text-[10px] font-semibold">
+                      Yağ
+                    </Text>
                   </View>
                 </View>
               </View>

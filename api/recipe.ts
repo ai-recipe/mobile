@@ -33,7 +33,7 @@ export interface RecipeFromAPI {
 }
 
 export interface RecipeListItem {
-  id: string;
+  _id: string;
   title: string;
   slug: string;
   description: string;
@@ -120,7 +120,7 @@ export async function fetchRecipeList(params: {
   isTrending?: boolean;
   isFavorite?: boolean;
 }): Promise<RecipeListResponse> {
-  const response = await api.get<RecipeListResponse>("/recipes", {
+  const response = await api.get<RecipeListResponse>("/recipes/ai", {
     params,
   });
   return response.data;

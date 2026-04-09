@@ -5,7 +5,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { Modal, Platform, Pressable, Text, View } from "react-native";
 
 interface CalendarModalProps {

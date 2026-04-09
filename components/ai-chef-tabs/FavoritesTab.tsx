@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadMoreFavorites } from "@/store/slices/favoritesListSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
@@ -20,6 +21,7 @@ interface FavoritesTabProps {
 }
 
 const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { favorites, isLoading, isLoadingMore, meta, hasMore } = useAppSelector(
     (state) => state.favoritesList,
@@ -72,7 +74,7 @@ const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
             <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
               <MaterialIcons name="schedule" size={14} color="#f39849" />
               <Text className="text-[#f39849] font-black text-xs ml-1">
-                {item.totalTimeMinutes} dk
+                {item.totalTimeMinutes}
               </Text>
             </View>
           </View>
@@ -88,7 +90,7 @@ const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
               <View className="flex-row items-center">
                 <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
                 <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                  {item.totalTimeMinutes} dk
+                  {item.totalTimeMinutes} {t("minutes")}
                 </Text>
               </View>
               <View className="flex-row items-center">

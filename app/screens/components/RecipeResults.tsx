@@ -20,7 +20,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
-import { useTranslation } from "@/node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addFoodLogAsync } from "@/store/slices/dailyLogsSlice";
@@ -120,14 +120,19 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
               {/* Image Section */}
               <View className="h-48 relative">
                 <Image
-                  source={{ uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE }}
+                  source={{
+                    uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE,
+                  }}
                   className="w-full h-full object-cover"
                 />
-                {(item.prepTimeMinutes != null || item.cookTimeMinutes != null) && (
+                {(item.prepTimeMinutes != null ||
+                  item.cookTimeMinutes != null) && (
                   <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
                     <MaterialIcons name="schedule" size={14} color="#f39849" />
                     <Text className="text-[#f39849] font-black text-xs ml-1">
-                      {(item.prepTimeMinutes ?? 0) + (item.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                      {(item.prepTimeMinutes ?? 0) +
+                        (item.cookTimeMinutes ?? 0)}{" "}
+                      {t("explore.mins")}
                     </Text>
                   </View>
                 )}
@@ -141,19 +146,32 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
 
                 {/* Time & Difficulty */}
                 <View className="flex-row items-center gap-4 mb-3">
-                  {(item.prepTimeMinutes != null || item.cookTimeMinutes != null) && (
+                  {(item.prepTimeMinutes != null ||
+                    item.cookTimeMinutes != null) && (
                     <View className="flex-row items-center">
-                      <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
+                      <MaterialIcons
+                        name="schedule"
+                        size={16}
+                        color="#a1a1aa"
+                      />
                       <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                        {(item.prepTimeMinutes ?? 0) + (item.cookTimeMinutes ?? 0)} {t("explore.mins")}
+                        {(item.prepTimeMinutes ?? 0) +
+                          (item.cookTimeMinutes ?? 0)}{" "}
+                        {t("explore.mins")}
                       </Text>
                     </View>
                   )}
                   {item.difficulty && (
                     <View className="flex-row items-center">
-                      <MaterialCommunityIcons name="food-apple" size={16} color="#a1a1aa" />
+                      <MaterialCommunityIcons
+                        name="food-apple"
+                        size={16}
+                        color="#a1a1aa"
+                      />
                       <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                        {t(`difficulty.${item.difficulty}`, { defaultValue: item.difficulty })}
+                        {t(`difficulty.${item.difficulty}`, {
+                          defaultValue: item.difficulty,
+                        })}
                       </Text>
                     </View>
                   )}
@@ -195,7 +213,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                     <View className="flex-row justify-between">
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutrition.calories ?? '—'}
+                          {item.nutrition.calories ?? "—"}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.calories")}
@@ -203,7 +221,9 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutrition.protein != null ? `${item.nutrition.protein}g` : '—'}
+                          {item.nutrition.protein != null
+                            ? `${item.nutrition.protein}g`
+                            : "—"}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.protein")}
@@ -211,7 +231,9 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutrition.carbs != null ? `${item.nutrition.carbs}g` : '—'}
+                          {item.nutrition.carbs != null
+                            ? `${item.nutrition.carbs}g`
+                            : "—"}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.carbs")}
@@ -219,7 +241,9 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       </View>
                       <View className="items-center flex-1">
                         <Text className="text-zinc-900 dark:text-white text-lg font-bold">
-                          {item.nutrition.fat != null ? `${item.nutrition.fat}g` : '—'}
+                          {item.nutrition.fat != null
+                            ? `${item.nutrition.fat}g`
+                            : "—"}
                         </Text>
                         <Text className="text-zinc-500 text-[10px] font-semibold">
                           {t("mealEntry.fat")}
@@ -257,7 +281,11 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
                       <ActivityIndicator size="small" color="white" />
                     ) : (
                       <>
-                        <MaterialCommunityIcons name="silverware-fork-knife" size={16} color="white" />
+                        <MaterialCommunityIcons
+                          name="silverware-fork-knife"
+                          size={16}
+                          color="white"
+                        />
                         <Text className="text-white font-bold text-sm">
                           {t("recipeResults.eatIt")}
                         </Text>

@@ -37,7 +37,10 @@ export const fetchWaterIntakeAsync = createAsyncThunk(
     const startOfDay = new Date(`${state.waterLogs.date}T00:00:00`);
     const endOfDay = new Date(`${state.waterLogs.date}T23:59:59.999`);
     try {
-      const data = await fetchWaterIntake({ startDate: startOfDay.toISOString(), endDate: endOfDay.toISOString() });
+      const data = await fetchWaterIntake({
+        startDate: startOfDay.toISOString(),
+        endDate: endOfDay.toISOString(),
+      });
       return data?.data;
     } catch (error) {
       return rejectWithValue(
@@ -56,7 +59,6 @@ export const addWaterIntakeAsync = createAsyncThunk(
     { rejectWithValue, dispatch },
   ) => {
     try {
-      console.log("payload", payload);
       const response = await addWaterIntake({
         amountMl: payload.amountMl,
         loggedAt: payload.loggedAt,
