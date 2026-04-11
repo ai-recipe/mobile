@@ -47,6 +47,7 @@ export const fetchProgressData = async (payload: {
   startDate: string;
   endDate: string;
 }) => {
+  console.log("fetchProgressData", payload);
   const response = await api.get<{ data: ProgressData }>(
     "/nutrition/progress",
     {

@@ -107,7 +107,7 @@ export const fetchTrendingRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchRecipeList({
+      const response = await fetchPersonalizedRecipes({
         isTrending: true,
         ...params,
       });
@@ -130,7 +130,7 @@ export const loadMoreTrendingRecipes = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetchRecipeList({
+      const response = await fetchPersonalizedRecipes({
         isTrending: true,
         ...params,
       });

@@ -33,8 +33,9 @@ export default function ProgressScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const dispatch = useDispatch();
-  const { startDate, endDate, progressData, isProgressDataLoading } =
-    useAppSelector((state) => state.progress);
+  const { startDate, endDate, progressData } = useAppSelector(
+    (state) => state.progress,
+  );
   const { goalPlan: activeGoalPlan } = useAppSelector(
     (state) => state.goalPlans,
   );

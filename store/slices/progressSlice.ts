@@ -11,10 +11,11 @@ interface ProgressDataState {
 }
 const initialState: ProgressDataState = {
   //weekly start date is 7 days ago
-  startDate: new Date(new Date().setDate(new Date().getDate() - 7))
-    .toISOString()
-    .split("T")[0],
-  endDate: new Date().toISOString().split("T")[0],
+  startDate: new Date(
+    new Date().setHours(0, 0, 0, 0) - 7 * 24 * 60 * 60 * 1000,
+  ).toISOString(),
+  // end of today
+  endDate: new Date(new Date().setHours(23, 59, 59, 999)).toISOString(),
   progressData: {
     startDate: "",
     endDate: "",

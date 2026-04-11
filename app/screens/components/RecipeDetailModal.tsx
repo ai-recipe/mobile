@@ -13,9 +13,6 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
-
 interface RecipeDetailModalProps {
   visible: boolean;
   onClose: () => void;
@@ -97,9 +94,11 @@ export function RecipeDetailModal({
           {/* Header Image */}
           <View className="relative w-full h-80">
             <Image
-              source={{
-                uri: recipe.imageUrl || baseImageUri || PLACEHOLDER_IMAGE,
-              }}
+              source={
+                recipe.imageUrl
+                  ? { uri: recipe.imageUrl }
+                  : require("@/assets/images/food_placeholder.jpg")
+              }
               className="w-full h-full object-cover"
             />
             <View className="absolute top-0 left-0 right-0 p-4 flex-row justify-between items-center pt-12">

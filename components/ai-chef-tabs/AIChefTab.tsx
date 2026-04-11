@@ -13,9 +13,6 @@ import {
   View,
 } from "react-native";
 
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
-
 interface AIChefTabProps {
   onOpenRecipe: (recipe: any) => void;
 }
@@ -68,15 +65,13 @@ const AIChefTab = ({ onOpenRecipe }: AIChefTabProps) => {
         >
           <View className="h-48 relative">
             <Image
-              source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
+              source={
+                item.imageUrl
+                  ? { uri: item.imageUrl }
+                  : require("@/assets/images/food_placeholder.jpg")
+              }
               className="w-full h-full object-cover"
             />
-            <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-              <MaterialIcons name="schedule" size={14} color="#f39849" />
-              <Text className="text-[#f39849] font-black text-xs ml-1">
-                {item.totalTimeMinutes} dk
-              </Text>
-            </View>
           </View>
 
           <View className="p-5">
