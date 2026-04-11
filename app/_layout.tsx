@@ -1,7 +1,6 @@
 //import messaging from "@react-native-firebase/messaging";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
-import { CopilotProvider } from "react-native-copilot";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { TourTooltip } from "../components/TourTooltip";
@@ -14,41 +13,11 @@ import "../global.css";
 
 import { FunnyLoader } from "@/components/FunnyLoader";
 import { ThemeSync } from "@/components/ThemeSync";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import useInitApp from "@/hooks/useInitApp";
 import { store } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { Stack } from "expo-router";
-import { useTranslation } from "react-i18next";
-function CopilotLabelsWrapper({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation();
-
-  return (
-    <CopilotProvider
-      tooltipComponent={TourTooltip}
-      tooltipStyle={{
-        backgroundColor: "transparent",
-        boxShadow: "none",
-        margin: 0,
-        padding: 0,
-        borderRadius: 0,
-      }}
-      stepNumberComponent={() => null}
-      overlay="view"
-      animated={true}
-      labels={{
-        finish: t("copilot.finish"),
-        next: t("copilot.next"),
-        previous: t("copilot.previous"),
-        skip: t("copilot.skip"),
-      }}
-    >
-      {children}
-    </CopilotProvider>
-  );
-}
 
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
@@ -78,13 +47,8 @@ function RootLayoutNavigator() {
 
 function RootLayoutWithLanguageSupport() {
   // Listen to language changes from Redux to trigger re-renders
-  const { currentLanguage } = useAppSelector((state) => state.app);
 
-  return (
-    <CopilotLabelsWrapper key={currentLanguage}>
-      <RootLayoutNavigator />
-    </CopilotLabelsWrapper>
-  );
+  return <RootLayoutNavigator />;
 }
 
 export default function RootLayout() {
