@@ -334,7 +334,7 @@ const HomeScreen = () => {
                   className="text-xs font-black"
                   style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
                 >
-                  {t("home.scansRemaining", { count: 3 })}
+                  {t("home.scansRemaining", { count: creditRemaining })}
                 </Text>
               </Pressable>
             </View>

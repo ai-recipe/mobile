@@ -234,7 +234,7 @@ export const authSlice = createSlice({
       })
       .addCase(initDeviceAsync.fulfilled, (state, action) => {
         state.creditGrantType = action.payload?.grantType;
-        state.creditRemaining = action.payload?.credits?.remaining;
+        state.creditRemaining = action.payload?.credits;
         state.isNewUser = action.payload?.isNewUser;
         state.isNewDevice = action.payload?.isNewDevice;
         state.user = action.payload?.user;
