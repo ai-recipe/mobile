@@ -218,7 +218,7 @@ export function RecipeDetailModal({
             {recipe.nutrition && (
               <View className="mb-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3">
                 <Text className="text-zinc-500 text-xs font-bold mb-2">
-                  Besin Değerleri
+                  Nutrition Values
                 </Text>
                 <View className="flex-row justify-between">
                   <View className="items-center flex-1">
@@ -226,7 +226,7 @@ export function RecipeDetailModal({
                       {recipe.nutrition.calories ?? "—"}
                     </Text>
                     <Text className="text-zinc-500 text-[10px] font-semibold">
-                      Kalori
+                      Calories
                     </Text>
                   </View>
                   <View className="items-center flex-1">
@@ -246,7 +246,7 @@ export function RecipeDetailModal({
                         : "—"}
                     </Text>
                     <Text className="text-zinc-500 text-[10px] font-semibold">
-                      Karbonhidrat
+                      Carbs
                     </Text>
                   </View>
                   <View className="items-center flex-1">
@@ -256,7 +256,7 @@ export function RecipeDetailModal({
                         : "—"}
                     </Text>
                     <Text className="text-zinc-500 text-[10px] font-semibold">
-                      Yağ
+                      Fat
                     </Text>
                   </View>
                 </View>
@@ -280,7 +280,7 @@ export function RecipeDetailModal({
                       : "text-zinc-400 dark:text-zinc-500"
                   }`}
                 >
-                  Malzemeler
+                  Ingredients
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -298,7 +298,7 @@ export function RecipeDetailModal({
                       : "text-zinc-400 dark:text-zinc-500"
                   }`}
                 >
-                  Hazırlanış
+                  Preparation
                 </Text>
               </TouchableOpacity>
             </View>

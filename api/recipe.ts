@@ -76,13 +76,13 @@ export interface RecipeSuggestion {
   tip: string;
 }
 
-export interface RecipeDiscoverResponse {
-  data: {
-    requestId: string;
-    recipes: RecipeFromAPI[];
-    suggestions: RecipeSuggestion;
-    processingTimeMs: number;
-  };
+export interface RecipeDiscoverJobResponse {
+  data: { requestId: string };
+}
+
+export interface RecipeDiscoverSocketPayload {
+  requestId: string;
+  recipes: RecipeFromAPI[];
 }
 
 export interface DiscoverRecipesParams {
@@ -103,13 +103,13 @@ export interface AnalyseImageParams {
 
 export async function discoverRecipes(
   params: DiscoverRecipesParams,
-): Promise<RecipeDiscoverResponse> {
-  const response = await api.post<RecipeDiscoverResponse>(
+): Promise<{ requestId: string }> {
+  const response = await api.post<RecipeDiscoverJobResponse>(
     "/recipes/discover",
     params,
   );
 
-  return response.data;
+  return response.data.data;
 }
 
 export async function fetchRecipeList(params: {

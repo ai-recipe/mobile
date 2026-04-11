@@ -16,9 +16,6 @@ import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { ExploreSkeleton } from "./components/ExploreSkeleton";
 
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
-
 const ExploreScreen = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -134,7 +131,7 @@ const ExploreScreen = () => {
         ) : (
           <FlatList
             data={currentRecipes}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item?._id}
             numColumns={2}
             columnWrapperStyle={{ paddingHorizontal: 20, gap: 16 }}
             showsVerticalScrollIndicator={false}
@@ -155,7 +152,8 @@ const ExploreScreen = () => {
                   <View className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 rounded-full flex-row items-center">
                     <MaterialIcons name="timer" size={10} color="#f39849" />
                     <Text className="text-[#f39849] font-black text-[10px] ml-1">
-                      {item.totalTimeMinutes} {t("explore.mins")}
+                      {item.prepTimeMinutes + item.cookTimeMinutes}{" "}
+                      {t("explore.mins")}
                     </Text>
                   </View>
                 </View>
@@ -174,7 +172,9 @@ const ExploreScreen = () => {
                         color="#f39849"
                       />
                       <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold ml-1">
-                        {item.difficulty}
+                        {t(`difficulty.${item.difficulty}`, {
+                          defaultValue: item.difficulty,
+                        })}
                       </Text>
                     </View>
                     <Text className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold">
@@ -193,7 +193,7 @@ const ExploreScreen = () => {
             visible={modalVisible}
             onClose={handleCloseModal}
             recipe={selectedRecipe}
-            baseImageUri={selectedRecipe.imageUrl || PLACEHOLDER_IMAGE}
+            baseImageUri={selectedRecipe.imageUrl}
           />
         )}
       </TabScreenWrapper>

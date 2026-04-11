@@ -2,12 +2,31 @@ import {
   addFavorite,
   discoverRecipes,
   RecipeFromAPI,
+  RecipeDiscoverSocketPayload,
   removeFavorite,
   type RecipeSuggestion,
 } from "@/api/recipe";
-import { scanImage as scanImageAPI } from "@/api/scanImage";
+import { uploadImageForRecognition, DetectedIngredient } from "@/api/scanImage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { io, Socket } from "socket.io-client";
 import { setStep } from "./multiStepFormSlice";
+
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3001/api/v1/";
+const SOCKET_SERVER = API_BASE.replace(/\/api\/v1\/?$/, "").replace(/\/$/, "");
+
+let _recognitionSocket: Socket | null = null;
+let _recipesSocket: Socket | null = null;
+
+export const disconnectRecognition = () => {
+  _recognitionSocket?.disconnect();
+  _recognitionSocket = null;
+};
+
+export const disconnectRecipes = () => {
+  _recipesSocket?.disconnect();
+  _recipesSocket = null;
+};
 
 // Enum for app step states
 export enum AppStep {
@@ -45,26 +64,64 @@ const initialState: RecipeState = {
   scannedIngredients: [],
 };
 
-// Async thunk for scanning image
+// Async thunk for scanning image — socket-based, no polling
 export const scanImage = createAsyncThunk(
   "recipe/scanImage",
   async (imageUri: string, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await scanImageAPI({ imageUri });
+    const token = await AsyncStorage.getItem("token");
 
-      dispatch(setStep(1));
-      dispatch(setAppStep(AppStep.IngredientsSelection));
-      return response.ingredients;
-    } catch (error) {
-      console.log(error?.response?.data?.message);
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Tarama başarısız",
+    return new Promise<string[]>((resolve, reject) => {
+      const socket = io(`${SOCKET_SERVER}/recognition`, {
+        transports: ["websocket", "polling"],
+        auth: { token },
+      });
+      _recognitionSocket = socket;
+
+      socket.on("connect", async () => {
+        try {
+          const { jobId } = await uploadImageForRecognition(imageUri);
+          socket.emit("subscribe:recognition", { jobId });
+        } catch (err: any) {
+          socket.disconnect();
+          _recognitionSocket = null;
+          const backendMessage = err?.response?.data?.error?.message;
+          const statusCode = err?.response?.data?.error?.statusCode;
+          if (statusCode === 400 && err?.response?.data?.error?.errorCode) {
+            reject(new Error(backendMessage ?? "Kota aşıldı veya servis hatası"));
+          } else {
+            reject(new Error(err?.message ?? backendMessage ?? "Görüntü tarama başarısız, tekrar deneyin"));
+          }
+        }
+      });
+
+      socket.on(
+        "recognition:completed",
+        (data: { jobId: string; detectionResults: DetectedIngredient[] }) => {
+          socket.disconnect();
+          _recognitionSocket = null;
+          dispatch(setStep(1));
+          resolve(data.detectionResults?.map((ing) => ing.ingredientName) ?? []);
+        },
       );
-    }
+
+      socket.on("recognition:error", (data: { message: string }) => {
+        socket.disconnect();
+        _recognitionSocket = null;
+        reject(new Error(data.message));
+      });
+
+      socket.on("connect_error", (err: Error) => {
+        socket.disconnect();
+        _recognitionSocket = null;
+        reject(err);
+      });
+    }).catch((err) =>
+      rejectWithValue(err instanceof Error ? err.message : "Tarama başarısız"),
+    ) as Promise<string[]>;
   },
 );
 
-// Async thunk for fetching recipes
+// Async thunk for fetching recipes — socket-based, no blocking HTTP
 export const discoverRecipesAsync = createAsyncThunk(
   "recipe/discoverRecipesAsync",
   async (
@@ -73,19 +130,64 @@ export const discoverRecipesAsync = createAsyncThunk(
       maxPrepTime: number;
       dietaryPreferences: string[];
     },
-    { rejectWithValue, dispatch },
+    { rejectWithValue },
   ) => {
-    try {
-      const response = await discoverRecipes({
-        ingredients: params.ingredients,
-        maxPrepTime: params.maxPrepTime,
-        dietaryPreferences: params.dietaryPreferences,
-      });
-      dispatch(setAppStep(AppStep.Results));
-      return response?.data;
-    } catch (error: any) {
-      return rejectWithValue(error?.response?.data.message);
-    }
+    const token = await AsyncStorage.getItem("token");
+
+    return new Promise<{ recipes: RecipeFromAPI[]; suggestions: RecipeSuggestion | null }>(
+      (resolve, reject) => {
+        const socket = io(`${SOCKET_SERVER}/recipes`, {
+          transports: ["websocket", "polling"],
+          auth: { token },
+        });
+        _recipesSocket = socket;
+
+        const timeout = setTimeout(() => {
+          socket.disconnect();
+          _recipesSocket = null;
+          reject(new Error("Tarif oluşturma zaman aşımına uğradı, tekrar deneyin"));
+        }, 120_000);
+
+        socket.on("connect", async () => {
+          try {
+            const { requestId } = await discoverRecipes({
+              ingredients: params.ingredients,
+              maxPrepTime: params.maxPrepTime,
+              dietaryPreferences: params.dietaryPreferences,
+            });
+            socket.emit("subscribe:recipes", { requestId });
+          } catch (err: any) {
+            clearTimeout(timeout);
+            socket.disconnect();
+            _recipesSocket = null;
+            reject(new Error(err?.response?.data?.message ?? err?.message ?? "Tarif oluşturulamadı"));
+          }
+        });
+
+        socket.on("recipes:completed", (data: RecipeDiscoverSocketPayload) => {
+          clearTimeout(timeout);
+          socket.disconnect();
+          _recipesSocket = null;
+          resolve({ recipes: data.recipes, suggestions: null });
+        });
+
+        socket.on("recipes:error", (data: { message: string }) => {
+          clearTimeout(timeout);
+          socket.disconnect();
+          _recipesSocket = null;
+          reject(new Error(data.message));
+        });
+
+        socket.on("connect_error", (err: Error) => {
+          clearTimeout(timeout);
+          socket.disconnect();
+          _recipesSocket = null;
+          reject(err);
+        });
+      },
+    ).catch((err) =>
+      rejectWithValue(err instanceof Error ? err.message : "Tarif oluşturulamadı"),
+    ) as Promise<{ recipes: RecipeFromAPI[]; suggestions: RecipeSuggestion | null }>;
   },
 );
 
@@ -131,6 +233,8 @@ export const recipeSlice = createSlice({
       }
     },
     resetRecipeState: (state) => {
+      disconnectRecognition();
+      disconnectRecipes();
       state.appStep = AppStep.StepScan;
       state.recipes = [];
       state.suggestions = null;

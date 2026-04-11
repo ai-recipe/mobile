@@ -334,7 +334,7 @@ const HomeScreen = () => {
                   className="text-xs font-black"
                   style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
                 >
-                  {t("home.scansRemaining", { count: creditRemaining })}
+                  {t("home.scansRemaining", { count: 3 })}
                 </Text>
               </Pressable>
             </View>
@@ -353,8 +353,8 @@ const HomeScreen = () => {
                 color="#f39849"
               />
               <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex-1 ml-2">
-                SlayCal Pro'yu dene —{" "}
-                <Text className="text-[#f39849]">Planları Görüntüle</Text>
+                Try SlayCal Pro —{" "}
+                <Text className="text-[#f39849]">View Plans</Text>
               </Text>
               <Pressable
                 onPress={(e) => {

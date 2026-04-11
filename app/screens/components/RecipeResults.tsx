@@ -27,9 +27,6 @@ import { addFoodLogAsync } from "@/store/slices/dailyLogsSlice";
 import { resetRecipeState } from "@/store/slices/recipeSlice";
 import { RecipeDetailModal } from "./RecipeDetailModal";
 
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop";
-
 interface RecipeResultsProps {
   direction?: "forward" | "backward";
 }
@@ -120,9 +117,7 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
               {/* Image Section */}
               <View className="h-48 relative">
                 <Image
-                  source={{
-                    uri: item.imageUrl || baseImageUri || PLACEHOLDER_IMAGE,
-                  }}
+                  source={require("@/assets/images/food_placeholder.jpg")}
                   className="w-full h-full object-cover"
                 />
                 {(item.prepTimeMinutes != null ||
