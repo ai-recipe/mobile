@@ -1,40 +1,42 @@
 {
   "expo": {
-    "name": "myapp",
-    "slug": "myapp",
+    "name": "SlayCal",
+    "description": "SlayCal is an AI-powered calorie tracker that helps you track your calories and improve your health.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "myapp",
+    "scheme": "slaycalai",
     "platforms": ["ios", "android"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "appleTeamId": "MZC4RF3T88",
-      "bundleIdentifier": "com.myapp",
-      "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Uygulama, yemek tarifleri oluşturmak için seçtiğiniz malzemelerin fotoğraflarına erişir.",
-        "NSCameraUsageDescription": "This app uses your camera to scan and identify meals.",
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true,
-          "NSAllowsLocalNetworking": true
-        },
-        "ITSAppUsesNonExemptEncryption": false
-      }
-    },
+
+    "owner": "mirrorbitai",
+    "slug": "slaycalai",
     "android": {
+      "package": "com.slaycal.android",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.png",
         "backgroundImage": "./assets/images/logo.png",
         "monochromeImage": "./assets/images/logo.png"
       },
-      "package": "com.myapp",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ]
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.slaycal.ios",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "SlayCal uses your camera to scan and identify meals.",
+        "NSCameraUsageDescription": "SlayCal uses your camera to scan and identify meals.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSAllowsLocalNetworking": true
+        },
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-localization",
@@ -65,24 +67,18 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Uygulama, tarif oluşturmak için galerinize erişim ister.",
-          "cameraPermission": "Uygulama, malzemeleri taramak için kameranızı kullanır."
+          "photosPermission": "SlayCal uses your camera to scan and identify meals.",
+          "cameraPermission": "SlayCal uses your camera to scan and identify meals."
         }
       ],
       "@react-native-community/datetimepicker",
       "expo-dev-client"
     ],
+
     "extra": {
       "eas": {
-        "projectId": "0af9548a-c546-434a-8e8f-74b6717f880a"
+        "projectId": "89379433-4b00-4065-b017-2977411a7be3"
       }
-    },
-    "owner": "myapp",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/0af9548a-c546-434a-8e8f-74b6717f880a"
     }
   }
 }
