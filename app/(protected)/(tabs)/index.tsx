@@ -24,6 +24,7 @@ import {
   openMealModal,
   openSoftPaywall,
 } from "@/store/slices/modalSlice";
+import { fetchQuotaAsync } from "@/store/slices/authSlice";
 import {
   addWaterIntakeAsync,
   deleteWaterIntakeAsync,
@@ -73,7 +74,7 @@ const HomeScreen = () => {
     isLoading: waterLoading,
     isAdding: waterAdding,
   } = useAppSelector((state) => state.waterLogs);
-  const { creditRemaining, creditGrantType } = useAppSelector(
+  const { creditRemaining, creditGrantType, scanLimit } = useAppSelector(
     (state) => state.auth,
   );
   const { mealModalOpen, softPaywallOpen } = useAppSelector(
@@ -88,8 +89,8 @@ const HomeScreen = () => {
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
 
-  // Free-tier users have a creditGrantType (anonymous device credits)
-  const isFreeUser = creditGrantType !== null && creditRemaining !== null;
+  // Show scan badge for any user with a limited quota (creditRemaining !== null means limited)
+  const isFreeUser = creditRemaining !== null;
   const creditsLow = creditRemaining !== null && creditRemaining <= 1;
   const creditsEmpty = creditRemaining !== null && creditRemaining <= 0;
 
@@ -139,6 +140,7 @@ const HomeScreen = () => {
       dispatch(setDate(format(selectedDate, "yyyy-MM-dd")));
       dispatch(fetchFoodLogsAsync());
       dispatch(fetchWaterIntakeAsync());
+      dispatch(fetchQuotaAsync());
     }, [selectedDate, dispatch]),
   );
 
@@ -334,7 +336,12 @@ const HomeScreen = () => {
                   className="text-xs font-black"
                   style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
                 >
-                  {t("home.scansRemaining", { count: creditRemaining })}
+                  {scanLimit != null
+                    ? t("home.scansRemainingOf", {
+                        remaining: creditRemaining ?? 0,
+                        total: scanLimit,
+                      })
+                    : t("home.scansRemaining", { count: creditRemaining ?? 0 })}
                 </Text>
               </Pressable>
             </View>

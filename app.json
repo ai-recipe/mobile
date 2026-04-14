@@ -5,29 +5,29 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "slaycalai",
+    "scheme": "slaycal",
     "platforms": ["ios", "android"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
 
     "owner": "mirrorbitai",
-    "slug": "slaycalai",
+    "slug": "slaycal",
     "android": {
       "package": "com.slaycal.android",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.png",
         "backgroundImage": "./assets/images/logo.png",
         "monochromeImage": "./assets/images/logo.png"
       },
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.CAMERA"]
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.slaycal.ios",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "SlayCal uses your camera to scan and identify meals.",
         "NSCameraUsageDescription": "SlayCal uses your camera to scan and identify meals.",
@@ -72,6 +72,8 @@
         }
       ],
       "@react-native-community/datetimepicker",
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin",
       "expo-dev-client"
     ],
 

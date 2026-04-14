@@ -142,10 +142,10 @@ export default function MealScannerScreen() {
       });
 
       const uri = photo.path;
-      dispatch(decrementCredit());
       dispatch(setCapturedPhotoUri(uri));
       await dispatch(startScanAsync(uri)).unwrap();
-      // Upload succeeded; pending entry is in daily log. Navigate to home immediately.
+      // Upload succeeded; decrement optimistically and navigate to home.
+      dispatch(decrementCredit());
       router.navigate("/(protected)/(tabs)/");
     } catch (e) {
       console.error("[MealScanner] Take photo / upload error:", e);

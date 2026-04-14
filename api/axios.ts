@@ -1,16 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import type { AppDispatch } from "@/store";
-import { initDeviceAsync } from "@/store/slices/authSlice";
+import { initDeviceAsync, logout } from "@/store/slices/authSlice";
 
 let _dispatch: AppDispatch | undefined;
+let _getUserType: (() => string | undefined) | undefined;
 
 export function injectDispatch(dispatch: AppDispatch) {
   _dispatch = dispatch;
 }
 
+export function injectGetUserType(fn: () => string | undefined) {
+  _getUserType = fn;
+}
+
 export const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3001/api/v1/",
+  baseURL: "http://10.0.2.2:3001/api/v1/",
   timeout: 60000,
   headers: {
     "Content-Type": "application/json",
@@ -57,8 +62,14 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      const userType = _getUserType?.();
       if (_dispatch) {
-        _dispatch(initDeviceAsync());
+        if (userType === "registered") {
+          await AsyncStorage.removeItem("token");
+          _dispatch(logout());
+        } else {
+          _dispatch(initDeviceAsync());
+        }
       }
 
       return Promise.reject(error);

@@ -1,6 +1,7 @@
 import AuthService from "@/api/auth";
 import SurveyService from "@/api/survey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as Application from "expo-application";
 import { router } from "expo-router";
@@ -8,9 +9,10 @@ import { Platform } from "react-native";
 
 interface User {
   id: string;
-  email: string;
+  email?: string;
   firstName?: string;
   lastName?: string;
+  userType?: string;
 }
 
 interface UserPreferences {
@@ -47,15 +49,20 @@ interface AuthState {
   preferences: UserPreferences | null;
   surveyQuestions: SurveyQuestion[];
   isAuthenticated: boolean;
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   creditGrantType: string | null;
   creditRemaining: number | null;
+  scanLimit: number | null;
+  scanTier: string | null;
   isNewUser: boolean;
   isNewDevice: boolean;
   isOnboarded: boolean;
   isOnboardingStateLoaded: boolean;
   isLoginLoading: boolean;
   isRegisterLoading: boolean;
+  isGoogleLoading: boolean;
+  isAppleLoading: boolean;
   isInitDeviceLoading: boolean;
   isPreferencesLoading: boolean;
   isSurveyQuestionsLoading: boolean;
@@ -68,22 +75,30 @@ const initialState: AuthState = {
   preferences: null,
   surveyQuestions: [],
   isAuthenticated: false,
-  token: null,
+  accessToken: null,
+  refreshToken: null,
   creditGrantType: null,
   creditRemaining: null,
+  scanLimit: null,
+  scanTier: null,
   isNewUser: false,
   isNewDevice: false,
   isOnboarded: false,
   isOnboardingStateLoaded: false,
   isLoginLoading: false,
   isRegisterLoading: false,
+  isGoogleLoading: false,
+  isAppleLoading: false,
   isInitDeviceLoading: false,
   isPreferencesLoading: false,
   isSurveyQuestionsLoading: false,
   isSurveySubmitting: false,
   error: null,
 };
-
+GoogleSignin.configure({
+  webClientId:
+    "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
+});
 export const fetchUserPreferencesAsync = createAsyncThunk(
   "auth/fetchUserPreferences",
   async (_, { rejectWithValue, dispatch }) => {
@@ -140,6 +155,13 @@ export const initDeviceAsync = createAsyncThunk(
   "auth/initDevice",
   async (_, { dispatch, rejectWithValue }) => {
     try {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      const refreshToken = await AsyncStorage.getItem("refreshToken");
+      console.log("accessToken", accessToken);
+      console.log("refreshToken", refreshToken);
+      if (accessToken && refreshToken) {
+        return { accessToken, refreshToken };
+      }
       let deviceId: string;
       if (Platform.OS === "ios") {
         deviceId = (await Application.getIosIdForVendorAsync()) || "unknown";
@@ -156,11 +178,8 @@ export const initDeviceAsync = createAsyncThunk(
       });
       const data = response.data?.data;
       if (data?.anonymousToken) {
-        await AsyncStorage.setItem("token", data.anonymousToken);
+        await AsyncStorage.setItem("accessToken", data.anonymousToken);
       }
-
-      // Dispatch preferences after init completes
-      await dispatch(fetchUserPreferencesAsync());
 
       return data;
     } catch (error: any) {
@@ -171,17 +190,37 @@ export const initDeviceAsync = createAsyncThunk(
   },
 );
 
+export const loginWithEmailAsync = createAsyncThunk(
+  "auth/loginWithEmail",
+  async (data: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.loginWithEmailAPI(data);
+      const { accessToken, refreshToken, user } = response.data.data;
+      await AsyncStorage.setItem("accessToken", accessToken);
+      return { accessToken, refreshToken, user };
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error?.message || "Giriş başarısız",
+      );
+    }
+  },
+);
+
 export const registerWithEmailAsync = createAsyncThunk(
   "auth/registerWithEmail",
   async (data: any, { rejectWithValue }) => {
     try {
+      console.log("data", data);
       const response = await AuthService.registerWithEmailAPI(data);
-      const { token, user } = response.data;
-      await AsyncStorage.setItem("token", token);
-      return { token, user };
+      console.log("response", response);
+      const { accessToken, refreshToken, user } = response.data.data;
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
+      return { accessToken, refreshToken, user };
     } catch (error: any) {
+      console.log("error", JSON.stringify(error, null, 2));
       return rejectWithValue(
-        error.response?.data?.message || "Kayıt başarısız",
+        error.response?.data?.error?.message || "Kayıt başarısız",
       );
     }
   },
@@ -192,12 +231,107 @@ export const logoutAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await AuthService.logoutAPI();
-      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
     } catch (error: any) {
       // Even if API fails, we should clear local token
-      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
       return rejectWithValue(
         error.response?.data?.message || "Çıkış yapılırken bir hata oluştu",
+      );
+    }
+  },
+);
+
+export const loginWithGoogleAsync = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log(
+        "GoogleSignin",
+        JSON.stringify(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID, null, 2),
+      );
+
+      const response = (await GoogleSignin.signIn({
+        loginHint: "test@test.com",
+      })) as any;
+      const googleResponse = await AuthService.loginWithGoogleAPI({
+        idToken: response.data.idToken,
+      });
+      await AsyncStorage.setItem(
+        "accessToken",
+        googleResponse.data.data.accessToken,
+      );
+      await AsyncStorage.setItem(
+        "refreshToken",
+        googleResponse.data.data.refreshToken,
+      );
+
+      return googleResponse.data?.data;
+    } catch (error: any) {
+      console.log("error", JSON.stringify(error, null, 2));
+      return rejectWithValue(
+        error.response?.data?.error?.message ||
+          error.message ||
+          "Google sign-in failed",
+      );
+    }
+  },
+);
+
+export const loginWithAppleAsync = createAsyncThunk(
+  "auth/loginWithApple",
+  async (_, { rejectWithValue }) => {
+    try {
+      const AppleAuthentication = await import("expo-apple-authentication");
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (!credential.identityToken) {
+        return rejectWithValue(
+          "Apple sign-in did not return an identity token",
+        );
+      }
+      const apiResponse = await AuthService.loginWithAppleAPI({
+        identityToken: credential.identityToken,
+        fullName: credential.fullName
+          ? {
+              givenName: credential.fullName.givenName ?? undefined,
+              familyName: credential.fullName.familyName ?? undefined,
+            }
+          : undefined,
+        email: credential.email ?? undefined,
+      });
+      const { accessToken, refreshToken, user } = apiResponse.data.data;
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
+      return { accessToken, refreshToken, user };
+    } catch (error: any) {
+      if (error.code === "ERR_REQUEST_CANCELED") {
+        return rejectWithValue("cancelled");
+      }
+      return rejectWithValue(
+        error.response?.data?.error?.message ||
+          error.message ||
+          "Apple sign-in failed",
+      );
+    }
+  },
+);
+
+export const fetchQuotaAsync = createAsyncThunk(
+  "auth/fetchQuota",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.fetchQuotaAPI();
+      return response.data?.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Kota bilgisi alınamadı",
       );
     }
   },
@@ -219,9 +353,22 @@ export const authSlice = createSlice({
         state.creditRemaining -= 1;
       }
     },
+    setRemainingScans: (
+      state,
+      action: PayloadAction<{
+        remaining: number | null;
+        limit: number | null;
+        tier: string | null;
+      }>,
+    ) => {
+      state.creditRemaining = action.payload.remaining;
+      state.scanLimit = action.payload.limit;
+      state.scanTier = action.payload.tier;
+    },
     logout: (state) => {
       state.isAuthenticated = false;
-      state.token = null;
+      state.accessToken = null;
+      state.refreshToken = null;
       state.user = null;
       state.preferences = null;
     },
@@ -234,12 +381,15 @@ export const authSlice = createSlice({
       })
       .addCase(initDeviceAsync.fulfilled, (state, action) => {
         state.creditGrantType = action.payload?.grantType;
-        state.creditRemaining = action.payload?.credits;
+        state.creditRemaining = action.payload?.credits ?? null;
+        state.scanLimit = action.payload?.scanLimit ?? null;
+        state.scanTier = action.payload?.tier ?? null;
         state.isNewUser = action.payload?.isNewUser;
         state.isNewDevice = action.payload?.isNewDevice;
         state.user = action.payload?.user;
-        state.token = action.payload?.anonymousToken;
-        state.isAuthenticated = true;
+        state.accessToken = action.payload?.anonymousToken;
+        state.refreshToken = action.payload?.refreshToken;
+        state.isAuthenticated = action.payload?.refreshToken ? true : false;
         state.isInitDeviceLoading = false;
       })
       .addCase(initDeviceAsync.rejected, (state) => {
@@ -277,11 +427,112 @@ export const authSlice = createSlice({
       })
       .addCase(submitSurveyAsync.rejected, (state) => {
         state.isSurveySubmitting = false;
+      })
+      // Fetch Quota
+      .addCase(fetchQuotaAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.creditRemaining = action.payload.remaining ?? null;
+          state.scanLimit = action.payload.limit ?? null;
+          state.scanTier = action.payload.tier ?? null;
+        }
+      })
+      // Login with Email
+      .addCase(loginWithEmailAsync.pending, (state) => {
+        state.isLoginLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithEmailAsync.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        state.isLoginLoading = false;
+        state.error = null;
+      })
+      .addCase(loginWithEmailAsync.rejected, (state, action) => {
+        state.isLoginLoading = false;
+        state.error = action.payload as string;
+      })
+      // Register with Email
+      .addCase(registerWithEmailAsync.pending, (state) => {
+        state.isRegisterLoading = true;
+        state.error = null;
+      })
+      .addCase(registerWithEmailAsync.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        state.isRegisterLoading = false;
+        state.error = null;
+      })
+      .addCase(registerWithEmailAsync.rejected, (state, action) => {
+        state.isRegisterLoading = false;
+        state.error = action.payload as string;
+      })
+      // Login with Google
+      .addCase(loginWithGoogleAsync.pending, (state) => {
+        state.isGoogleLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithGoogleAsync.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        state.isGoogleLoading = false;
+        state.error = null;
+      })
+      .addCase(loginWithGoogleAsync.rejected, (state, action) => {
+        state.isGoogleLoading = false;
+        state.error = action.payload as string;
+      })
+      // Login with Apple
+      .addCase(loginWithAppleAsync.pending, (state) => {
+        state.isAppleLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithAppleAsync.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        state.isAppleLoading = false;
+        state.error = null;
+      })
+      .addCase(loginWithAppleAsync.rejected, (state, action) => {
+        state.isAppleLoading = false;
+        if (action.payload !== "cancelled") {
+          state.error = action.payload as string;
+        }
+      })
+      // Logout
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.user = null;
+        state.preferences = null;
+        state.error = null;
+        router.replace("/(public)/screens/login");
+      })
+      .addCase(logoutAsync.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.user = null;
+        state.preferences = null;
+        state.error = null;
       });
   },
 });
 
-export const { logout, setIsOnboarded, setAuthenticated, decrementCredit } =
-  authSlice.actions;
+export const {
+  logout,
+  setIsOnboarded,
+  setAuthenticated,
+  decrementCredit,
+  setRemainingScans,
+} = authSlice.actions;
 
 export default authSlice.reducer;

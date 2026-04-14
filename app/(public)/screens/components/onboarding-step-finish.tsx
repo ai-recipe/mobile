@@ -31,7 +31,7 @@ export const OnboardingStepFinish = ({
       return;
     }
 
-    router.replace("/screens/survey");
+    router.replace("/(public)/screens/login");
     dispatch(setIsOnboarded(true));
   };
   return (

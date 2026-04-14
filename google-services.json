@@ -12,7 +12,20 @@
           "package_name": "com.slaycal.android"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1029242653801-86b5qb6bf7gpfm7tdukmq0mag4n944vo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.slaycal.android",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBPt8WZkBd7634h3W7YKEmcfbiVm5X52kM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

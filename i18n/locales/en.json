@@ -54,7 +54,8 @@
   },
   "home": {
     "title": "Home",
-    "scansRemaining": "{{count}} Scans",
+    "scansRemaining": "{{count}} scans left",
+    "scansRemainingOf": "{{remaining}} / {{total}} scans",
     "proTrial": "Try SlayCal Pro — View Plans",
     "mealActivity": "Meal Activity",
     "waterActivity": "Water Activity",
@@ -116,7 +117,8 @@
     "languageTitle": "Language",
     "themeLight": "Light",
     "themeDark": "Dark",
-    "themeSystem": "System (device)"
+    "themeSystem": "System (device)",
+    "logout": "Log Out"
   },
   "scanner": {
     "takePhoto": "Take Photo",
@@ -267,7 +269,14 @@
     "passwordRequired": "Password is required",
     "passwordMinLength": "Password must be at least 6 characters",
     "confirmPasswordRequired": "Confirm password is required",
-    "passwordsMustMatch": "Passwords do not match"
+    "passwordsMustMatch": "Passwords do not match",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "googleLoginFailed": "Google sign-in failed. Please try again.",
+    "appleLoginFailed": "Apple sign-in failed. Please try again.",
+    "accountLinked": "Your account has been linked successfully.",
+    "providerAlreadyLinked": "This account is already linked."
   },
   "aiScan": {
     "title": "Scan",

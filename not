@@ -59,3 +59,8 @@ dependencies {
 }
 By using the Firebase Android BoM, your app will always use compatible Firebase library versions. Learn more
 After adding the plugin and the desired SDKs, sync your Android project with Gradle files.
+
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+
+https://stackoverflow.com/questions/79175221/expo-eas-googlesignin-developer-error-code-10

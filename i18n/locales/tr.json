@@ -54,7 +54,8 @@
   },
   "home": {
     "title": "Ana Sayfa",
-    "scansRemaining": "{{count}} Tarama",
+    "scansRemaining": "{{count}} tarama kaldı",
+    "scansRemainingOf": "{{remaining}} / {{total}} tarama",
     "proTrial": "SlayCal Pro'yu dene — Planları Görüntüle",
     "mealActivity": "Yemek Takibi",
     "waterActivity": "Su Takibi",
@@ -116,7 +117,8 @@
     "languageTitle": "Dil Seçimi",
     "themeLight": "Açık",
     "themeDark": "Koyu",
-    "themeSystem": "Sistem (cihaz)"
+    "themeSystem": "Sistem (cihaz)",
+    "logout": "Çıkış Yap"
   },
   "scanner": {
     "takePhoto": "Fotoğraf Çek",
@@ -267,7 +269,14 @@
     "passwordRequired": "Şifre alanı zorunludur",
     "passwordMinLength": "Şifre en az 6 karakter olmalıdır",
     "confirmPasswordRequired": "Şifre tekrar alanı zorunludur",
-    "passwordsMustMatch": "Şifreler eşleşmiyor"
+    "passwordsMustMatch": "Şifreler eşleşmiyor",
+    "or": "veya",
+    "continueWithGoogle": "Google ile devam et",
+    "continueWithApple": "Apple ile devam et",
+    "googleLoginFailed": "Google ile giriş başarısız. Lütfen tekrar deneyin.",
+    "appleLoginFailed": "Apple ile giriş başarısız. Lütfen tekrar deneyin.",
+    "accountLinked": "Hesabınız başarıyla bağlandı.",
+    "providerAlreadyLinked": "Bu hesap zaten bağlı."
   },
   "aiScan": {
     "title": "Ürünleri",

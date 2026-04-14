@@ -28,6 +28,22 @@ class AuthService {
       appVersion,
     });
   }
+
+  public loginWithGoogleAPI(data: { idToken: string }) {
+    return api.post("/auth/google", data);
+  }
+
+  public loginWithAppleAPI(data: {
+    identityToken: string;
+    fullName?: { givenName?: string; familyName?: string };
+    email?: string;
+  }) {
+    return api.post("/auth/apple", data);
+  }
+
+  public fetchQuotaAPI() {
+    return api.get("/auth/me/quota");
+  }
 }
 
 export default new AuthService();

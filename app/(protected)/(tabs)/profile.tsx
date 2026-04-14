@@ -3,6 +3,7 @@ import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
+import { logoutAsync } from "@/store/slices/authSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -12,6 +13,8 @@ import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
+  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -46,12 +49,29 @@ const ProfileScreen = () => {
     setThemeModalVisible(false);
   };
 
+  const [loggingOut, setLoggingOut] = useState(false);
+
   const handleSelectLanguage = async (lang: string) => {
     if (lang === currentLanguage) return;
     await AsyncStorage.setItem("CURRENT_LANGUAGE", lang);
     i18n.changeLanguage(lang);
     dispatch(setCurrentLanguage(lang));
     setLanguageModalVisible(false);
+  };
+
+  const handleLogout = () => {
+    Alert.alert(t("profile.logout"), t("profile.logoutDescription"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("profile.logout"),
+        style: "destructive",
+        onPress: async () => {
+          setLoggingOut(true);
+          await dispatch(logoutAsync());
+          setLoggingOut(false);
+        },
+      },
+    ]);
   };
 
   return (
@@ -110,6 +130,23 @@ const ProfileScreen = () => {
             label={t("profile.aiChef")}
             onPress={() => router.push("/screens/ai-chef" as any)}
           />
+
+          <TouchableOpacity
+            onPress={handleLogout}
+            disabled={loggingOut}
+            className="flex-row items-center justify-center p-4 mt-4 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-100 dark:border-red-500/20"
+          >
+            {loggingOut ? (
+              <ActivityIndicator size="small" color="#ef4444" />
+            ) : (
+              <>
+                <MaterialIcons name="logout" size={22} color="#ef4444" />
+                <Text className="ml-3 font-bold text-red-500">
+                  {t("profile.logout")}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       </ScrollView>
 

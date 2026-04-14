@@ -1,12 +1,10 @@
 import { AppDispatch } from "@/store";
-import { initI18n } from "@/store/slices/appSlice";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import i18n from "@/i18n";
 
 const THEME_STORAGE_KEY = "appTheme";
 

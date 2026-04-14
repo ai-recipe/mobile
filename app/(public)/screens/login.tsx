@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setAuthenticated } from "@/store/slices/authSlice";
+import {
+  loginWithEmailAsync,
+  loginWithGoogleAsync,
+  loginWithAppleAsync,
+} from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
@@ -30,7 +34,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const { isLoginLoading, error: authError } = useAppSelector(
+  const { isLoginLoading, isGoogleLoading, isAppleLoading } = useAppSelector(
     (state) => state.auth,
   );
 
@@ -60,10 +64,6 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      dispatch(setAuthenticated(true));
-      router.replace("/(protected)/(tabs)");
-      return;
-      /*
       const resultAction = await dispatch(loginWithEmailAsync(data));
       if (loginWithEmailAsync.fulfilled.match(resultAction)) {
         router.replace("/(protected)/(tabs)");
@@ -71,9 +71,32 @@ export default function LoginScreen() {
         const message = resultAction.payload as string;
         Alert.alert(t("auth.error"), message || t("auth.loginFailed"));
       }
-      */
     } catch (err) {
       Alert.alert(t("auth.error"), t("auth.somethingWentWrong"));
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const resultAction = await dispatch(loginWithGoogleAsync());
+    if (loginWithGoogleAsync.fulfilled.match(resultAction)) {
+      router.replace("/(protected)/(tabs)");
+    } else {
+      const message = resultAction.payload as string;
+      if (message !== "cancelled") {
+        Alert.alert(t("auth.error"), message || t("auth.googleLoginFailed"));
+      }
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    const resultAction = await dispatch(loginWithAppleAsync());
+    if (loginWithAppleAsync.fulfilled.match(resultAction)) {
+      router.replace("/(protected)/(tabs)");
+    } else {
+      const message = resultAction.payload as string;
+      if (message !== "cancelled") {
+        Alert.alert(t("auth.error"), message || t("auth.appleLoginFailed"));
+      }
     }
   };
 
@@ -213,6 +236,69 @@ export default function LoginScreen() {
                   </Text>
                 )}
               </TouchableOpacity>
+
+              {/* OR Divider */}
+              <View className="flex-row items-center my-5">
+                <View className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+                <Text className="text-zinc-400 dark:text-zinc-500 text-sm font-medium mx-4 uppercase">
+                  {t("auth.or")}
+                </Text>
+                <View className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
+              </View>
+
+              {/* Google Button */}
+              <TouchableOpacity
+                onPress={handleGoogleLogin}
+                activeOpacity={0.8}
+                disabled={isGoogleLoading}
+                className={`w-full h-14 rounded-full flex-row items-center justify-center mb-3 border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 ${
+                  isGoogleLoading ? "opacity-70" : ""
+                }`}
+              >
+                {isGoogleLoading ? (
+                  <ActivityIndicator color="#f39849" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons
+                      name="google"
+                      size={20}
+                      color="#DB4437"
+                    />
+                    <Text className="text-zinc-900 dark:text-white font-bold text-[15px] ml-2">
+                      {t("auth.continueWithGoogle")}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              {/* Apple Button (iOS only) */}
+              {Platform.OS === "ios" && (
+                <TouchableOpacity
+                  onPress={handleAppleLogin}
+                  activeOpacity={0.8}
+                  disabled={isAppleLoading}
+                  className={`w-full h-14 rounded-full flex-row items-center justify-center mb-4 bg-zinc-900 dark:bg-white ${
+                    isAppleLoading ? "opacity-70" : ""
+                  }`}
+                >
+                  {isAppleLoading ? (
+                    <ActivityIndicator
+                      color={Platform.OS === "ios" ? "white" : "#000"}
+                    />
+                  ) : (
+                    <>
+                      <MaterialCommunityIcons
+                        name="apple"
+                        size={22}
+                        color={Platform.OS === "ios" ? "#fff" : "#000"}
+                      />
+                      <Text className="text-white dark:text-zinc-900 font-bold text-[15px] ml-2">
+                        {t("auth.continueWithApple")}
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              )}
 
               {/* Sign up link */}
               <View className="flex-row justify-center items-center gap-1">
