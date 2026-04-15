@@ -54,6 +54,7 @@ import {
   View,
 } from "react-native";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
@@ -311,6 +312,7 @@ const HomeScreen = () => {
       }
     }, [selectedDate]),
   );
+  useSubscription();
 
   return (
     <ScreenWrapper>
@@ -394,7 +396,8 @@ const HomeScreen = () => {
               <View className="flex-row gap-3 px-2 py-2">
                 {dates.map((item, index) => {
                   const isActive = isSameDay(item.date, selectedDate);
-                  const isDisabled = isAfter(item.date, endOfDay(new Date())) || item.disabled;
+                  const isDisabled =
+                    isAfter(item.date, endOfDay(new Date())) || item.disabled;
                   return (
                     <Pressable
                       key={index}

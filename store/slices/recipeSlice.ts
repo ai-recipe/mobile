@@ -12,8 +12,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
 import { setStep } from "./multiStepFormSlice";
 
-const API_BASE = "http://10.0.2.2:3001/api/v1/";
-const SOCKET_SERVER = "http://10.0.2.2:3001";
+const SOCKET_SERVER = process.env.EXPO_PUBLIC_BASE_URL;
 
 let _recognitionSocket: Socket | null = null;
 let _recipesSocket: Socket | null = null;
@@ -80,7 +79,9 @@ export const scanImage = createAsyncThunk(
       const timeout = setTimeout(() => {
         socket.disconnect();
         _recognitionSocket = null;
-        reject(new Error("Görüntü tarama zaman aşımına uğradı, tekrar deneyin"));
+        reject(
+          new Error("Görüntü tarama zaman aşımına uğradı, tekrar deneyin"),
+        );
       }, 60_000);
 
       socket.on("connect", async () => {

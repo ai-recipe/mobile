@@ -99,6 +99,7 @@ const initialState: AuthState = {
 GoogleSignin.configure({
   webClientId:
     "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
+  forceCodeForRefreshToken: true,
 });
 export const fetchUserPreferencesAsync = createAsyncThunk(
   "auth/fetchUserPreferences",
@@ -258,9 +259,7 @@ export const loginWithGoogleAsync = createAsyncThunk(
         JSON.stringify(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID, null, 2),
       );
 
-      const response = (await GoogleSignin.signIn({
-        loginHint: "test@test.com",
-      })) as any;
+      const response = (await GoogleSignin.signIn({})) as any;
       const googleResponse = await AuthService.loginWithGoogleAPI({
         idToken: response.data.idToken,
       });

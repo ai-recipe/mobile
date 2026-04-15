@@ -81,59 +81,47 @@ export function SoftPaywallModal({ visible }: Props) {
     <Modal
       transparent
       visible={visible}
-      animationType="none"
       onRequestClose={handleClose}
-      statusBarTranslucent
+      animationType="slide"
+      presentationStyle="pageSheet"
     >
-      <View className="flex-1 justify-end">
-        <Animated.View
-          style={backdropStyle}
-          className="absolute inset-0 bg-black/50"
-          pointerEvents={visible ? "auto" : "none"}
+      <View style={{ flex: 1 }} className="bg-zinc-50 dark:bg-zinc-950">
+        <Pressable className="flex-1" onPress={handleClose} />
+
+        {/* Handle bar */}
+        <View className="w-10 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-full self-center mb-6" />
+
+        {/* Icon */}
+        <View className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center self-center mb-5">
+          <MaterialIcons name="bolt" size={32} color="#ef4444" />
+        </View>
+
+        <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
+          {t("paywall.softTitle")}
+        </Text>
+        <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center leading-relaxed mb-8">
+          {t("paywall.softDesc")}
+        </Text>
+
+        <TouchableOpacity
+          onPress={handleUpgrade}
+          activeOpacity={0.85}
+          className="bg-[#f39849] h-[58px] rounded-2xl items-center justify-center mb-3 shadow-lg shadow-orange-500/30"
         >
-          <Pressable className="flex-1" onPress={handleClose} />
-        </Animated.View>
+          <Text className="text-white font-extrabold text-base">
+            {t("paywall.upgradeButton")}
+          </Text>
+        </TouchableOpacity>
 
-        <Animated.View
-          style={[sheetStyle, { paddingBottom: bottomPadding }]}
-          className="w-full rounded-t-3xl bg-white dark:bg-zinc-900 px-6 pt-4 pb-6"
-          pointerEvents="box-none"
+        <TouchableOpacity
+          onPress={handleClose}
+          activeOpacity={0.7}
+          className="h-[48px] rounded-2xl items-center justify-center"
         >
-          {/* Handle bar */}
-          <View className="w-10 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-full self-center mb-6" />
-
-          {/* Icon */}
-          <View className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center self-center mb-5">
-            <MaterialIcons name="bolt" size={32} color="#ef4444" />
-          </View>
-
-          <Text className="text-2xl font-extrabold text-zinc-900 dark:text-white text-center mb-2">
-            {t("paywall.softTitle")}
+          <Text className="text-zinc-500 dark:text-zinc-400 font-medium">
+            {t("paywall.wait24h")}
           </Text>
-          <Text className="text-zinc-500 dark:text-zinc-400 text-base text-center leading-relaxed mb-8">
-            {t("paywall.softDesc")}
-          </Text>
-
-          <TouchableOpacity
-            onPress={handleUpgrade}
-            activeOpacity={0.85}
-            className="bg-[#f39849] h-[58px] rounded-2xl items-center justify-center mb-3 shadow-lg shadow-orange-500/30"
-          >
-            <Text className="text-white font-extrabold text-base">
-              {t("paywall.upgradeButton")}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleClose}
-            activeOpacity={0.7}
-            className="h-[48px] rounded-2xl items-center justify-center"
-          >
-            <Text className="text-zinc-500 dark:text-zinc-400 font-medium">
-              {t("paywall.wait24h")}
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
+        </TouchableOpacity>
       </View>
     </Modal>
   );

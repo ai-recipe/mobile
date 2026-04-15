@@ -400,46 +400,39 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           </Pressable>
         </TouchableOpacity>
       </View>
-      <View className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800 mb-6">
-        {/* Circular Progress with Calories */}
-        <View className="flex-column items-center justify-center w-full">
-          {/* SVG Circle */}
-          <View className="relative w-24 h-24 mr-6 items-center justify-center">
-            <AnimatedCircleProgress
-              progress={calorieProgress}
-              trackColor={trackColor}
-              progressColor={themeColors.primary}
-              exceedColor={themeColors.error}
-              strokeWidth={10}
-              icon={
-                <MaterialIcons
-                  name="local-fire-department"
-                  size={24}
-                  color={themeColors.primary}
-                />
-              }
+      <View className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800 mb-6 items-center">
+        <View className="relative w-48 h-48 items-center justify-center mb-6">
+          <AnimatedCircleProgress
+            progress={calorieProgress}
+            trackColor={trackColor}
+            progressColor={themeColors.primary}
+            exceedColor={themeColors.error}
+            size={192}
+            radius={88}
+            strokeWidth={12}
+          />
+          <View className="absolute inset-0 items-center justify-center">
+            <MaterialIcons
+              name="local-fire-department"
+              size={48}
+              color={themeColors.primary}
             />
-          </View>
-
-          {/* Calorie Numbers */}
-          <View className="flex-column items-center justify-center gap-2 mt-4">
-            <View className="flex-row items-center justify-center">
-              <View className="flex-row items-baseline gap-1">
-                <Text className="text-3xl font-bold text-zinc-900 dark:text-white">
-                  {Math.round(consumedCalories)}
-                </Text>
-                <Text className="text-xl font-light text-zinc-300 dark:text-zinc-600">
-                  /
-                </Text>
-              </View>
-              <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-1">
-                {calorieGoal}
-              </Text>
-            </View>
-            <Text className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">
-              {t("home.caloriesConsumed")}
+            <Text className="text-3xl font-black text-zinc-900 dark:text-white mt-1">
+              {Math.round(consumedCalories)}
+            </Text>
+            <Text className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
+              / {calorieGoal} kcal
             </Text>
           </View>
+        </View>
+
+        <View className="flex-row items-center gap-2 px-4 py-2 bg-orange-50 dark:bg-orange-500/10 rounded-full">
+          <Text
+            className="text-xs font-bold"
+            style={{ color: themeColors.primary }}
+          >
+            {Math.round(calorieProgress)}% {t("home.caloriesConsumed")}
+          </Text>
         </View>
       </View>
       <View className="flex flex-row gap-4 mb-6">
@@ -477,15 +470,9 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
       ) : entries.length > 0 ? (
         <View className="pb-10">
           <MealSection
-            title={t("home.breakfast")}
-            icon="wb-sunny"
-            items={groupedEntries.BREAKFAST}
-            color={themeColors.primary}
-          />
-          <MealSection
-            title={t("home.lunch")}
-            icon="restaurant"
-            items={groupedEntries.LUNCH}
+            title={t("home.snacks")}
+            icon="fastfood"
+            items={groupedEntries.SNACK}
             color={themeColors.primary}
           />
           <MealSection
@@ -495,9 +482,15 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
             color={themeColors.primary}
           />
           <MealSection
-            title={t("home.snacks")}
-            icon="fastfood"
-            items={groupedEntries.SNACK}
+            title={t("home.lunch")}
+            icon="restaurant"
+            items={groupedEntries.LUNCH}
+            color={themeColors.primary}
+          />
+          <MealSection
+            title={t("home.breakfast")}
+            icon="wb-sunny"
+            items={groupedEntries.BREAKFAST}
             color={themeColors.primary}
           />
         </View>

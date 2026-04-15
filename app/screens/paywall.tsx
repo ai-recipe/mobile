@@ -1,18 +1,27 @@
+import { useSubscription } from "@/hooks/useSubscription";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useEffect } from "react";
 import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StepPaywall } from "./components/StepPaywall";
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
+  const { isProOrTrial, isLoading } = useSubscription();
+
+  // If the user is already subscribed, close the paywall
+  useEffect(() => {
+    if (!isLoading && isProOrTrial) {
+      router.back();
+    }
+  }, [isProOrTrial, isLoading]);
 
   return (
     <View
       className="flex-1 bg-white dark:bg-zinc-900"
       style={{ paddingTop: insets.top }}
     >
-      {/* Close button */}
       <View className="items-end px-4 pb-2">
         <Pressable
           onPress={() => router.back()}

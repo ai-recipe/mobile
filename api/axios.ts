@@ -15,7 +15,7 @@ export function injectGetUserType(fn: () => string | undefined) {
 }
 
 export const api = axios.create({
-  baseURL: "http://10.0.2.2:3001/api/v1/",
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 60000,
   headers: {
     "Content-Type": "application/json",
