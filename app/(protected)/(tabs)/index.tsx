@@ -36,8 +36,10 @@ import {
   endOfDay,
   format,
   isAfter,
+  isBefore,
   isSameDay,
   parseISO,
+  startOfDay,
   subDays,
 } from "date-fns";
 import { router, useFocusEffect } from "expo-router";
@@ -74,7 +76,7 @@ const HomeScreen = () => {
     isLoading: waterLoading,
     isAdding: waterAdding,
   } = useAppSelector((state) => state.waterLogs);
-  const { creditRemaining, creditGrantType, scanLimit } = useAppSelector(
+  const { creditRemaining, creditGrantType, scanLimit, user } = useAppSelector(
     (state) => state.auth,
   );
   const { mealModalOpen, softPaywallOpen } = useAppSelector(
@@ -115,18 +117,25 @@ const HomeScreen = () => {
     }
   }, [summary?.totalCalories, summary?.targetCalories]);
 
-  // Generate a week of dates around the current date
+  // Always show last 30 days; disable dates before registration
   const dates = useMemo(() => {
-    return Array.from({ length: 32 }).map((_, i) => {
-      const date = subDays(new Date(), 30 - i);
+    const today = startOfDay(new Date());
+    const thirtyDaysAgo = subDays(today, 30);
+    const registeredAt = user?.createdAt
+      ? startOfDay(parseISO(user.createdAt))
+      : today;
+
+    return Array.from({ length: 31 }).map((_, i) => {
+      const date = subDays(today, 30 - i);
       return {
         date,
         day: format(date, "d"),
         month: format(date, "MMM"),
-        isToday: isSameDay(date, new Date()),
+        isToday: isSameDay(date, today),
+        disabled: isBefore(date, registeredAt),
       };
     });
-  }, []);
+  }, [user?.createdAt]);
 
   useFocusEffect(
     useCallback(() => {
@@ -385,7 +394,7 @@ const HomeScreen = () => {
               <View className="flex-row gap-3 px-2 py-2">
                 {dates.map((item, index) => {
                   const isActive = isSameDay(item.date, selectedDate);
-                  const isDisabled = isAfter(item.date, endOfDay(new Date()));
+                  const isDisabled = isAfter(item.date, endOfDay(new Date())) || item.disabled;
                   return (
                     <Pressable
                       key={index}

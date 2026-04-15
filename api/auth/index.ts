@@ -44,6 +44,10 @@ class AuthService {
   public fetchQuotaAPI() {
     return api.get("/auth/me/quota");
   }
+
+  public getUserAPI() {
+    return api.get("/auth/me");
+  }
 }
 
 export default new AuthService();

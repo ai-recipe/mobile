@@ -13,6 +13,7 @@ interface User {
   firstName?: string;
   lastName?: string;
   userType?: string;
+  createdAt?: string;
 }
 
 interface UserPreferences {
@@ -105,6 +106,7 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
     try {
       const response = await SurveyService.getUserPreferencesAPI();
       dispatch(fetchSurveyQuestionsAsync());
+      dispatch(fetchUserAsync());
 
       if (!response.data?.data) {
         router.push("/screens/survey");
@@ -345,6 +347,20 @@ export const fetchQuotaAsync = createAsyncThunk(
   },
 );
 
+export const fetchUserAsync = createAsyncThunk(
+  "auth/fetchUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.getUserAPI();
+      return response.data?.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Kullanıcı bilgisi alınamadı",
+      );
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -442,6 +458,12 @@ export const authSlice = createSlice({
           state.creditRemaining = action.payload.remaining ?? null;
           state.scanLimit = action.payload.limit ?? null;
           state.scanTier = action.payload.tier ?? null;
+        }
+      })
+      // Fetch User
+      .addCase(fetchUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = { ...state.user, ...action.payload };
         }
       })
       // Login with Email
