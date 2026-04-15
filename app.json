@@ -5,13 +5,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "slaycal",
+    "scheme": "slaycalai",
     "platforms": ["ios", "android"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
 
     "owner": "mirrorbitai",
-    "slug": "slaycal",
+    "slug": "slaycalai",
     "android": {
       "package": "com.slaycal.android",
       "googleServicesFile": "./google-services.json",
