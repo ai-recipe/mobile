@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
+import { FunnyLoader } from "@/components/FunnyLoader";
 
 function RootLayoutNavigator() {
   const { isLoading } = useAppSelector((state) => state.app);
@@ -38,10 +39,9 @@ function RootLayoutNavigator() {
     init();
   }, [dispatch, currentLanguage]);
 
-  /*
   if (isLoading || isInitDeviceLoading) {
     return <FunnyLoader />;
-  }*/
+  }
 
   return (
     <ThemeSync>

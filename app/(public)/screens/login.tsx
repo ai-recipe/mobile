@@ -20,6 +20,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
@@ -125,18 +126,11 @@ export default function LoginScreen() {
 
               {/* Main Illustration */}
               <View className="items-center justify-center mb-4">
-                <View className="size-32 bg-white dark:bg-zinc-800 rounded-[40px] items-center justify-center shadow-2xl shadow-orange-500/30 rotate-3">
-                  <MaterialCommunityIcons
-                    name="chef-hat"
-                    size={64}
-                    color="#f39849"
-                  />
-                </View>
-                <View className="absolute -bottom-4 -right-4 bg-zinc-900 dark:bg-white p-3 rounded-2xl rotate-[-6deg] shadow-lg">
-                  <MaterialCommunityIcons
-                    name="auto-awesome"
-                    size={24}
-                    color={"#f39849"}
+                <View className="size-32 bg-white dark:bg-zinc-800 rounded-[40px] items-center justify-center shadow-2xl shadow-orange-500/30">
+                  <Image
+                    source={require("@/assets/images/logo.png")}
+                    className="w-24 h-24"
+                    resizeMode="contain"
                   />
                 </View>
               </View>

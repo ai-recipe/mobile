@@ -3,6 +3,8 @@ import i18n from "i18next";
 import HttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization";
+import { store } from "@/store";
+import { setIsLoading } from "@/store/slices/appSlice";
 /**
  *     {
       "_id": "69c95edf545f8ad668494747",
@@ -42,7 +44,7 @@ i18n
           },
           {},
         );
-
+        store.dispatch(setIsLoading(false));
         return result;
       },
     },

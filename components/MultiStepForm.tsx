@@ -36,6 +36,7 @@ export type MultiStepFormStep = {
     nextStep: () => void;
     control: Control<any>;
     errors: FieldErrors<any>;
+    scrollRef: React.RefObject<ScrollView>;
   }) => React.ReactNode;
 };
 
@@ -212,6 +213,7 @@ export function MultiStepForm<T extends Record<string, any>>({
             nextStep,
             control,
             errors: !!submittedSteps[currentStep.id] ? errors : {},
+            scrollRef,
           })}
         </View>
       </KeyboardAvoidingView>

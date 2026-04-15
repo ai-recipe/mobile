@@ -337,9 +337,8 @@ const HomeScreen = () => {
                   style={{ color: creditsLow ? "#ef4444" : "#f39849" }}
                 >
                   {scanLimit != null
-                    ? t("home.scansRemainingOf", {
-                        remaining: creditRemaining ?? 0,
-                        total: scanLimit,
+                    ? t("home.scansRemaining", {
+                        count: creditRemaining,
                       })
                     : t("home.scansRemaining", { count: creditRemaining ?? 0 })}
                 </Text>

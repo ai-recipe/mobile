@@ -31,7 +31,7 @@ export function generateIdempotencyKey(): string {
 
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("accessToken");
     console.log("token", token);
     const localeStorageCurrentLanguage = await AsyncStorage.getItem(
       "CURRENT_LANGUAGE",
@@ -65,7 +65,7 @@ api.interceptors.response.use(
       const userType = _getUserType?.();
       if (_dispatch) {
         if (userType === "registered") {
-          await AsyncStorage.removeItem("token");
+          await AsyncStorage.removeItem("accessToken");
           _dispatch(logout());
         } else {
           _dispatch(initDeviceAsync());

@@ -117,7 +117,7 @@ export const startScanAsync = createAsyncThunk<
   string,
   { state: RootState }
 >("scanMeal/startScan", async (photoUri, { dispatch, getState }) => {
-  const token = await AsyncStorage.getItem("token");
+  const token = await AsyncStorage.getItem("accessToken");
 
   dispatch(setScanStatus("connecting"));
   dispatch(setScanProgress({ progress: 0, message: "Connecting..." }));

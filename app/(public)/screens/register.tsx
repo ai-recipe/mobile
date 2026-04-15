@@ -20,6 +20,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import * as yup from "yup";
@@ -107,7 +108,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScreenWrapper withTabNavigation={false}>
+    <ScreenWrapper withTabBar={false} withTabNavigation={false}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -132,10 +133,10 @@ export default function RegisterScreen() {
               {/* Main Illustration */}
               <View className="items-center justify-center mb-4">
                 <View className="size-32 bg-white dark:bg-zinc-800 rounded-[40px] items-center justify-center shadow-2xl shadow-orange-500/30 rotate-3">
-                  <MaterialCommunityIcons
-                    name="chef-hat"
-                    size={64}
-                    color="#f39849"
+                  <Image
+                    source={require("@/assets/images/logo.png")}
+                    className="w-24 h-24"
+                    resizeMode="contain"
                   />
                 </View>
               </View>

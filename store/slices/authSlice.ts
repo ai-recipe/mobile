@@ -107,10 +107,10 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
       dispatch(fetchSurveyQuestionsAsync());
 
       if (!response.data?.data) {
-        router.replace("/screens/survey");
+        router.push("/screens/survey");
         return null;
       } else {
-        router.replace("(protected)/(tabs)");
+        router.push("(protected)/(tabs)");
       }
       return response.data?.data;
     } catch (error: any) {
@@ -160,6 +160,8 @@ export const initDeviceAsync = createAsyncThunk(
       console.log("accessToken", accessToken);
       console.log("refreshToken", refreshToken);
       if (accessToken && refreshToken) {
+        await dispatch(fetchUserPreferencesAsync());
+
         return { accessToken, refreshToken };
       }
       let deviceId: string;
@@ -208,7 +210,7 @@ export const loginWithEmailAsync = createAsyncThunk(
 
 export const registerWithEmailAsync = createAsyncThunk(
   "auth/registerWithEmail",
-  async (data: any, { rejectWithValue }) => {
+  async (data: any, { rejectWithValue, dispatch }) => {
     try {
       console.log("data", data);
       const response = await AuthService.registerWithEmailAPI(data);
@@ -216,6 +218,7 @@ export const registerWithEmailAsync = createAsyncThunk(
       const { accessToken, refreshToken, user } = response.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
+      await dispatch(fetchUserPreferencesAsync());
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       console.log("error", JSON.stringify(error, null, 2));
@@ -246,7 +249,7 @@ export const logoutAsync = createAsyncThunk(
 
 export const loginWithGoogleAsync = createAsyncThunk(
   "auth/loginWithGoogle",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       console.log(
         "GoogleSignin",
@@ -268,6 +271,8 @@ export const loginWithGoogleAsync = createAsyncThunk(
         googleResponse.data.data.refreshToken,
       );
 
+      await dispatch(fetchUserPreferencesAsync());
+
       return googleResponse.data?.data;
     } catch (error: any) {
       console.log("error", JSON.stringify(error, null, 2));
@@ -282,7 +287,7 @@ export const loginWithGoogleAsync = createAsyncThunk(
 
 export const loginWithAppleAsync = createAsyncThunk(
   "auth/loginWithApple",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const AppleAuthentication = await import("expo-apple-authentication");
       const credential = await AppleAuthentication.signInAsync({
@@ -306,9 +311,12 @@ export const loginWithAppleAsync = createAsyncThunk(
           : undefined,
         email: credential.email ?? undefined,
       });
+
       const { accessToken, refreshToken, user } = apiResponse.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
+      await dispatch(fetchUserPreferencesAsync());
+
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       if (error.code === "ERR_REQUEST_CANCELED") {

@@ -34,6 +34,7 @@ interface StepSurveyItemProps {
   onNext: () => void;
   direction?: "forward" | "backward";
   isLastStep: boolean;
+  scrollRef?: React.RefObject<ScrollView>;
 }
 
 export function StepSurveyItem({
@@ -43,6 +44,7 @@ export function StepSurveyItem({
   onNext,
   direction = "forward",
   isLastStep,
+  scrollRef,
 }: StepSurveyItemProps) {
   const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
@@ -86,6 +88,7 @@ export function StepSurveyItem({
       className="flex-1 px-5"
     >
       <ScrollView
+        ref={scrollRef}
         className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}

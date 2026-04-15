@@ -18,6 +18,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -53,6 +54,7 @@ export function MealEntryModal({
 }: MealEntryModalProps) {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const [mealName, setMealName] = useState("");
   const [servings, setServings] = useState(1);
@@ -223,47 +225,49 @@ export function MealEntryModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 24 : 20}
-      >
-        <View className="flex-1 bg-zinc-50 dark:bg-zinc-950">
-          {/* Header Image Area */}
-          <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
-            {/* Top Bar */}
-            <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
-              <Pressable
-                onPress={onClose}
-                className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/10 flex items-center justify-center"
-              >
-                <MaterialIcons name="close" size={24} color="white" />
-              </Pressable>
-            </View>
-
-            {/* Image or Placeholder */}
-            {imageUrl ? (
-              <Image
-                source={{ uri: imageUrl }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="opacity-80">
-                <MaterialIcons
-                  name="restaurant"
-                  size={120}
-                  color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
-                />
-              </View>
-            )}
+      <View style={{ flex: 1 }} className="bg-zinc-50 dark:bg-zinc-950">
+        {/* Header Image Area — outside KAV so it never shifts */}
+        <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+          {/* Top Bar */}
+          <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
+            <Pressable
+              onPress={onClose}
+              className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/10 flex items-center justify-center"
+            >
+              <MaterialIcons name="close" size={24} color="white" />
+            </Pressable>
           </View>
 
+          {/* Image or Placeholder */}
+          {imageUrl ? (
+            <Image
+              source={{ uri: imageUrl }}
+              className="w-full h-full"
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="opacity-80">
+              <MaterialIcons
+                name="restaurant"
+                size={120}
+                color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* KAV wraps only scroll + button — image header is unaffected */}
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
           {/* Content Area */}
           <ScrollView
-            className="flex-1 bg-white dark:bg-zinc-900 -mt-8 rounded-t-3xl px-6 pt-3 pb-24"
+            className="flex-1 bg-white dark:bg-zinc-900 -mt-8 rounded-t-3xl px-6 pt-3"
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 24 }}
           >
             {/* Drag Handle */}
             <View className="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-600 rounded-full mx-auto mb-6 mt-2" />
@@ -516,7 +520,10 @@ export function MealEntryModal({
           </ScrollView>
 
           {/* Bottom Save Button */}
-          <View className="bg-white dark:bg-zinc-900 px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 pb-8">
+          <View
+            className="bg-white dark:bg-zinc-900 px-6 pt-4 border-t border-zinc-100 dark:border-zinc-800"
+            style={{ paddingBottom: insets.bottom + 16 }}
+          >
             <Pressable
               onPress={handleSave}
               disabled={isLoading}
@@ -535,8 +542,8 @@ export function MealEntryModal({
               )}
             </Pressable>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

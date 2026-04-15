@@ -7,7 +7,7 @@ interface AppState {
 }
 
 const initialState: AppState = {
-  isLoading: false,
+  isLoading: true,
   currentLanguage: "en",
 };
 

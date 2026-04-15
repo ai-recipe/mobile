@@ -33,7 +33,6 @@ import {
 } from "@/api/goalPlan";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchFoodLogsAsync, fetchRecentMealsAsync } from "./dailyLogsSlice";
-import { setTargetWeightKgProgressSlice } from "./progressSlice";
 import { fetchWaterIntakeAsync } from "./waterLogsSlice";
 
 interface GoalPlanState {
@@ -85,18 +84,12 @@ export const postGoalPlanLogAsync = createAsyncThunk(
   ) => {
     try {
       const { from, ...rest } = payload;
-      if (from === "progress") {
-        dispatch(setTargetWeightKgProgressSlice(rest.targetWeightKg));
-      } else if (from === "profile") {
-        dispatch(mergeGoalPlan(rest));
-        dispatch(fetchRecentMealsAsync() as any);
-        dispatch(fetchWaterIntakeAsync() as any);
-      }
       const response = await postGoalPlanLog(rest);
 
-      if (from === "progress") {
-        dispatch(fetchFoodLogsAsync());
-      }
+      dispatch(fetchFoodLogsAsync());
+      dispatch(mergeGoalPlan(rest));
+      dispatch(fetchRecentMealsAsync() as any);
+      dispatch(fetchWaterIntakeAsync() as any);
 
       return response.data;
     } catch (error: any) {

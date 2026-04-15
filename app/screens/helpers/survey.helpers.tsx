@@ -33,7 +33,7 @@ export const createSurveySteps = ({
       title: t(question.title),
       fields: [question.key],
       shouldHandleNextStep: true,
-      render: ({ data, setValue, nextStep }) => (
+      render: ({ data, setValue, nextStep, scrollRef }) => (
         <StepSurveyItem
           question={question}
           value={data[question.key] || []}
@@ -41,6 +41,7 @@ export const createSurveySteps = ({
           onNext={nextStep}
           isLastStep={index === questions.length - 1}
           direction="forward"
+          scrollRef={scrollRef}
         />
       ),
     });
