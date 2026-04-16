@@ -6,10 +6,12 @@
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "slaycalai",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "owner": "mirrorbitai",
     "slug": "slaycalai",
     "android": {
@@ -21,7 +23,9 @@
         "backgroundImage": "./assets/images/logo.png",
         "monochromeImage": "./assets/images/logo.png"
       },
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "ios": {
       "supportsTablet": true,
@@ -74,9 +78,16 @@
       "@react-native-community/datetimepicker",
       "expo-apple-authentication",
       "@react-native-google-signin/google-signin",
-      "expo-dev-client"
+      "expo-dev-client",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "mirrorbit-ai"
+        }
+      ]
     ],
-
     "extra": {
       "eas": {
         "projectId": "89379433-4b00-4065-b017-2977411a7be3"
