@@ -19,10 +19,10 @@ import { initDeviceAsync } from "@/store/slices/authSlice";
 import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
 import { FunnyLoader } from "@/components/FunnyLoader";
-import * as Sentry from '@sentry/react-native';
+import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
-  dsn: 'https://7a90cff677e854e1452ca6321fcdac53@o4511230880579584.ingest.de.sentry.io/4511230885822544',
+  dsn: "https://7a90cff677e854e1452ca6321fcdac53@o4511230880579584.ingest.de.sentry.io/4511230885822544",
 
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
@@ -34,7 +34,10 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
@@ -59,10 +62,6 @@ function RootLayoutNavigator() {
     };
     init();
   }, [dispatch, currentLanguage]);
-
-  if (isInitDeviceLoading || isLoading) {
-    return <FunnyLoader />;
-  }
 
   return (
     <ThemeSync>
