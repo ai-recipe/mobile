@@ -181,6 +181,8 @@ export const initDeviceAsync = createAsyncThunk(
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
+      router.push("(public)/screens/login");
+
       const data = response.data?.data;
       if (data?.anonymousToken) {
         await AsyncStorage.setItem("accessToken", data.anonymousToken);

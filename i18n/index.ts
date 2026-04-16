@@ -31,7 +31,7 @@ i18n
       useSuspense: false, // IMPORTANT for React Native
     },
     backend: {
-      loadPath: `${"http://10.0.2.2:3001/api/v1"}/cms/translations`,
+      loadPath: `${process.env.EXPO_PUBLIC_API_URL}/cms/translations`,
       parse: (data: any, languages: string | string[]) => {
         const parsedJSON = JSON.parse(data);
 

@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import "../global.css";
+import i18n from "@/i18n";
 
 // Must be registered outside the React tree (module scope)
 /*messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -39,7 +40,7 @@ function RootLayoutNavigator() {
     init();
   }, [dispatch, currentLanguage]);
 
-  if (isLoading || isInitDeviceLoading) {
+  if (isInitDeviceLoading || isLoading) {
     return <FunnyLoader />;
   }
 
