@@ -3,7 +3,7 @@ import { setCurrentLanguage } from "@/store/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -11,10 +11,12 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { OnboardingLanguageSelector } from "./components/onboarding-language-selector";
 import { OnboardingProgressBar } from "./components/onboarding-progress-bar";
+import { OnboardingStepFeature } from "./components/onboarding-step-feature";
 import { OnboardingStepFinish } from "./components/onboarding-step-finish";
 import { OnboardingStepWelcome } from "./components/onboarding-step-welcome";
+
+const TOTAL_STEPS = 4;
 
 const STEP_IMAGES = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCfIOgyd-AArVUDn1vb4CK8i67wcKT_M3vbkOOK8sLATy9sWjjGWTkVsKUniY-YMzQ5EsUUlioSsVy-A0JpUhqZeDnS-kr6MsPQePrWnEMQaXgpGxQg58LSGOfiWXblMOYUwtYVyaG10MQjHhJLQ4xVfaVh8OP9UPXUo8X6OVBLDa7lbl80-3kOMowAFVzdXK3B-ePh2lHjjPa8YQzOY45LNBsDal19fkfDFvMWo7X_KBWWPJWA49zi7IKR-2vs0iRk7NW7TIcFHs4r",
@@ -40,7 +42,7 @@ export default function OnboardingScreen() {
   }));
 
   const nextStep = () => {
-    if (currentStep < STEP_IMAGES.length - 1) {
+    if (currentStep < TOTAL_STEPS - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -50,44 +52,45 @@ export default function OnboardingScreen() {
     await AsyncStorage.setItem("CURRENT_LANGUAGE", lng);
     dispatch(setCurrentLanguage(lng));
   };
+
   return (
     <SafeAreaView className="flex-1 bg-background dark:bg-darker">
-      {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-2">
         <View className="w-12" />
-        <Text className="text-xl font-black text-text dark:text-white">
-          {currentStep === 1 ? t("onboarding.preferences") : ""}
-        </Text>
         <View className="w-12" />
       </View>
 
-      <OnboardingLanguageSelector
-        currentLanguage={currentLanguage}
-        onChangeLanguage={changeLanguage}
-      />
-
-      <OnboardingProgressBar
-        currentStep={currentStep}
-        totalSteps={STEP_IMAGES.length}
-      />
+      <OnboardingProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
 
       {currentStep === 0 && (
         <OnboardingStepWelcome
           onNext={nextStep}
           animatedScanStyle={animatedScanStyle}
-          image={STEP_IMAGES[0]}
           description={t("onboarding.step1Description")}
-          welcomeText={t("welcome")}
         />
       )}
 
       {currentStep === 1 && (
-        <OnboardingStepFinish
-          image={STEP_IMAGES[1]}
-          title={t("onboarding.step2Title")}
-          description={t("onboarding.step2Description")}
+        <OnboardingStepFeature
+          featureType="ai-chef"
+          title={t("onboarding.step3Title")}
+          titleHighlight={t("onboarding.step3TitleHighlight")}
+          description={t("onboarding.step3Description")}
+          onNext={nextStep}
         />
       )}
+
+      {currentStep === 2 && (
+        <OnboardingStepFeature
+          featureType="progress"
+          title={t("onboarding.step4Title")}
+          titleHighlight={t("onboarding.step4TitleHighlight")}
+          description={t("onboarding.step4Description")}
+          onNext={nextStep}
+        />
+      )}
+
+      {currentStep === 3 && <OnboardingStepFinish />}
     </SafeAreaView>
   );
 }

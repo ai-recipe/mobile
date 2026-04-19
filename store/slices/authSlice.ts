@@ -180,7 +180,9 @@ export const initDeviceAsync = createAsyncThunk(
         platform: Platform.OS,
         appVersion: "1.0.0",
       });
-      router.push("(public)/screens/login");
+      const isOnboarded = await AsyncStorage.getItem("isOnboarded");
+      console.log("isOnboarded", isOnboarded);
+      dispatch(setIsOnboarded(isOnboarded === "true"));
 
       const data = response.data?.data;
       if (data?.anonymousToken) {

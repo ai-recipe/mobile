@@ -1,95 +1,114 @@
-import { useAppSelector } from "@/store/hooks";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-interface OnboardingStepFinishProps {
-  image: string;
-  title: string;
-  description: string;
-}
 
-export const OnboardingStepFinish = ({
-  image,
-  title,
-  description,
-}: OnboardingStepFinishProps) => {
+export const OnboardingStepFinish = () => {
   const { t } = useTranslation();
   const { isInitDeviceLoading } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const token = useSelector((state: any) => state.auth.token);
-  const preferences = useAppSelector((state) => state.auth.preferences);
 
   const onSubmit = () => {
     if (isInitDeviceLoading) {
       setIsSubmitClicked(true);
       return;
     }
-
     router.replace("/(public)/screens/login");
     dispatch(setIsOnboarded(true));
+    AsyncStorage.setItem("isOnboarded", "true");
   };
+
   return (
     <View className="flex-1">
-      <ScrollView className="flex-1 px-6">
-        <View className="py-12 items-center">
-          <View
-            style={{ transform: [{ rotate: "3deg" }] }}
-            className="w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden"
-          >
-            <Image
-              source={{ uri: image }}
-              className="w-full aspect-[4/3]"
-              contentFit="cover"
-            />
-            <View className="absolute top-4 right-4 bg-white/95 px-4 py-1.5 rounded-full shadow-md">
-              <Text className="text-text font-black text-[10px]">
-                {t("onboarding.demoLevel")}
-              </Text>
+      <ScrollView
+        className="flex-1 px-6"
+        contentContainerStyle={{ paddingBottom: 16 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Goal achievement illustration */}
+        <View className="mt-4 mb-6 bg-primary/8 rounded-3xl p-5 border border-primary/15 gap-3">
+          {/* Trophy header */}
+          <View className="items-center py-4">
+            <View className="w-20 h-20 bg-primary/15 rounded-full items-center justify-center mb-3">
+              <MaterialCommunityIcons
+                name="trophy-outline"
+                size={40}
+                color="#f39849"
+              />
             </View>
-            <View className="p-8">
-              <Text className="text-primary text-xs font-black tracking-widest uppercase mb-2">
-                {t("onboarding.demoTag")}
-              </Text>
-              <Text className="text-2xl font-black text-text dark:text-white mb-3">
-                {t("onboarding.demoRecipe")}
-              </Text>
-              <View className="flex-row items-center">
+            <Text className="text-xs font-black tracking-widest text-primary uppercase">
+              {t("onboarding.finishBadge")}
+            </Text>
+          </View>
+
+          {/* Achievement stat cards */}
+          <View className="flex-row gap-2">
+            {[
+              {
+                icon: "fire" as const,
+                value: "14",
+                sub: t("onboarding.statStreak"),
+                color: "#f39849",
+              },
+              {
+                icon: "scale-bathroom" as const,
+                value: "−5kg",
+                sub: t("onboarding.statWeight"),
+                color: "#22c55e",
+              },
+              {
+                icon: "lightning-bolt" as const,
+                value: "3",
+                sub: t("onboarding.statScans"),
+                color: "#a78bfa",
+              },
+            ].map((s) => (
+              <View
+                key={s.sub}
+                className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3 items-center gap-1"
+              >
                 <MaterialCommunityIcons
-                  name="clock-outline"
+                  name={s.icon}
                   size={20}
-                  color="#f39849"
+                  color={s.color}
                 />
-                <Text className="text-secondary text-sm font-bold ml-1.5">
-                  {t("onboarding.demoPrepTime")}
+                <Text className="text-sm font-black text-text dark:text-white">
+                  {s.value}
+                </Text>
+                <Text className="text-[9px] text-secondary text-center font-medium leading-tight">
+                  {s.sub}
                 </Text>
               </View>
-            </View>
+            ))}
           </View>
         </View>
 
-        <View className="items-center py-6">
-          <Text className="text-4xl font-black text-text dark:text-white text-center mb-4">
-            {title}
+        {/* Copy */}
+        <View className="items-center px-2">
+          <Text className="text-4xl font-black text-center text-text dark:text-white leading-tight mb-3">
+            {t("onboarding.finishHeadlinePrefix")}{" "}
+            <Text className="text-primary">
+              {t("onboarding.finishHeadlineHighlight")}
+            </Text>
           </Text>
-          <Text className="text-lg text-secondary dark:text-gray-300 text-center leading-relaxed font-medium">
-            {description}
+          <Text className="text-base text-center text-secondary dark:text-gray-300 leading-relaxed font-medium">
+            {t("onboarding.finishDescription")}
           </Text>
         </View>
       </ScrollView>
 
-      <View className="p-10 pb-12">
+      <View className="px-6 pb-12 pt-4">
         <Pressable
           onPress={onSubmit}
           disabled={isSubmitClicked && isInitDeviceLoading && !token}
           className={`w-full bg-primary py-5 rounded-full shadow-xl shadow-primary/30 flex-row items-center justify-center gap-2 active:opacity-95
-            ${isSubmitClicked && isInitDeviceLoading ? "opacity-50" : ""}
-            `}
+            ${isSubmitClicked && isInitDeviceLoading ? "opacity-50" : ""}`}
         >
           <Text className="text-white text-lg font-bold">
             {isSubmitClicked && isInitDeviceLoading && !token

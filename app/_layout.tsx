@@ -63,10 +63,6 @@ function RootLayoutNavigator() {
     init();
   }, [dispatch, currentLanguage]);
 
-  if (isLoading || isInitDeviceLoading) {
-    return <FunnyLoader />;
-  }
-
   return (
     <ThemeSync>
       <Stack

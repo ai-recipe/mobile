@@ -21,7 +21,8 @@ i18n
   .use(HttpBackend)
   .use(initReactI18next)
   .init({
-    lng: Localization.getLocales()[0].languageCode ?? "en", // fallback language
+    //lng: Localization.getLocales()[0].languageCode ?? "en", // fallback language
+    lng: "en",
     fallbackLng: "en",
     interpolation: {
       escapeValue: false,
