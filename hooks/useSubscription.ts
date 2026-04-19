@@ -1,9 +1,14 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { openPurchaseSuccess } from "@/store/slices/modalSlice";
 import {
   activateGooglePlayPurchase,
   clearSubscriptionError,
+  fetchSubscriptionStatus,
+  selectIsProActive,
+  selectShouldShowPaywallBanners,
   setIsPurchasing,
 } from "@/store/slices/subscriptionSlice";
+import { router } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import * as RNIap from "react-native-iap";
@@ -37,9 +42,7 @@ const EMPTY_PLAN: PlanInfo = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function parseProducts(
-  products: RNIap.Product[],
-): Record<PlanId, PlanInfo> {
+function parseProducts(products: RNIap.Product[]): Record<PlanId, PlanInfo> {
   const result: Record<PlanId, PlanInfo> = {
     monthly: { ...EMPTY_PLAN },
     yearly: { ...EMPTY_PLAN },
@@ -76,8 +79,7 @@ function parseProducts(
     const yearlyPhase = phases.find((p) => p.billingPeriod === "P1Y");
     const trialPhase = phases.find((p) => p.priceAmountMicros === "0");
 
-    const displayPrice =
-      yearlyPhase?.formattedPrice ?? bestYearly.displayPrice;
+    const displayPrice = yearlyPhase?.formattedPrice ?? bestYearly.displayPrice;
     const price = yearlyPhase
       ? Number(yearlyPhase.priceAmountMicros) / 1_000_000
       : bestYearly.price;
@@ -102,6 +104,10 @@ export const useSubscription = () => {
   const { data, isLoading, isPurchasing, error } = useAppSelector(
     (s) => s.subscription,
   );
+  const isProOrTrial = useAppSelector(selectIsProActive);
+  const shouldShowPaywallBanners = useAppSelector(
+    selectShouldShowPaywallBanners,
+  );
 
   const [products, setProducts] = useState<RNIap.Product[]>([]);
   const [planInfo, setPlanInfo] = useState<Record<PlanId, PlanInfo>>({
@@ -121,8 +127,8 @@ export const useSubscription = () => {
         skus: ["pro"],
         type: "subs",
       });
-      setProducts(fetched);
-      setPlanInfo(parseProducts(fetched));
+      setProducts(fetched as any);
+      setPlanInfo(parseProducts(fetched as any));
     } catch (e) {
       console.warn("[useSubscription] fetchProducts error", e);
     }
@@ -135,27 +141,28 @@ export const useSubscription = () => {
   // ─── Purchase listener ───────────────────────────────────────────────────
 
   useEffect(() => {
-    const purchaseListener = RNIap.purchaseUpdatedListener(
-      async (purchase) => {
-        try {
-          if (purchase.purchaseToken) {
-            await RNIap.finishTransaction({
-              purchase,
-              isConsumable: false,
-            });
-            dispatch(
-              activateGooglePlayPurchase({
-                purchaseToken: purchase.purchaseToken,
-                basePlanId: currentPlanRef.current,
-              }),
-            );
-          }
-        } catch (e) {
-          console.warn("[useSubscription] finishTransaction error", e);
-          dispatch(setIsPurchasing(false));
+    const purchaseListener = RNIap.purchaseUpdatedListener(async (purchase) => {
+      try {
+        if (purchase.purchaseToken) {
+          await RNIap.finishTransaction({
+            purchase,
+            isConsumable: false,
+          });
+          await dispatch(
+            activateGooglePlayPurchase({
+              purchaseToken: purchase.purchaseToken,
+              basePlanId: currentPlanRef.current,
+            }),
+          );
+          await dispatch(fetchSubscriptionStatus() as any);
+          router.push("/(protected)/(tabs)/");
+          dispatch(openPurchaseSuccess());
         }
-      },
-    );
+      } catch (e) {
+        console.warn("[useSubscription] finishTransaction error", e);
+        dispatch(setIsPurchasing(false));
+      }
+    });
 
     const errorListener = RNIap.purchaseErrorListener((e) => {
       if ((e as any)?.code !== "E_USER_CANCELLED") {
@@ -206,7 +213,6 @@ export const useSubscription = () => {
             type: "subs",
           });
         } else {
-          await RNIap.requestPurchase({ sku: planId, type: "subs" });
         }
       } catch (e: any) {
         if (e?.code !== "E_USER_CANCELLED") {
@@ -234,6 +240,8 @@ export const useSubscription = () => {
     error,
     products,
     planInfo,
+    isProOrTrial,
+    shouldShowPaywallBanners,
     getPlanPrice,
     getPlanInfo,
     purchase,

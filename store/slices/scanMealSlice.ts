@@ -6,12 +6,11 @@ import type { RootState } from "..";
 import {
   addPendingScanEntry,
   fetchFoodLogsAsync,
-  removePendingScanEntry,
   setEndDate,
   setStartDate,
 } from "./dailyLogsSlice";
 
-const SOCKET_SERVER = "https://localhost:3001/api/v1";
+const SOCKET_SERVER = process.env.EXPO_PUBLIC_BASE_URL;
 
 export interface ScanResult {
   foodName?: string;
@@ -136,7 +135,9 @@ export const startScanAsync = createAsyncThunk<
           setScanProgress({ progress: 5, message: "Uploading image..." }),
         );
 
+        console.log("uploading image", photoUri);
         const uploadRes = await uploadScanImage(photoUri);
+        console.log("uploadRes", uploadRes);
         const scanId = uploadRes.data?.scanId;
         const dailyLogEntry = uploadRes.data?.dailyLogEntry;
         if (!scanId) {
@@ -196,10 +197,7 @@ export const startScanAsync = createAsyncThunk<
     });
 
     socket.on("scan:error", (data: { code: string; message: string }) => {
-      const scanId = getState().scanMeal.scanId;
-      if (scanId) {
-        dispatch(removePendingScanEntry(scanId));
-      }
+      dispatch(fetchFoodLogsAsync());
       socket.disconnect();
       _socket = null;
       reject(new Error(data.message));

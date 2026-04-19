@@ -8,6 +8,9 @@ export default function Index() {
 
   if (isAuthenticated) {
     return <Redirect href="/(protected)/(tabs)" />;
+  } else if (isOnboarded) {
+    return <Redirect href="/(public)/screens/login" />;
+  } else {
+    return <Redirect href="/(public)/screens/onboarding" />;
   }
-  return <Redirect href="/(public)/screens/login" />;
 }

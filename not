@@ -66,12 +66,12 @@ keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -sto
 https://stackoverflow.com/questions/79175221/expo-eas-googlesignin-developer-error-code-10
 
 EXPO_PUBLIC_API_URL=http://10.0.2.2:3001/api/v1
-EXPO_BASE_URL=http://10.0.2.2:3001
+EXPO_PUBLIC_BASE_URL=http://10.0.2.2:3001
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
 
 EXPO_PUBLIC_API_URL=http://localhost:3001/api/v1
-EXPO_BASE_URL=http://localhost:3001
+EXPO_PUBLIC_BASE_URL=http://localhost:3001
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
 

@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1029242653801-h0rjqan48gfpk8odnc74b2psp2fqr2q3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.slaycal.android",
+            "certificate_hash": "f0feb3438e6a3c78b0858942932d012f043e4349"
+          }
+        },
+        {
           "client_id": "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
           "client_type": 3
         }

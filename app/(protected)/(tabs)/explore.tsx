@@ -146,7 +146,11 @@ const ExploreScreen = () => {
               >
                 <View className="h-40 relative">
                   <Image
-                    source={{ uri: item.imageUrl || PLACEHOLDER_IMAGE }}
+                    source={{
+                      uri:
+                        item.imageUrl ||
+                        require("@/assets/images/food_placeholder.jpg"),
+                    }}
                     className="w-full h-full object-cover"
                   />
                   <View className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 rounded-full flex-row items-center">

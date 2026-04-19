@@ -56,6 +56,7 @@ import {
 } from "react-native";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { useSubscription } from "@/hooks/useSubscription";
+import { selectShouldShowPaywallBanners } from "@/store/slices/subscriptionSlice";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
@@ -93,6 +94,9 @@ const HomeScreen = () => {
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
 
+  const shouldShowPaywallBanners = useAppSelector(
+    selectShouldShowPaywallBanners,
+  );
   // Show scan badge for any user with a limited quota (creditRemaining !== null means limited)
   const isFreeUser = creditRemaining !== null;
   const creditsLow = creditRemaining !== null && creditRemaining <= 1;
@@ -104,7 +108,8 @@ const HomeScreen = () => {
     }
   }, [mealModalOpen]);
 
-  // Trigger goal celebration when daily calorie goal is first hit
+  // Trigger goal celebration when daily calorie goal is first hit TODO
+  /*
   useEffect(() => {
     const target = summary?.targetCalories;
     const consumed = summary?.totalCalories;
@@ -118,7 +123,7 @@ const HomeScreen = () => {
       goalHitRef.current = false;
     }
   }, [summary?.totalCalories, summary?.targetCalories]);
-
+  */
   // Always show last 30 days; disable dates before registration
   const dates = useMemo(() => {
     const today = startOfDay(new Date());
@@ -320,7 +325,7 @@ const HomeScreen = () => {
       <TabScreenWrapper>
         <View className="flex-1" style={{ backgroundColor }}>
           {/* ── Credits Header ───────────────────────────────────── */}
-          {isFreeUser && (
+          {shouldShowPaywallBanners && isFreeUser && (
             <View className="flex-row items-center justify-between px-5 pt-1 pb-2">
               <Text
                 className="text-zinc-900 dark:text-white text-xl font-extrabold"
@@ -359,7 +364,7 @@ const HomeScreen = () => {
           )}
 
           {/* ── Pro Banner (dismissible) ─────────────────────────── */}
-          {isFreeUser && !bannerDismissed && (
+          {shouldShowPaywallBanners && !bannerDismissed && (
             <Pressable
               onPress={() => router.push("/screens/paywall")}
               className="mx-4 mb-3 rounded-2xl overflow-hidden flex-row items-center px-4 py-3"

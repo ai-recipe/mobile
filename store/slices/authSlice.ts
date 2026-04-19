@@ -97,8 +97,7 @@ const initialState: AuthState = {
   error: null,
 };
 GoogleSignin.configure({
-  webClientId:
-    "1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com",
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   forceCodeForRefreshToken: true,
 });
 export const fetchUserPreferencesAsync = createAsyncThunk(
@@ -204,6 +203,7 @@ export const loginWithEmailAsync = createAsyncThunk(
       const response = await AuthService.loginWithEmailAPI(data);
       const { accessToken, refreshToken, user } = response.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       return rejectWithValue(

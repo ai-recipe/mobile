@@ -21,7 +21,6 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 /**
  * Generate a unique idempotency key
  */

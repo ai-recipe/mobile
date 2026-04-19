@@ -16,8 +16,6 @@ import {
   View,
 } from "react-native";
 
-const SCAN_IMAGE_BASE = "https://api.recipetrack.tech";
-
 function isPendingScan(entry: FoodLogEntry): boolean {
   return entry.status === "pending_scan";
 }

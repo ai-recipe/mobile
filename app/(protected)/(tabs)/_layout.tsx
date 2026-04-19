@@ -1,7 +1,8 @@
 import { AddOptionsModal } from "@/app/(protected)/(tabs)/components/AddOptionsModal";
+import { PurchaseSuccessModal } from "@/app/screens/components/PurchaseSuccessModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { openMealModal } from "@/store/slices/modalSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
@@ -205,46 +206,52 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 
 export default function TabLayout() {
   const { t } = useTranslation();
+  const purchaseSuccessOpen = useAppSelector(
+    (s) => s.modal.purchaseSuccessOpen,
+  );
 
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t("tabs.home"),
+    <>
+      <PurchaseSuccessModal visible={purchaseSuccessOpen} />
+      <Tabs
+        tabBar={(props) => <CustomTabBar {...props} />}
+        screenOptions={{
+          headerShown: false,
         }}
-      />
-      <Tabs.Screen
-        name="progress"
-        options={{
-          title: t("tabs.progress"),
-        }}
-      />
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: t("tabs.home"),
+          }}
+        />
+        <Tabs.Screen
+          name="progress"
+          options={{
+            title: t("tabs.progress"),
+          }}
+        />
 
-      <Tabs.Screen
-        name="add"
-        options={{
-          title: t("tabs.add"),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: t("tabs.explore"),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: t("tabs.profile"),
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="add"
+          options={{
+            title: t("tabs.add"),
+          }}
+        />
+        <Tabs.Screen
+          name="explore"
+          options={{
+            title: t("tabs.explore"),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: t("tabs.profile"),
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
 

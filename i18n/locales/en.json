@@ -106,6 +106,15 @@
     "needMoreDataCalorie": "We need more data to show your calorie intake chart.",
     "needMoreDataWeight": "We need more data to show your weight progress chart."
   },
+  "purchaseSuccess": {
+    "title": "Welcome to Pro! 🎉",
+    "subtitle": "Your subscription is now active. Enjoy unlimited access to all premium features.",
+    "perk1": "Unlimited AI meal scans",
+    "perk2": "Personalized AI Chef recipes",
+    "perk3": "Advanced nutrition analytics",
+    "perk4": "Priority AI processing speed",
+    "cta": "Start My Pro Journey"
+  },
   "profile": {
     "title": "My Account",
     "upgradeToPro": "Upgrade to Pro",
@@ -118,7 +127,14 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System (device)",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "logoutDescription": "Are you sure you want to log out?",
+    "planPro": "Pro Plan",
+    "planFree": "Free Plan",
+    "planTrial": "Trial",
+    "planExpired": "Expired",
+    "renewsOn": "Renews {{date}}",
+    "manageSubscription": "Manage Subscription"
   },
   "scanner": {
     "takePhoto": "Take Photo",

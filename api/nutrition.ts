@@ -15,7 +15,7 @@ export interface FoodLogEntry {
   imageUri?: string;
   type?: "scan" | "manual";
   /** When set, entry is a placeholder while scan runs; backend updates it on completion */
-  status?: "pending_scan" | "completed";
+  status?: "pending_scan" | "completed" | "failed_scan";
   scanId?: string;
   /** Path or full URL for scan image (e.g. /api/v1/scan/.../image) */
   imageUrl?: string;

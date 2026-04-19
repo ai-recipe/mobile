@@ -106,6 +106,15 @@
     "needMoreDataCalorie": "Kalori alımı grafiğini göstermek için daha fazla veriye ihtiyacımız var.",
     "needMoreDataWeight": "Kilo takibi grafiğini göstermek için daha fazla veriye ihtiyacımız var."
   },
+  "purchaseSuccess": {
+    "title": "Pro'ya Hoş Geldiniz! 🎉",
+    "subtitle": "Aboneliğiniz aktif. Tüm premium özelliklere sınırsız erişimin tadını çıkarın.",
+    "perk1": "Sınırsız AI öğün taraması",
+    "perk2": "Kişiselleştirilmiş AI Chef tarifleri",
+    "perk3": "Gelişmiş beslenme analitiği",
+    "perk4": "Öncelikli AI işlem hızı",
+    "cta": "Pro Yolculuğuma Başla"
+  },
   "profile": {
     "title": "Hesabım",
     "upgradeToPro": "Pro'ya Yükselt",
@@ -118,7 +127,14 @@
     "themeLight": "Açık",
     "themeDark": "Koyu",
     "themeSystem": "Sistem (cihaz)",
-    "logout": "Çıkış Yap"
+    "logout": "Çıkış Yap",
+    "logoutDescription": "Çıkış yapmak istediğinizden emin misiniz?",
+    "planPro": "Pro Plan",
+    "planFree": "Ücretsiz Plan",
+    "planTrial": "Deneme",
+    "planExpired": "Süresi Doldu",
+    "renewsOn": "Yenileme {{date}}",
+    "manageSubscription": "Aboneliği Yönet"
   },
   "scanner": {
     "takePhoto": "Fotoğraf Çek",
