@@ -112,7 +112,7 @@ const ProfileScreen = () => {
             </View>
           )}
 
-          {shouldShowPaywallBanners ? (
+          {shouldShowPaywallBanners && (
             <TouchableOpacity
               onPress={() => router.push("/screens/paywall" as any)}
               className="flex-row items-center p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border border-orange-100 dark:border-orange-500/20"
@@ -122,17 +122,6 @@ const ProfileScreen = () => {
                 {t("profile.upgradeToPro")}
               </Text>
               <MaterialIcons name="chevron-right" size={24} color="#f48c25" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={() => router.push("/subscription" as any)}
-              className="flex-row items-center p-4 bg-green-50 dark:bg-green-500/10 rounded-2xl border border-green-100 dark:border-green-500/20"
-            >
-              <MaterialCommunityIcons name="crown" size={24} color="#22c55e" />
-              <Text className="ml-4 flex-1 font-bold text-green-600 dark:text-green-400">
-                {t("profile.manageSubscription")}
-              </Text>
-              <MaterialIcons name="chevron-right" size={24} color="#22c55e" />
             </TouchableOpacity>
           )}
           <TouchableOpacity

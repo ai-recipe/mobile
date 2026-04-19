@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, StatusBar, Text, View } from "react-native";
 import Animated, {
   FadeInDown,
@@ -18,6 +19,7 @@ export function LoadingStep({
   loadingText,
   direction = "forward",
 }: LoadingStepProps) {
+  const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
@@ -50,7 +52,7 @@ export function LoadingStep({
         </Animated.View>
 
         <Text className="text-zinc-500 dark:text-zinc-400 text-center font-medium leading-6 max-w-[250px]">
-          Fotoğraftaki malzemeler taranıyor ve analiz ediliyor...
+          {t("loadingStep.subtitle")}
         </Text>
       </View>
     </Animated.View>

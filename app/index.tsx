@@ -2,6 +2,7 @@ import { FunnyLoader } from "@/components/FunnyLoader";
 import useInitApp from "@/hooks/useInitApp";
 import { useAppSelector } from "@/store/hooks";
 import { Redirect } from "expo-router";
+import i18n from "@/i18n";
 
 export default function Index() {
   const { isAuthenticated, isOnboarded } = useAppSelector(

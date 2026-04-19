@@ -7,6 +7,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 interface StepScanProps {
@@ -25,6 +26,7 @@ export function StepScan({
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
+  const { t } = useTranslation();
   const { scannedImage } = useSelector((state: any) => state.recipe);
   return (
     <Animated.View
@@ -39,7 +41,7 @@ export function StepScan({
         />
         <View className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-5">
           <Text className="text-white font-bold text-center text-lg">
-            Taranan Görüntü
+            {t("stepScan.scannedImage")}
           </Text>
         </View>
       </View>
@@ -52,7 +54,7 @@ export function StepScan({
           >
             <MaterialIcons name="photo-camera" size={20} color="#71717a" />
             <Text className="text-zinc-700 dark:text-zinc-300 font-bold">
-              Yeni Çek
+              {t("stepScan.newCapture")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -61,7 +63,7 @@ export function StepScan({
           >
             <MaterialIcons name="collections" size={20} color="#71717a" />
             <Text className="text-zinc-700 dark:text-zinc-300 font-bold">
-              Galeri
+              {t("stepScan.gallery")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -73,7 +75,7 @@ export function StepScan({
           className="bg-[#f39849] w-full py-4 rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
         >
           <Text className="text-white font-extrabold text-lg">
-            İçerikleri Bul
+            {t("stepScan.findIngredients")}
           </Text>
           <MaterialIcons name="arrow-forward" size={24} color="white" />
         </TouchableOpacity>

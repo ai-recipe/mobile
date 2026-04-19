@@ -457,5 +457,14 @@
     "dietPrefTitle": "Dietary Preferences",
     "dietPrefSubtitle": "Choose the ones most suitable for you.",
     "next": "Next"
+  },
+  "stepScan": {
+    "scannedImage": "Scanned Image",
+    "newCapture": "New Capture",
+    "gallery": "Gallery",
+    "findIngredients": "Find Ingredients"
+  },
+  "loadingStep": {
+    "subtitle": "Scanning and analyzing the ingredients in the photo..."
   }
 }

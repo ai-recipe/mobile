@@ -17,13 +17,19 @@ import Animated, {
 } from "react-native-reanimated";
 
 const CARD_SPRING = { damping: 22, stiffness: 240 };
-const ICON_SPRING = { damping: 14, stiffness: 120, restDisplacementThreshold: 0.001 };
+const ICON_SPRING = {
+  damping: 14,
+  stiffness: 120,
+  restDisplacementThreshold: 0.001,
+};
 
 const PERKS = [
-  "purchaseSuccess.perk1",
-  "purchaseSuccess.perk2",
-  "purchaseSuccess.perk3",
-  "purchaseSuccess.perk4",
+  "paywall.featureRecipes",
+  "paywall.featureCalories",
+  "paywall.featureNutrition",
+  "paywall.featureFavorites",
+  "paywall.featureTools",
+  "paywall.featureAnalytics",
 ] as const;
 
 interface Props {
@@ -46,12 +52,22 @@ export function PurchaseSuccessModal({ visible }: Props) {
       backdropOpacity.value = withTiming(1, { duration: 240 });
       cardScale.value = withSpring(1, CARD_SPRING);
       cardOpacity.value = withTiming(1, { duration: 200 });
-      iconOpacity.value = withDelay(240, withTiming(1, { duration: 280, easing: Easing.out(Easing.quad) }));
+      iconOpacity.value = withDelay(
+        240,
+        withTiming(1, { duration: 280, easing: Easing.out(Easing.quad) }),
+      );
       iconTranslateY.value = withDelay(240, withSpring(0, ICON_SPRING));
-      iconScale.value = withDelay(240, withSequence(
-        withSpring(1.08, { damping: 18, stiffness: 140 }),
-        withSpring(1.0, { damping: 20, stiffness: 200, restDisplacementThreshold: 0.001 }),
-      ));
+      iconScale.value = withDelay(
+        240,
+        withSequence(
+          withSpring(1.08, { damping: 18, stiffness: 140 }),
+          withSpring(1.0, {
+            damping: 20,
+            stiffness: 200,
+            restDisplacementThreshold: 0.001,
+          }),
+        ),
+      );
     } else {
       backdropOpacity.value = withTiming(0, { duration: 180 });
       cardScale.value = withTiming(0.86, { duration: 180 });
@@ -60,7 +76,15 @@ export function PurchaseSuccessModal({ visible }: Props) {
       iconScale.value = 0;
       iconTranslateY.value = 16;
     }
-  }, [visible, backdropOpacity, cardScale, cardOpacity, iconScale, iconOpacity, iconTranslateY]);
+  }, [
+    visible,
+    backdropOpacity,
+    cardScale,
+    cardOpacity,
+    iconScale,
+    iconOpacity,
+    iconTranslateY,
+  ]);
 
   const handleClose = useCallback(() => {
     dispatch(closePurchaseSuccess());
@@ -140,7 +164,11 @@ export function PurchaseSuccessModal({ visible }: Props) {
                 elevation: 0,
               }}
             >
-              <MaterialIcons name="workspace-premium" size={52} color="#7a6a00" />
+              <MaterialIcons
+                name="workspace-premium"
+                size={52}
+                color="#7a6a00"
+              />
             </View>
           </Animated.View>
 

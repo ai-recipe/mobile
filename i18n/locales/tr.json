@@ -457,5 +457,14 @@
     "dietPrefTitle": "Beslenme Tercihleri",
     "dietPrefSubtitle": "Senin için en uygun olanları seç.",
     "next": "Sonraki"
+  },
+  "stepScan": {
+    "scannedImage": "Taranan Görüntü",
+    "newCapture": "Yeni Çek",
+    "gallery": "Galeri",
+    "findIngredients": "İçerikleri Bul"
+  },
+  "loadingStep": {
+    "subtitle": "Fotoğraftaki malzemeler taranıyor ve analiz ediliyor..."
   }
 }

@@ -182,7 +182,7 @@ export const initDeviceAsync = createAsyncThunk(
       });
       const isOnboarded = await AsyncStorage.getItem("isOnboarded");
       console.log("isOnboarded", isOnboarded);
-      dispatch(setIsOnboarded(isOnboarded === "true"));
+      dispatch(setIsOnboarded(isOnboarded === "true" && false));
 
       const data = response.data?.data;
       if (data?.anonymousToken) {
