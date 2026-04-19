@@ -150,13 +150,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                       />
                     );
                   default:
-                    return (
-                      <MaterialIcons
-                        name="help-outline"
-                        size={24}
-                        color={iconColor}
-                      />
-                    );
+                    return <></>;
                 }
               };
 
