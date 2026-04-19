@@ -59,6 +59,13 @@ function RootLayoutNavigator() {
     if (!currentLanguage) return;
     const init = async () => {
       dispatch(initDeviceAsync());
+      // Belt-and-suspenders: guarantee the translations GET fires even if
+      // the module-scope init promise lost its handler in a release build.
+      try {
+        await i18n.loadNamespaces("translation");
+      } catch {
+        // Swallow — the safety timeout in i18n/index.ts will unblock the UI.
+      }
     };
     init();
   }, [dispatch, currentLanguage]);

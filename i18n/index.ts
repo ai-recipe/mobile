@@ -17,7 +17,7 @@ import { setIsLoading } from "@/store/slices/appSlice";
     },
  */
 
-i18n
+const i18nReady = i18n
   .use(HttpBackend)
   .use(initReactI18next)
   .init({
@@ -50,4 +50,24 @@ i18n
       },
     },
   });
+
+// Force the backend GET to fire on boot. i18next is lazy and otherwise
+// waits for a namespace to be consumed; in release builds that can race
+// with render and leave the app stuck on the initial loader.
+i18nReady
+  .then(() => i18n.reloadResources(["en"], ["translation"]))
+  .catch(() => {
+    store.dispatch(setIsLoading(false));
+  });
+
+// Safety net: if translations never arrive (network failure, backend 500,
+// etc.), unblock the app after 8s so it can proceed with fallback keys
+// instead of stalling on FunnyLoader forever.
+setTimeout(() => {
+  if (store.getState().app.isLoading) {
+    store.dispatch(setIsLoading(false));
+  }
+}, 8000);
+
 export default i18n;
+export { i18nReady };
