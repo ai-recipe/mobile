@@ -212,7 +212,10 @@
     "softDesc": "24 saat bekleyerek 1 ücretsiz tarama hakkı kazanabilir ya da Pro'ya geçerek sınırsız tarama yapabilirsin.",
     "softHighlight": "sınırsız",
     "upgradeButton": "Pro'ya Geç — Sınırsız Tarama",
-    "wait24h": "24 Saat Bekleyeceğim"
+    "wait24h": "24 Saat Bekleyeceğim",
+    "restorePurchases": "Satın Alımları Geri Yükle",
+    "restoreNoSubscription": "Aktif abonelik bulunamadı. Bunun bir hata olduğunu düşünüyorsanız lütfen destek ekibiyle iletişime geçin.",
+    "restoreError": "Satın alımlar geri yüklenemedi. Lütfen tekrar deneyin."
   },
   "celebration": {
     "title": "Günlük Hedefe Ulaştın!",

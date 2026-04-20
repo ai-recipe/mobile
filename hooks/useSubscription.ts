@@ -10,7 +10,7 @@ import {
 } from "@/store/slices/subscriptionSlice";
 import { router } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import * as RNIap from "react-native-iap";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -110,6 +110,7 @@ export const useSubscription = () => {
   );
 
   const [products, setProducts] = useState<RNIap.Product[]>([]);
+  const [isRestoring, setIsRestoring] = useState(false);
   const [planInfo, setPlanInfo] = useState<Record<PlanId, PlanInfo>>({
     monthly: { ...EMPTY_PLAN },
     yearly: { ...EMPTY_PLAN },
@@ -225,18 +226,45 @@ export const useSubscription = () => {
   );
 
   const restore = useCallback(async () => {
+    setIsRestoring(true);
+    dispatch(clearSubscriptionError());
     try {
       await RNIap.restorePurchases();
+      const result = await dispatch(fetchSubscriptionStatus() as any);
+      const status = result?.payload;
+      const isActive =
+        status &&
+        (status.tier === "pro" || status.tier === "trial") &&
+        status.isActive &&
+        (!status.currentPeriodEnd ||
+          new Date(status.currentPeriodEnd) > new Date());
+
+      if (isActive) {
+        router.push("/(protected)/(tabs)/");
+        dispatch(openPurchaseSuccess());
+      } else {
+        Alert.alert(
+          "No Subscription Found",
+          "No active subscription found. Please contact support if you believe this is an error.",
+        );
+      }
     } catch (e) {
       console.warn("[useSubscription] restorePurchases error", e);
+      Alert.alert(
+        "Restore Failed",
+        "Failed to restore purchases. Please try again.",
+      );
+    } finally {
+      setIsRestoring(false);
     }
-  }, []);
+  }, [dispatch]);
 
   return {
     PLANS,
     data,
     isLoading,
     isPurchasing,
+    isRestoring,
     error,
     products,
     planInfo,

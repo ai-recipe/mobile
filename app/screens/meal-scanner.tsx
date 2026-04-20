@@ -10,6 +10,7 @@ import {
   Animated,
   Image,
   Linking,
+  Platform,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -141,8 +142,13 @@ export default function MealScannerScreen() {
         enableShutterSound: true,
       });
 
-      const uri = photo.path;
-      dispatch(setCapturedPhotoUri(uri));
+      // On Android, photo.path is a raw file path without the file:// scheme.
+      // Network APIs and Image components require a proper URI.
+      const uri =
+        Platform.OS === "android" && !photo.path.startsWith("file://")
+          ? `file://${photo.path}`
+          : photo.path;
+      await dispatch(setCapturedPhotoUri(uri));
       await dispatch(startScanAsync(uri)).unwrap();
       // Upload succeeded; decrement optimistically and navigate to home.
       dispatch(decrementCredit());

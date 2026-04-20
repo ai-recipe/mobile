@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 
@@ -15,6 +16,7 @@ export default function AIScanScreen() {
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme].background;
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const handlePickImage = async (useCamera: boolean) => {
     const permissionResult = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
@@ -51,6 +53,7 @@ export default function AIScanScreen() {
         className="flex-1 px-5"
         style={{ backgroundColor }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 24) }}
       >
         {/* Header Section */}
         <View className="pt-8 pb-6">

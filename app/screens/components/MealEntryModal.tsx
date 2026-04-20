@@ -14,6 +14,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  StatusBar,
   Text,
   TextInput,
   View,
@@ -260,7 +261,9 @@ export function MealEntryModal({
         <KeyboardAvoidingView
           behavior="padding"
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          keyboardVerticalOffset={
+            Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 0
+          }
         >
           {/* Content Area */}
           <ScrollView
@@ -435,7 +438,7 @@ export function MealEntryModal({
               {/* Fat */}
               <Pressable
                 className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-2xl p-3"
-                onTouchStart={() => fatRef.current?.focus()}
+                onPress={() => fatRef.current?.focus()}
               >
                 <View className="flex-row items-center gap-2 mb-2">
                   <View className="w-6 h-6 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">

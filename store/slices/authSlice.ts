@@ -105,10 +105,12 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
+      console.log("response", typeof response.data.data, response.data.data);
       dispatch(fetchSurveyQuestionsAsync());
       dispatch(fetchUserAsync());
 
-      if (!response.data?.data) {
+      if (response.data?.data === null) {
+        console.log("pushing to survey");
         router.push("/screens/survey");
         return null;
       } else {
@@ -182,7 +184,7 @@ export const initDeviceAsync = createAsyncThunk(
       });
       const isOnboarded = await AsyncStorage.getItem("isOnboarded");
       console.log("isOnboarded", isOnboarded);
-      dispatch(setIsOnboarded(isOnboarded === "true" && false));
+      dispatch(setIsOnboarded(isOnboarded === "true"));
 
       const data = response.data?.data;
       if (data?.anonymousToken) {
@@ -200,12 +202,16 @@ export const initDeviceAsync = createAsyncThunk(
 
 export const loginWithEmailAsync = createAsyncThunk(
   "auth/loginWithEmail",
-  async (data: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    data: { email: string; password: string },
+    { rejectWithValue, dispatch },
+  ) => {
     try {
       const response = await AuthService.loginWithEmailAPI(data);
       const { accessToken, refreshToken, user } = response.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
+      await dispatch(fetchUserPreferencesAsync()).unwrap();
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       return rejectWithValue(
@@ -225,7 +231,7 @@ export const registerWithEmailAsync = createAsyncThunk(
       const { accessToken, refreshToken, user } = response.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
-      await dispatch(fetchUserPreferencesAsync());
+      await dispatch(fetchUserPreferencesAsync()).unwrap();
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       console.log("error", JSON.stringify(error, null, 2));
@@ -276,7 +282,7 @@ export const loginWithGoogleAsync = createAsyncThunk(
         googleResponse.data.data.refreshToken,
       );
 
-      await dispatch(fetchUserPreferencesAsync());
+      await dispatch(fetchUserPreferencesAsync()).unwrap();
 
       return googleResponse.data?.data;
     } catch (error: any) {

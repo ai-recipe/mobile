@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   FadeInDown,
   SlideInLeft,
@@ -46,6 +47,7 @@ const MOCK_REVIEWS = [
 
 export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [userRating, setUserRating] = useState(0);
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
@@ -71,7 +73,8 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 24 }}
       >
         <View className="items-center mb-8">
           <View className="bg-orange-100 dark:bg-orange-500/20 p-6 rounded-full mb-6">
@@ -141,7 +144,7 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
         </View>
       </ScrollView>
 
-      <View className="pb-8 pt-2">
+      <View style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}>
         <TouchableOpacity
           onPress={onReview}
           activeOpacity={0.9}

@@ -139,73 +139,74 @@ export function MultiStepForm<T extends Record<string, any>>({
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+      {/* Header – outside KAV so it never shifts on Android */}
+      <View
+        className="flex-row items-center justify-between px-4 py-3 border-b"
+        style={{
+          paddingTop: insets.top,
+          borderBottomColor: theme.border,
+        }}
       >
-        {/* Header – padded for status bar / safe area */}
+        {!currentStep.dontShowBackButton && (
+          <TouchableOpacity
+            onPress={handleBack}
+            className="size-12 items-center justify-center"
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <MaterialIcons
+              name={"arrow-back-ios"}
+              size={20}
+              color={theme.text}
+            />
+          </TouchableOpacity>
+        )}
+        <Text
+          className="flex-1 text-center text-lg font-bold pr-12"
+          style={{ color: theme.text }}
+        >
+          {headerTitle}
+        </Text>
+        <View className="w-12" />
+      </View>
+
+      {/* Progress – outside KAV so it never shifts on Android */}
+      <View className="flex-col gap-3 p-4">
+        <View className="flex-row justify-between items-end">
+          <Text
+            className="text-base font-medium"
+            style={{ color: isDark ? "rgba(255,255,255,0.8)" : theme.muted }}
+          >
+            Step {stepIndex + 1}
+          </Text>
+          <Text
+            className="text-sm"
+            style={{ color: isDark ? "rgba(255,255,255,0.6)" : theme.muted }}
+          >
+            {stepIndex + 1} of {steps.length}
+          </Text>
+        </View>
         <View
-          className="flex-row items-center justify-between px-4 py-3 border-b"
+          className="h-2 rounded-full overflow-hidden"
           style={{
-            paddingTop: insets.top,
-            borderBottomColor: theme.border,
+            backgroundColor: isDark ? "rgba(255,255,255,0.1)" : theme.border,
           }}
         >
-          {!currentStep.dontShowBackButton && (
-            <TouchableOpacity
-              onPress={handleBack}
-              className="size-12 items-center justify-center"
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-            >
-              <MaterialIcons
-                name={"arrow-back-ios"}
-                size={20}
-                color={theme.text}
-              />
-            </TouchableOpacity>
-          )}
-          <Text
-            className="flex-1 text-center text-lg font-bold pr-12"
-            style={{ color: theme.text }}
-          >
-            {headerTitle}
-          </Text>
-          <View className="w-12" />
-        </View>
-
-        {/* Progress */}
-        <View className="flex-col gap-3 p-4">
-          <View className="flex-row justify-between items-end">
-            <Text
-              className="text-base font-medium"
-              style={{ color: isDark ? "rgba(255,255,255,0.8)" : theme.muted }}
-            >
-              Step {stepIndex + 1}
-            </Text>
-            <Text
-              className="text-sm"
-              style={{ color: isDark ? "rgba(255,255,255,0.6)" : theme.muted }}
-            >
-              {stepIndex + 1} of {steps.length}
-            </Text>
-          </View>
           <View
-            className="h-2 rounded-full overflow-hidden"
+            className="h-full rounded-full"
             style={{
-              backgroundColor: isDark ? "rgba(255,255,255,0.1)" : theme.border,
+              width: `${progress}%`,
+              backgroundColor: theme.tint,
             }}
-          >
-            <View
-              className="h-full rounded-full"
-              style={{
-                width: `${progress}%`,
-                backgroundColor: theme.tint,
-              }}
-            />
-          </View>
+          />
         </View>
+      </View>
 
-        {/* Step content container */}
+      {/* KAV wraps only step content so header/progress stay fixed */}
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "android" ? 0 : 0}
+      >
         <View className="flex-1">
           {currentStep.render({
             data,

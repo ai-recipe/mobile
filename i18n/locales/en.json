@@ -212,7 +212,10 @@
     "softDesc": "Wait 24 hours for 1 free scan, or upgrade to Pro for unlimited scanning.",
     "softHighlight": "unlimited",
     "upgradeButton": "Go Pro — Unlimited Scans",
-    "wait24h": "I'll Wait 24 Hours"
+    "wait24h": "I'll Wait 24 Hours",
+    "restorePurchases": "Restore Purchases",
+    "restoreNoSubscription": "No active subscription found. Please contact support if you believe this is an error.",
+    "restoreError": "Failed to restore purchases. Please try again."
   },
   "celebration": {
     "title": "Daily Goal Reached!",

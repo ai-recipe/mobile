@@ -43,6 +43,7 @@ export function StepPaywall({
     getPlanInfo,
     purchase,
     isPurchasing,
+    isRestoring,
     error,
     restore,
   } = useSubscription();
@@ -237,7 +238,7 @@ export function StepPaywall({
           <TouchableOpacity
             onPress={handleSubscribe}
             activeOpacity={0.9}
-            disabled={isPurchasing}
+            disabled={isPurchasing || isRestoring}
             className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
           >
             {isPurchasing ? (
@@ -262,12 +263,16 @@ export function StepPaywall({
           <TouchableOpacity
             onPress={restore}
             activeOpacity={0.7}
-            disabled={isPurchasing}
+            disabled={isPurchasing || isRestoring}
             className="mt-3 items-center py-2"
           >
-            <Text className="text-zinc-400 text-xs">
-              {t("paywall.restorePurchases")}
-            </Text>
+            {isRestoring ? (
+              <ActivityIndicator size="small" color="#a1a1aa" />
+            ) : (
+              <Text className="text-zinc-400 text-xs">
+                {t("paywall.restorePurchases")}
+              </Text>
+            )}
           </TouchableOpacity>
 
           {skipVisible ? (
@@ -275,7 +280,7 @@ export function StepPaywall({
               <TouchableOpacity
                 onPress={onFinish}
                 activeOpacity={0.7}
-                disabled={isPurchasing}
+                disabled={isPurchasing || isRestoring}
                 className="mt-1 items-center py-2"
               >
                 <Text className="text-zinc-400 text-sm">

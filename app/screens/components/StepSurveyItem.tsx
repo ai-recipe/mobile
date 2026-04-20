@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   SlideInLeft,
   SlideInRight,
@@ -47,6 +48,7 @@ export function StepSurveyItem({
   scrollRef,
 }: StepSurveyItemProps) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
 
@@ -91,6 +93,7 @@ export function StepSurveyItem({
         ref={scrollRef}
         className="flex-1"
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <Text className="text-[32px] font-bold leading-tight pt-2 pb-1 text-zinc-900 dark:text-white">
@@ -107,6 +110,7 @@ export function StepSurveyItem({
               placeholder="0"
               placeholderTextColor="#a1a1aa"
               keyboardType="numeric"
+              returnKeyType="done"
               value={value[0] || ""}
               onChangeText={(text) => onChange([text])}
               autoFocus
@@ -152,7 +156,7 @@ export function StepSurveyItem({
         )}
       </ScrollView>
 
-      <View className="pb-8 pt-2">
+      <View style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}>
         <TouchableOpacity
           onPress={onNext}
           disabled={isNextDisabled}
