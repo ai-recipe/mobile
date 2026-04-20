@@ -1,4 +1,4 @@
-import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
+import { TabScreenWrapper } from "@/app/(protected)/components/TabScreenWrapper";
 import { GoalCelebrationModal } from "@/app/screens/components/GoalCelebrationModal";
 import {
   MealData,

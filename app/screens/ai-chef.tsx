@@ -1,5 +1,5 @@
-import { FavoritesSkeleton } from "@/app/(protected)/(tabs)/components/FavoritesSkeleton";
-import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
+import { FavoritesSkeleton } from "@/app/(protected)/components/FavoritesSkeleton";
+import { TabScreenWrapper } from "@/app/(protected)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import AIChefTab from "@/components/ai-chef-tabs/AIChefTab";
 import FavoritesTab from "@/components/ai-chef-tabs/FavoritesTab";

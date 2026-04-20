@@ -25,7 +25,7 @@ import {
 import { BarChart } from "react-native-gifted-charts";
 import { useDispatch } from "react-redux";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { TabScreenWrapper } from "./components/TabScreenWrapper";
+import { TabScreenWrapper } from "@/app/(protected)/components/TabScreenWrapper";
 
 export default function ProgressScreen() {
   const { t } = useTranslation();

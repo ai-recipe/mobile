@@ -68,6 +68,7 @@ export const scanImage = createAsyncThunk(
   "recipe/scanImage",
   async (imageUri: string, { rejectWithValue, dispatch }) => {
     const token = await AsyncStorage.getItem("accessToken");
+    console.log("here", imageUri);
 
     return new Promise<string[]>((resolve, reject) => {
       const socket = io(`${SOCKET_SERVER}/recognition`, {

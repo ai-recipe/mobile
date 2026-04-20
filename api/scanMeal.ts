@@ -14,20 +14,25 @@ export const uploadScanImage = async (
 ): Promise<ScanUploadResponse> => {
   console.log("uploading image", imageUri);
   console.log("api.defaults.baseURL", api.defaults.baseURL);
-  const formData = new FormData();
-  formData.append("image", {
-    uri: imageUri,
-    type: "image/jpeg",
-    name: "meal.jpg",
-  } as any);
+  try {
+    const formData = new FormData();
+    formData.append("image", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: "meal.jpg",
+    } as any);
 
-  const response = await api.post<ScanUploadResponse>(
-    "/scan/upload",
-    formData,
-    {
-      headers: { "Content-Type": "multipart/form-data" },
-    },
-  );
-  console.log("response", response);
-  return response.data;
+    const response = await api.post<ScanUploadResponse>(
+      "/scan/upload",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log("error", JSON.stringify(error, null, 2));
+
+    throw error?.response?.data?.message ?? error;
+  }
 };

@@ -1,4 +1,4 @@
-import { AddOptionsModal } from "@/app/(protected)/(tabs)/components/AddOptionsModal";
+import { AddOptionsModal } from "@/app/(protected)/components/AddOptionsModal";
 import { PurchaseSuccessModal } from "@/app/screens/components/PurchaseSuccessModal";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";

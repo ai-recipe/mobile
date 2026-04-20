@@ -1,4 +1,4 @@
-import { TabScreenWrapper } from "@/app/(protected)/(tabs)/components/TabScreenWrapper";
+import { TabScreenWrapper } from "@/app/(protected)/components/TabScreenWrapper";
 import { RecipeDetailModal } from "@/app/screens/components/RecipeDetailModal";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { TabSwitcher } from "@/components/TabSwitcher";
@@ -14,7 +14,7 @@ import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { ExploreSkeleton } from "./components/ExploreSkeleton";
+import { ExploreSkeleton } from "@/app/(protected)/components/ExploreSkeleton";
 
 const ExploreScreen = () => {
   const { t } = useTranslation();
