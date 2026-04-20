@@ -89,18 +89,25 @@ const ProfileScreen = () => {
           {user && (
             <View className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700 mb-1">
               <View className="flex-row items-center mb-3">
-                <View className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-500/20 items-center justify-center mr-3">
-                  <Text className="text-xl font-bold text-orange-500">
-                    {(user.firstName?.[0] ?? "").toUpperCase()}
-                  </Text>
-                </View>
+                {user.firstName && (
+                  <View className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-500/20 items-center justify-center mr-3">
+                    <Text className="text-xl font-bold text-orange-500">
+                      {(user.firstName?.[0] ?? "").toUpperCase()}
+                    </Text>
+                  </View>
+                )}
+
                 <View className="flex-1">
-                  <Text className="text-base font-bold text-zinc-900 dark:text-white">
-                    {user.firstName} {user.lastName}
-                  </Text>
-                  <Text className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {user.email}
-                  </Text>
+                  {user.firstName && user.lastName && (
+                    <Text className="text-base font-bold text-zinc-900 dark:text-white">
+                      {user.firstName} {user.lastName}
+                    </Text>
+                  )}
+                  {user.email && (
+                    <Text className="text-sm text-zinc-500 dark:text-zinc-400">
+                      {user.email}
+                    </Text>
+                  )}
                 </View>
               </View>
               <SubscriptionBadge

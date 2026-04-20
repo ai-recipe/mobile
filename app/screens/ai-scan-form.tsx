@@ -1,6 +1,6 @@
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import {
   AppStep,
   discoverRecipesAsync,
