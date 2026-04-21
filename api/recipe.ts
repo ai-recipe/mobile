@@ -31,7 +31,6 @@ export interface RecipeFromAPI {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export interface RecipeListItem {
   _id: string;
   title: string;
@@ -39,9 +38,28 @@ export interface RecipeListItem {
   description: string;
   difficulty: string;
   totalTimeMinutes: number;
+  servings: number;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  nutrition: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+  };
+  dietaryTags: string[];
+  allergens: string[];
+  cuisineType: string;
+  source: "manual" | "ai_generated";
+  isPublished: boolean;
+  category: string;
   imageUrl: string | null;
   isFavorite?: boolean;
   isTrending?: boolean;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RecipeListResponse {
