@@ -138,8 +138,11 @@ export function MultiStepForm<T extends Record<string, any>>({
   if (!currentStep) return null;
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      {/* Header – outside KAV so it never shifts on Android */}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      contentContainerStyle={{ flex: 1, height: "100%" }}
+      style={{ flex: 1, backgroundColor: theme.background }}
+    >
       <View
         className="flex-row items-center justify-between px-4 py-3 border-b"
         style={{
@@ -169,7 +172,7 @@ export function MultiStepForm<T extends Record<string, any>>({
         <View className="w-12" />
       </View>
 
-      {/* Progress – outside KAV so it never shifts on Android */}
+      {/* Progress */}
       <View className="flex-col gap-3 p-4">
         <View className="flex-row justify-between items-end">
           <Text
@@ -201,23 +204,16 @@ export function MultiStepForm<T extends Record<string, any>>({
         </View>
       </View>
 
-      {/* KAV wraps only step content so header/progress stay fixed */}
-      <KeyboardAvoidingView
-        behavior="padding"
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "android" ? 0 : 0}
-      >
-        <View className="flex-1">
-          {currentStep.render({
-            data,
-            setValue: setValueWrapper,
-            nextStep,
-            control,
-            errors: !!submittedSteps[currentStep.id] ? errors : {},
-            scrollRef,
-          })}
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+      <View className="flex-1">
+        {currentStep.render({
+          data,
+          setValue: setValueWrapper,
+          nextStep,
+          control,
+          errors: !!submittedSteps[currentStep.id] ? errors : {},
+          scrollRef,
+        })}
+      </View>
+    </KeyboardAvoidingView>
   );
 }

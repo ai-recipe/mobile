@@ -257,13 +257,10 @@ export function MealEntryModal({
           )}
         </View>
 
-        {/* KAV wraps only scroll + button — image header is unaffected */}
         <KeyboardAvoidingView
-          behavior="padding"
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={
-            Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 0
-          }
         >
           {/* Content Area */}
           <ScrollView

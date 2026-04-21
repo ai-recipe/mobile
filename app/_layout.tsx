@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import "../global.css";
 import i18n from "@/i18n";
+import { StatusBar } from "expo-status-bar";
 
 // Must be registered outside the React tree (module scope)
 /*messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -90,10 +91,8 @@ function RootLayoutWithLanguageSupport() {
 export default Sentry.wrap(function RootLayout() {
   return (
     <Provider store={store}>
-      <GestureHandlerRootView
-        className={`bg-background  ${Platform.OS === "ios" ? "pb-0 " : ""}`}
-        style={{ flex: 1 }}
-      >
+      <GestureHandlerRootView style={{ flex: 1 }} className="bg-background">
+        <StatusBar style="auto" />
         <RootLayoutWithLanguageSupport />
       </GestureHandlerRootView>
     </Provider>

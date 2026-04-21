@@ -4,12 +4,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Easing, Image, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const FunnyLoader = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
   const { t } = useTranslation();
-
+  const insets = useSafeAreaInsets();
   // Ensure fallback messages exist if translation fails
   const messages = t("loader.messages", { returnObjects: true }) as string[];
   const fallbackMessages = [
@@ -152,7 +153,10 @@ export const FunnyLoader = () => {
   return (
     <View
       className="flex-1 justify-center items-center px-8 relative overflow-hidden"
-      style={{ backgroundColor: colors.background }}
+      style={{
+        backgroundColor: colors.background,
+        paddingBottom: insets.bottom + 16,
+      }}
     >
       {/* Radiant Background Gradient Overlay */}
       <View
@@ -270,7 +274,10 @@ export const FunnyLoader = () => {
       {/* Footer Branding */}
       <View
         className="absolute bottom-10 flex-row items-center gap-2 px-6 py-2 rounded-full"
-        style={{ backgroundColor: colors.surfaceContainerLow }}
+        style={{
+          backgroundColor: colors.surfaceContainerLow,
+          marginBottom: insets.bottom,
+        }}
       >
         <MaterialIcons name="auto-awesome" size={14} color={colors.primary} />
         <Text

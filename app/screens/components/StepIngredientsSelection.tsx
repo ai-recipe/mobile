@@ -90,11 +90,10 @@ export function StepIngredientsSelection({
 
       {/* Ingredients List */}
       <ScrollView
+        ref={scrollRef}
         className="flex-1 mb-4"
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="gap-3"
-        style={{ height: 400 }}
-        scrollViewRef={scrollRef}
+        contentContainerStyle={{ gap: 12 }}
       >
         {scannedIngredients.map((ingredient, index) => {
           const selected = isSelected(ingredient);

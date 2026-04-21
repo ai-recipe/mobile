@@ -23,6 +23,7 @@ import {
   Image,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
@@ -36,6 +37,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { isRegisterLoading, isGoogleLoading, isAppleLoading } = useAppSelector(
     (state) => state.auth,
   );
@@ -68,11 +70,17 @@ export default function RegisterScreen() {
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
+  const { preferences } = useAppSelector((state) => state.auth);
   const onSubmit = async (data: RegisterFormData) => {
+    const newPreferences = preferences === null ? null : preferences;
     try {
       const resultAction = await dispatch(registerWithEmailAsync(data));
       if (registerWithEmailAsync.fulfilled.match(resultAction)) {
-        router.replace("/(protected)/(tabs)");
+        if (newPreferences === null) {
+          router.replace("/screens/survey");
+        } else {
+          router.replace("(protected)/(tabs)/progress");
+        }
       } else {
         const message = resultAction.payload as string;
         Alert.alert(t("auth.error"), message || t("auth.registerFailed"));
@@ -86,7 +94,6 @@ export default function RegisterScreen() {
     const resultAction = await dispatch(loginWithGoogleAsync());
     console.log("resultAction", JSON.stringify(resultAction, null, 2));
     if (loginWithGoogleAsync.fulfilled.match(resultAction)) {
-      router.replace("/(protected)/(tabs)");
     } else {
       const message = resultAction.payload as string;
       if (message !== "cancelled") {
@@ -98,7 +105,6 @@ export default function RegisterScreen() {
   const handleAppleLogin = async () => {
     const resultAction = await dispatch(loginWithAppleAsync());
     if (loginWithAppleAsync.fulfilled.match(resultAction)) {
-      router.replace("/(protected)/(tabs)");
     } else {
       const message = resultAction.payload as string;
       if (message !== "cancelled") {
@@ -110,9 +116,9 @@ export default function RegisterScreen() {
   return (
     <ScreenWrapper withTabBar={false} withTabNavigation={false}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
         className="flex-1"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={0}
       >
         <ScrollView
           className="flex-1"
@@ -158,7 +164,8 @@ export default function RegisterScreen() {
             {/* Form Section - centered */}
             <Animated.View
               entering={FadeInDown.duration(1000).delay(200).springify()}
-              className="w-full px-6 pb-12 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
+              className="w-full px-6 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
+              style={{ paddingBottom: Math.max(48, insets.bottom + 24) }}
             >
               {/* Email Input */}
               <View className="mb-4">

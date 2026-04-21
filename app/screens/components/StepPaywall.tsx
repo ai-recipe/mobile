@@ -93,7 +93,7 @@ export function StepPaywall({
       info: yearlyInfo,
       titleKey: "paywall.yearly",
       periodKey: "paywall.perYear",
-      descriptionKey: "paywall.yearlyDesc",
+      descriptionKey: "paywall.monthlyDesc",
       featured: true,
       badgeKey: "paywall.mostPopular",
     },
@@ -208,13 +208,6 @@ export function StepPaywall({
                     <Text className="text-zinc-400 text-[10px] uppercase font-bold">
                       {t(plan.periodKey)}
                     </Text>
-                    {isYearly && monthlyInfo.price > 0 && (
-                      <Text className="text-zinc-400 text-[10px] mt-0.5">
-                        ≈{" "}
-                        {plan.info.currency}{" "}
-                        {(plan.info.price / 12).toFixed(2)}/mo
-                      </Text>
-                    )}
                   </View>
                 </View>
               </TouchableOpacity>

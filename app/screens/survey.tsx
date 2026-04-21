@@ -165,17 +165,20 @@ export default function SurveyScreen() {
       setIsInitialized(true);
     }
   }, [surveyQuestions, defaultValues, form, isInitialized]);
-
+  const { preferences } = useAppSelector((state) => state.auth);
   const handleFinish = async (data: any = {}) => {
+    const newPreferences = preferences === null ? null : preferences;
     const responses = Object.entries(data).map(([key, value]) => ({
       questionKey: key,
       answers: value as string[],
     }));
 
     if (responses.length > 0) {
-      const result = await dispatch(submitSurveyAsync(responses));
-      if (submitSurveyAsync.fulfilled.match(result)) {
+      await dispatch(submitSurveyAsync(responses));
+      if (newPreferences === null) {
         router.replace("/screens/post-survey-experience");
+      } else {
+        router.replace("(protected)/(tabs)/progress");
       }
     }
   };
@@ -187,7 +190,11 @@ export default function SurveyScreen() {
 
   if (isSurveyQuestionsLoading && !isInitialized) {
     return (
-      <ScreenWrapper withTabNavigation={false} showTopNavBar={false}>
+      <ScreenWrapper
+        withTabNavigation={false}
+        showTopNavBar={false}
+        withTabBar={false}
+      >
         <View className="flex-1 items-center justify-center bg-white dark:bg-zinc-900">
           <View className="items-center justify-center mb-8">
             <View className="size-24 bg-orange-100 dark:bg-orange-500/20 rounded-full items-center justify-center mb-4">
@@ -207,7 +214,11 @@ export default function SurveyScreen() {
 
   if (isSurveySubmitting) {
     return (
-      <ScreenWrapper withTabNavigation={false} showTopNavBar={false}>
+      <ScreenWrapper
+        withTabNavigation={false}
+        showTopNavBar={false}
+        withTabBar={false}
+      >
         <Animated.View
           entering={FadeIn.duration(400)}
           className="flex-1 items-center justify-center bg-white dark:bg-zinc-900 px-6"

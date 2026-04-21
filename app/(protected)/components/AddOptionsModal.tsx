@@ -15,6 +15,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type AddOption = "scan-food" | "manual-log" | "ai-chef";
 
@@ -35,6 +36,7 @@ export function AddOptionsModal({
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme];
   const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
 
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
@@ -147,6 +149,7 @@ export function AddOptionsModal({
               borderTopColor: isDark
                 ? "rgba(255,255,255,0.05)"
                 : "rgba(255,255,255,0.2)",
+              paddingBottom: Math.max(56, insets.bottom + 32),
             },
           ]}
         >

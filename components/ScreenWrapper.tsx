@@ -82,6 +82,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: "hidden",
   },
   title: {},
 });

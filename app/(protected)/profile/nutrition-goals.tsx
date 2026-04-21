@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
 const NutritionGoalCard = ({
@@ -93,6 +94,7 @@ const NutritionGoals = () => {
   const { goalPlan } = useAppSelector((state) => state.goalPlans);
   const dispatch = useAppDispatch();
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
 
   const [goals, setGoals] = useState({
     targetWeightKg: goalPlan?.targetWeightKg?.toString() ?? "",
@@ -130,15 +132,21 @@ const NutritionGoals = () => {
       showTopNavBar={false}
       withTabNavigation={false}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 bg-[#F9FAFB] dark:bg-zinc-950"
-      >
-        <View className="flex-1 px-6">
+      <View className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          contentContainerStyle={{ flex: 1, height: "100%" }}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={
+            Platform.OS === "ios" ? 0 : insets.bottom + 72
+          }
+        >
           <ScrollView
-            className="flex-1"
+            className="flex-1 px-6"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 180 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
+            keyboardShouldPersistTaps="handled"
+            automaticallyAdjustKeyboardInsets={true}
           >
             <Text className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">
               {t("home.editNutritionGoals")}
@@ -185,9 +193,12 @@ const NutritionGoals = () => {
             />
           </ScrollView>
 
-          <View className="absolute bottom-10 left-6 right-6">
+          <View
+            className="px-6 pt-2"
+            style={{ paddingBottom: Math.max(insets.bottom, 24) }}
+          >
             <TouchableOpacity
-              className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center mb-4"
+              className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center"
               onPress={handleSave}
               activeOpacity={0.8}
             >
@@ -196,8 +207,8 @@ const NutritionGoals = () => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </ScreenWrapper>
   );
 };

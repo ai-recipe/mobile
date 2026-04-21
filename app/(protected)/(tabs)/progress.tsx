@@ -232,17 +232,15 @@ export default function ProgressScreen() {
             <TouchableOpacity
               className="flex-1 bg-primary py-4 rounded-full items-center justify-center flex-row gap-3 "
               activeOpacity={0.7}
+              onPress={() => {
+                router.push("/screens/survey");
+              }}
             >
               <MaterialIcons name="auto-awesome" size={18} color="white" />
-              <Pressable
-                onPress={() => {
-                  router.push("/screens/survey");
-                }}
-              >
-                <Text className="text-white font-bold text-base">
-                  {t("progress.autoGenerateGoals")}
-                </Text>
-              </Pressable>
+
+              <Text className="text-white font-bold text-base">
+                {t("progress.autoGenerateGoals")}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

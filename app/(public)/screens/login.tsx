@@ -23,6 +23,7 @@ import {
   Image,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as yup from "yup";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
@@ -35,6 +36,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { isLoginLoading, isGoogleLoading, isAppleLoading } = useAppSelector(
     (state) => state.auth,
   );
@@ -67,7 +69,6 @@ export default function LoginScreen() {
     try {
       const resultAction = await dispatch(loginWithEmailAsync(data));
       if (loginWithEmailAsync.fulfilled.match(resultAction)) {
-        router.replace("/(protected)/(tabs)");
       } else {
         const message = resultAction.payload as string;
         Alert.alert(t("auth.error"), message || t("auth.loginFailed"));
@@ -104,9 +105,9 @@ export default function LoginScreen() {
   return (
     <ScreenWrapper withTabNavigation={false}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
         className="flex-1"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === "android" ? 0 : 0}
       >
         <ScrollView
           className="flex-1"
@@ -153,7 +154,8 @@ export default function LoginScreen() {
             {/* Form Section - centered */}
             <Animated.View
               entering={FadeInDown.duration(1000).delay(200).springify()}
-              className="w-full px-6 pb-12 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
+              className="w-full px-6 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
+              style={{ paddingBottom: Math.max(48, insets.bottom + 24) }}
             >
               {/* Email Input */}
               <View className="mb-4">
