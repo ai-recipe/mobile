@@ -12,10 +12,10 @@ export default function Index() {
     isPreferencesLoading,
     preferences,
   } = useAppSelector((state) => state.auth);
-  const { isLoading } = useAppSelector((state) => state.app);
+  const { isLoading, isAppInitialized } = useAppSelector((state) => state.app);
   useInitApp();
 
-  if (isLoading || isInitDeviceLoading) {
+  if (isLoading || isInitDeviceLoading || !isAppInitialized) {
     return <FunnyLoader />;
   }
 

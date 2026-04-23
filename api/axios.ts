@@ -35,6 +35,7 @@ api.interceptors.request.use(
     const localeStorageCurrentLanguage = await AsyncStorage.getItem(
       "CURRENT_LANGUAGE",
     );
+    console.log("localeStorageCurrentLanguage", localeStorageCurrentLanguage);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

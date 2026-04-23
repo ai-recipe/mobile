@@ -70,17 +70,10 @@ export default function RegisterScreen() {
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  const { preferences } = useAppSelector((state) => state.auth);
   const onSubmit = async (data: RegisterFormData) => {
-    const newPreferences = preferences === null ? null : preferences;
     try {
       const resultAction = await dispatch(registerWithEmailAsync(data));
       if (registerWithEmailAsync.fulfilled.match(resultAction)) {
-        if (newPreferences === null) {
-          router.replace("/screens/survey");
-        } else {
-          router.replace("(protected)/(tabs)/progress");
-        }
       } else {
         const message = resultAction.payload as string;
         Alert.alert(t("auth.error"), message || t("auth.registerFailed"));

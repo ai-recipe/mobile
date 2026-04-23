@@ -19,8 +19,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
 import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
-import { FunnyLoader } from "@/components/FunnyLoader";
 import * as Sentry from "@sentry/react-native";
+import { initAppAsync } from "@/store/slices/appSlice";
 
 Sentry.init({
   dsn: "https://7a90cff677e854e1452ca6321fcdac53@o4511230880579584.ingest.de.sentry.io/4511230885822544",
@@ -45,9 +45,6 @@ Sentry.init({
 });
 
 function RootLayoutNavigator() {
-  const { isLoading } = useAppSelector((state) => state.app);
-  useInitApp();
-  const { isInitDeviceLoading } = useAppSelector((state) => state.auth);
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
 
@@ -60,6 +57,7 @@ function RootLayoutNavigator() {
     if (!currentLanguage) return;
     const init = async () => {
       dispatch(initDeviceAsync());
+      dispatch(initAppAsync());
       // Belt-and-suspenders: guarantee the translations GET fires even if
       // the module-scope init promise lost its handler in a release build.
       try {

@@ -122,22 +122,32 @@ export const useSubscription = () => {
 
   // ─── Fetch products ──────────────────────────────────────────────────────
 
+  const initConnection = useCallback(async () => {
+    try {
+      await RNIap.initConnection();
+      fetchProducts();
+    } catch (e) {
+      console.warn("[useSubscription] initConnection error", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    initConnection();
+  }, [initConnection]);
+
   const fetchProducts = useCallback(async () => {
     try {
       const fetched = await RNIap.fetchProducts({
         skus: ["pro"],
         type: "subs",
       });
+      console.log("fetched", fetched);
       setProducts(fetched as any);
       setPlanInfo(parseProducts(fetched as any));
     } catch (e) {
       console.warn("[useSubscription] fetchProducts error", e);
     }
   }, []);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
 
   // ─── Purchase listener ───────────────────────────────────────────────────
 

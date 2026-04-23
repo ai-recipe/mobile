@@ -79,3 +79,25 @@ EXPO_PUBLIC_API_URL=https://api.slaycal.com/api/v1
 EXPO_PUBLIC_BASE_URL=https://api.slaycal.com
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=1029242653801-4e39hdmbtgm0f0hmul7jg10d832jplqq.apps.googleusercontent.com
+
+Project Credentials Configuration
+
+Project                   @mirrorbitai/slaycalai
+Bundle Identifier         com.slaycal.ios
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             64B6373C752FA73E9BB5E278335B7463
+Expiration Date           Thu, 22 Apr 2027 09:46:51 GMT
+Apple Team                2575C2BF77 (Musa Sahin Kundakci (Individual))
+Updated                   6 seconds ago
+                          
+Provisioning Profile      
+Developer Portal ID       5M5H5BK85G
+Status                    active
+Expiration                Thu, 22 Apr 2027 09:46:51 GMT
+Apple Team                2575C2BF77 (Musa Sahin Kundakci (Individual))
+Updated                   1 second ago
+                          
+All credentials are ready to build @mirrorbitai/slaycalai (com.slaycal.ios)

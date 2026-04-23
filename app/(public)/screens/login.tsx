@@ -81,7 +81,6 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     const resultAction = await dispatch(loginWithGoogleAsync());
     if (loginWithGoogleAsync.fulfilled.match(resultAction)) {
-      router.replace("/(protected)/(tabs)");
     } else {
       const message = resultAction.payload as string;
       if (message !== "cancelled") {
@@ -93,7 +92,6 @@ export default function LoginScreen() {
   const handleAppleLogin = async () => {
     const resultAction = await dispatch(loginWithAppleAsync());
     if (loginWithAppleAsync.fulfilled.match(resultAction)) {
-      router.replace("/(protected)/(tabs)");
     } else {
       const message = resultAction.payload as string;
       if (message !== "cancelled") {

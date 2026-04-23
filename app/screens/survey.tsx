@@ -183,10 +183,13 @@ export default function SurveyScreen() {
     }
   };
 
-  const steps = useMemo(
-    () => createSurveySteps({ questions: surveyQuestions, t }),
-    [surveyQuestions, t],
-  );
+  const steps = useMemo(() => {
+    const s = createSurveySteps({ questions: surveyQuestions, t });
+    if (preferences === null && s.length > 0) {
+      s[0] = { ...s[0], dontShowBackButton: true };
+    }
+    return s;
+  }, [surveyQuestions, t, preferences]);
 
   if (isSurveyQuestionsLoading && !isInitialized) {
     return (
