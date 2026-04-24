@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { openPurchaseSuccess } from "@/store/slices/modalSlice";
 import {
+  activateAppleIAPPurchase,
   activateGooglePlayPurchase,
   clearSubscriptionError,
   fetchSubscriptionStatus,
@@ -48,6 +49,42 @@ function parseProducts(products: RNIap.Product[]): Record<PlanId, PlanInfo> {
     yearly: { ...EMPTY_PLAN },
   };
 
+  if (Platform.OS === "ios") {
+    const monthly = products.find((p) => p.id === "pro_monthly") as any;
+    const yearly = products.find((p) => p.id === "pro_yearly") as any;
+
+    if (monthly) {
+      const hasFreeTrial = !!monthly.introductoryPriceIOS;
+      result.monthly = {
+        displayPrice: monthly.displayPrice,
+        price: monthly.price,
+        currency: monthly.currency,
+        offerToken: null,
+        hasFreeTrial,
+        trialDescription: hasFreeTrial
+          ? `${monthly.introductoryPriceNumberOfPeriodsIOS} ${monthly.introductoryPriceSubscriptionPeriodIOS} free`
+          : null,
+      };
+    }
+
+    if (yearly) {
+      const hasFreeTrial = !!yearly.introductoryPriceIOS;
+      result.yearly = {
+        displayPrice: yearly.displayPrice,
+        price: yearly.price,
+        currency: yearly.currency,
+        offerToken: null,
+        hasFreeTrial,
+        trialDescription: hasFreeTrial
+          ? `${yearly.introductoryPriceNumberOfPeriodsIOS} ${yearly.introductoryPriceSubscriptionPeriodIOS} free`
+          : null,
+      };
+    }
+
+    return result;
+  }
+
+  // Android
   const proProduct = products.find((p) => p.id === "pro") as any;
   if (!proProduct) return result;
 
@@ -97,6 +134,10 @@ function parseProducts(products: RNIap.Product[]): Record<PlanId, PlanInfo> {
   return result;
 }
 
+const SKUS_BY_PLATFORM = {
+  android: ["pro"],
+  ios: ["pro_monthly", "pro_yearly"],
+};
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useSubscription = () => {
@@ -138,7 +179,7 @@ export const useSubscription = () => {
   const fetchProducts = useCallback(async () => {
     try {
       const fetched = await RNIap.fetchProducts({
-        skus: ["pro"],
+        skus: SKUS_BY_PLATFORM[Platform.OS],
         type: "subs",
       });
       console.log("fetched", fetched);
@@ -154,15 +195,27 @@ export const useSubscription = () => {
   useEffect(() => {
     const purchaseListener = RNIap.purchaseUpdatedListener(async (purchase) => {
       try {
-        if (purchase.purchaseToken) {
-          await RNIap.finishTransaction({
-            purchase,
-            isConsumable: false,
-          });
+        if (Platform.OS === "android" && purchase.purchaseToken) {
+          await RNIap.finishTransaction({ purchase, isConsumable: false });
           await dispatch(
             activateGooglePlayPurchase({
               purchaseToken: purchase.purchaseToken,
               basePlanId: currentPlanRef.current,
+            }),
+          );
+          await dispatch(fetchSubscriptionStatus() as any);
+          router.push("/(protected)/(tabs)/");
+          dispatch(openPurchaseSuccess());
+        } else if (Platform.OS === "ios" && purchase.transactionId) {
+          const originalTransactionId =
+            (purchase as any).originalTransactionIdentifierIOS ??
+            purchase.transactionId;
+          await RNIap.finishTransaction({ purchase, isConsumable: false });
+          await dispatch(
+            activateAppleIAPPurchase({
+              originalTransactionId,
+              productId: purchase.productId,
+              transactionId: purchase.transactionId,
             }),
           );
           await dispatch(fetchSubscriptionStatus() as any);
@@ -224,6 +277,11 @@ export const useSubscription = () => {
             type: "subs",
           });
         } else {
+          const sku = planId === "monthly" ? "pro_monthly" : "pro_yearly";
+          await RNIap.requestPurchase({
+            request: { ios: { sku } },
+            type: "subs",
+          });
         }
       } catch (e: any) {
         if (e?.code !== "E_USER_CANCELLED") {

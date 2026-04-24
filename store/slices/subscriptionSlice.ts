@@ -36,6 +36,28 @@ export const fetchSubscriptionStatus = createAsyncThunk(
   },
 );
 
+export const activateAppleIAPPurchase = createAsyncThunk(
+  "subscription/activateAppleIAP",
+  async (
+    payload: {
+      originalTransactionId: string;
+      productId: string;
+      transactionId?: string;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const res = await SubscriptionService.activateAppleAppStore(payload);
+      return res.data.subscription;
+    } catch (err: any) {
+      return rejectWithValue(
+        err?.response?.data?.error?.message ??
+          "Failed to activate subscription",
+      );
+    }
+  },
+);
+
 export const activateGooglePlayPurchase = createAsyncThunk(
   "subscription/activateGooglePlay",
   async (
@@ -98,6 +120,21 @@ const subscriptionSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(activateGooglePlayPurchase.rejected, (state, action) => {
+        state.isPurchasing = false;
+        state.error = action.payload as string;
+      });
+
+    // activateAppleIAPPurchase
+    builder
+      .addCase(activateAppleIAPPurchase.pending, (state) => {
+        state.isPurchasing = true;
+        state.error = null;
+      })
+      .addCase(activateAppleIAPPurchase.fulfilled, (state, action) => {
+        state.isPurchasing = false;
+        state.data = action.payload;
+      })
+      .addCase(activateAppleIAPPurchase.rejected, (state, action) => {
         state.isPurchasing = false;
         state.error = action.payload as string;
       });
