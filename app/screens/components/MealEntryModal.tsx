@@ -1,4 +1,5 @@
 import { FoodLogEntry } from "@/api/nutrition";
+import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { usePrev } from "@/hooks/usePrev";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -226,7 +227,7 @@ export function MealEntryModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View style={{ flex: 1 }} className="bg-zinc-50 dark:bg-zinc-950">
+      <View className="flex-1">
         {/* Header Image Area — outside KAV so it never shifts */}
         <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
           {/* Top Bar */}
@@ -258,9 +259,10 @@ export function MealEntryModal({
         </View>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          contentContainerStyle={{ flex: 1, height: "100%" }}
           style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : insets.bottom}
         >
           {/* Content Area */}
           <ScrollView

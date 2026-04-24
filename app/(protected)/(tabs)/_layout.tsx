@@ -63,10 +63,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         <BlurView
           intensity={80}
           tint={isDark ? "dark" : "light"}
-          style={[
-            styles.blurWrapper,
-            { paddingBottom: insets.bottom + 8, paddingTop: 12 },
-          ]}
+          style={[styles.blurWrapper, { paddingBottom: 4, paddingTop: 12 }]}
         >
           <View style={styles.tabBarInner}>
             {state.routes.map((route: any, index: number) => {

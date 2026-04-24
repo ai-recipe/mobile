@@ -15,6 +15,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import {
@@ -42,14 +43,25 @@ import { SoftPaywallModal } from "./components/SoftPaywallModal";
  */
 type ScanMode = "meal" | "barcode" | "nutrition";
 
-const VIEWFINDER_SIZES: Record<ScanMode, { width: number; height: number }> = {
-  meal: { width: 272, height: 272 },
-  barcode: { width: 300, height: 110 },
-  nutrition: { width: 200, height: 340 },
-};
-
 export default function MealScannerScreen() {
   const insets = useSafeAreaInsets();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  // Safe viewport available to the viewfinder (between top bar and bottom controls)
+  const viewfinderTopPad = insets.top + 60;
+  const viewfinderBottomPad = insets.bottom + 230;
+  const safeH = Math.max(120, screenHeight - viewfinderTopPad - viewfinderBottomPad);
+  const safeW = screenWidth - 48;
+
+  const VIEWFINDER_SIZES: Record<ScanMode, { width: number; height: number }> = {
+    meal: { width: Math.min(272, safeW * 0.85), height: Math.min(272, safeH * 0.75) },
+    barcode: { width: Math.min(300, safeW * 0.9), height: Math.min(110, safeH * 0.4) },
+    nutrition: { width: Math.min(200, safeW * 0.6), height: Math.min(340, safeH * 0.85) },
+  };
+
+  // Keep a stable ref so the spring callbacks always read current sizes
+  const viewfinderSizesRef = useRef(VIEWFINDER_SIZES);
+  viewfinderSizesRef.current = VIEWFINDER_SIZES;
   const cameraRef = useRef<Camera>(null);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [scanMode, setScanMode] = useState<ScanMode>("meal");
@@ -59,6 +71,12 @@ export default function MealScannerScreen() {
   const viewfinderHeight = useRef(
     new Animated.Value(VIEWFINDER_SIZES.meal.height),
   ).current;
+  // Sync animated values when responsive sizes change (e.g. first layout)
+  useEffect(() => {
+    viewfinderWidth.setValue(viewfinderSizesRef.current[scanMode].width);
+    viewfinderHeight.setValue(viewfinderSizesRef.current[scanMode].height);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeH, safeW]);
 
   const dispatch = useAppDispatch();
   const { status, progress, progressMessage, result, error, capturedPhotoUri } =
@@ -181,13 +199,13 @@ export default function MealScannerScreen() {
     (mode: ScanMode) => {
       setScanMode(mode);
       Animated.spring(viewfinderWidth, {
-        toValue: VIEWFINDER_SIZES[mode].width,
+        toValue: viewfinderSizesRef.current[mode].width,
         useNativeDriver: false,
         damping: 18,
         stiffness: 200,
       }).start();
       Animated.spring(viewfinderHeight, {
-        toValue: VIEWFINDER_SIZES[mode].height,
+        toValue: viewfinderSizesRef.current[mode].height,
         useNativeDriver: false,
         damping: 18,
         stiffness: 200,
@@ -246,10 +264,7 @@ export default function MealScannerScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black">
-      <StatusBar barStyle="light-content" />
-
-      {/* Full-screen camera (always rendered so it stays warm) */}
+    <View className="flex-1">
       <Camera
         ref={cameraRef}
         style={[StyleSheet.absoluteFill, isScanning && { opacity: 0.35 }]}
@@ -278,6 +293,7 @@ export default function MealScannerScreen() {
       {status === "idle" && (
         <View
           className="absolute inset-0 items-center justify-center"
+          style={{ paddingTop: viewfinderTopPad, paddingBottom: viewfinderBottomPad }}
           pointerEvents="none"
         >
           <Animated.View
@@ -628,7 +644,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.9)",
   },
   modeTab: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 999,
   },

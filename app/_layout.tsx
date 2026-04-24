@@ -21,6 +21,7 @@ import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
 import * as Sentry from "@sentry/react-native";
 import { initAppAsync } from "@/store/slices/appSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 Sentry.init({
   dsn: "https://7a90cff677e854e1452ca6321fcdac53@o4511230880579584.ingest.de.sentry.io/4511230885822544",
@@ -90,8 +91,9 @@ export default Sentry.wrap(function RootLayout() {
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }} className="bg-background">
-        <StatusBar style="auto" />
-        <RootLayoutWithLanguageSupport />
+        <SafeAreaView style={{ flex: 1 }}>
+          <RootLayoutWithLanguageSupport />
+        </SafeAreaView>
       </GestureHandlerRootView>
     </Provider>
   );

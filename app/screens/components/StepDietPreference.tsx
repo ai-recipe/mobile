@@ -8,6 +8,7 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface StepDietPreferenceProps {
   value: string[];
@@ -25,7 +26,7 @@ export function StepDietPreference({
   const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
-
+  const insets = useSafeAreaInsets();
   const DIET_OPTIONS = [
     { id: "vegan", label: t("dietPreference.vegan"), icon: "leaf" },
     { id: "vegetarian", label: t("dietPreference.vegetarian"), icon: "carrot" },
@@ -110,11 +111,13 @@ export function StepDietPreference({
         </View>
       </ScrollView>
 
-      <View className="pb-8 pt-2">
+      <View
+        style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}
+      >
         <TouchableOpacity
           onPress={onSubmit}
           activeOpacity={0.9}
-          className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30 flex-row gap-2"
+          className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg flex-row gap-2"
         >
           <MaterialIcons name="auto-awesome" size={24} color="white" />
           <Text className="text-white font-extrabold text-lg">

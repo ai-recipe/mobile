@@ -115,15 +115,15 @@ export default function RegisterScreen() {
       >
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 min-h-[500px] justify-center py-4">
+          <View className="flex-1 min-h-[500px] justify-center">
             {/* Top Visual Section - compact */}
             <Animated.View
               entering={FadeInUp.duration(1000).springify()}
-              className="items-center justify-center relative py-4"
+              className="items-center justify-center relative py-4 mt-16"
             >
               {/* Background Decorative Blobs */}
               <View className="absolute top-10 left-[-50] size-64 bg-orange-400/20 rounded-full blur-3xl" />
@@ -131,7 +131,7 @@ export default function RegisterScreen() {
 
               {/* Main Illustration */}
               <View className="items-center justify-center mb-4">
-                <View className="size-32 bg-white dark:bg-zinc-800 rounded-[40px] items-center justify-center shadow-2xl shadow-orange-500/30 rotate-3">
+                <View className="size-32 bg-white dark:bg-zinc-800 rounded-[40px] items-center justify-center shadow-2xl shadow-orange-500/30">
                   <Image
                     source={require("@/assets/images/logo.png")}
                     className="w-24 h-24"
@@ -157,7 +157,7 @@ export default function RegisterScreen() {
             {/* Form Section - centered */}
             <Animated.View
               entering={FadeInDown.duration(1000).delay(200).springify()}
-              className="w-full px-6 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50"
+              className="w-full px-6 pt-6 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-t-[40px] border-t border-white/20 dark:border-zinc-700/50 flex-1"
               style={{ paddingBottom: Math.max(48, insets.bottom + 24) }}
             >
               {/* Email Input */}

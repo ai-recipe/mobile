@@ -137,9 +137,7 @@ const NutritionGoals = () => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           contentContainerStyle={{ flex: 1, height: "100%" }}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={
-            Platform.OS === "ios" ? 0 : insets.bottom + 72
-          }
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : insets.bottom}
         >
           <ScrollView
             className="flex-1 px-6"

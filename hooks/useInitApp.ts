@@ -23,7 +23,7 @@ const useInitApp = () => {
     const stored = await AsyncStorage.getItem(THEME_STORAGE_KEY);
     const valid: ThemePreference[] = ["light", "dark", "system"];
     if (stored && valid.includes(stored as ThemePreference)) {
-      dispatch(setTheme(stored as ThemePreference));
+      dispatch(setTheme("light"));
     }
     // else: keep Redux default "system" → device theme
   }, [dispatch]);

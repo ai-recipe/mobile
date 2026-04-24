@@ -9,7 +9,7 @@ const CARD_META_HEIGHT = 12;
 
 export function FavoritesSkeleton() {
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4 pb-6">
+    <View className="flex-1 dark:bg-zinc-900 px-5 pt-4 pb-6">
       {/* Header title */}
       <View className="mb-2">
         <Skeleton width={240} height={36} borderRadius={10} />
@@ -28,11 +28,7 @@ export function FavoritesSkeleton() {
       {/* Recipe cards - full width list */}
       {[1, 2, 3, 4].map((i) => (
         <View key={i} className="mb-6">
-          <Skeleton
-            width="100%"
-            height={CARD_IMAGE_HEIGHT}
-            borderRadius={20}
-          />
+          <Skeleton width="100%" height={CARD_IMAGE_HEIGHT} borderRadius={20} />
           <View className="p-5">
             <Skeleton
               width="90%"

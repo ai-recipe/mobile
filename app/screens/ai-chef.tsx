@@ -75,7 +75,7 @@ const AIChefScreen = () => {
       }
     >
       <TabScreenWrapper>
-        <View className="flex-1 bg-white dark:bg-zinc-900 px-5 pt-4">
+        <View className="flex-1 dark:bg-zinc-900 px-5 pt-4">
           <View className=" mb-4 mt-4">
             <View className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1 flex-row">
               <Pressable

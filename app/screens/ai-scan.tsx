@@ -51,7 +51,6 @@ export default function AIScanScreen() {
     >
       <ScrollView
         className="flex-1 px-5"
-        style={{ backgroundColor }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 24) }}
       >

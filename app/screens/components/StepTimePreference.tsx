@@ -8,6 +8,7 @@ import Animated, {
   SlideOutRight,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TIME_OPTIONS = [15, 30, 60];
 
@@ -27,7 +28,7 @@ export function StepTimePreference({
   const { t } = useTranslation();
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
-
+  const insets = useSafeAreaInsets();
   return (
     <Animated.View
       entering={entering}
@@ -98,7 +99,9 @@ export function StepTimePreference({
         </View>
       </ScrollView>
 
-      <View className="pb-8 pt-2">
+      <View
+        style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}
+      >
         <TouchableOpacity
           onPress={onNext}
           activeOpacity={0.9}

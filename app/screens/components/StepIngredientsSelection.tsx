@@ -16,6 +16,7 @@ import Animated, {
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { ScanFormData } from "../types/ai-scan-form.types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface StepIngredientsSelectionProps {
   onToggleIngredient: (ingredient: string) => void;
@@ -39,7 +40,7 @@ export function StepIngredientsSelection({
   const [newIngredient, setNewIngredient] = useState("");
   const entering = direction === "forward" ? SlideInRight : SlideInLeft;
   const exiting = direction === "forward" ? SlideOutLeft : SlideOutRight;
-
+  const insets = useSafeAreaInsets();
   const handleAddIngredient = () => {
     if (newIngredient.trim()) {
       onAddIngredient(newIngredient);
@@ -132,12 +133,14 @@ export function StepIngredientsSelection({
       </ScrollView>
 
       {/* Next Button */}
-      <View className="pb-8">
+      <View
+        style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}
+      >
         <TouchableOpacity
           onPress={onNext}
           disabled={data.selectedIngredients?.length === 0}
           activeOpacity={0.9}
-          className={`w-full py-4 rounded-2xl items-center justify-center shadow-lg flex-row gap-2 ${
+          className={`w-full h-[64px] rounded-2xl items-center justify-center shadow-lg flex-row gap-2 ${
             data.selectedIngredients?.length === 0
               ? "bg-zinc-300 dark:bg-zinc-700"
               : "bg-[#f39849] shadow-orange-500/30"

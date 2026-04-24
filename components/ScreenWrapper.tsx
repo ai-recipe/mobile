@@ -34,24 +34,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme];
 
-  const containerStyle = [
-    styles.container,
-    {
-      backgroundColor: themeColors.background,
-      ...(withTabNavigation
-        ? {
-            paddingTop:
-              Platform.OS === "android"
-                ? Math.max(insets.top, StatusBar.currentHeight || 0)
-                : insets.top,
-            paddingBottom: insets.bottom + 16,
-          }
-        : {
-            marginBottom: 0,
-            paddingTop: Platform.OS === "android" ? insets.top : insets.top,
-          }),
-    },
-  ];
+  const containerStyle = [styles.container];
 
   return (
     <View style={containerStyle}>

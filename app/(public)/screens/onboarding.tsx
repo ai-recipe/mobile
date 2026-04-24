@@ -54,13 +54,16 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background dark:bg-darker">
+    <>
       <View className="flex-row items-center justify-between px-4 py-2">
         <View className="w-12" />
         <View className="w-12" />
       </View>
 
-      <OnboardingProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+      <OnboardingProgressBar
+        currentStep={currentStep}
+        totalSteps={TOTAL_STEPS}
+      />
 
       {currentStep === 0 && (
         <OnboardingStepWelcome
@@ -91,6 +94,6 @@ export default function OnboardingScreen() {
       )}
 
       {currentStep === 3 && <OnboardingStepFinish />}
-    </SafeAreaView>
+    </>
   );
 }
