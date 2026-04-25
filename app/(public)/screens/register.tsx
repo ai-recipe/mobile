@@ -273,31 +273,31 @@ export default function RegisterScreen() {
                 <View className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
               </View>
 
-              {/* Google Button */}
-              <TouchableOpacity
-                onPress={handleGoogleLogin}
-                activeOpacity={0.8}
-                disabled={isGoogleLoading}
-                className={`w-full h-14 rounded-full flex-row items-center justify-center mb-3 border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 ${
-                  isGoogleLoading ? "opacity-70" : ""
-                }`}
-              >
-                {isGoogleLoading ? (
-                  <ActivityIndicator color="#f39849" />
-                ) : (
-                  <>
-                    <MaterialCommunityIcons
-                      name="google"
-                      size={20}
-                      color="#DB4437"
-                    />
-                    <Text className="text-zinc-900 dark:text-white font-bold text-[15px] ml-2">
-                      {t("auth.continueWithGoogle")}
-                    </Text>
-                  </>
-                )}
-              </TouchableOpacity>
-
+              {Platform.OS === "android" && (
+                <TouchableOpacity
+                  onPress={handleGoogleLogin}
+                  activeOpacity={0.8}
+                  disabled={isGoogleLoading}
+                  className={`w-full h-14 rounded-full flex-row items-center justify-center mb-3 border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 ${
+                    isGoogleLoading ? "opacity-70" : ""
+                  }`}
+                >
+                  {isGoogleLoading ? (
+                    <ActivityIndicator color="#f39849" />
+                  ) : (
+                    <>
+                      <MaterialCommunityIcons
+                        name="google"
+                        size={20}
+                        color="#DB4437"
+                      />
+                      <Text className="text-zinc-900 dark:text-white font-bold text-[15px] ml-2">
+                        {t("auth.continueWithGoogle")}
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              )}
               {/* Apple Button (iOS only) */}
               {Platform.OS === "ios" && (
                 <TouchableOpacity
