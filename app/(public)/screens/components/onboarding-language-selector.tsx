@@ -23,8 +23,16 @@ export const OnboardingLanguageSelector = ({
             currentLanguage === "en" ? "text-white" : "text-gray-500"
           }`}
         >
-          EN
+          English
         </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => onChangeLanguage("tr")}
+        className={`px-3 py-1.5 rounded-full ${
+          currentLanguage === "tr" ? "bg-primary" : ""
+        }`}
+      >
+        <Text className="text-xs font-bold">Türkçe</Text>
       </Pressable>
     </View>
   </View>

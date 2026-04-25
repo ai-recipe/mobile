@@ -31,6 +31,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
       backgroundColor: theme.card,
       borderTopColor: theme.border,
       shadowColor: isDark ? "#000" : "#000",
+      paddingBottom: insets.bottom,
     },
   ];
 

@@ -262,7 +262,9 @@ export function MealEntryModal({
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           contentContainerStyle={{ flex: 1, height: "100%" }}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : insets.bottom}
+          keyboardVerticalOffset={
+            Platform.OS === "ios" ? insets.bottom : insets.bottom
+          }
         >
           {/* Content Area */}
           <ScrollView

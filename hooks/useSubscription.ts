@@ -182,7 +182,7 @@ export const useSubscription = () => {
         skus: SKUS_BY_PLATFORM[Platform.OS],
         type: "subs",
       });
-      console.log("fetched", fetched);
+      console.log("fetched", JSON.stringify(fetched, null, 2));
       setProducts(fetched as any);
       setPlanInfo(parseProducts(fetched as any));
     } catch (e) {
@@ -206,16 +206,12 @@ export const useSubscription = () => {
           await dispatch(fetchSubscriptionStatus() as any);
           router.push("/(protected)/(tabs)/");
           dispatch(openPurchaseSuccess());
-        } else if (Platform.OS === "ios" && purchase.transactionId) {
-          const originalTransactionId =
-            (purchase as any).originalTransactionIdentifierIOS ??
-            purchase.transactionId;
+        } else if (Platform.OS === "ios" && purchase.purchaseToken) {
           await RNIap.finishTransaction({ purchase, isConsumable: false });
           await dispatch(
             activateAppleIAPPurchase({
-              originalTransactionId,
               productId: purchase.productId,
-              transactionId: purchase.transactionId,
+              purchaseToken: purchase.purchaseToken,
             }),
           );
           await dispatch(fetchSubscriptionStatus() as any);

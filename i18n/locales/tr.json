@@ -153,7 +153,8 @@
     "planTrial": "Deneme",
     "planExpired": "Süresi Doldu",
     "renewsOn": "Yenileme {{date}}",
-    "manageSubscription": "Aboneliği Yönet"
+    "manageSubscription": "Aboneliği Yönet",
+    "termsOfUse": "Kullanım Koşulları (EULA)"
   },
   "scanner": {
     "takePhoto": "Fotoğraf Çek",
@@ -215,7 +216,8 @@
     "wait24h": "24 Saat Bekleyeceğim",
     "restorePurchases": "Satın Alımları Geri Yükle",
     "restoreNoSubscription": "Aktif abonelik bulunamadı. Bunun bir hata olduğunu düşünüyorsanız lütfen destek ekibiyle iletişime geçin.",
-    "restoreError": "Satın alımlar geri yüklenemedi. Lütfen tekrar deneyin."
+    "restoreError": "Satın alımlar geri yüklenemedi. Lütfen tekrar deneyin.",
+    "privacyPolicy": "Gizlilik Politikası"
   },
   "celebration": {
     "title": "Günlük Hedefe Ulaştın!",

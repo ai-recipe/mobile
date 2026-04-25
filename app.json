@@ -21,7 +21,10 @@
         "backgroundImage": "./assets/images/logo.png",
         "monochromeImage": "./assets/images/logo.png"
       },
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "ios": {
       "supportsTablet": true,
@@ -35,11 +38,13 @@
           "NSAllowsArbitraryLoads": true,
           "NSAllowsLocalNetworking": true
         },
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSUserTrackingUsageDescription": "SlayCal uses your advertising identifier for personalized recommendations and analytics to improve your experience."
       }
     },
     "plugins": [
       "expo-localization",
+      "expo-tracking-transparency",
       "./plugins/withAllowHttp",
       [
         "expo-build-properties",

@@ -322,7 +322,7 @@ const HomeScreen = () => {
   return (
     <ScreenWrapper>
       <TabScreenWrapper>
-        <View className="flex-1" style={{ backgroundColor }}>
+        <View className="flex-1">
           {/* ── Credits Header ───────────────────────────────────── */}
           {shouldShowPaywallBanners && isFreeUser && (
             <View className="flex-row items-center justify-between px-5 pt-1 pb-2">

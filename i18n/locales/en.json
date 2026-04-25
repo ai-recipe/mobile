@@ -153,7 +153,8 @@
     "planTrial": "Trial",
     "planExpired": "Expired",
     "renewsOn": "Renews {{date}}",
-    "manageSubscription": "Manage Subscription"
+    "manageSubscription": "Manage Subscription",
+    "termsOfUse": "Terms of Use (EULA)"
   },
   "scanner": {
     "takePhoto": "Take Photo",
@@ -215,7 +216,8 @@
     "wait24h": "I'll Wait 24 Hours",
     "restorePurchases": "Restore Purchases",
     "restoreNoSubscription": "No active subscription found. Please contact support if you believe this is an error.",
-    "restoreError": "Failed to restore purchases. Please try again."
+    "restoreError": "Failed to restore purchases. Please try again.",
+    "privacyPolicy": "Privacy Policy"
   },
   "celebration": {
     "title": "Daily Goal Reached!",

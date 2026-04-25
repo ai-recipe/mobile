@@ -4,11 +4,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import Animated, {
   FadeIn,
   SlideInLeft,
@@ -132,7 +134,7 @@ export function StepPaywall({
         </View>
 
         {/* Feature list */}
-        <View className="gap-3 mb-10 bg-zinc-50 dark:bg-zinc-800/50 p-6 rounded-[32px]">
+        <View className="gap-3 mb-10 bg-white p-6 rounded-[32px]">
           {FEATURE_KEYS.map((key, index) => (
             <View key={index} className="flex-row items-center gap-3">
               <View className="bg-[#f39849]/10 rounded-full p-1">
@@ -284,6 +286,34 @@ export function StepPaywall({
           ) : (
             <View className="mt-4 h-10" />
           )}
+
+          <View className="flex-row justify-center gap-4 mt-2">
+            <TouchableOpacity
+              onPress={() =>
+                WebBrowser.openBrowserAsync(
+                  Platform.OS === "ios"
+                    ? "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+                    : "https://slaycal.com/terms",
+                )
+              }
+            >
+              <Text className="text-zinc-400 text-[11px]">
+                {t("profile.termsOfUse")}
+              </Text>
+            </TouchableOpacity>
+            <Text className="text-zinc-300 dark:text-zinc-600 text-[11px]">
+              ·
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                WebBrowser.openBrowserAsync("https://slaycal.com/privacy")
+              }
+            >
+              <Text className="text-zinc-400 text-[11px]">
+                {t("paywall.privacyPolicy")}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </Animated.View>

@@ -40,9 +40,8 @@ export const activateAppleIAPPurchase = createAsyncThunk(
   "subscription/activateAppleIAP",
   async (
     payload: {
-      originalTransactionId: string;
       productId: string;
-      transactionId?: string;
+      purchaseToken: string;
     },
     { rejectWithValue },
   ) => {

@@ -43,11 +43,7 @@ class SubscriptionService {
   }
 
   /** POST /api/apple-app-store/activate — verify App Store transaction and activate */
-  activateAppleAppStore(data: {
-    originalTransactionId: string;
-    productId: string;
-    transactionId?: string;
-  }) {
+  activateAppleAppStore(data: { productId: string; purchaseToken: string }) {
     return baseApi.post<{ subscription: SubscriptionStatus }>(
       "/api/apple-app-store/activate",
       data,

@@ -4,7 +4,9 @@ import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect } from "react";
+import { Platform } from "react-native";
 import { useDispatch } from "react-redux";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 
 const THEME_STORAGE_KEY = "appTheme";
 
@@ -28,10 +30,17 @@ const useInitApp = () => {
     // else: keep Redux default "system" → device theme
   }, [dispatch]);
 
+  const requestTrackingPermission = useCallback(async () => {
+    if (Platform.OS === "ios") {
+      await requestTrackingPermissionsAsync();
+    }
+  }, []);
+
   useEffect(() => {
     initOnboardedStatus();
     initTheme();
-  }, [dispatch, initOnboardedStatus, initTheme]);
+    requestTrackingPermission();
+  }, [dispatch, initOnboardedStatus, initTheme, requestTrackingPermission]);
 };
 
 export default useInitApp;

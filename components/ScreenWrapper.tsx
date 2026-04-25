@@ -3,14 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ScreenWrapperProps {
@@ -34,7 +27,26 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme];
 
-  const containerStyle = [styles.container];
+  const containerStyle = [
+    styles.container,
+
+    {
+      paddingTop: insets.top,
+      ...(withTabNavigation
+        ? {
+            paddingBottom: insets.bottom,
+          }
+        : {}),
+      ...(showBackButton
+        ? {
+            paddingLeft: insets.left,
+            paddingRight: insets.right,
+            paddingBottom: insets.bottom,
+            paddingTop: insets.top,
+          }
+        : {}),
+    },
+  ];
 
   return (
     <View style={containerStyle}>
@@ -66,6 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     overflow: "hidden",
+    paddingTop: 8,
   },
   title: {},
 });

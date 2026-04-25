@@ -101,5 +101,7 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>SlayCal uses your advertising identifier for personalized recommendations and analytics to improve your experience.</string>
   </dict>
 </plist>

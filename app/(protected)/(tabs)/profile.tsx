@@ -18,6 +18,7 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -32,7 +33,10 @@ const THEME_OPTIONS: { value: ThemePreference; labelKey: string }[] = [
   { value: "system", labelKey: "profile.themeSystem" },
 ];
 
-const LANGUAGE_OPTIONS = [{ value: "en", label: "English", key: "en" }];
+const LANGUAGE_OPTIONS = [
+  { value: "en", label: "English", key: "en" },
+  { value: "tr", label: "Türkçe", key: "tr" },
+];
 
 const ProfileScreen = () => {
   const { t } = useTranslation();
@@ -80,12 +84,11 @@ const ProfileScreen = () => {
 
   return (
     <ScreenWrapper showTopNavBar={false} withTabNavigation={true}>
-      <ScrollView className="flex-1 px-5 mt-16">
+      <ScrollView className="flex-1 px-5 mt-4">
         <View className="gap-y-3">
           <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
             {t("profile.title")}
           </Text>
-
           {user && (
             <View className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700 mb-1">
               <View className="flex-row items-center mb-3">
@@ -118,7 +121,6 @@ const ProfileScreen = () => {
               />
             </View>
           )}
-
           {shouldShowPaywallBanners && (
             <TouchableOpacity
               onPress={() => router.push("/screens/paywall" as any)}
@@ -130,7 +132,13 @@ const ProfileScreen = () => {
               </Text>
               <MaterialIcons name="chevron-right" size={24} color="#f48c25" />
             </TouchableOpacity>
-          )}
+          )}{" "}
+          <ProfileMenuItem
+            isMaterialCommunityIcon={true}
+            icon="chef-hat"
+            label={t("profile.aiChef")}
+            onPress={() => router.push("/screens/ai-chef" as any)}
+          />
           <TouchableOpacity
             onPress={() => setThemeModalVisible(true)}
             className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
@@ -144,7 +152,6 @@ const ProfileScreen = () => {
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => setLanguageModalVisible(true)}
             className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
@@ -158,19 +165,24 @@ const ProfileScreen = () => {
             </Text>
             <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
           </TouchableOpacity>
-
           <ProfileMenuItem
             icon="help-outline"
             label={t("profile.help")}
-            onPress={() => WebBrowser.openBrowserAsync("https://slaycal.com/")}
+            onPress={() =>
+              WebBrowser.openBrowserAsync("https://slaycal.com/contact")
+            }
           />
           <ProfileMenuItem
-            isMaterialCommunityIcon={true}
-            icon="chef-hat"
-            label={t("profile.aiChef")}
-            onPress={() => router.push("/screens/ai-chef" as any)}
+            icon="description"
+            label={t("profile.termsOfUse")}
+            onPress={() =>
+              WebBrowser.openBrowserAsync(
+                Platform.OS === "ios"
+                  ? "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+                  : "https://slaycal.com/terms",
+              )
+            }
           />
-
           <TouchableOpacity
             onPress={handleLogout}
             disabled={loggingOut}

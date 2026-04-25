@@ -91,9 +91,7 @@ export default Sentry.wrap(function RootLayout() {
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }} className="bg-background">
-        <SafeAreaView style={{ flex: 1 }}>
-          <RootLayoutWithLanguageSupport />
-        </SafeAreaView>
+        <RootLayoutWithLanguageSupport />
       </GestureHandlerRootView>
     </Provider>
   );

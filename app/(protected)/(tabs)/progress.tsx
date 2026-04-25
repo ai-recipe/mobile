@@ -118,7 +118,7 @@ export default function ProgressScreen() {
     <ScreenWrapper>
       <TabScreenWrapper>
         <ScrollView>
-          <View className="mx-4 flex-col gap-4">
+          <View className="mx-4 flex-col gap-4 mt-4">
             <WeightGoalCard
               currentWeight={progressData.weightTrend.currentKg}
               goalWeight={progressData.weightTrend.targetKg}
