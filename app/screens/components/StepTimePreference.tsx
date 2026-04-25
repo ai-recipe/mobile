@@ -37,7 +37,8 @@ export function StepTimePreference({
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40, flex: 1 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         <View className="flex-1 flex ">
           <Text className="text-3xl font-extrabold text-zinc-900 dark:text-white mb-2">

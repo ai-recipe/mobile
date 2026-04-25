@@ -29,7 +29,6 @@ export function LoadingStep({
       exiting={exiting}
       className="flex-1 items-center justify-center px-8 bg-white dark:bg-zinc-900"
     >
-      <StatusBar barStyle="dark-content" />
       <View className="absolute size-80 bg-orange-400/20 rounded-full blur-3xl animate-pulse" />
 
       <View className="items-center mb-10 z-10">

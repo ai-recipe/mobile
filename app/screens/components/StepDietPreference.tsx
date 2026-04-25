@@ -117,7 +117,7 @@ export function StepDietPreference({
         <TouchableOpacity
           onPress={onSubmit}
           activeOpacity={0.9}
-          className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg flex-row gap-2"
+          className="bg-[#f39849] w-full h-[64px] rounded-2xl items-center justify-center shadow-lg flex-row gap-2 z-50"
         >
           <MaterialIcons name="auto-awesome" size={24} color="white" />
           <Text className="text-white font-extrabold text-lg">
