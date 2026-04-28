@@ -48,6 +48,10 @@ class AuthService {
   public getUserAPI() {
     return api.get("/auth/me");
   }
+
+  public deleteAccountAPI() {
+    return api.delete("/auth/me");
+  }
 }
 
 export default new AuthService();

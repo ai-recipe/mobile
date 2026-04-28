@@ -180,7 +180,7 @@ export const initDeviceAsync = createAsyncThunk(
       const response = await AuthService.initDeviceAPI({
         deviceId,
         platform: Platform.OS,
-        appVersion: "1.0.0",
+        appVersion: "1.0.1",
       });
       const isOnboarded = await AsyncStorage.getItem("isOnboarded");
       console.log("isOnboarded", isOnboarded);
@@ -337,6 +337,23 @@ export const loginWithAppleAsync = createAsyncThunk(
         error.response?.data?.error?.message ||
           error.message ||
           "Apple sign-in failed",
+      );
+    }
+  },
+);
+
+export const deleteAccountAsync = createAsyncThunk(
+  "auth/deleteAccount",
+  async (_, { rejectWithValue }) => {
+    try {
+      await AuthService.deleteAccountAPI();
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+    } catch (error: any) {
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      return rejectWithValue(
+        error.response?.data?.message || "Account deletion failed",
       );
     }
   },
@@ -562,6 +579,25 @@ export const authSlice = createSlice({
         state.user = null;
         state.preferences = null;
         state.error = null;
+      })
+      // Delete Account
+      .addCase(deleteAccountAsync.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.user = null;
+        state.preferences = null;
+        state.error = null;
+        router.replace("/(public)/screens/login");
+      })
+      .addCase(deleteAccountAsync.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.user = null;
+        state.preferences = null;
+        state.error = null;
+        router.replace("/(public)/screens/login");
       });
   },
 });

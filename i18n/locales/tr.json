@@ -134,8 +134,13 @@
     "perk4": "Öncelikli AI işlem hızı",
     "cta": "Pro Yolculuğuma Başla"
   },
+  "favorites": {
+    "title": "Favori",
+    "titleHighlight": "Tariflerim"
+  },
   "profile": {
     "title": "Hesabım",
+    "favorites": "Favorilerim",
     "upgradeToPro": "Pro'ya Yükselt",
     "appearance": "Görünüm (Tema)",
     "language": "Uygulama Dili",
@@ -154,7 +159,9 @@
     "planExpired": "Süresi Doldu",
     "renewsOn": "Yenileme {{date}}",
     "manageSubscription": "Aboneliği Yönet",
-    "termsOfUse": "Kullanım Koşulları (EULA)"
+    "termsOfUse": "Kullanım Koşulları (EULA)",
+    "deleteAccount": "Hesabı Sil",
+    "deleteAccountDescription": "Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz silinecektir."
   },
   "scanner": {
     "takePhoto": "Fotoğraf Çek",
@@ -438,7 +445,8 @@
     "underweight": "Zayıf",
     "healthy": "Sağlıklı",
     "overweight": "Fazla Kilolu",
-    "obese": "Obez"
+    "obese": "Obez",
+    "whoSource": "Kaynak: DSÖ VKİ Sınıflandırması"
   },
   "weightGoal": {
     "currentWeight": "Şu anki Kilo",

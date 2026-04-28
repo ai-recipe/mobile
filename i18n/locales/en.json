@@ -134,8 +134,13 @@
     "perk4": "Priority AI processing speed",
     "cta": "Start My Pro Journey"
   },
+  "favorites": {
+    "title": "My",
+    "titleHighlight": "Favorites"
+  },
   "profile": {
     "title": "My Account",
+    "favorites": "My Favorites",
     "upgradeToPro": "Upgrade to Pro",
     "appearance": "Appearance (Theme)",
     "language": "App Language",
@@ -154,7 +159,9 @@
     "planExpired": "Expired",
     "renewsOn": "Renews {{date}}",
     "manageSubscription": "Manage Subscription",
-    "termsOfUse": "Terms of Use (EULA)"
+    "termsOfUse": "Terms of Use (EULA)",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDescription": "Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be erased."
   },
   "scanner": {
     "takePhoto": "Take Photo",
@@ -438,7 +445,8 @@
     "underweight": "Underweight",
     "healthy": "Healthy",
     "overweight": "Overweight",
-    "obese": "Obese"
+    "obese": "Obese",
+    "whoSource": "Source: WHO BMI Classification"
   },
   "weightGoal": {
     "currentWeight": "Current Weight",

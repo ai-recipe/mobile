@@ -48,6 +48,7 @@ Sentry.init({
 function RootLayoutNavigator() {
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
+  useInitApp();
 
   useEffect(() => {
     injectDispatch(dispatch);

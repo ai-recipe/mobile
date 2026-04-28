@@ -189,22 +189,21 @@ const NutritionGoals = () => {
               color="#3B82F6"
               onChange={(val) => setGoals({ ...goals, targetWaterMl: val })}
             />
-          </ScrollView>
-
-          <View
-            className="px-6 pt-2"
-            style={{ paddingBottom: Math.max(insets.bottom, 24) }}
-          >
-            <TouchableOpacity
-              className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center"
-              onPress={handleSave}
-              activeOpacity={0.8}
+            <View
+              className="px-6 pt-2"
+              style={{ paddingBottom: Math.max(insets.bottom, 24) }}
             >
-              <Text className="text-white dark:text-zinc-900 font-bold text-lg">
-                {t("common.save")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                className="w-full bg-primary py-5 rounded-[22px] shadow-xl items-center justify-center"
+                onPress={handleSave}
+                activeOpacity={0.8}
+              >
+                <Text className="text-white dark:text-zinc-900 font-bold text-lg">
+                  {t("common.save")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </View>
     </ScreenWrapper>

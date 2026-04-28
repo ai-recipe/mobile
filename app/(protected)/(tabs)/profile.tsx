@@ -3,7 +3,7 @@ import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
-import { logoutAsync } from "@/store/slices/authSlice";
+import { deleteAccountAsync, logoutAsync } from "@/store/slices/authSlice";
 import { selectShouldShowPaywallBanners } from "@/store/slices/subscriptionSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
@@ -58,6 +58,7 @@ const ProfileScreen = () => {
   };
 
   const [loggingOut, setLoggingOut] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const handleSelectLanguage = async (lang: string) => {
     if (lang === currentLanguage) return;
@@ -80,6 +81,25 @@ const ProfileScreen = () => {
         },
       },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t("profile.deleteAccount"),
+      t("profile.deleteAccountDescription"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("profile.deleteAccount"),
+          style: "destructive",
+          onPress: async () => {
+            setDeletingAccount(true);
+            await dispatch(deleteAccountAsync());
+            setDeletingAccount(false);
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -136,22 +156,24 @@ const ProfileScreen = () => {
           <ProfileMenuItem
             isMaterialCommunityIcon={true}
             icon="chef-hat"
-            label={t("profile.aiChef")}
-            onPress={() => router.push("/screens/ai-chef" as any)}
+            label={t("profile.favorites")}
+            onPress={() => router.push("/screens/favorites" as any)}
           />
-          <TouchableOpacity
-            onPress={() => setThemeModalVisible(true)}
-            className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
-          >
-            <MaterialIcons name="palette" size={24} color="#f39849" />
-            <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
-              {t("profile.appearance")}
-            </Text>
-            <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 capitalize">
-              {currentTheme}
-            </Text>
-            <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
-          </TouchableOpacity>
+          {false && (
+            <TouchableOpacity
+              onPress={() => setThemeModalVisible(true)}
+              className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
+            >
+              <MaterialIcons name="palette" size={24} color="#f39849" />
+              <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
+                {t("profile.appearance")}
+              </Text>
+              <Text className="text-sm text-zinc-500 dark:text-zinc-400 mr-2 capitalize">
+                {currentTheme}
+              </Text>
+              <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => setLanguageModalVisible(true)}
             className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
@@ -195,6 +217,22 @@ const ProfileScreen = () => {
                 <MaterialIcons name="logout" size={22} color="#ef4444" />
                 <Text className="ml-3 font-bold text-red-500">
                   {t("profile.logout")}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleDeleteAccount}
+            disabled={deletingAccount}
+            className="flex-row items-center justify-center p-4 mb-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700"
+          >
+            {deletingAccount ? (
+              <ActivityIndicator size="small" color="#71717a" />
+            ) : (
+              <>
+                <MaterialIcons name="delete-forever" size={22} color="#71717a" />
+                <Text className="ml-3 font-bold text-zinc-500 dark:text-zinc-400">
+                  {t("profile.deleteAccount")}
                 </Text>
               </>
             )}

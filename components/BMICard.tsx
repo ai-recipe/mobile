@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, Linking, Pressable, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 // Custom hook to handle smooth number counting and sliding animations
@@ -189,6 +189,22 @@ export const BMICard: React.FC<BMICardProps> = ({ bmi }) => {
           t={t}
         />
       </View>
+
+      <Pressable
+        onPress={() =>
+          Linking.openURL(
+            "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight"
+          )
+        }
+        className="mt-4"
+      >
+        <Text
+          className="text-[11px] underline"
+          style={{ color: isDark ? "#71717A" : "#94A3B8" }}
+        >
+          {t("bmi.whoSource")}
+        </Text>
+      </Pressable>
     </View>
   );
 };

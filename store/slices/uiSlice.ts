@@ -10,7 +10,7 @@ interface UIState {
 }
 
 const initialState: UIState = {
-  theme: "system",
+  theme: "light",
   isLoading: false,
 };
 
