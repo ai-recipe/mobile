@@ -205,6 +205,18 @@ const ProfileScreen = () => {
               )
             }
           />
+          {__DEV__ && (
+            <TouchableOpacity
+              onPress={() => router.push("/screens/analytics-dev" as any)}
+              className="flex-row items-center p-4 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl border border-indigo-100 dark:border-indigo-500/20"
+            >
+              <MaterialIcons name="science" size={22} color="#6366f1" />
+              <Text className="ml-3 font-bold text-indigo-600 dark:text-indigo-400 flex-1">
+                Analytics Dev
+              </Text>
+              <MaterialIcons name="chevron-right" size={22} color="#6366f1" />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={handleLogout}
             disabled={loggingOut}
