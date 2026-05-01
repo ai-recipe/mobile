@@ -2,7 +2,7 @@
   "expo": {
     "name": "SlayCal",
     "description": "SlayCal is an AI-powered calorie tracker that helps you track your calories and improve your health.",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "slaycalai",

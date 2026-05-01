@@ -180,7 +180,7 @@ export const initDeviceAsync = createAsyncThunk(
       const response = await AuthService.initDeviceAPI({
         deviceId,
         platform: Platform.OS,
-        appVersion: "1.0.1",
+        appVersion: "1.0.2",
       });
       const isOnboarded = await AsyncStorage.getItem("isOnboarded");
       console.log("isOnboarded", isOnboarded);
