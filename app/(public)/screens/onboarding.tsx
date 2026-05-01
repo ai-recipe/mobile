@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
+import { Analytics } from "@/analytics";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import {
@@ -17,6 +18,7 @@ import { OnboardingStepFinish } from "./components/onboarding-step-finish";
 import { OnboardingStepWelcome } from "./components/onboarding-step-welcome";
 
 const TOTAL_STEPS = 4;
+const STEP_IDS = ["welcome", "ai_chef", "progress", "finish"];
 
 const STEP_IMAGES = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCfIOgyd-AArVUDn1vb4CK8i67wcKT_M3vbkOOK8sLATy9sWjjGWTkVsKUniY-YMzQ5EsUUlioSsVy-A0JpUhqZeDnS-kr6MsPQePrWnEMQaXgpGxQg58LSGOfiWXblMOYUwtYVyaG10MQjHhJLQ4xVfaVh8OP9UPXUo8X6OVBLDa7lbl80-3kOMowAFVzdXK3B-ePh2lHjjPa8YQzOY45LNBsDal19fkfDFvMWo7X_KBWWPJWA49zi7IKR-2vs0iRk7NW7TIcFHs4r",
@@ -32,9 +34,15 @@ export default function OnboardingScreen() {
   const scanPos = useSharedValue(0);
 
   useEffect(() => {
+    Analytics.onboardingStarted();
+    Analytics.onboardingStepViewed(0, STEP_IDS[0]);
+  }, []);
+
+  useEffect(() => {
     if (currentStep === 0) {
       scanPos.value = withRepeat(withTiming(1, { duration: 2000 }), -1, true);
     }
+    Analytics.onboardingStepViewed(currentStep, STEP_IDS[currentStep]);
   }, [currentStep, scanPos]);
 
   const animatedScanStyle = useAnimatedStyle(() => ({
@@ -42,8 +50,11 @@ export default function OnboardingScreen() {
   }));
 
   const nextStep = () => {
+    Analytics.onboardingStepCompleted(currentStep, STEP_IDS[currentStep]);
     if (currentStep < TOTAL_STEPS - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      Analytics.onboardingCompleted(currentLanguage ?? "unknown");
     }
   };
 

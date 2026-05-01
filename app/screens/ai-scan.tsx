@@ -4,7 +4,8 @@ import { setImage } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
+import { Analytics } from "@/analytics";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,6 +18,11 @@ export default function AIScanScreen() {
   const backgroundColor = Colors[colorScheme].background;
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    Analytics.scanFlowStarted("ingredients");
+  }, []);
+
   const handlePickImage = async (useCamera: boolean) => {
     const permissionResult = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
@@ -38,6 +44,8 @@ export default function AIScanScreen() {
         });
 
     if (!result.canceled) {
+      Analytics.scanCaptureTapped("ingredients");
+      Analytics.scanUploadStarted("ingredients");
       dispatch(setImage(result.assets[0].uri));
       router.push("/screens/ai-scan-form");
     }

@@ -38,7 +38,9 @@
       "Bash(grep -r \"dashboard\\\\|panel\\\\|manage\\\\|settings\\\\|user\" /Users/sahin/Desktop/slaycallapp/new/my-app --include=*.ts --include=*.tsx --exclude-dir=node_modules --exclude-dir=.expo -l)",
       "Bash(npm list:*)",
       "Bash(python3 -m json.tool)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(xargs basename *)",
+      "Bash(node *)"
     ]
   }
 }

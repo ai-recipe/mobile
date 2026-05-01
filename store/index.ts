@@ -17,6 +17,8 @@ import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
 
 import { injectDispatch } from "@/api/axios";
+import { analyticsListenerMiddleware } from "./middleware/analyticsMiddleware";
+
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
@@ -39,7 +41,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).prepend(analyticsListenerMiddleware.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

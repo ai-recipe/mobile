@@ -3,6 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Pressable, View } from "react-native";
+import { Analytics } from "@/analytics";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -13,6 +14,10 @@ import { ScreenWrapper } from "@/components/ScreenWrapper";
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const { isProOrTrial, isLoading } = useSubscription();
+
+  useEffect(() => {
+    Analytics.paywallViewed("full_screen");
+  }, []);
 
   // If the user is already subscribed, close the paywall
   useEffect(() => {
@@ -26,14 +31,23 @@ export default function PaywallScreen() {
       <View className="flex-1 pt-6">
         <View className="px-4 pb-2">
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => {
+              Analytics.paywallDismissed("full_screen", "close");
+              router.back();
+            }}
             className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-800 items-center justify-center active:opacity-70"
           >
             <MaterialIcons name="close" size={20} color="#71717a" />
           </Pressable>
         </View>
 
-        <StepPaywall onFinish={() => router.back()} />
+        <StepPaywall
+          onFinish={() => {
+            Analytics.paywallDismissed("full_screen", "skip");
+            router.back();
+          }}
+          placement="full_screen"
+        />
       </View>
     </ScreenWrapper>
   );

@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { openPurchaseSuccess } from "@/store/slices/modalSlice";
+import { Analytics } from "@/analytics";
 import {
   activateAppleIAPPurchase,
   activateGooglePlayPurchase,
@@ -290,6 +291,7 @@ export const useSubscription = () => {
   );
 
   const restore = useCallback(async () => {
+    Analytics.iapRestoreStarted();
     setIsRestoring(true);
     dispatch(clearSubscriptionError());
     try {
@@ -303,6 +305,8 @@ export const useSubscription = () => {
         (!status.currentPeriodEnd ||
           new Date(status.currentPeriodEnd) > new Date());
 
+      Analytics.iapRestoreCompleted(!!isActive);
+
       if (isActive) {
         router.push("/(protected)/(tabs)/");
         dispatch(openPurchaseSuccess());
@@ -314,6 +318,7 @@ export const useSubscription = () => {
       }
     } catch (e) {
       console.warn("[useSubscription] restorePurchases error", e);
+      Analytics.iapRestoreCompleted(false);
       Alert.alert(
         "Restore Failed",
         "Failed to restore purchases. Please try again.",

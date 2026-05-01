@@ -4,7 +4,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
+import { Analytics } from "@/analytics";
 import { ImageBackground, Pressable, Text, View } from "react-native";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 
@@ -12,11 +13,17 @@ export default function ScanScreen() {
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme];
 
+  useEffect(() => {
+    Analytics.addMenuOpened("add");
+  }, []);
+
   const handleScanIngredients = () => {
+    Analytics.addMenuAction("navigate_scan_ingredients");
     router.push("/screens/ai-scan");
   };
 
   const handleScanMeal = () => {
+    Analytics.addMenuAction("navigate_scan_meal");
     router.push("/screens/meal-scanner");
   };
 

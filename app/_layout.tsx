@@ -6,6 +6,8 @@ import { Provider } from "react-redux";
 import "../global.css";
 import i18n from "@/i18n";
 import { StatusBar } from "expo-status-bar";
+import { usePathname } from "expo-router";
+import { Analytics } from "@/analytics";
 
 // Must be registered outside the React tree (module scope)
 /*messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -48,12 +50,17 @@ Sentry.init({
 function RootLayoutNavigator() {
   const { currentLanguage } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   useInitApp();
 
   useEffect(() => {
     injectDispatch(dispatch);
     injectGetUserType(() => store.getState().auth.user?.userType);
   }, [dispatch]);
+
+  useEffect(() => {
+    Analytics.screenView(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     if (!currentLanguage) return;

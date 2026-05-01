@@ -4,6 +4,7 @@ import {
   loginWithGoogleAsync,
   loginWithAppleAsync,
 } from "@/store/slices/authSlice";
+import { Analytics } from "@/analytics";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
@@ -82,6 +83,7 @@ export default function LoginScreen() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    Analytics.loginStarted("email");
     try {
       const resultAction = await dispatch(loginWithEmailAsync(data));
       if (loginWithEmailAsync.fulfilled.match(resultAction)) {
@@ -95,6 +97,7 @@ export default function LoginScreen() {
   };
 
   const handleGoogleLogin = async () => {
+    Analytics.loginStarted("google");
     const resultAction = await dispatch(loginWithGoogleAsync());
     if (loginWithGoogleAsync.fulfilled.match(resultAction)) {
     } else {
@@ -106,6 +109,7 @@ export default function LoginScreen() {
   };
 
   const handleAppleLogin = async () => {
+    Analytics.loginStarted("apple");
     const resultAction = await dispatch(loginWithAppleAsync());
     if (loginWithAppleAsync.fulfilled.match(resultAction)) {
     } else {

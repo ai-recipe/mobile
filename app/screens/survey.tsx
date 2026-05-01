@@ -1,6 +1,7 @@
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { submitSurveyAsync } from "@/store/slices/authSlice";
+import { Analytics } from "@/analytics";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -145,6 +146,7 @@ export default function SurveyScreen() {
     useAppSelector((state) => state.auth);
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const surveyStartedAt = React.useRef(0);
   const defaultValues = useMemo(() => {
     const values: any = {};
     surveyQuestions?.forEach((q) => {
@@ -163,6 +165,8 @@ export default function SurveyScreen() {
     if (surveyQuestions?.length > 0 && !isInitialized) {
       form.reset(defaultValues);
       setIsInitialized(true);
+      surveyStartedAt.current = Date.now();
+      Analytics.surveyStarted(surveyQuestions.length, preferences === null);
     }
   }, [surveyQuestions, defaultValues, form, isInitialized]);
   const { preferences } = useAppSelector((state) => state.auth);
@@ -174,10 +178,14 @@ export default function SurveyScreen() {
     }));
 
     if (responses.length > 0) {
+      const submission_ms = Date.now() - surveyStartedAt.current;
+      Analytics.surveySubmitted(submission_ms, newPreferences === null);
       await dispatch(submitSurveyAsync(responses));
       if (newPreferences === null) {
+        Analytics.surveyOutcomeRouted("post_survey");
         router.replace("/screens/post-survey-experience");
       } else {
+        Analytics.surveyOutcomeRouted("progress_tab");
         router.replace("(protected)/(tabs)/progress");
       }
     }

@@ -35,6 +35,7 @@ import { fetchFoodLogsAsync } from "@/store/slices/dailyLogsSlice";
 import { decrementCredit } from "@/store/slices/authSlice";
 import { openSoftPaywall } from "@/store/slices/modalSlice";
 import { SoftPaywallModal } from "./components/SoftPaywallModal";
+import { Analytics } from "@/analytics";
 
 /**
  * Meal Scanner screen.
@@ -116,6 +117,7 @@ export default function MealScannerScreen() {
   // Reset scan state on mount. Do NOT disconnect socket on unmount so background scan can finish.
   useEffect(() => {
     dispatch(resetScan());
+    Analytics.scanFlowStarted("meal");
   }, [dispatch]);
 
   // Request camera permission on mount
@@ -148,9 +150,13 @@ export default function MealScannerScreen() {
 
     // Guard: no credits left
     if (creditRemaining !== null && creditRemaining <= 0) {
+      Analytics.quotaExhaustedShown("meal_scan");
       dispatch(openSoftPaywall());
       return;
     }
+
+    Analytics.scanCaptureTapped(scanMode);
+    const captureStart = Date.now();
 
     try {
       setIsTakingPhoto(true);
@@ -166,13 +172,19 @@ export default function MealScannerScreen() {
         Platform.OS === "android" && !photo.path.startsWith("file://")
           ? `file://${photo.path}`
           : photo.path;
+      Analytics.scanUploadStarted(scanMode);
       await dispatch(setCapturedPhotoUri(uri));
       await dispatch(startScanAsync(uri)).unwrap();
+      Analytics.scanUploadSucceeded(scanMode, Date.now() - captureStart);
       // Upload succeeded; decrement optimistically and navigate to home.
       dispatch(decrementCredit());
       router.navigate("/(protected)/(tabs)/");
-    } catch (e) {
+    } catch (e: any) {
       console.error("[MealScanner] Take photo / upload error:", e);
+      Analytics.scanUploadFailed(
+        scanMode,
+        String(e?.message ?? e ?? "unknown"),
+      );
       // Error state is already set in Redux; stay on scanner to show error card
     } finally {
       setIsTakingPhoto(false);
@@ -180,20 +192,22 @@ export default function MealScannerScreen() {
   }, [isTakingPhoto, dispatch, creditRemaining]);
 
   const handleClose = useCallback(() => {
+    Analytics.scanFlowAbandoned(scanMode, status);
     disconnectScan();
     dispatch(resetScan());
     router.back();
-  }, [dispatch]);
+  }, [dispatch, scanMode, status]);
 
   const handleScanAgain = useCallback(() => {
     dispatch(resetScan());
   }, [dispatch]);
 
   const handleCompleteScan = useCallback(() => {
+    Analytics.scanResultAppliedToLog(scanMode);
     dispatch(fetchFoodLogsAsync());
     dispatch(resetScan());
     router.navigate("/(protected)/(tabs)/");
-  }, [dispatch]);
+  }, [dispatch, scanMode]);
 
   const handleModeChange = useCallback(
     (mode: ScanMode) => {

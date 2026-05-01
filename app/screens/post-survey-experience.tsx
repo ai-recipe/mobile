@@ -2,12 +2,13 @@ import { MultiStepForm, MultiStepFormStep } from "@/components/MultiStepForm";
 import { setIsOnboarded } from "@/store/slices/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { useAppDispatch } from "@/store/hooks";
 import { StepPaywall } from "./components/StepPaywall";
 import { StepRateUs } from "./components/StepRateUs";
+import { Analytics } from "@/analytics";
 
 export default function PostSurveyExperienceScreen() {
   const router = useRouter();
@@ -15,6 +16,11 @@ export default function PostSurveyExperienceScreen() {
   const form = useForm({
     mode: "onChange",
   });
+
+  useEffect(() => {
+    Analytics.postSurveyStarted();
+    Analytics.ratePromptShown("post_survey");
+  }, []);
 
   const handleFinish = async () => {
     await AsyncStorage.setItem("isOnboarded", "true");
@@ -36,7 +42,7 @@ export default function PostSurveyExperienceScreen() {
         fields: [],
         shouldHandleNextStep: true,
         dontShowBackButton: true,
-        render: () => <StepPaywall onFinish={handleFinish} />,
+        render: () => <StepPaywall onFinish={handleFinish} placement="post_survey" />,
       },
     ],
     [],

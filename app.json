@@ -79,6 +79,7 @@
       "@react-native-community/datetimepicker",
       "expo-apple-authentication",
       "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app",
       "expo-dev-client",
       [
         "@sentry/react-native/expo",

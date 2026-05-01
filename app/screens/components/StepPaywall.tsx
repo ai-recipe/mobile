@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Analytics } from "@/analytics";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -23,6 +24,7 @@ import { useSubscription, type PlanId } from "@/hooks/useSubscription";
 interface StepPaywallProps {
   onFinish: () => void;
   direction?: "forward" | "backward";
+  placement?: string;
 }
 
 const FEATURE_KEYS = [
@@ -37,6 +39,7 @@ const FEATURE_KEYS = [
 export function StepPaywall({
   onFinish,
   direction = "forward",
+  placement = "full_screen",
 }: StepPaywallProps) {
   const { t } = useTranslation();
   const {
@@ -58,9 +61,10 @@ export function StepPaywall({
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
+    Analytics.paywallViewed(placement);
     const timer = setTimeout(() => setSkipVisible(true), 3500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [placement]);
 
   useFocusEffect(
     useCallback(() => {
@@ -102,8 +106,10 @@ export function StepPaywall({
   ];
 
   const handleSubscribe = useCallback(async () => {
+    Analytics.paywallCtaTapped(placement, selectedPlan);
+    Analytics.iapPurchaseStarted(selectedPlan, placement);
     await purchase(selectedPlan);
-  }, [purchase, selectedPlan]);
+  }, [purchase, selectedPlan, placement]);
 
   const selectedInfo = getPlanInfo(selectedPlan);
   const showTrialCta =
@@ -273,7 +279,10 @@ export function StepPaywall({
           {skipVisible ? (
             <Animated.View entering={FadeIn.duration(400)}>
               <TouchableOpacity
-                onPress={onFinish}
+                onPress={() => {
+                  Analytics.paywallDismissed(placement, "skip");
+                  onFinish();
+                }}
                 activeOpacity={0.7}
                 disabled={isPurchasing || isRestoring}
                 className="mt-1 items-center py-2"
