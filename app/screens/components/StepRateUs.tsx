@@ -26,22 +26,24 @@ interface StepRateUsProps {
 const MOCK_REVIEWS = [
   {
     id: "1",
-    user: "Ayşe Y.",
+    user: "John Adams",
     rating: 5,
-    comment: "Harika bir uygulama! Mutfak becerilerim çok gelişti. 😍",
+    comment:
+      "I love this app! It has helped me track my calories and improve my health.",
   },
   {
     id: "2",
-    user: "Mehmet K.",
+    user: "Emily White",
     rating: 5,
     comment:
-      "Yapay zeka şefi gerçekten çok akıllı, eldeki malzemelerle harikalar yaratıyor.",
+      "This app is really smart! It helps me track my calories and improve my health.",
   },
   {
     id: "3",
-    user: "Selin B.",
+    user: "Eric Black",
     rating: 5,
-    comment: "Tasarıma bayıldım, kullanımı çok kolay ve tarifler çok lezzetli!",
+    comment:
+      "I love the design of this app! It's easy to use and the recipes are delicious!",
   },
 ];
 
@@ -59,9 +61,10 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
         "https://play.google.com/store/apps/details?id=com.chefai",
       );
     } else {
+      //
       // open app store
       Linking.openURL(
-        "https://play.google.com/store/apps/details?id=com.chefai",
+        "https://apps.apple.com/us/app/slaycal-ai-calorie-tracker/id6762659988",
       );
     }
   };
@@ -137,14 +140,16 @@ export function StepRateUs({ onNext, direction = "forward" }: StepRateUsProps) {
                 </View>
               </View>
               <Text className="text-zinc-600 dark:text-zinc-400 text-sm italic">
-                "{review.comment}"
+                &quot;{review.comment}&quot;
               </Text>
             </Animated.View>
           ))}
         </View>
       </ScrollView>
 
-      <View style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}>
+      <View
+        style={{ paddingBottom: Math.max(insets.bottom, 32), paddingTop: 8 }}
+      >
         <TouchableOpacity
           onPress={onReview}
           activeOpacity={0.9}
