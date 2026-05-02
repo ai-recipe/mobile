@@ -1,5 +1,13 @@
-//import messaging from "@react-native-firebase/messaging";
+import "@react-native-firebase/app";
+import messaging from "@react-native-firebase/messaging";
 import React, { useEffect } from "react";
+
+// Must run at module scope — before any React tree mounts
+if (Platform.OS !== "web") {
+  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    console.log("Background notification:", remoteMessage.notification);
+  });
+}
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
@@ -16,6 +24,7 @@ import { Analytics } from "@/analytics";
 
 import { ThemeSync } from "@/components/ThemeSync";
 import useInitApp from "@/hooks/useInitApp";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { store } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
@@ -52,6 +61,7 @@ function RootLayoutNavigator() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   useInitApp();
+  usePushNotifications();
 
   useEffect(() => {
     injectDispatch(dispatch);

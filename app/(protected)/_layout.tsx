@@ -1,3 +1,4 @@
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useAppSelector } from "@/store/hooks";
 import { fetchUserAsync } from "@/store/slices/authSlice";
 import { fetchGoalPlanActiveAsync } from "@/store/slices/goalPlansSlice";
@@ -8,6 +9,7 @@ import { useDispatch } from "react-redux";
 
 export default function ProtectedLayout() {
   const dispatch = useDispatch();
+  usePushNotifications();
   useEffect(() => {
     dispatch(fetchGoalPlanActiveAsync() as any);
     dispatch(fetchUserAsync() as any);

@@ -276,6 +276,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - ExpoNotifications (55.0.22):
+    - ExpoModulesCore
   - ExpoSplashScreen (31.0.13):
     - ExpoModulesCore
   - ExpoSymbols (1.0.8):
@@ -2710,6 +2712,7 @@ DEPENDENCIES:
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
   - ExpoLocalization (from `../node_modules/expo-localization/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoNotifications (from `../node_modules/expo-notifications/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
@@ -2891,6 +2894,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-localization/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoNotifications:
+    :path: "../node_modules/expo-notifications/ios"
   ExpoSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   ExpoSymbols:
@@ -3106,6 +3111,7 @@ SPEC CHECKSUMS:
   ExpoLinking: 8f0aaf69aa56f832913030503b6263dc6f647f37
   ExpoLocalization: d9168d5300a5b03e5e78b986124d11fb6ec3ebbd
   ExpoModulesCore: f3da4f1ab5a8375d0beafab763739dbee8446583
+  ExpoNotifications: f5c15fdabb5cc3168c20cf49b6551a9d46304657
   ExpoSplashScreen: bc3cffefca2716e5f22350ca109badd7e50ec14d
   ExpoSymbols: 349ee2b4d7d5ff3ea8436467914f8a67635aa354
   ExpoSystemUI: 2ad325f361a2fcd96a464e8574e19935c461c9cc

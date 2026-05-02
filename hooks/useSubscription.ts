@@ -183,7 +183,6 @@ export const useSubscription = () => {
         skus: SKUS_BY_PLATFORM[Platform.OS],
         type: "subs",
       });
-      console.log("fetched", JSON.stringify(fetched, null, 2));
       setProducts(fetched as any);
       setPlanInfo(parseProducts(fetched as any));
     } catch (e) {

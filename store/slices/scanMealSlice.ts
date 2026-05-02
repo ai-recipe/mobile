@@ -135,9 +135,7 @@ export const startScanAsync = createAsyncThunk<
           setScanProgress({ progress: 5, message: "Uploading image..." }),
         );
 
-        console.log("uploading image", photoUri);
         const uploadRes = await uploadScanImage(photoUri);
-        console.log("uploadRes", uploadRes);
         const scanId = uploadRes.data?.scanId;
         const dailyLogEntry = uploadRes.data?.dailyLogEntry;
         if (!scanId) {

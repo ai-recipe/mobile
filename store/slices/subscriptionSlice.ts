@@ -26,7 +26,6 @@ export const fetchSubscriptionStatus = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await SubscriptionService.getStatus();
-      console.log("res", res.data);
       return res.data.subscription;
     } catch (err: any) {
       return rejectWithValue(

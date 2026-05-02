@@ -105,12 +105,10 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await SurveyService.getUserPreferencesAPI();
-      console.log("response", typeof response.data.data, response.data.data);
       dispatch(fetchSurveyQuestionsAsync());
       dispatch(fetchUserAsync());
 
       if (response.data?.data === null) {
-        console.log("pushing to survey");
         router.push("/screens/survey");
         return null;
       } else {
@@ -161,8 +159,6 @@ export const initDeviceAsync = createAsyncThunk(
     try {
       const accessToken = await AsyncStorage.getItem("accessToken");
       const refreshToken = await AsyncStorage.getItem("refreshToken");
-      console.log("accessToken", accessToken);
-      console.log("refreshToken", refreshToken);
       if (accessToken && refreshToken) {
         await dispatch(fetchUserPreferencesAsync());
 
@@ -176,14 +172,12 @@ export const initDeviceAsync = createAsyncThunk(
       } else {
         deviceId = "unknown";
       }
-      console.log("deviceId", deviceId);
       const response = await AuthService.initDeviceAPI({
         deviceId,
         platform: Platform.OS,
         appVersion: "1.0.2",
       });
       const isOnboarded = await AsyncStorage.getItem("isOnboarded");
-      console.log("isOnboarded", isOnboarded);
       dispatch(setIsOnboarded(isOnboarded === "true"));
 
       const data = response.data?.data;
@@ -225,9 +219,7 @@ export const registerWithEmailAsync = createAsyncThunk(
   "auth/registerWithEmail",
   async (data: any, { rejectWithValue, dispatch }) => {
     try {
-      console.log("data", data);
       const response = await AuthService.registerWithEmailAPI(data);
-      console.log("response", response);
       const { accessToken, refreshToken, user } = response.data.data;
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("refreshToken", refreshToken);
@@ -264,11 +256,6 @@ export const loginWithGoogleAsync = createAsyncThunk(
   "auth/loginWithGoogle",
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      console.log(
-        "GoogleSignin",
-        JSON.stringify(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID, null, 2),
-      );
-
       const response = (await GoogleSignin.signIn({})) as any;
       const googleResponse = await AuthService.loginWithGoogleAPI({
         idToken: response.data.idToken,

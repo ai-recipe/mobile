@@ -8,7 +8,8 @@
     "android": "bun expo run:android",
     "ios": "bun expo run:ios",
     "web": "bun expo start --web",
-    "lint": "bun expo lint"
+    "lint": "bun expo lint",
+    "postinstall": "node scripts/fix-expo-notifications.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -41,6 +42,7 @@
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.11",
     "expo-localization": "^17.0.8",
+    "expo-notifications": "^55.0.22",
     "expo-router": "~6.0.22",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
