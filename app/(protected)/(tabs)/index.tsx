@@ -42,6 +42,7 @@ import {
   startOfDay,
   subDays,
 } from "date-fns";
+import { enUS, tr } from "date-fns/locale";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -65,8 +66,7 @@ const HomeScreen = () => {
   const colorScheme = useColorScheme();
   const dispatch = useAppDispatch();
   const themeColors = Colors[colorScheme];
-  const backgroundColor = themeColors.background;
-  const { t } = useTranslation();
+  const { t, i18n: i18nInstance } = useTranslation();
   const { entries, summary, isLoading } = useAppSelector(
     (state) => state.dailyLogs,
   );
@@ -78,7 +78,7 @@ const HomeScreen = () => {
     isLoading: waterLoading,
     isAdding: waterAdding,
   } = useAppSelector((state) => state.waterLogs);
-  const { creditRemaining, creditGrantType, scanLimit, user } = useAppSelector(
+  const { creditRemaining, scanLimit, user } = useAppSelector(
     (state) => state.auth,
   );
   const { mealModalOpen, softPaywallOpen } = useAppSelector(
@@ -89,7 +89,6 @@ const HomeScreen = () => {
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
   const [celebrationVisible, setCelebrationVisible] = React.useState(false);
   const [bannerDismissed, setBannerDismissed] = React.useState(false);
-  const goalHitRef = React.useRef(false);
   const scrollRef = React.useRef<ScrollView>(null);
   const mainScrollRef = React.useRef<ScrollView>(null);
 
@@ -123,10 +122,11 @@ const HomeScreen = () => {
     }
   }, [summary?.totalCalories, summary?.targetCalories]);
   */
+  const dateFnsLocale = i18nInstance.language === "tr" ? tr : enUS;
+
   // Always show last 30 days; disable dates before registration
   const dates = useMemo(() => {
     const today = startOfDay(new Date());
-    const thirtyDaysAgo = subDays(today, 30);
     const registeredAt = user?.createdAt
       ? startOfDay(parseISO(user.createdAt))
       : today;
@@ -135,13 +135,13 @@ const HomeScreen = () => {
       const date = subDays(today, 30 - i);
       return {
         date,
-        day: format(date, "d"),
-        month: format(date, "MMM"),
+        day: format(date, "d", { locale: dateFnsLocale }),
+        month: format(date, "MMM", { locale: dateFnsLocale }),
         isToday: isSameDay(date, today),
         disabled: isBefore(date, registeredAt),
       };
     });
-  }, [user?.createdAt]);
+  }, [user?.createdAt, dateFnsLocale]);
 
   useFocusEffect(
     useCallback(() => {
@@ -373,11 +373,16 @@ const HomeScreen = () => {
                 name="workspace-premium"
                 size={18}
                 color="#f39849"
+                className="mr-2"
               />
-              <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex-1 ml-2">
-                Try SlayCal Pro —{" "}
-                <Text className="text-[#f39849]">View Plans</Text>
-              </Text>
+              <View className="flex-row items-center gap-1 flex-1">
+                <Text className="text-zinc-700 dark:text-zinc-300 text-xs font-semibold">
+                  {t("home.proTrial", "Try SlayCal Pro —")}
+                </Text>
+                <Text className="text-xs font-semibold text-[#f39849]">
+                  {t("home.viewPlans", "View Plans")}
+                </Text>
+              </View>
               <Pressable
                 onPress={(e) => {
                   e.stopPropagation();

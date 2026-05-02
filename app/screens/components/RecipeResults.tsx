@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Image,
   Pressable,
   Text,
   TouchableOpacity,
@@ -114,25 +113,6 @@ export function RecipeResults({ direction = "forward" }: RecipeResultsProps) {
             className="bg-white dark:bg-zinc-800 rounded-[28px] mb-6 border border-zinc-100 dark:border-zinc-700 overflow-hidden"
           >
             <Pressable onPress={() => handleOpenRecipe(item)}>
-              {/* Image Section */}
-              <View className="h-48 relative">
-                <Image
-                  source={require("@/assets/images/food_placeholder.jpg")}
-                  className="w-full h-full object-cover"
-                />
-                {(item.prepTimeMinutes != null ||
-                  item.cookTimeMinutes != null) && (
-                  <View className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex-row items-center">
-                    <MaterialIcons name="schedule" size={14} color="#f39849" />
-                    <Text className="text-[#f39849] font-black text-xs ml-1">
-                      {(item.prepTimeMinutes ?? 0) +
-                        (item.cookTimeMinutes ?? 0)}{" "}
-                      {t("explore.mins")}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
               {/* Content Section */}
               <View className="p-5">
                 <Text className="text-xl font-bold text-zinc-900 dark:text-white mb-2">

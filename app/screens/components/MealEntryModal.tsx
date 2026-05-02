@@ -1,5 +1,4 @@
 import { FoodLogEntry } from "@/api/nutrition";
-import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { usePrev } from "@/hooks/usePrev";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -15,7 +14,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StatusBar,
   Text,
   TextInput,
   View,
@@ -202,10 +200,7 @@ export function MealEntryModal({
   }, [servings]);
 
   useEffect(() => {
-    if (skipScaleOnceRef.current) {
-      skipScaleOnceRef.current = false;
-      return;
-    }
+
     const prev = servingsPrev ?? servings;
     if (typeof prev !== "number" || prev === 0 || servings === prev) return;
     const ratio = servings / prev;
@@ -321,6 +316,7 @@ export function MealEntryModal({
                   placeholderTextColor={
                     colorScheme === "dark" ? "#71717a" : "#a1a1aa"
                   }
+                  returnKeyType="done"
                 />
               </View>
 
@@ -375,6 +371,7 @@ export function MealEntryModal({
                     onChangeText={setCalories}
                     keyboardType="numeric"
                     className="text-2xl font-bold text-zinc-900 dark:text-white w-full"
+                    returnKeyType="done"
                   />
                 </View>
               </View>
@@ -406,6 +403,7 @@ export function MealEntryModal({
                     onChangeText={setProtein}
                     keyboardType="numeric"
                     className="text-lg font-bold text-zinc-900 dark:text-white w-full"
+                    returnKeyType="done"
                   />
                   <Text className="text-xs text-zinc-400 ml-1">g</Text>
                 </View>
@@ -431,6 +429,7 @@ export function MealEntryModal({
                     onChangeText={setCarbs}
                     keyboardType="numeric"
                     className="text-lg font-bold text-zinc-900 dark:text-white w-full"
+                    returnKeyType="done"
                   />
                   <Text className="text-xs text-zinc-400 ml-1">g</Text>
                 </View>
@@ -460,6 +459,7 @@ export function MealEntryModal({
                     onChangeText={setFat}
                     keyboardType="numeric"
                     className="text-lg font-bold text-zinc-900 dark:text-white w-full"
+                    returnKeyType="done"
                   />
                   <Text className="text-xs text-zinc-400 ml-1">g</Text>
                 </View>

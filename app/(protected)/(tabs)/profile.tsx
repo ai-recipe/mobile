@@ -106,9 +106,23 @@ const ProfileScreen = () => {
     <ScreenWrapper showTopNavBar={false} withTabNavigation={true}>
       <ScrollView className="flex-1 px-5 mt-4">
         <View className="gap-y-3">
-          <Text className="text-lg font-bold text-zinc-900 dark:text-white mb-4">
-            {t("profile.title")}
-          </Text>
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-bold text-zinc-900 dark:text-white">
+              {t("profile.title")}
+            </Text>
+            <TouchableOpacity
+              onPress={handleLogout}
+              disabled={loggingOut}
+              className="p-2 rounded-full bg-red-50 dark:bg-red-500/10"
+              hitSlop={8}
+            >
+              {loggingOut ? (
+                <ActivityIndicator size="small" color="#ef4444" />
+              ) : (
+                <MaterialIcons name="logout" size={22} color="#ef4444" />
+              )}
+            </TouchableOpacity>
+          </View>
           {user && (
             <View className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700 mb-1">
               <View className="flex-row items-center mb-3">
@@ -194,17 +208,6 @@ const ProfileScreen = () => {
               WebBrowser.openBrowserAsync("https://slaycal.com/contact")
             }
           />
-          <ProfileMenuItem
-            icon="description"
-            label={t("profile.termsOfUse")}
-            onPress={() =>
-              WebBrowser.openBrowserAsync(
-                Platform.OS === "ios"
-                  ? "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
-                  : "https://slaycal.com/terms",
-              )
-            }
-          />
           {__DEV__ && (
             <TouchableOpacity
               onPress={() => router.push("/screens/analytics-dev" as any)}
@@ -217,38 +220,16 @@ const ProfileScreen = () => {
               <MaterialIcons name="chevron-right" size={22} color="#6366f1" />
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            onPress={handleLogout}
-            disabled={loggingOut}
-            className="flex-row items-center justify-center p-4 mt-4 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-100 dark:border-red-500/20"
-          >
-            {loggingOut ? (
-              <ActivityIndicator size="small" color="#ef4444" />
-            ) : (
-              <>
-                <MaterialIcons name="logout" size={22} color="#ef4444" />
-                <Text className="ml-3 font-bold text-red-500">
-                  {t("profile.logout")}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
+          <ProfileMenuItem
+            icon="delete-forever"
+            label={t("profile.deleteAccount")}
             onPress={handleDeleteAccount}
+            iconColor="#71717a"
+            labelClassName="text-zinc-500 dark:text-zinc-400"
+            loading={deletingAccount}
             disabled={deletingAccount}
-            className="flex-row items-center justify-center p-4 mb-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700"
-          >
-            {deletingAccount ? (
-              <ActivityIndicator size="small" color="#71717a" />
-            ) : (
-              <>
-                <MaterialIcons name="delete-forever" size={22} color="#71717a" />
-                <Text className="ml-3 font-bold text-zinc-500 dark:text-zinc-400">
-                  {t("profile.deleteAccount")}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
+            showChevron={false}
+          />
         </View>
       </ScrollView>
 
@@ -410,25 +391,38 @@ const ProfileMenuItem = ({
   label,
   onPress,
   isMaterialCommunityIcon = false,
+  iconColor = "#f39849",
+  labelClassName = "text-zinc-700 dark:text-zinc-200",
+  loading = false,
+  disabled = false,
+  showChevron = true,
 }: {
   icon: string;
   label: string;
   onPress: () => void;
   isMaterialCommunityIcon?: boolean;
+  iconColor?: string;
+  labelClassName?: string;
+  loading?: boolean;
+  disabled?: boolean;
+  showChevron?: boolean;
 }) => (
   <TouchableOpacity
     onPress={onPress}
+    disabled={disabled || loading}
     className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700"
   >
-    {isMaterialCommunityIcon ? (
-      <MaterialCommunityIcons name={icon as any} size={24} color="#f39849" />
+    {loading ? (
+      <ActivityIndicator size="small" color={iconColor} />
+    ) : isMaterialCommunityIcon ? (
+      <MaterialCommunityIcons name={icon as any} size={24} color={iconColor} />
     ) : (
-      <MaterialIcons name={icon as any} size={24} color="#f39849" />
+      <MaterialIcons name={icon as any} size={24} color={iconColor} />
     )}
-    <Text className="ml-4 flex-1 font-bold text-zinc-700 dark:text-zinc-200">
-      {label}
-    </Text>
-    <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
+    <Text className={`ml-4 flex-1 font-bold ${labelClassName}`}>{label}</Text>
+    {showChevron && (
+      <MaterialIcons name="chevron-right" size={24} color="#a1a1aa" />
+    )}
   </TouchableOpacity>
 );
 

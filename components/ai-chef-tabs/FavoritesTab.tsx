@@ -1,4 +1,5 @@
 import PlaceholderComponent from "@/components/ai-chef-tabs/PlaceholderComponent";
+import { SmartImage } from "@/components/SmartImage";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadMoreFavorites } from "@/store/slices/favoritesListSlice";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -7,13 +8,10 @@ import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-
-const PLACEHOLDER_IMAGE = "/assets/images/food_placeholder.jpg";
 
 interface FavoritesTabProps {
   onOpenRecipe: (recipe: any) => void;
@@ -66,14 +64,7 @@ const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
           onPress={() => onOpenRecipe(item)}
         >
           <View className="h-48 relative">
-            <Image
-              source={
-                item.imageUrl
-                  ? { uri: item.imageUrl }
-                  : require("@/assets/images/food_placeholder.jpg")
-              }
-              className="w-full h-full object-cover"
-            />
+            <SmartImage uri={item.imageUrl} />
           </View>
 
           <View className="p-5">

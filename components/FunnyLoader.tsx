@@ -158,19 +158,6 @@ export const FunnyLoader = () => {
         paddingBottom: insets.bottom + 16,
       }}
     >
-      {/* Radiant Background Gradient Overlay */}
-      <View
-        className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundColor: colors.primary,
-          borderRadius: 9999,
-          width: "150%",
-          height: "150%",
-          top: "-25%",
-          left: "-25%",
-        }}
-      />
-
       {/* Decorative top-left shape */}
       <View
         className="absolute top-12 left-12 opacity-30"
@@ -245,47 +232,6 @@ export const FunnyLoader = () => {
             }}
           />
         </View>
-
-        {/* Main Message */}
-        <Animated.View
-          className="max-w-xs"
-          style={{
-            opacity: fadeValue,
-            transform: [{ scale: scaleValue }],
-          }}
-        >
-          <Text
-            className="text-lg font-semibold text-center tracking-wide"
-            style={{ color: colors.onSurfaceVariant }}
-          >
-            {currentMessage}
-          </Text>
-        </Animated.View>
-
-        {/* Subtitle */}
-        <Text
-          className="text-xs font-bold uppercase mt-2 text-center tracking-widest"
-          style={{ color: colors.outline, opacity: 0.6 }}
-        >
-          {displayMessages[1] || "Peak productivity incoming"}
-        </Text>
-      </View>
-
-      {/* Footer Branding */}
-      <View
-        className="absolute bottom-10 flex-row items-center gap-2 px-6 py-2 rounded-full"
-        style={{
-          backgroundColor: colors.surfaceContainerLow,
-          marginBottom: insets.bottom,
-        }}
-      >
-        <MaterialIcons name="auto-awesome" size={14} color={colors.primary} />
-        <Text
-          className="text-xs font-bold uppercase tracking-widest"
-          style={{ color: colors.onSurfaceVariant }}
-        >
-          The Radiant Nutrition Tracker
-        </Text>
       </View>
     </View>
   );

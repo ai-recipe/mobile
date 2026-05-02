@@ -1,6 +1,7 @@
 import { DailySummary, FoodLogEntry } from "@/api/nutrition";
 import { AnimatedCircleProgress } from "@/components/AnimatedCircleProgress";
 import { EmptyMealState } from "@/components/EmptyMealState";
+import { SmartImage } from "@/components/SmartImage";
 import { Colors } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
@@ -9,7 +10,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   Text,
   TouchableOpacity,
@@ -139,6 +139,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           {items.map((entry) => {
             const pending = isPendingScan(entry);
             const failed = isFailedScan(entry);
+            console.log(entry);
             const showImage = !!entry.imageUrl || pending;
 
             // Pending scan: reference-style card (white, rounded-3xl, 16x16 thumb, spinner, subtitle)
@@ -151,12 +152,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   <View className="flex-shrink-0">
                     {entry.imageUrl ? (
                       <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <Image
-                          source={{ uri: entry.imageUrl }}
-                          className="w-full h-full"
-                          resizeMode="cover"
-                          style={{ opacity: 0.7 }}
-                        />
+                        <SmartImage uri={entry.imageUrl} style={{ opacity: 0.7 }} />
                         <View
                           className="absolute inset-0 rounded-2xl"
                           style={{
@@ -219,12 +215,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   <View className="flex-shrink-0 relative">
                     {entry.imageUrl ? (
                       <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <Image
-                          source={{ uri: entry.imageUrl }}
-                          className="w-full h-full"
-                          resizeMode="cover"
-                          style={{ opacity: 0.4 }}
-                        />
+                        <SmartImage uri={entry.imageUrl} style={{ opacity: 0.4 }} />
                         <View className="absolute inset-0 rounded-2xl items-center justify-center bg-red-100 dark:bg-red-900/30">
                           <MaterialIcons
                             name="image-not-supported"
@@ -300,15 +291,11 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                 className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 flex-row items-center"
               >
                 {/* Image */}
-                {showImage && entry.imageUrl ? (
-                  <View className="mr-3 flex-shrink-0">
-                    <Image
-                      source={{ uri: entry.imageUrl }}
-                      className="w-12 h-12 rounded-xl"
-                      resizeMode="cover"
-                    />
+                {showImage && entry.imageUrl && (
+                  <View className="mr-3 flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden">
+                    <SmartImage uri={entry.imageUrl} />
                   </View>
-                ) : null}
+                ) }
 
                 {/* Content */}
                 <View className="flex-1 min-w-0 mr-3 justify-center">

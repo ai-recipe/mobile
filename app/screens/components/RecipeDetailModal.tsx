@@ -2,9 +2,9 @@ import { useAppDispatch } from "@/store/hooks";
 import { toggleFavorite } from "@/store/slices/recipeListSlice";
 import { toggleFavoriteFromScan } from "@/store/slices/recipeSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { SmartImage } from "@/components/SmartImage";
 import React, { useState } from "react";
 import {
-  Image,
   Modal,
   ScrollView,
   Text,
@@ -93,14 +93,7 @@ export function RecipeDetailModal({
         >
           {/* Header Image */}
           <View className="relative w-full h-80">
-            <Image
-              source={
-                recipe.imageUrl
-                  ? { uri: recipe.imageUrl }
-                  : require("@/assets/images/food_placeholder.jpg")
-              }
-              className="w-full h-full object-cover"
-            />
+            <SmartImage uri={recipe.imageUrl} />
             <View className="absolute top-0 left-0 right-0 p-4 flex-row justify-between items-center pt-12">
               <TouchableOpacity
                 onPress={onClose}
