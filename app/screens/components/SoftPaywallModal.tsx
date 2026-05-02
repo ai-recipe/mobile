@@ -7,6 +7,7 @@ import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -46,7 +47,7 @@ export function SoftPaywallModal({ visible }: Props) {
   const handleClose = useCallback(() => {
     backdropOpacity.value = withTiming(0, { duration: 180 });
     cardScale.value = withTiming(0.88, { duration: 180 });
-    cardOpacity.value = withTiming(0, { duration: 160 });
+    cardOpacity.value = withTiming(0, { duration: 160, }, () => runOnJS(runClose)());
   }, [backdropOpacity, cardScale, cardOpacity, runClose]);
 
   const handleUpgrade = useCallback(() => {

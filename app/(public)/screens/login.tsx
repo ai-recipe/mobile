@@ -8,13 +8,12 @@ import { Analytics } from "@/analytics";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -42,21 +41,6 @@ export default function LoginScreen() {
   const { isLoginLoading, isGoogleLoading, isAppleLoading } = useAppSelector(
     (state) => state.auth,
   );
-
-  const [flexToggle, setFlexToggle] = useState(false);
-
-  useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener("keyboardDidShow", () => {
-      setFlexToggle(false);
-    });
-    const keyboardHideListener = Keyboard.addListener("keyboardDidHide", () => {
-      setFlexToggle(true);
-    });
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  }, []);
 
   const loginSchema = useMemo(
     () =>
@@ -124,15 +108,14 @@ export default function LoginScreen() {
     <ScreenWrapper withTabNavigation={false}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={flexToggle ? { flexGrow: 1 } : { flex: 1 }}
-        enabled={!flexToggle}
+        className="flex-1"
       >
         <ScrollView
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 min-h-[500px] justify-center">
+          <View style={{ flex: 1 }}>
             {/* Top Visual Section - compact */}
             <Animated.View
               entering={FadeInUp.duration(1000).springify()}

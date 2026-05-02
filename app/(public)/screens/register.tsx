@@ -114,12 +114,11 @@ export default function RegisterScreen() {
         keyboardVerticalOffset={0}
       >
         <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 min-h-[500px] justify-center">
+          <View style={{ flex: 1 }}>
             {/* Top Visual Section - compact */}
             <Animated.View
               entering={FadeInUp.duration(1000).springify()}

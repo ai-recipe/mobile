@@ -1,6 +1,7 @@
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch } from "@/store/hooks";
+import { openSoftPaywall } from "@/store/slices/modalSlice";
 import {
   AppStep,
   discoverRecipesAsync,
@@ -15,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { SoftPaywallModal } from "./components/SoftPaywallModal";
 
 // Sub-components
 import { usePrev } from "@/hooks/usePrev";
@@ -64,6 +66,10 @@ export default function AiScanFormScreen() {
 
   const { appStep, scannedIngredients, scanError, analyseError, scannedImage } =
     useSelector((state: any) => state.recipe);
+  const { creditRemaining, softPaywallOpen } = useSelector((state: any) => ({
+    creditRemaining: state.auth.creditRemaining,
+    softPaywallOpen: state.modal.softPaywallOpen,
+  }));
   const dispatch = useAppDispatch();
 
   const [loadingText, setLoadingText] = useState(t("aiScanForm.analyzing"));
@@ -91,9 +97,13 @@ export default function AiScanFormScreen() {
 
   // Handle scan image action
   const handleScanImage = useCallback(() => {
+    if (creditRemaining !== null && creditRemaining <= 0) {
+      dispatch(openSoftPaywall());
+      return;
+    }
     form.setValue("selectedIngredients", []);
     dispatch(scanImage(scannedImage));
-  }, [dispatch, scannedImage]);
+  }, [dispatch, scannedImage, creditRemaining]);
 
   // Handle fetch recipes action
   const handleDiscoverRecipesAsync = useCallback(
@@ -231,6 +241,7 @@ export default function AiScanFormScreen() {
   // Form view (all steps except loading and results)
   return (
     <View style={{ flex: 1 }}>
+      <SoftPaywallModal visible={softPaywallOpen} />
       <FormProvider {...form}>
         <MultiStepForm
           steps={steps}
