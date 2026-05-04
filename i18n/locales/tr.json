@@ -479,5 +479,44 @@
   },
   "loadingStep": {
     "subtitle": "Fotoğraftaki malzemeler taranıyor ve analiz ediliyor..."
+  },
+  "coach": {
+    "todaysTip": "Günün İpucu",
+    "forYou": "Sana Özel",
+    "exploreAllRecipes": "Tüm Tarifleri Keşfet",
+    "finishSurveyHint": "Kişiselleştirilmiş tariflerin kilidini açmak için anketi tamamla.",
+    "trophyRoom": {
+      "title": "Kupa Odası",
+      "collectionComplete": "🎉 Koleksiyon tamamlandı!",
+      "badgesLeft": "{{count}} rozet daha kaldı",
+      "emptyHint": "İlk rozetini kazanmak için günlük hedeflerini ve taramalarını tamamla!"
+    },
+    "insightCard": {
+      "readyTitle": "Koçun hazır",
+      "readyHint": "Bugün ilk öğününü kaydet ve anında kişisel bir ipucu al."
+    },
+    "communityPill": {
+      "active": "{{count}} kişi şu an hedeflerini eziyor",
+      "beFirst": "Bugün ilk kaydeden sen ol!"
+    },
+    "badgeDetail": {
+      "lockedTitle": "Kilitli Rozet",
+      "lockedDesc": "Devam et — bu rozet seni bekliyor!",
+      "notUnlocked": "Henüz açılmadı",
+      "earned": "Rozet kazanıldı!",
+      "earnedOn": "{{date}} tarihinde kazanıldı"
+    },
+    "badgeModal": {
+      "unlocked": "Rozet Açıldı 🎉",
+      "awesome": "Harika!",
+      "moreWaiting": "{{count}} rozet daha bekliyor",
+      "moreWaitingPlural": "{{count}} rozet daha bekliyor",
+      "rarity": {
+        "common": "Yaygın",
+        "rare": "Nadir",
+        "epic": "Epik",
+        "legendary": "Efsanevi ⭐"
+      }
+    }
   }
 }

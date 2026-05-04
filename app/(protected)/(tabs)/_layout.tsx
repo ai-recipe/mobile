@@ -139,10 +139,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                         color={iconColor}
                       />
                     );
-                  case "explore":
+                  case "coach":
                     return (
                       <MaterialIcons
-                        name="explore"
+                        name="bolt"
                         size={24}
                         color={iconColor}
                       />
@@ -160,8 +160,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                     return t("tabs.progress");
                   case "profile":
                     return t("tabs.profile");
-                  case "explore":
-                    return t("tabs.explore");
+                  case "coach":
+                    return "Coach";
                   default:
                     return t(`tabs.${name}`);
                 }
@@ -231,9 +231,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="explore"
+          name="coach"
           options={{
-            title: t("tabs.explore"),
+            title: "Coach",
           }}
         />
         <Tabs.Screen

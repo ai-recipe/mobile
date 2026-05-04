@@ -28,6 +28,8 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { store } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { initDeviceAsync } from "@/store/slices/authSlice";
+import { badgeReceived } from "@/store/slices/gamificationSlice";
+import GlobalBadgeModal from "@/components/badges/GlobalBadgeModal";
 import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
 import * as Sentry from "@sentry/react-native";
@@ -56,12 +58,37 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
+function useBadgeSocket() {
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((s) => s.auth.token);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const { io } = require("socket.io-client");
+    const socket = io(`${process.env.EXPO_PUBLIC_BASE_URL}/badges`, {
+      transports: ["websocket", "polling"],
+      auth: { token },
+    });
+
+    socket.on("badge:unlocked", (payload: Parameters<typeof badgeReceived>[0]) => {
+      dispatch(badgeReceived(payload));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [token, dispatch]);
+}
+
 function RootLayoutNavigator() {
   const { currentLanguage } = useAppSelector((state) => state.app);
+  const isDisplayingBadge = useAppSelector((s) => s.gamification.isDisplayingBadge);
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   useInitApp();
   usePushNotifications();
+  useBadgeSocket();
 
   useEffect(() => {
     injectDispatch(dispatch);
@@ -90,11 +117,8 @@ function RootLayoutNavigator() {
 
   return (
     <ThemeSync>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
+      <Stack screenOptions={{ headerShown: false }} />
+      {isDisplayingBadge && <GlobalBadgeModal />}
     </ThemeSync>
   );
 }

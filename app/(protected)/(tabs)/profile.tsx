@@ -1,4 +1,5 @@
 import { ScreenWrapper } from "@/components/ScreenWrapper";
+import TrophyRoom from "@/components/badges/TrophyRoom";
 import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";

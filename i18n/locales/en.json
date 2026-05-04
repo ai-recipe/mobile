@@ -479,5 +479,44 @@
   },
   "loadingStep": {
     "subtitle": "Scanning and analyzing the ingredients in the photo..."
+  },
+  "coach": {
+    "todaysTip": "Today's Tip",
+    "forYou": "For You",
+    "exploreAllRecipes": "Explore All Recipes",
+    "finishSurveyHint": "Finish your survey to unlock personalised recipes.",
+    "trophyRoom": {
+      "title": "Trophy Room",
+      "collectionComplete": "🎉 Collection complete!",
+      "badgesLeft": "{{count}} badges left to unlock",
+      "emptyHint": "Complete daily goals and scans to earn your first badge!"
+    },
+    "insightCard": {
+      "readyTitle": "Your Coach is ready",
+      "readyHint": "Log your first meal today and get a personalised tip instantly."
+    },
+    "communityPill": {
+      "active": "{{count}} people are slaying right now",
+      "beFirst": "Be the first to log today!"
+    },
+    "badgeDetail": {
+      "lockedTitle": "Locked Badge",
+      "lockedDesc": "Keep going — this badge is waiting for you!",
+      "notUnlocked": "Not unlocked yet",
+      "earned": "Badge earned!",
+      "earnedOn": "Earned {{date}}"
+    },
+    "badgeModal": {
+      "unlocked": "Badge Unlocked 🎉",
+      "awesome": "Awesome!",
+      "moreWaiting": "{{count}} more badge waiting",
+      "moreWaitingPlural": "{{count}} more badges waiting",
+      "rarity": {
+        "common": "Common",
+        "rare": "Rare",
+        "epic": "Epic",
+        "legendary": "Legendary ⭐"
+      }
+    }
   }
 }

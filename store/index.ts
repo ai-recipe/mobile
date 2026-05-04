@@ -15,6 +15,9 @@ import subscriptionReducer from "./slices/subscriptionSlice";
 import uiReducer from "./slices/uiSlice";
 import userReducer from "./slices/userSlice";
 import waterLogsReducer from "./slices/waterLogsSlice";
+import gamificationReducer from "./slices/gamificationSlice";
+import badgesReducer from "./slices/badgesSlice";
+import coachReducer from "./slices/coachSlice";
 
 import { injectDispatch } from "@/api/axios";
 import { analyticsListenerMiddleware } from "./middleware/analyticsMiddleware";
@@ -37,6 +40,9 @@ export const store = configureStore({
     goalPlans: goalPlansReducer,
     scanMeal: scanMealReducer,
     subscription: subscriptionReducer,
+    gamification: gamificationReducer,
+    badges: badgesReducer,
+    coach: coachReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

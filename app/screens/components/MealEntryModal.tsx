@@ -9,21 +9,20 @@ import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Modal,
   Platform,
   Pressable,
   ScrollView,
   Text,
   TextInput,
+  UIManager,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 interface MealEntryModalProps {
   visible: boolean;
@@ -175,6 +174,29 @@ export function MealEntryModal({
     width: `${fatWidthShared.value}%`,
   }));
 
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      UIManager.setLayoutAnimationEnabledExperimental?.(true);
+    }
+    const onShow = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setKeyboardVisible(true);
+      },
+    );
+    const onHide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setKeyboardVisible(false);
+      },
+    );
+    return () => { onShow.remove(); onHide.remove(); };
+  }, []);
+
   const caloriesRef = useRef<TextInput>(null);
   const proteinRef = useRef<TextInput>(null);
   const carbsRef = useRef<TextInput>(null);
@@ -223,7 +245,8 @@ export function MealEntryModal({
       onRequestClose={onClose}
     >
       <View className="flex-1">
-        {/* Header Image Area — outside KAV so it never shifts */}
+        {/* Header Image Area — hidden when keyboard is open */}
+        {!keyboardVisible && (
         <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
           {/* Top Bar */}
           <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
@@ -252,6 +275,7 @@ export function MealEntryModal({
             </View>
           )}
         </View>
+        )}
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
