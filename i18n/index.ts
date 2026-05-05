@@ -5,6 +5,8 @@ import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization";
 import { store } from "@/store";
 import { setIsLoading } from "@/store/slices/appSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateLocaleAsync } from "@/store/slices/authSlice";
 /**
  *     {
       "_id": "69c95edf545f8ad668494747",
@@ -16,6 +18,12 @@ import { setIsLoading } from "@/store/slices/appSlice";
       "updatedAt": "2026-03-29T17:18:22.905Z"
     },
  */
+
+(async () => {
+  const locale = await AsyncStorage.getItem("locale");
+  const defaultLocale = Localization.getLocales()[0].languageCode ?? "en";
+  store.dispatch(updateLocaleAsync(locale ?? defaultLocale));
+})();
 
 const i18nReady = i18n
   .use(HttpBackend)

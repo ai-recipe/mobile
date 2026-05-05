@@ -52,6 +52,10 @@ class AuthService {
   public deleteAccountAPI() {
     return api.delete("/auth/me");
   }
+
+  public updateLocaleAPI(locale: string) {
+    return api.patch("/user/locale", { locale });
+  }
 }
 
 export default new AuthService();

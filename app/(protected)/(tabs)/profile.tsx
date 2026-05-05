@@ -4,7 +4,11 @@ import i18n from "@/i18n";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { setCurrentLanguage } from "@/store/slices/appSlice";
-import { deleteAccountAsync, logoutAsync } from "@/store/slices/authSlice";
+import {
+  deleteAccountAsync,
+  logoutAsync,
+  updateLocaleAsync,
+} from "@/store/slices/authSlice";
 import { selectShouldShowPaywallBanners } from "@/store/slices/subscriptionSlice";
 import type { ThemePreference } from "@/store/slices/uiSlice";
 import { setTheme } from "@/store/slices/uiSlice";
@@ -65,6 +69,7 @@ const ProfileScreen = () => {
     if (lang === currentLanguage) return;
     await AsyncStorage.setItem("CURRENT_LANGUAGE", lang);
     i18n.changeLanguage(lang);
+    dispatch(updateLocaleAsync(lang));
     dispatch(setCurrentLanguage(lang));
     setLanguageModalVisible(false);
   };
@@ -167,7 +172,7 @@ const ProfileScreen = () => {
               </Text>
               <MaterialIcons name="chevron-right" size={24} color="#f48c25" />
             </TouchableOpacity>
-          )}{" "}
+          )}
           <ProfileMenuItem
             isMaterialCommunityIcon={true}
             icon="chef-hat"

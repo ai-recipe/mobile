@@ -374,6 +374,20 @@ export const fetchUserAsync = createAsyncThunk(
   },
 );
 
+export const updateLocaleAsync = createAsyncThunk(
+  "auth/updateLocale",
+  async (locale: string, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.updateLocaleAPI(locale);
+      return response.data?.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Dil güncellenemedi",
+      );
+    }
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,

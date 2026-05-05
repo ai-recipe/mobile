@@ -150,7 +150,7 @@ const ExploreScreen = () => {
                   onPress={() => handleOpenRecipe(item)}
                   activeOpacity={0.7}
                 >
-                  <View className="h-40 relative">
+                  <View className="h-40 relative overflow-hidden">
                     <SmartImage uri={item.imageUrl} />
                     <View className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/80 px-2 py-1 rounded-full flex-row items-center">
                       <MaterialIcons name="timer" size={10} color="#f39849" />

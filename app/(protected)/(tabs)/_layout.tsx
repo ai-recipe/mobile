@@ -141,11 +141,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                     );
                   case "coach":
                     return (
-                      <MaterialIcons
-                        name="bolt"
-                        size={24}
-                        color={iconColor}
-                      />
+                      <MaterialIcons name="bolt" size={24} color={iconColor} />
                     );
                   default:
                     return <></>;
@@ -161,7 +157,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                   case "profile":
                     return t("tabs.profile");
                   case "coach":
-                    return "Coach";
+                    return t("tabs.coach");
                   default:
                     return t(`tabs.${name}`);
                 }
