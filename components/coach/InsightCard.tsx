@@ -21,7 +21,7 @@ export function InsightCard({
   isDark: boolean;
 }) {
   const { t } = useTranslation();
-  if (loading) {
+  if (loading && !title) {
     return (
       <View
         className="rounded-[20px] border p-4 overflow-hidden"

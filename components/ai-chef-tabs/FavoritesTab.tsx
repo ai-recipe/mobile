@@ -47,7 +47,7 @@ const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
   return (
     <FlatList
       data={favorites}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item._id}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
       onEndReached={handleLoadMore}
@@ -78,7 +78,7 @@ const FavoritesTab = ({ onOpenRecipe }: FavoritesTabProps) => {
               <View className="flex-row items-center">
                 <MaterialIcons name="schedule" size={16} color="#a1a1aa" />
                 <Text className="text-zinc-500 text-xs font-bold ml-1.5">
-                  {item.totalTimeMinutes} {t("minutes")}
+                  {item.prepTimeMinutes + item.cookTimeMinutes} {t("minutes")}
                 </Text>
               </View>
               <View className="flex-row items-center">

@@ -7,32 +7,28 @@ async function log(
   event: string,
   params?: Record<string, string | number | boolean | null>,
 ) {
-  if (IS_WEB) return;
-  if (__DEV__) console.log("[Analytics]", event, params ?? "");
+  if (IS_WEB || __DEV__) return;
   try {
     await analytics().logEvent(event, params as any);
-  } catch (e) {
-    if (__DEV__) console.warn("[Analytics] logEvent failed:", event, e);
-  }
+  } catch {}
 }
 
 export const Analytics = {
   // ── Identity ────────────────────────────────────────────────────────────────
   setUserId: async (userId: string | null) => {
-    if (IS_WEB) return;
+    if (IS_WEB || __DEV__) return;
     try {
       await analytics().setUserId(userId);
     } catch {}
   },
   setUserProperties: async (props: Record<string, string | null>) => {
-    if (IS_WEB) return;
+    if (IS_WEB || __DEV__) return;
     try {
       await analytics().setUserProperties(props);
     } catch {}
   },
   screenView: async (screen_name: string) => {
-    if (IS_WEB) return;
-    if (__DEV__) console.log("[Analytics] screen_view", screen_name);
+    if (IS_WEB || __DEV__) return;
     try {
       await analytics().logScreenView({ screen_name, screen_class: screen_name });
     } catch {}

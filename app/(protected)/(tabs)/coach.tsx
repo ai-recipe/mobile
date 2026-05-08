@@ -8,7 +8,6 @@ import { TrophyRoom } from "@/components/coach/TrophyRoom";
 import { BRAND } from "@/components/coach/constants";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useCoachSync } from "@/hooks/useCoachSync";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchMyBadgesAsync } from "@/store/slices/badgesSlice";
 import {
@@ -41,7 +40,6 @@ export default function CoachScreen() {
   const theme = Colors[colorScheme ?? "light"];
 
   const { t } = useTranslation();
-  useCoachSync();
 
   const {
     insight,
@@ -63,10 +61,10 @@ export default function CoachScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (badgesStatus === "idle") dispatch(fetchMyBadgesAsync());
-      if (!isInsightLoaded) dispatch(fetchInsightAsync());
-      if (!isRecipesLoaded) dispatch(fetchCoachRecipesAsync());
-    }, [dispatch, badgesStatus, isInsightLoaded, isRecipesLoaded]),
+      dispatch(fetchMyBadgesAsync());
+      dispatch(fetchInsightAsync());
+      dispatch(fetchCoachRecipesAsync());
+    }, [dispatch]),
   );
 
   return (
@@ -139,7 +137,7 @@ export default function CoachScreen() {
               <MaterialIcons name="arrow-forward" size={14} color={BRAND} />
             </TouchableOpacity>
           </View>
-          {isRecipesLoading ? (
+          {isRecipesLoading && personalizedRecipes.length === 0 ? (
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}

@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Reanimated, {
   Easing,
@@ -54,7 +50,7 @@ export function TrophyRoom({
     setSelected(badge);
   };
 
-  if (status === "loading") {
+  if (status === "loading" && badges.length === 0) {
     return (
       <View className="rounded-[20px] p-4">
         <View className="flex-row items-center justify-between mb-2.5">
@@ -112,7 +108,10 @@ export function TrophyRoom({
         >
           {t("coach.trophyRoom.title")}
         </Text>
-        <View className="px-2.5 py-1 rounded-full" style={{ backgroundColor: BRAND_LIGHT }}>
+        <View
+          className="px-2.5 py-1 rounded-full"
+          style={{ backgroundColor: BRAND_LIGHT }}
+        >
           <Text className="text-[12px] font-extrabold" style={{ color: BRAND }}>
             {unlocked} / {total}
           </Text>

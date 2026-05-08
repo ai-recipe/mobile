@@ -34,7 +34,7 @@ import { injectDispatch, injectGetUserType } from "@/api/axios";
 import { Stack } from "expo-router";
 import * as Sentry from "@sentry/react-native";
 import { initAppAsync } from "@/store/slices/appSlice";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useCoachSync } from "@/hooks/useCoachSync";
 
 Sentry.init({
   dsn: "https://7a90cff677e854e1452ca6321fcdac53@o4511230880579584.ingest.de.sentry.io/4511230885822544",
@@ -60,7 +60,7 @@ Sentry.init({
 
 function useBadgeSocket() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((s) => s.auth.token);
+  const token = useAppSelector((s) => s.auth.accessToken);
 
   useEffect(() => {
     if (!token) return;
@@ -71,9 +71,13 @@ function useBadgeSocket() {
       auth: { token },
     });
 
-    socket.on("badge:unlocked", (payload: Parameters<typeof badgeReceived>[0]) => {
-      dispatch(badgeReceived(payload));
-    });
+    socket.on(
+      "badge:unlocked",
+      (payload: Parameters<typeof badgeReceived>[0]) => {
+        console.log("badge:unlocked", payload);
+        dispatch(badgeReceived(payload));
+      },
+    );
 
     return () => {
       socket.disconnect();
@@ -83,9 +87,12 @@ function useBadgeSocket() {
 
 function RootLayoutNavigator() {
   const { currentLanguage } = useAppSelector((state) => state.app);
-  const isDisplayingBadge = useAppSelector((s) => s.gamification.isDisplayingBadge);
+  const isDisplayingBadge = useAppSelector(
+    (s) => s.gamification.isDisplayingBadge,
+  );
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+  useCoachSync();
   useInitApp();
   usePushNotifications();
   useBadgeSocket();

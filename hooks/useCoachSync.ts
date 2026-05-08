@@ -28,12 +28,14 @@ export function useCoachSync() {
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    console.log("token coach", token);
     // Don't connect until we have a valid token (guards anonymous users too)
     if (!token) return;
 
     const { io } =
       require("socket.io-client") as typeof import("socket.io-client");
 
+    console.log("token coach", token);
     const socket = io(`${process.env.EXPO_PUBLIC_BASE_URL}/coach`, {
       transports: ["websocket", "polling"],
       auth: { token },
@@ -46,6 +48,7 @@ export function useCoachSync() {
     });
 
     socket.on("coach:insight_updated", (insight: CoachInsight) => {
+      console.log("coach:insight_updated", insight);
       dispatch(setInsight(insight));
     });
 

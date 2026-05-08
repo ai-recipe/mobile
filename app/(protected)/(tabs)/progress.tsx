@@ -84,6 +84,7 @@ export default function ProgressScreen() {
       };
     });
   }, [progressData.weightTrend.dailyBreakdown]);
+  console.log("chartData", chartData);
 
   const stackData = useMemo(() => {
     return progressData.calorieIntake.dailyBreakdown.map((day) => {
