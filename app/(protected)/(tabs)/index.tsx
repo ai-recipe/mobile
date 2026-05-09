@@ -1,10 +1,12 @@
 import { TabScreenWrapper } from "@/app/(protected)/components/TabScreenWrapper";
+import { FoodPickerModal } from "@/app/screens/components/FoodPickerModal";
 import { GoalCelebrationModal } from "@/app/screens/components/GoalCelebrationModal";
 import {
   MealData,
   MealEntryModal,
 } from "@/app/screens/components/MealEntryModal";
 import { SoftPaywallModal } from "@/app/screens/components/SoftPaywallModal";
+import { FoodItem } from "@/api/foods";
 import { ActivityTabSwitcher } from "@/components/ActivityTabSwitcher";
 import { MealActivityTab } from "@/components/MealActivityTab";
 import { WaterActivityTab } from "@/components/WaterActivityTab";
@@ -23,6 +25,8 @@ import {
   closeMealModal,
   openMealModal,
   openSoftPaywall,
+  openFoodPicker,
+  closeFoodPicker,
 } from "@/store/slices/modalSlice";
 import { fetchQuotaAsync } from "@/store/slices/authSlice";
 import {
@@ -57,6 +61,7 @@ import {
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { useSubscription } from "@/hooks/useSubscription";
 import { selectShouldShowPaywallBanners } from "@/store/slices/subscriptionSlice";
+import { selectFoodAsync } from "@/store/slices/foodPickerSlice";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 64; // w-16
@@ -81,12 +86,15 @@ const HomeScreen = () => {
   const { creditRemaining, scanLimit, user } = useAppSelector(
     (state) => state.auth,
   );
-  const { mealModalOpen, softPaywallOpen } = useAppSelector(
+  const { mealModalOpen, softPaywallOpen, foodPickerOpen } = useAppSelector(
     (state) => state.modal,
   );
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [activeTab, setActiveTab] = React.useState<"meal" | "water">("meal");
   const [editingMeal, setEditingMeal] = React.useState<MealData | null>(null);
+  const [prefillFromFood, setPrefillFromFood] = React.useState<MealData | null>(
+    null,
+  );
   const [celebrationVisible, setCelebrationVisible] = React.useState(false);
   const [bannerDismissed, setBannerDismissed] = React.useState(false);
   const scrollRef = React.useRef<ScrollView>(null);
@@ -258,6 +266,32 @@ const HomeScreen = () => {
         ),
       }),
     );
+  };
+
+  const prevFoodPickerOpen = React.useRef(foodPickerOpen);
+  useEffect(() => {
+    if (prevFoodPickerOpen.current && !foodPickerOpen && prefillFromFood) {
+      dispatch(openMealModal());
+    }
+    prevFoodPickerOpen.current = foodPickerOpen;
+  }, [foodPickerOpen]);
+
+  const handleFoodSelected = (food: FoodItem) => {
+    const calories = food.nutrition?.calories?.amount ?? 0;
+    const protein = food.nutrition?.protein?.amount ?? 0;
+    const carbs = food.nutrition?.carbohydrates?.amount ?? 0;
+    const fat = food.nutrition?.fat?.amount ?? 0;
+    setPrefillFromFood({
+      name: food.name,
+      calories: Math.round(calories),
+      protein: Math.round(protein),
+      carbs: Math.round(carbs),
+      fat: Math.round(fat),
+      servings: 1,
+      loggedAt: "",
+    });
+    dispatch(selectFoodAsync(food._id));
+    dispatch(closeFoodPicker());
   };
 
   const handleDeleteWater = (id: string) => {
@@ -492,13 +526,20 @@ const HomeScreen = () => {
           </ScrollView>
         </View>
 
+        <FoodPickerModal
+          visible={foodPickerOpen}
+          onClose={() => dispatch(closeFoodPicker())}
+          onSelect={handleFoodSelected}
+        />
+
         <MealEntryModal
           visible={mealModalOpen}
-          initialData={editingMeal || undefined}
+          initialData={prefillFromFood ?? editingMeal ?? undefined}
           selectedDate={selectedDate}
           onClose={() => {
             dispatch(closeMealModal());
             setEditingMeal(null);
+            setPrefillFromFood(null);
           }}
           onSave={handleAddMeal}
         />

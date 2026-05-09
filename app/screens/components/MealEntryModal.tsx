@@ -22,7 +22,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 interface MealEntryModalProps {
   visible: boolean;
@@ -194,7 +198,10 @@ export function MealEntryModal({
         setKeyboardVisible(false);
       },
     );
-    return () => { onShow.remove(); onHide.remove(); };
+    return () => {
+      onShow.remove();
+      onHide.remove();
+    };
   }, []);
 
   const caloriesRef = useRef<TextInput>(null);
@@ -222,7 +229,6 @@ export function MealEntryModal({
   }, [servings]);
 
   useEffect(() => {
-
     const prev = servingsPrev ?? servings;
     if (typeof prev !== "number" || prev === 0 || servings === prev) return;
     const ratio = servings / prev;
@@ -247,34 +253,34 @@ export function MealEntryModal({
       <View className="flex-1">
         {/* Header Image Area — hidden when keyboard is open */}
         {!keyboardVisible && (
-        <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
-          {/* Top Bar */}
-          <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
-            <Pressable
-              onPress={onClose}
-              className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/10 flex items-center justify-center"
-            >
-              <MaterialIcons name="close" size={24} color="white" />
-            </Pressable>
-          </View>
-
-          {/* Image or Placeholder */}
-          {imageUrl ? (
-            <Image
-              source={{ uri: imageUrl }}
-              className="w-full h-full"
-              resizeMode="cover"
-            />
-          ) : (
-            <View className="opacity-80">
-              <MaterialIcons
-                name="restaurant"
-                size={120}
-                color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
-              />
+          <View className="relative w-full h-[25vh] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+            {/* Top Bar */}
+            <View className="absolute top-0 left-0 w-full p-4 pt-12 flex-row justify-between items-start z-10">
+              <Pressable
+                onPress={onClose}
+                className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/10 flex items-center justify-center"
+              >
+                <MaterialIcons name="close" size={24} color="white" />
+              </Pressable>
             </View>
-          )}
-        </View>
+
+            {/* Image or Placeholder */}
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                className="w-full h-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <View className="opacity-80">
+                <MaterialIcons
+                  name="restaurant"
+                  size={120}
+                  color={colorScheme === "dark" ? "#52525b" : "#d1d5db"}
+                />
+              </View>
+            )}
+          </View>
         )}
 
         <KeyboardAvoidingView
@@ -563,7 +569,7 @@ export function MealEntryModal({
                 <ActivityIndicator color="white" size="small" />
               ) : (
                 <Text className="text-white font-bold text-lg text-center">
-                  {initialData
+                  {initialData?.id
                     ? t("mealEntry.updateEntry")
                     : t("mealEntry.addToDiary")}
                 </Text>

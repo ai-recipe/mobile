@@ -75,7 +75,6 @@ export const loadMoreRecipes = createAsyncThunk(
     },
     { rejectWithValue },
   ) => {
-    console.log("loadMoreRecipes", params);
     try {
       const response = await fetchRecipeList(params);
       return response;

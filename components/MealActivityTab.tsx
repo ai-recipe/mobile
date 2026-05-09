@@ -139,7 +139,6 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
           {items.map((entry) => {
             const pending = isPendingScan(entry);
             const failed = isFailedScan(entry);
-            console.log(entry);
             const showImage = !!entry.imageUrl || pending;
 
             // Pending scan: reference-style card (white, rounded-3xl, 16x16 thumb, spinner, subtitle)
@@ -152,7 +151,10 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   <View className="flex-shrink-0">
                     {entry.imageUrl ? (
                       <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <SmartImage uri={entry.imageUrl} style={{ opacity: 0.7 }} />
+                        <SmartImage
+                          uri={entry.imageUrl}
+                          style={{ opacity: 0.7 }}
+                        />
                         <View
                           className="absolute inset-0 rounded-2xl"
                           style={{
@@ -215,7 +217,10 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   <View className="flex-shrink-0 relative">
                     {entry.imageUrl ? (
                       <View className="relative w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <SmartImage uri={entry.imageUrl} style={{ opacity: 0.4 }} />
+                        <SmartImage
+                          uri={entry.imageUrl}
+                          style={{ opacity: 0.4 }}
+                        />
                         <View className="absolute inset-0 rounded-2xl items-center justify-center bg-red-100 dark:bg-red-900/30">
                           <MaterialIcons
                             name="image-not-supported"
@@ -295,7 +300,7 @@ export const MealActivityTab: React.FC<MealActivityTabProps> = ({
                   <View className="mr-3 flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden">
                     <SmartImage uri={entry.imageUrl} />
                   </View>
-                ) }
+                )}
 
                 {/* Content */}
                 <View className="flex-1 min-w-0 mr-3 justify-center">

@@ -68,7 +68,6 @@ export const scanImage = createAsyncThunk(
   "recipe/scanImage",
   async (imageUri: string, { rejectWithValue, dispatch }) => {
     const token = await AsyncStorage.getItem("accessToken");
-    console.log("here", imageUri);
 
     return new Promise<string[]>((resolve, reject) => {
       const socket = io(`${SOCKET_SERVER}/recognition`, {
@@ -88,7 +87,6 @@ export const scanImage = createAsyncThunk(
       socket.on("connect", async () => {
         try {
           const { jobId } = await uploadImageForRecognition(imageUri);
-          console.log("jobId", jobId);
           socket.emit("subscribe:recognition", { jobId });
         } catch (err: any) {
           console.log("err", err);
@@ -116,7 +114,6 @@ export const scanImage = createAsyncThunk(
       socket.on(
         "recognition:completed",
         (data: { jobId: string; detectionResults: DetectedIngredient[] }) => {
-          console.log("data", data);
           clearTimeout(timeout);
           socket.disconnect();
           _recognitionSocket = null;

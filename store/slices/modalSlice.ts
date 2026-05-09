@@ -4,12 +4,16 @@ interface ModalState {
   mealModalOpen: boolean;
   softPaywallOpen: boolean;
   purchaseSuccessOpen: boolean;
+  addMealOptionsOpen: boolean;
+  foodPickerOpen: boolean;
 }
 
 const initialState: ModalState = {
   mealModalOpen: false,
   softPaywallOpen: false,
   purchaseSuccessOpen: false,
+  addMealOptionsOpen: false,
+  foodPickerOpen: false,
 };
 
 const modalSlice = createSlice({
@@ -34,6 +38,18 @@ const modalSlice = createSlice({
     closePurchaseSuccess: (state) => {
       state.purchaseSuccessOpen = false;
     },
+    openAddMealOptions: (state) => {
+      state.addMealOptionsOpen = true;
+    },
+    closeAddMealOptions: (state) => {
+      state.addMealOptionsOpen = false;
+    },
+    openFoodPicker: (state) => {
+      state.foodPickerOpen = true;
+    },
+    closeFoodPicker: (state) => {
+      state.foodPickerOpen = false;
+    },
   },
 });
 
@@ -44,5 +60,9 @@ export const {
   closeSoftPaywall,
   openPurchaseSuccess,
   closePurchaseSuccess,
+  openAddMealOptions,
+  closeAddMealOptions,
+  openFoodPicker,
+  closeFoodPicker,
 } = modalSlice.actions;
 export default modalSlice.reducer;

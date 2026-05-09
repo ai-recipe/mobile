@@ -85,7 +85,6 @@ export default function RegisterScreen() {
 
   const handleGoogleLogin = async () => {
     const resultAction = await dispatch(loginWithGoogleAsync());
-    console.log("resultAction", JSON.stringify(resultAction, null, 2));
     if (loginWithGoogleAsync.fulfilled.match(resultAction)) {
     } else {
       const message = resultAction.payload as string;

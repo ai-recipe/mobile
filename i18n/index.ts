@@ -20,8 +20,10 @@ import { updateLocaleAsync } from "@/store/slices/authSlice";
  */
 
 (async () => {
-  const locale = await AsyncStorage.getItem("locale");
+  const locale = await AsyncStorage.getItem("CURRENT_LANGUAGE");
+  console.log("locale", locale);
   const defaultLocale = Localization.getLocales()[0].languageCode ?? "en";
+  console.log("defaultLocale", defaultLocale);
   store.dispatch(updateLocaleAsync(locale ?? defaultLocale));
 })();
 

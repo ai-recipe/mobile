@@ -18,6 +18,7 @@ import waterLogsReducer from "./slices/waterLogsSlice";
 import gamificationReducer from "./slices/gamificationSlice";
 import badgesReducer from "./slices/badgesSlice";
 import coachReducer from "./slices/coachSlice";
+import foodPickerReducer from "./slices/foodPickerSlice";
 
 import { injectDispatch } from "@/api/axios";
 import { analyticsListenerMiddleware } from "./middleware/analyticsMiddleware";
@@ -43,6 +44,7 @@ export const store = configureStore({
     gamification: gamificationReducer,
     badges: badgesReducer,
     coach: coachReducer,
+    foodPicker: foodPickerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

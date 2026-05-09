@@ -17,7 +17,6 @@ export default function ProtectedLayout() {
   }, [dispatch]);
 
   const user = useAppSelector((state) => state.auth.user);
-  console.log("user", user);
   // Authenticated and onboarding complete - render protected routes
   return (
     <Stack screenOptions={{ headerShown: false }}>

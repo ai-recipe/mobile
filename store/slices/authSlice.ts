@@ -107,7 +107,6 @@ export const fetchUserPreferencesAsync = createAsyncThunk(
       const response = await SurveyService.getUserPreferencesAPI();
       dispatch(fetchSurveyQuestionsAsync());
       dispatch(fetchUserAsync());
-      console.log("response", response.data);
 
       if (response.data?.data === null) {
         router.push("/screens/survey");
@@ -129,7 +128,6 @@ export const fetchSurveyQuestionsAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await SurveyService.getSurveyQuestionsAPI();
-      console.log("response", response.data);
       return response.data?.data || [];
     } catch (error: any) {
       console.log("error", error);

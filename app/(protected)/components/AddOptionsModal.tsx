@@ -17,12 +17,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export type AddOption = "scan-food" | "manual-log" | "ai-chef";
+export type AddOption = "scan-food" | "manual-log" | "ai-chef" | "select-foods";
 
 interface AddOptionsModalProps {
   visible: boolean;
   onClose: () => void;
   onManualLog: () => void;
+  onSelectFoods?: () => void;
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -31,6 +32,7 @@ export function AddOptionsModal({
   visible,
   onClose,
   onManualLog,
+  onSelectFoods,
 }: AddOptionsModalProps) {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
@@ -102,6 +104,12 @@ export function AddOptionsModal({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onClose();
     router.push("/screens/ai-scan");
+  };
+
+  const handleSelectFoods = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    afterCloseRef.current = onSelectFoods ?? null;
+    onClose();
   };
 
   const handleRequestClose = () => {
@@ -255,6 +263,47 @@ export function AddOptionsModal({
                   </Text>
                   <Text style={[styles.optionDesc, { color: theme.icon }]}>
                     {t("addOptions.manualLogDesc")}
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={24}
+                  color={isDark ? "#52525b" : "#9CA3AF"}
+                />
+              </View>
+            </Pressable>
+
+            {/* Select from Foods */}
+            <Pressable
+              onPress={handleSelectFoods}
+              style={({ pressed }) => [
+                styles.optionCardOuter,
+                {
+                  backgroundColor: isDark ? "#27272a" : "#FFFFFF",
+                  borderColor: isDark ? "rgba(255,255,255,0.06)" : "#F3F4F6",
+                },
+                pressed && styles.optionPressed,
+              ]}
+            >
+              <View style={styles.optionCardRow}>
+                <View
+                  style={[
+                    styles.iconWrap,
+                    {
+                      backgroundColor: isDark
+                        ? "rgba(99,102,241,0.15)"
+                        : "#EEF2FF",
+                    },
+                  ]}
+                >
+                  <MaterialIcons name="search" size={24} color="#6366F1" />
+                </View>
+                <View style={styles.optionTextContainer}>
+                  <Text style={[styles.optionTitle, { color: theme.text }]}>
+                    {t("addMealOptions.foods")}
+                  </Text>
+                  <Text style={[styles.optionDesc, { color: theme.icon }]}>
+                    {t("addMealOptions.foodsSub")}
                   </Text>
                 </View>
                 <MaterialIcons

@@ -76,7 +76,6 @@ export async function initializeNotifications(): Promise<string | null> {
 
 export async function registerToken(platform: string): Promise<void> {
   const token = await initializeNotifications();
-  console.log("fcmtoken", token);
   if (token) {
     await registerFcmToken(token, platform);
   }

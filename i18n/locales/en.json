@@ -99,6 +99,28 @@
     "stayHydrated": "Stay Hydrated!",
     "hydrationTip": "Drinking enough water helps improve your energy levels, focus, and overall metabolism. Aim for small sips throughout the day!"
   },
+  "addMealOptions": {
+    "title": "Add to Diary",
+    "subtitle": "How would you like to log this meal?",
+    "manual": "Manual Entry",
+    "manualSub": "Enter name and macros yourself",
+    "foods": "Select from Foods",
+    "foodsSub": "Search our food database"
+  },
+  "foodPicker": {
+    "title": "Food Database",
+    "searchPlaceholder": "Search foods, brands…",
+    "loading": "Loading foods…",
+    "noResults": "No foods found",
+    "noResultsSub": "Try a different search term",
+    "filter": {
+      "all": "All",
+      "vegan": "Vegan",
+      "vegetarian": "Vegetarian",
+      "glutenFree": "Gluten-Free",
+      "halal": "Halal"
+    }
+  },
   "mealEntry": {
     "quickSelect": "Quick Select",
     "mealNamePlaceholder": "Meal name (e.g. Boiled Egg)",
@@ -369,7 +391,9 @@
     "manualLogDesc": "Quickly add your meal",
     "aiChef": "AI Chef",
     "aiChefDesc": "Take photo of your foods, ingredients or products then we'll generate personalized recipes for you",
-    "magic": "Magic"
+    "magic": "Magic",
+    "selectFoods": "Food Database",
+    "selectFoodsDesc": "Browse & search our food library to log a meal"
   },
   "rateUs": {
     "title": "Rate",

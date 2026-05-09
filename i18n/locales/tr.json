@@ -99,6 +99,28 @@
     "stayHydrated": "Hidrate Kal!",
     "hydrationTip": "Yeterince su içmek enerji seviyenizi, odaklanmanızı ve genel metabolizmanızı iyileştirmeye yardımcı olur. Gün boyunca küçük yudumlar hedefleyin!"
   },
+  "addMealOptions": {
+    "title": "Günlüğe Ekle",
+    "subtitle": "Bu öğünü nasıl kaydetmek istersiniz?",
+    "manual": "Manuel Giriş",
+    "manualSub": "İsim ve makroları kendiniz girin",
+    "foods": "Yiyecek Seç",
+    "foodsSub": "Yiyecek veritabanımızda arayın"
+  },
+  "foodPicker": {
+    "title": "Yiyecek Veritabanı",
+    "searchPlaceholder": "Yiyecek, marka ara…",
+    "loading": "Yükleniyor…",
+    "noResults": "Yiyecek bulunamadı",
+    "noResultsSub": "Farklı bir arama terimi deneyin",
+    "filter": {
+      "all": "Tümü",
+      "vegan": "Vegan",
+      "vegetarian": "Vejetaryen",
+      "glutenFree": "Glütensiz",
+      "halal": "Helal"
+    }
+  },
   "mealEntry": {
     "quickSelect": "Hızlı Seç",
     "mealNamePlaceholder": "Öğün adı (ör. Haşlanmış Yumurta)",
@@ -369,7 +391,9 @@
     "manualLogDesc": "Hızlı bir şekilde öğünü ekle",
     "aiChef": "AI Şef",
     "aiChefDesc": "Yemeklerin, malzemelerin veya ürünlerin fotoğrafını çek, biz sana kişiselleştirilmiş tarifler oluşturalım",
-    "magic": "Sihirli"
+    "magic": "Sihirli",
+    "selectFoods": "Yemek Veritabanı",
+    "selectFoodsDesc": "Öğün eklemek için yemek kütüphanemize göz at"
   },
   "rateUs": {
     "title": "Bizi",

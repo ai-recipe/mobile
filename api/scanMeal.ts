@@ -12,8 +12,6 @@ export interface ScanUploadResponse {
 export const uploadScanImage = async (
   imageUri: string,
 ): Promise<ScanUploadResponse> => {
-  console.log("uploading image", imageUri);
-  console.log("api.defaults.baseURL", api.defaults.baseURL);
   try {
     const formData = new FormData();
     formData.append("image", {

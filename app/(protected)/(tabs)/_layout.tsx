@@ -3,7 +3,7 @@ import { PurchaseSuccessModal } from "@/app/screens/components/PurchaseSuccessMo
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { openMealModal } from "@/store/slices/modalSlice";
+import { openMealModal, openFoodPicker } from "@/store/slices/modalSlice";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -53,12 +53,20 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     }
   };
 
+  const handleSelectFoods = () => {
+    if (currentRouteName !== "index") {
+      router.navigate("/(protected)/(tabs)/");
+    }
+    dispatch(openFoodPicker());
+  };
+
   return (
     <>
       <AddOptionsModal
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
         onManualLog={handleManualLog}
+        onSelectFoods={handleSelectFoods}
       />
       <View style={tabBarContainerStyle}>
         <BlurView
