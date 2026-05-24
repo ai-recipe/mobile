@@ -31,12 +31,7 @@ export function RecipeCard({
       style={{
         backgroundColor: isDark ? "#18181b" : "#ffffff",
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: theme.border,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: isDark ? 0.28 : 0.07,
-        shadowRadius: 12,
-        elevation: 3,
+        borderColor: "transparent",
       }}
     >
       <View className="h-[130px] bg-[#e4e4e7] overflow-hidden">
@@ -51,7 +46,10 @@ export function RecipeCard({
             style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
           >
             <MaterialIcons name="timer" size={11} color="#fff" />
-            <Text className="text-white text-[10px] font-bold">{totalMins}{t("explore.mins")}</Text>
+            <Text className="text-white text-[10px] font-bold">
+              {totalMins}
+              {t("explore.mins")}
+            </Text>
           </View>
         )}
       </View>

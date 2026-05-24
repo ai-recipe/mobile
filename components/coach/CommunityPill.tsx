@@ -19,12 +19,7 @@ export function CommunityPill({
       className="flex-row items-center justify-center rounded-full border py-3 px-5"
       style={{
         backgroundColor: isDark ? "#18181b" : "#ffffff",
-        borderColor: theme.border,
-        shadowColor: "#000",
-        shadowOpacity: 0.06,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 8,
-        elevation: 2,
+        borderColor: "transparent",
       }}
     >
       <LiveDot />

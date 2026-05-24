@@ -48,7 +48,7 @@ export function InsightCard({
         className="rounded-[20px] border p-4 overflow-hidden flex-row items-center gap-3"
         style={{
           backgroundColor: isDark ? "#18181b" : "#ffffff",
-          borderColor: theme.border,
+          borderColor: "transparent",
         }}
       >
         <View
@@ -79,7 +79,7 @@ export function InsightCard({
     <View
       className="rounded-[20px] border p-4 overflow-hidden"
       style={{
-        borderColor: BRAND + "30",
+        borderColor: "transparent",
         backgroundColor: isDark ? "#1a1208" : "#fffbf5",
       }}
     >

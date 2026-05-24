@@ -169,7 +169,7 @@ export default function CoachScreen() {
                 <View
                   className="flex-row items-center gap-2.5 border rounded-2xl p-4 w-[260px]"
                   style={{
-                    borderColor: theme.border,
+                    borderColor: "transparent",
                     backgroundColor: isDark ? "#18181b" : "#fff",
                   }}
                 >
